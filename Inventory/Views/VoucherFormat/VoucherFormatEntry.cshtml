@@ -1,0 +1,245 @@
+﻿@using Inventory.Models
+@model VoucherFormatModels
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuVoucherFormat').className = 'active';
+    </script>
+</head>
+
+<div>
+
+    <div class="row">
+        <div class="col-md-8 col-lg-8">
+            <div class="row setup-title-layout">
+                <div class="col-md-6 col-lg-6">
+                    <label class="page-title">Create Voucher Format</label>
+                </div>
+                <div class="col-md-6 col-lg-6">
+                    <button id="btnAll" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("VoucherFormatList", "VoucherFormat")'">ALL</button>
+                </div>
+            </div>
+            <div class="row setup-entry-border margin-20">
+                <div class="col-md-12 col-lg-12">
+                    <div class="row setup-entry-header">
+                        <div class="col-md-11 col-lg-11">
+                            <label class="setup-entry-header-title">Fill Voucher Format Detail</label>
+                        </div>
+                        <div class="col-md-1 col-lg-1" style="display:flex;align-items:center;justify-content:center">
+                            <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                        </div>
+                    </div>
+                    <div class="row padding-20">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label class="control-label">PreFormat</label>
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    @Html.TextBoxFor(m => m.PreFormat, null, new { @class = "form-control control-input" })
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    @Html.TextBoxFor(m => m.PreFormat, new { @class = "form-control control-input", Value = Session["EditPreFormat"] })
+                                }
+                                <label id="vldPreFormat" class="text-danger" style="display:none">PreFormat Require!</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">MidFormat</label>
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    @Html.TextBoxFor(m => m.MidFormat, null, new { @class = "form-control control-input" })
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    @Html.TextBoxFor(m => m.MidFormat, new { @class = "form-control control-input", Value = Session["EditMidFormat"] })
+                                }
+                                <label id="vldMidFormat" class="text-danger" style="display:none">MidFormat Require!</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">PostFormat</label>
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    @Html.TextBoxFor(m => m.PostFormat, "0", new { @class = "form-control control-input number", @type = "number", @min = "0" })
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    @Html.TextBoxFor(m => m.PostFormat, new { @class = "form-control control-input number", @type = "number", Value = Session["EditPostFormat"], @min = "0" })
+                                }
+                                <label id="vldPostFormat" class="text-danger" style="display:none">PostFormat Require!</label>
+                            </div>
+                            @if (ViewBag.IsMultiBranch == true)
+                            {
+                                <div class="form-group">
+                                    <label class="control-label">Branch</label>
+                                    @Html.DropDownListFor(m => m.BranchID, Model.Branches, new { @class = "form-control control-input" })
+                                </div>
+                            }
+                            <div class="form-group">
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    <button id="btnEdit" class="btn btn-first setup-btn-save-edit">Edit</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 col-lg-4 empty-div"></div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    var vldOk,isDefaultLocation = false;
+    $(function () {
+
+        $('#btnSave').click(function () {
+            var preFormat = $('#PreFormat').val();
+            var midFormat = $('#MidFormat').val();
+            var postFormat = $('#PostFormat').val();
+            var branchId = $('#BranchID option:selected').val();
+
+            if (preFormat.length == 0) {
+                $("#vldPreFormat").show();
+                vldOk = 0;
+            } else if (midFormat.length == 0) {
+                $("#vldMidFormat").show();
+                vldOk = 0;
+            } else if (postFormat.length == 0) {
+                $("#vldPostFormat").show();
+                vldOk = 0;
+            } else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("SaveAction", "VoucherFormat")',
+                    data: { "branchId": branchId, "preFormat": preFormat, "midFormat": midFormat, "postFormat": postFormat },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.SAVEOK == 1) {
+                            $('#PreFormat').val("");
+                            $('#MidFormat').val("");
+                            $('#PostFormat').val("");
+                            $("#vldPreFormat").hide();
+                            $("#vldMidFormat").hide();
+                            $("#vldPostFormat").hide();
+                            showToast(1, response.MESSAGE);
+                        } else if (response.SAVEOK == 0) {
+                            showToast(0, response.MESSAGE);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnEdit').click(function () {
+            var preFormat = $('#PreFormat').val();
+            var midFormat = $('#MidFormat').val();
+            var postFormat = $('#PostFormat').val();
+            var branchId = $('#BranchID option:selected').val();
+
+            if (preFormat.length == 0) {
+                $("#vldPreFormat").show();
+                vldOk = 0;
+            } else if (midFormat.length == 0) {
+                $("#vldMidFormat").show();
+                vldOk = 0;
+            } else if (postFormat.length == 0) {
+                $("#vldPostFormat").show();
+                vldOk = 0;
+            } else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("EditAction", "VoucherFormat")',
+                    data: { "branchId": branchId, "preFormat": preFormat, "midFormat": midFormat, "postFormat": postFormat },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.EDITOK == 1) {
+                            showToast(1, response.MESSAGE);
+                            window.location.href = '@Url.Action("VoucherFormatList", "VoucherFormat")';
+                        } else if (response.EDITOK == 0) {
+                            showToast(0, response.MESSAGE);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+        $("#PreFormat").keypress(function () {
+            $("#vldPreFormat").hide();
+        });
+
+        $("#MidFormat").keypress(function () {
+            $("#vldMidFormat").hide();
+        });
+
+        $("#PostFormat").keypress(function () {
+            $("#vldPostFormat").hide();
+        });
+
+        $(".alert").delay(4000).slideUp(200, function () {
+            $(this).alert('close');
+            $("#divMessage").hide();
+        });
+
+        $(".number").keypress(function (e) {
+            var txt = String.fromCharCode(e.which);
+            if (!txt.match(/^[0-9]*$/)) {
+                return false;
+            }
+        });
+
+        var isEdit = '@Session["IsEdit"]';
+        if (isEdit == 1) {
+            var branchId = '@Session["EditBranchID"]';
+            $("#BranchID").val(branchId);
+        }
+
+    });
+
+</script>
+
+

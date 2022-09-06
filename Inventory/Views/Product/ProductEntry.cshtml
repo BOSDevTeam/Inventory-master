@@ -1,0 +1,1099 @@
+﻿@using Inventory.Models
+@model ProductModels.ProductModel
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuProduct').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">Create Product</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAll" class="btn btn-primary" style="float:right">ALL</button>
+        </div>
+    </div>
+    <div class="row margin-20">
+        <div class="col-md-12 col-lg-12">
+            <div class="row setup-entry-header">
+                <div class="col-md-11 col-lg-11">
+                    <label class="setup-entry-header-title">Fill Product Detail</label>
+                </div>
+                <div class="col-md-1 col-lg-1" style="display:flex;align-items:center;justify-content:center">
+                    <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                </div>
+            </div>
+            <div class="row setup-entry-border padding-20">              
+                <div class="col-md-12 col-lg-12">
+                    <div class="row setup-title-layout">
+                        <div class="col-md-12 col-lg-12">
+                            <label class="product-entry-title">Product Detail</label>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Name</label>
+                                        @if (Session["IsEdit"].ToString() == "0")
+                                        {
+                                            @Html.TextBoxFor(m => m.ProductName, null, new { @class = "form-control control-input" })
+                                        }
+                                        else if (Session["IsEdit"].ToString() == "1")
+                                        {
+                                            @Html.TextBoxFor(m => m.ProductName, new { @class = "form-control control-input", Value = Session["EditProductName"] })
+                                        }
+                                        <label id="vldName" class="text-danger" style="display:none">Name Require!</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Description</label>
+                                        @if (Session["IsEdit"].ToString() == "0")
+                                        {
+                                            @Html.TextBoxFor(m => m.Description, null, new { @class = "form-control control-input" })
+                                        }
+                                        else if (Session["IsEdit"].ToString() == "1")
+                                        {
+                                            @Html.TextBoxFor(m => m.Description, new { @class = "form-control control-input", Value = Session["EditDescription"] })
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Main Menu</label>
+                                        @Html.DropDownListFor(m => m.MainMenuID, Model.MainMenus, new { @class = "form-control control-input" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Code</label>
+                                        @if (Session["IsEdit"].ToString() == "0")
+                                        {
+                                            <input id="Code" class="form-control control-input" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" />
+                                        }
+                                        else if (Session["IsEdit"].ToString() == "1")
+                                        {
+                                            <input id="Code" class="form-control control-input" value="@Session["EditCode"]" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" />
+                                        }
+                                        <label id="vldCode" class="text-danger" style="display:none">Code Require!</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Sort Code</label>
+                                        @if (Session["IsEdit"].ToString() == "0")
+                                        {
+                                            @Html.TextBoxFor(m => m.SortCode, null, new { @class = "form-control control-input", @type = "number" })
+                                        }
+                                        else if (Session["IsEdit"].ToString() == "1")
+                                        {
+                                            @Html.TextBoxFor(m => m.SortCode, new { @class = "form-control control-input", Value = Session["EditSortCode"], @type = "number" })
+                                        }
+                                        <label id="vldSortCode" class="text-danger" style="display:none">Sort Code Require!</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Sub Menu</label>
+                                        @Html.DropDownListFor(m => m.SubMenuID, Model.SubMenus, new { @class = "form-control control-input" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (ViewBag.IsProductPhoto == true)
+                    {
+                        <div class="row setup-title-layout" id="divPhoto">
+                            <div class="col-md-12 col-lg-12">
+                                <div class="form-group">
+                                    <label class="product-entry-title">Photo <span style="color:red">(Recommended Size 200*200)</span></label><br />
+                                    @if (ViewBag.Photo == true)
+                                    {
+                                        <img src="@Url.Content("data:image/png;base64," + Convert.ToBase64String(Model.Photo, 0, Model.Photo.Length))" id="imgPreview" style="height:80px;height:80px;" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/Image/sample.png" id="imgPreview" style="width:80px;height:80px;" />
+                                    }
+                                    <span class="btn control-label">
+                                        <input type="file" name="file" id="file" onchange="previewPhoto(this);" accept=".jpg,.jpeg,.png" />
+                                    </span>
+                                    <div id="error" style="display:none"><span style="color:red">Photo is larger than 200pixels!</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="row setup-title-layout">
+                        <div class="col-md-12 col-lg-12">
+                            <label class="product-entry-title">Product Price</label>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Purchase Price</label>
+                                        @if (Session["IsEdit"].ToString() == "0")
+                                        {
+                                            @Html.TextBoxFor(m => m.PurchasePrice, null, new { @class = "form-control control-input number", @type = "text" })                                    
+                                        }
+                                        else if (Session["IsEdit"].ToString() == "1")
+                                        {
+                                            @Html.TextBoxFor(m => m.PurchasePrice, new { @class = "form-control control-input number", Value = Session["EditPurchasePrice"], @type = "text" })
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label">Whole Sale Price</label>
+                                        @if (Session["IsEdit"].ToString() == "0")
+                                        {
+                                            @Html.TextBoxFor(m => m.WholeSalePrice, null, new { @class = "form-control control-input number", @type = "text" })
+                                        }
+                                        else if (Session["IsEdit"].ToString() == "1")
+                                        {
+                                            @Html.TextBoxFor(m => m.WholeSalePrice, new { @class = "form-control control-input number", Value = Session["EditWholeSalePrice"], @type = "text" })
+                                        }
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Sale Price</label>
+                                        @if (Session["IsEdit"].ToString() == "0")
+                                        {
+                                            @Html.TextBoxFor(m => m.SalePrice, null, new { @class = "form-control control-input number", @type = "text" })
+                                        }
+                                        else if (Session["IsEdit"].ToString() == "1")
+                                        {
+                                            @Html.TextBoxFor(m => m.SalePrice, new { @class = "form-control control-input number", Value = Session["EditSalePrice"], @type = "text" })
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (ViewBag.IsMultiUnit == true)
+                    {
+                        <div id="divUnit" class="row setup-title-layout">
+                            <div class="col-md-12 col-lg-12">
+                                <label class="product-entry-title">Unit</label>
+                                <div class="row">
+                                    <div class="col-md-2 col-lg-2">
+                                        <div class="form-group">
+                                            @Html.DropDownListFor(m => m.UnitID, Model.Units, new { @class = "form-control control-input" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10 col-lg-10">
+                                        <button id="btnUnitAdd" class="btn btn-sm btn-first">ADD</button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <table id="tblUnit" class="col-md-12 col-lg-12">
+                                        <thead>
+                                            <tr class="row table-header">
+                                                <th class="col-md-2 col-lg-2">Unit</th>
+                                                <th class="col-md-2 col-lg-2">Purchase Price</th>
+                                                <th class="col-md-2 col-lg-2">Sale Price</th>
+                                                <th class="col-md-2 col-lg-2">Discount(%)</th>
+                                                <th class="col-md-2 col-lg-2">Description</th>
+                                                <th class="col-md-2 col-lg-2">Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                            @if (Session["IsEdit"].ToString() == "0")
+                                            {
+                                                for (int i = 0; i < Model.LstUnit.Count(); i++)
+                                                {
+                                                    <tr class="row table-item">
+                                                        <td class="col-md-2 col-lg-2">@Model.LstUnit[i].UnitKeyword</td>
+                                                        <td class="col-md-2 col-lg-2">@Model.LstUnit[i].PurchasePrice</td>
+                                                        <td class="col-md-2 col-lg-2">@Model.LstUnit[i].SalePrice</td>
+                                                        <td class="col-md-2 col-lg-2">@Model.LstUnit[i].DiscountPercent</td>
+                                                        <td class="col-md-2 col-lg-2">@Model.LstUnit[i].Description</td>
+                                                        <td class="col-md-2 col-lg-2 btn-group">
+                                                            <button id="btnEdit" class="btn btn-sm btn-primary" style="font-size:0.7em" onclick="action('2')">Edit</button>
+                                                            <button id="btnDelete" class="btn btn-sm btn-danger" style="font-size:0.7em" onclick="action('3')">Delete</button>
+                                                        </td>
+                                                        <td style="display:none">@Model.LstUnit[i].UnitID</td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else if (Session["IsEdit"].ToString() == "1")
+                                            {
+                                                var units = (List<ProductModels.ProductUnit>)ViewData["EditLstProductUnit"]; // Cast the list
+                                                foreach (var c in units)
+                                                {
+                                                    <tr class="row table-item" style="cursor:pointer">
+                                                        <td class="col-md-2 col-lg-2">
+                                                            @c.UnitKeyword
+                                                        </td>
+                                                        <td class="col-md-2 col-lg-2">
+                                                            @c.PurchasePrice
+                                                        </td>
+                                                        <td class="col-md-2 col-lg-2">
+                                                            @c.SalePrice
+                                                        </td>
+                                                        <td class="col-md-2 col-lg-2">
+                                                            @c.DiscountPercent
+                                                        </td>
+                                                        <td class="col-md-2 col-lg-2">
+                                                            @c.Description
+                                                        </td>
+                                                        <td class="col-md-2 col-lg-2 btn-group">
+                                                            <button id="btnEdit" class="btn btn-sm btn-primary" style="font-size:0.7em" onclick="action('2')">Edit</button>
+                                                            <button id="btnDelete" class="btn btn-sm btn-danger" style="font-size:0.7em" onclick="action('3')">Delete</button>
+                                                        </td>
+                                                        <td style="display:none">
+                                                            @c.UnitID
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @if (ViewBag.IsProductVariant == true)
+                    {
+                        <div id="divVariant" class="row setup-title-layout">
+                            <div class="col-md-12 col-lg-12">
+                                <label class="product-entry-title">Variant</label>
+                                <div class="row">
+                                    <div class="col-md-2 col-lg-2">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(m => m.Variant, null, new { @class = "form-control control-input" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10 col-lg-10">
+                                        <button id="btnVariantAdd" class="btn btn-sm btn-second">ADD</button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <table id="tblVariant" class="col-md-12 col-lg-12">
+                                        <thead>
+                                            <tr class="row table-header">
+                                                <th class="col-md-10 col-lg-10">Variant</th>
+                                                <th class="col-md-2 col-lg-2">Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            @if (Session["IsEdit"].ToString() == "0")
+                                            {
+                                                for (int i = 0; i < Model.LstVariant.Count(); i++)
+                                                {
+                                                    <tr class="row table-item">
+                                                        <td class="col-md-10 col-lg-10">@Model.LstVariant[i].Variant</td>
+                                                        <td class="col-md-2 col-lg-2 btn-group">
+                                                            <button id="btnDelete" class="btn btn-sm btn-danger" style="font-size:0.7em" onclick="action('3')">Delete</button>
+                                                        </td>
+                                                        <td style="display:none">@Model.LstVariant[i].ID</td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else if (Session["IsEdit"].ToString() == "1")
+                                            {
+                                                var variants = (List<ProductModels.ProductVariant>)ViewData["EditLstProductVariant"]; // Cast the list
+                                                foreach (var c in variants)
+                                                {
+                                                    <tr class="row table-item" style="cursor:pointer">
+                                                        <td class="col-md-10 col-lg-10">
+                                                            @c.Variant
+                                                        </td>
+                                                        <td class="col-md-2 col-lg-2 btn-group">
+                                                            <button id="btnDelete" class="btn btn-sm btn-danger" style="font-size:0.7em" onclick="action('3')">Delete</button>
+                                                        </td>
+                                                        <td style="display:none">
+                                                            @c.ID
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @if (ViewBag.IsBarcode == true)
+                    {
+                        <div id="divBarcode" class="row setup-title-layout" style="display:none"></div>
+                    }
+                    @if (ViewBag.IsQRcode == true)
+                    {
+                        <div id="divQRcode" class="row setup-title-layout" style="display:none"></div>
+                    }
+                    @if (ViewBag.IsDifProductByBranch == true)
+                    {
+                        <div id="divBranch" class="row setup-title-layout" style="display:none"></div>
+                    }
+                    <div class="row setup-title-layout">
+                        <div class="col-md-12 col-lg-12">
+                            <label class="product-entry-title">Other</label>
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Alert Quantity</label>
+                                        @if (Session["IsEdit"].ToString() == "0")
+                                        {
+                                            @Html.TextBoxFor(m => m.AlertQty, null, new { @class = "form-control control-input number", @type = "number", @min="0" })
+                                        }
+                                        else if (Session["IsEdit"].ToString() == "1")
+                                        {
+                                            @Html.TextBoxFor(m => m.AlertQty, new { @class = "form-control control-input number", Value = Session["EditAlertQty"], @type = "number", @min = "0" })
+                                        }
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.CheckBoxFor(m => m.IsStock, new { @class = "control-input", onchange = "IsStockCheck(this.checked)", id = "chkIsStock" }) <label class="control-label">Non Stock</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-lg-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Discount(%)</label>
+                                        @if (Session["IsEdit"].ToString() == "0")
+                                        {
+                                            @Html.TextBoxFor(m => m.DisPercent, null, new { @class = "form-control control-input number", @type = "number", @min = "0", @max = "100" })
+                                        }
+                                        else if (Session["IsEdit"].ToString() == "1")
+                                        {
+                                            @Html.TextBoxFor(m => m.DisPercent, new { @class = "form-control control-input number", Value = Session["EditDisPercent"], @type = "number", @max = "100" })
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="padding:10px">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="form-group">
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    <button id="btnEditProduct" class="btn btn-first setup-btn-save-edit">Edit</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalUnit" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Unit</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg12">
+                        <label id="lblUnit" class="product-entry-title"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label class="control-label">Purchase Price</label>
+                            @if (Session["IsEdit"].ToString() == "0")
+                            {
+                                <input id="UnitPurPrice" class="form-control control-input number" type="text" />
+                            }
+                            else if (Session["IsEdit"].ToString() == "1")
+                            {
+                                <input id="UnitPurPrice" class="form-control control-input number" type="text" value="@Session["EditUnitPurPrice"]" />
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label class="control-label">Sale Price</label>
+                            @if (Session["IsEdit"].ToString() == "0")
+                            {
+                                <input id="UnitSalePrice" class="form-control control-input number" type="text" />
+                            }
+                            else if (Session["IsEdit"].ToString() == "1")
+                            {
+                                <input id="UnitSalePrice" class="form-control control-input number" type="text" value="@Session["EditUnitSalePrice"]" />
+                            }
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label class="control-label">Discount (%)</label>
+                            @if (Session["IsEdit"].ToString() == "0")
+                            {
+                                <input id="UnitDiscount" class="form-control control-input number" type="number" min="0" max="100" />
+                            }
+                            else if (Session["IsEdit"].ToString() == "1")
+                            {
+                                <input id="UnitDiscount" class="form-control control-input number" type="number" min="0" max="100" value="@Session["EditUnitDiscount"]" />
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 col-lg-12">
+                        <div class="form-group">
+                            <label class="control-label">Description</label>
+                            @if (Session["IsEdit"].ToString() == "0")
+                            {
+                                <input id="UnitDescription" class="form-control control-input" />
+                            }
+                            else if (Session["IsEdit"].ToString() == "1")
+                            {
+                                <input id="UnitDescription" class="form-control control-input" value="@Session["EditUnitDescription"]" />
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnUnitSave" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">SAVE</button>
+                <button id="btnUnitEdit" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close" style="display:none">EDIT</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalUnitConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg12">
+                        <label class="control-label">Are you sure you want to delete?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnUnitDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button id="btnUnitDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalVariantConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg12">
+                        <label class="control-label">Are you sure you want to delete?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnVariantDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button id="btnVariantDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var vldOk, isStock = true, unitId = 0, Id, actionValue, unitKeyword;
+    $(function () {
+
+        $('#btnAll').click(function () {
+            window.location.href = '@Url.Action("ProductList", "Product")?isMultiUnit=' + isMultiUnit + '&isProductPhoto=' + isProductPhoto + '&isProductVariant=' + isProductVariant + '&p=1';
+        });
+
+        $('#MainMenuID').change(function () {
+            var val = $('#MainMenuID option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("MainMenuSelectAction", "Product")',
+                data: { "mainMenuId": val },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    var loc;
+                    $("#SubMenuID").html("");
+                    for (var i = 0; i < response.length; i++) {
+                        loc += '<option value="' + response[i].SubMenuID + '">' + response[i].SubMenuName + '</option>';
+                    }
+                    $("#SubMenuID").append(loc);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $('#btnSave').click(function () {
+            var productName = $('#ProductName').val();
+            var sortCode = $('#SortCode').val();
+            var description = $('#Description').val();
+            var code = $('#Code').val();
+            var purchasePrice = $('#PurchasePrice').val();
+            var wholeSalePrice = $('#WholeSalePrice').val();
+            var salePrice = $('#SalePrice').val();
+            var alertQty = $('#AlertQty').val();
+            var disPercent = $('#DisPercent').val();
+            var subMenuId = $('#SubMenuID option:selected').val();
+
+            if (alertQty.length == 0) alertQty = 0;
+            if (disPercent.length == 0) disPercent = 0;
+            if (purchasePrice.length == 0) purchasePrice = 0;
+            if (salePrice.length == 0) salePrice = 0;
+            if (wholeSalePrice.length == 0) wholeSalePrice = 0;
+
+            if (productName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            } else if (code.length == 0) {
+                $("#vldCode").show();
+                vldOk = 0;
+            } else if (sortCode.length == 0) {
+                $("#vldSortCode").show();
+                vldOk = 0;
+            } else if (sortCode == 0) {
+                $("#vldSortCode").show();
+                vldOk = 0;
+            } else if (subMenuId == null) {
+                showToast(0, "Choose SubMenu!");
+                vldOk = 0;
+            } else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("SaveAction", "Product")',
+                    data: { "productName": productName, "sortCode": sortCode, "description": description, "code": code, "purchasePrice": purchasePrice, "wholeSalePrice": wholeSalePrice, "salePrice": salePrice, "alertQty": alertQty, "disPercent": disPercent, "isStock": isStock, "subMenuId": subMenuId, "isProductPhoto": isProductPhoto },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.ISSUCCESS == true) {
+                            $('#ProductName').val("");
+                            $('#SortCode').val("");
+                            $('#Description').val("");
+                            $('#Code').val("");
+                            $('#PurchasePrice').val("");
+                            $('#WholeSalePrice').val("");
+                            $('#SalePrice').val("");
+                            $('#AlertQty').val("");
+                            $('#DisPercent').val("");
+                            $('#imgPreview').attr('src', "");
+                            $("#vldName").hide();
+                            $("#vldCode").hide();
+                            $("#vldSortCode").hide();
+                            $("#tblUnit").find("tbody").empty();
+                            $("#tblVariant").find("tbody").empty();
+                            $("#chkIsStock").prop("checked", false);
+                            isStock = true;
+                            showToast(1, response.MESSAGE);
+                        } else if (response.ISSUCCESS == false) {
+                            showToast(0, response.MESSAGE);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnEditProduct').click(function () {
+            var productName = $('#ProductName').val();
+            var sortCode = $('#SortCode').val();
+            var description = $('#Description').val();
+            var code = $('#Code').val();
+            var purchasePrice = $('#PurchasePrice').val();
+            var wholeSalePrice = $('#WholeSalePrice').val();
+            var salePrice = $('#SalePrice').val();
+            var alertQty = $('#AlertQty').val();
+            var disPercent = $('#DisPercent').val();
+            var subMenuId = $('#SubMenuID option:selected').val();
+
+            if (alertQty.length == 0) alertQty = 0;
+            if (disPercent.length == 0) disPercent = 0;
+            if (purchasePrice.length == 0) purchasePrice = 0;
+            if (salePrice.length == 0) salePrice = 0;
+            if (wholeSalePrice.length == 0) wholeSalePrice = 0;
+
+            if (productName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            } else if (code.length == 0) {
+                $("#vldCode").show();
+                vldOk = 0;
+            } else if (sortCode.length == 0) {
+                $("#vldSortCode").show();
+                vldOk = 0;
+            } else if (sortCode == 0) {
+                $("#vldSortCode").show();
+                vldOk = 0;
+            } else if (subMenuId == null) {
+                showToast(0, "Choose SubMenu!");
+                vldOk = 0;
+            } else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("EditAction", "Product")',
+                    data: { "productName": productName, "sortCode": sortCode, "description": description, "code": code, "purchasePrice": purchasePrice, "wholeSalePrice": wholeSalePrice, "salePrice": salePrice, "alertQty": alertQty, "disPercent": disPercent, "isStock": isStock, "subMenuId": subMenuId, "isProductPhoto": isProductPhoto },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.ISSUCCESS == true) {
+                            showToast(1, response.MESSAGE);
+                            window.location.href = '@Url.Action("ProductList", "Product")?isMultiUnit=' + isMultiUnit + '&isProductPhoto=' + isProductPhoto + '&isProductVariant=' + isProductVariant + '&p=1';
+                        } else if (response.ISSUCCESS == false) {
+                            showToast(0, response.MESSAGE);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnUnitAdd').click(function () {
+            unitId = $('#UnitID option:selected').val();
+            unitKeyword = $('#UnitID option:selected').text();
+            $('#lblUnit').text(unitKeyword);
+            $('#btnUnitEdit').hide();
+            $('#btnUnitSave').show();
+            $('#UnitPurPrice').val("");
+            $('#UnitSalePrice').val("");
+            $('#UnitDiscount').val("");
+            $('#UnitDescription').val("");
+            $('#modalUnit').modal('show');
+        });
+
+        $('#btnUnitSave').click(function () {
+            var unitPurPrice = $('#UnitPurPrice').val();
+            var unitSalePrice = $('#UnitSalePrice').val();
+            var unitDiscount = $('#UnitDiscount').val();
+            var unitDescription = $('#UnitDescription').val();
+
+            if (unitPurPrice.length == 0) unitPurPrice = 0;
+            if (unitSalePrice.length == 0) unitSalePrice = 0;
+            if (unitDiscount.length == 0) unitDiscount = 0;
+
+            if (unitId != 0) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("UnitSaveAction", "Product")',
+                    data: { "unitId": unitId, "unitPurPrice": unitPurPrice, "unitSalePrice": unitSalePrice, "unitDiscount": unitDiscount, "unitDescription": unitDescription, "unitKeyword": unitKeyword },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.ISSUCCESS == true) {
+                            $("#tblUnit").find("tbody").empty();
+                            $.each(response.LstProductUnitList, function (i, item) {
+                                var rows = "<tr class='row table-item'>"
+                                + "<td class='col-md-2 col-lg-2'>" + item.UnitKeyword + "</td>"
+                                + "<td class='col-md-2 col-lg-2'>" + item.PurchasePrice + "</td>"
+                                + "<td class='col-md-2 col-lg-2'>" + item.SalePrice + "</td>"
+                                + "<td class='col-md-2 col-lg-2'>" + item.DiscountPercent + "</td>"
+                                + "<td class='col-md-2 col-lg-2'>" + item.Description + "</td>"
+                                + "<td class='col-md-2 col-lg-2 btn-group'><button id='btnEdit' class='btn btn-sm btn-primary' style='font-size:0.7em' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger' style='font-size:0.7em' onclick='action(3)'>Delete</button></td>"
+                                + "<td style='display:none'>" + item.UnitID + "</td>"
+                                + "</tr>";
+                                $('#tblUnit tbody').append(rows);
+                            })
+                            $('#modalUnit').modal('hide');
+                        } else if (response.ISSUCCESS == false) {
+                            showToast(0, response.MESSAGE);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $("#tblUnit").on("click", "tbody tr", function (event) {
+            selectedRow = $(this).parent('tr');
+            $(this).find("td:last").each(function () {
+                Id = $(this).text();
+                if (actionValue == 2) {
+                    showLoadingIcon();
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("UnitEditPrepareAction", "Product")',
+                        data: { "Id": Id },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            hideLoadingIcon();
+                            $('#modalUnit').modal('show');
+                            $('#lblUnit').text(response.UnitKeyword);
+                            $('#UnitPurPrice').val(response.PurPrice);
+                            $('#UnitSalePrice').val(response.SalePrice);
+                            $('#UnitDiscount').val(response.Discount);
+                            $('#UnitDescription').val(response.Description);
+                            unitId = response.UnitID;
+                            $('#btnUnitEdit').show();
+                            $('#btnUnitSave').hide();
+                        },
+                        failure: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        }
+                    });
+                } else if (actionValue == 3) {  // delete
+                    $('#modalUnitConfirm').modal('show');
+                }
+            });
+        });
+
+        $("#btnUnitDelOk").click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DeleteUnitAction", "Product")',
+                data: { "Id": Id },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    $("#tblUnit").find("tbody").empty();
+                    $.each(response.LstProductUnitList, function (i, item) {
+                        var rows = "<tr class='row table-item'>"
+                        + "<td class='col-md-2 col-lg-2'>" + item.UnitKeyword + "</td>"
+                        + "<td class='col-md-2 col-lg-2'>" + item.PurchasePrice + "</td>"
+                        + "<td class='col-md-2 col-lg-2'>" + item.SalePrice + "</td>"
+                        + "<td class='col-md-2 col-lg-2'>" + item.DiscountPercent + "</td>"
+                        + "<td class='col-md-2 col-lg-2'>" + item.Description + "</td>"
+                        + "<td class='col-md-2 col-lg-2 btn-group'><button id='btnEdit' class='btn btn-sm btn-primary' style='font-size:0.7em' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger' style='font-size:0.7em' onclick='action(3)'>Delete</button></td>"
+                        + "<td style='display:none'>" + item.UnitID + "</td>"
+                        + "</tr>";
+                        $('#tblUnit tbody').append(rows);
+                    })
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $('#btnUnitEdit').click(function () {
+            var unitPurPrice = $('#UnitPurPrice').val();
+            var unitSalePrice = $('#UnitSalePrice').val();
+            var unitDiscount = $('#UnitDiscount').val();
+            var unitDescription = $('#UnitDescription').val();
+
+            if (unitPurPrice.length == 0) unitPurPrice = 0;
+            if (unitSalePrice.length == 0) unitSalePrice = 0;
+            if (unitDiscount.length == 0) unitDiscount = 0;
+
+            if (unitId != 0) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("UnitEditAction", "Product")',
+                    data: { "Id": Id, "unitId": unitId, "unitPurPrice": unitPurPrice, "unitSalePrice": unitSalePrice, "unitDiscount": unitDiscount, "unitDescription": unitDescription },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        $("#tblUnit").find("tbody").empty();
+                        $.each(response.LstProductUnitList, function (i, item) {
+                            var rows = "<tr class='row table-item'>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.UnitKeyword + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.PurchasePrice + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.SalePrice + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.DiscountPercent + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.Description + "</td>"
+                            + "<td class='col-md-2 col-lg-2 btn-group'><button id='btnEdit' class='btn btn-sm btn-primary' style='font-size:0.7em' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger' style='font-size:0.7em' onclick='action(3)'>Delete</button></td>"
+                            + "<td style='display:none'>" + item.UnitID + "</td>"
+                            + "</tr>";
+                            $('#tblUnit tbody').append(rows);
+                        })
+                        $('#modalUnit').modal('hide');
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnVariantAdd').click(function () {
+            var variant = $('#Variant').val();
+
+            if (variant != "") {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("VariantSaveAction", "Product")',
+                    data: { "variant": variant },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        $("#tblVariant").find("tbody").empty();
+                        $.each(response.LstProductVariantList, function (i, item) {
+                            var rows = "<tr class='row table-item'>"
+                            + "<td class='col-md-10 col-lg-10'>" + item.Variant + "</td>"
+                            + "<td class='col-md-2 col-lg-2 btn-group'><button id='btnDelete' class='btn btn-sm btn-danger' style='font-size:0.7em' onclick='action(3)'>Delete</button></td>"
+                            + "<td style='display:none'>" + item.ID + "</td>"
+                            + "</tr>";
+                            $('#tblVariant tbody').append(rows);
+                        })
+                        $('#Variant').val("");
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            } else {
+                showToast(0, "Enter Variant!");
+            }
+        });
+
+        $("#tblVariant").on("click", "tbody tr", function (event) {
+            selectedRow = $(this).parent('tr');
+            $(this).find("td:last").each(function () {
+                Id = $(this).text();
+                if (actionValue == 3) {  // delete
+                    $('#modalVariantConfirm').modal('show');
+                }
+            });
+        });
+
+        $('#btnVariantDelOk').click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DeleteVariantAction", "Product")',
+                data: { "Id": Id },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    showToast(1, "Deleted Successfully!");
+                    $("#tblVariant").find("tbody").empty();
+                    $.each(response.LstProductVariantList, function (i, item) {
+                        var rows = "<tr class='row table-item'>"
+                        + "<td class='col-md-10 col-lg-10'>" + item.Variant + "</td>"
+                        + "<td class='col-md-2 col-lg-2 btn-group'><button id='btnDelete' class='btn btn-sm btn-danger' style='font-size:0.7em' onclick='action(3)'>Delete</button></td>"
+                        + "<td style='display:none'>" + item.ID + "</td>"
+                        + "</tr>";
+                        $('#tblVariant tbody').append(rows);
+                    })
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $('#btnRefresh').click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("RefreshAction", "Product")',
+                data: { },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    window.location.reload();
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });            
+        });
+
+        $("#ProductName").keypress(function () {
+            $("#vldName").hide();
+        });
+
+        $("#Code").keypress(function () {
+            $("#vldCode").hide();
+        });
+
+        $("#SortCode").keypress(function () {
+            $("#vldSortCode").hide();
+        });
+
+        $(".number").keypress(function (e) {
+            var txt = String.fromCharCode(e.which);
+            if (!txt.match(/^[0-9]*$/)) { 
+                return false;
+            }
+        });
+
+        var editIsStock = '@Session["EditIsStockVal"]';
+        if (editIsStock == 1) {
+            $("#chkIsStock").prop("checked", false);
+            isStock = true;
+        } else {
+            $("#chkIsStock").prop("checked", true);
+            isStock = false;
+        }
+        var editMainMenuID = '@Session["EditMainMenuID"]';
+        if (editMainMenuID.length != 0 && editMainMenuID != 0) $("#MainMenuID").val(editMainMenuID);
+        var editSubMenuID = '@Session["EditSubMenuID"]';
+        if (editSubMenuID.length != 0 && editSubMenuID != 0) $('#SubMenuID').val(editSubMenuID);
+
+    });
+
+    function IsStockCheck(checked) {
+        if (checked == true) {
+            isStock = false;
+        }
+        else {
+            isStock = true;
+        }
+    }
+
+    function action(val) {
+        actionValue = val;
+    }
+
+    function previewPhoto(input) {
+        img = new Image();
+        var objectUrl = window.URL.createObjectURL(input.files[0]);
+        img.onload = function () {
+            if (this.width > 200 || this.height > 200) {
+                $('#error').show();
+                $('#file').val('');
+            } else {
+                document.getElementById('imgPreview').src = objectUrl;
+            }
+        }
+        img.src = objectUrl;
+    }
+
+    var _URL = window.URL || window.webkitURL;
+    $("#file").change(function (e) {
+        var file, img;
+        if ((file = this.files[0])) {
+            img = new Image();
+            img.onload = function () {
+                var width = this.width;
+                var height = this.height;
+                if (width > 200 || height > 200) {
+                    $("#error").show();
+                    $('#file').val('');
+                }
+                else {
+                    var file = e.target.files;
+                    if (file.length > 0) {
+                        if (window.FormData !== undefined) {
+                            var data = new FormData();
+                            for (var x = 0; x < file.length; x++) {
+                                data.append("file" + x, file[x]);
+                            }
+
+                            $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("UploadFile", "Product")',
+                                contentType: false,
+                                processData: false,
+                                data: data,
+                                success: function (result) {
+                                    $('#image').attr('src', '@Url.Content("~/Content/img/")' + result.fileName);
+                                },
+                                error: function (xhr, status, p3, p4) {
+                                    var err = "Error " + " " + status + " " + p3 + " " + p4;
+                                    if (xhr.responseText && xhr.responseText[0] == "{")
+                                        err = JSON.parse(xhr.responseText).Message;
+                                    console.log(err);
+                                }
+                            });
+                        } else {
+                            alert("This browser doesn't support HTML5 file uploads!");
+                        }
+                    };
+                }
+            };
+            img.src = _URL.createObjectURL(file);
+        }
+    });
+
+
+</script>
+
+

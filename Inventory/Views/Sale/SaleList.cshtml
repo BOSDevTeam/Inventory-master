@@ -1,0 +1,610 @@
+﻿@using Inventory.Models
+@model SaleModels.SaleModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuSaleList').className = 'active';
+    </script>
+</head>
+
+<script type="text/javascript">
+
+    var actionValue, tranId, selectedRow;
+
+    $(function () {
+
+        $("#tblSales").on("click", "tbody tr", function (event) {
+            selectedRow = $(this).parent('tr');
+            $(this).find("td:last").each(function () {
+                tranId = $(this).text();
+                if (actionValue == 1) {
+                    showLoadingIcon();
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("SaleDetailAction", "Sale")',
+                        data: { "tranId": tranId },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            hideLoadingIcon();
+                            var date = new Date(parseInt((response.SaleListModel.Date.substr(6))));
+                            $("#tblSaleDetail").find("tbody").empty();
+                            $('#lblDate').text(date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear());
+                            $('#lblVoucherNo').text(response.SaleListModel.Voucher);
+                            $('#lblCustomer').text(response.SaleListModel.CustomerName);
+                            $('#lblUser').text(response.SaleListModel.UserName);
+                            $('#lblLocation').text(response.SaleListModel.LocShortName);
+                            $('#lblCurrency').text(response.SaleListModel.CurrencyKeyword);
+                            $('#lblPayment').text(response.SaleListModel.PayKeyword);
+                            $('#lblCreditDay').text(response.SaleListModel.CreditLimitDay);
+                            $('#lblVouDis').text(response.SaleListModel.VoucherDis);
+                            $('#lblFoc').text(response.SaleListModel.FOCAmt);
+                            $('#lblAdvancedPay').text(response.SaleListModel.AdvancedPayAmt);
+                            $('#lblTotalAmt').text(response.SaleListModel.TotalAmt);
+                            $('#lblTax').text(response.SaleListModel.TaxAmt);
+                            $('#lblCharges').text(response.SaleListModel.ChargesAmt);
+                            $('#lblNetAmt').text(response.SaleListModel.NetAmt);
+                            if (response.SaleListModel.PaymentPercent != 0) $("#lblNetAmountLabel").text('Net Amount (Include ' + response.SaleListModel.PaymentPercent + '%):');
+                            else $("#lblNetAmountLabel").text('Net Amount:');
+
+                            if (response.SaleListModel.IsDelivery == true) {
+                                $('#divDelivery').show();
+                                var deliDate = new Date(parseInt((response.DeliveryModel.Date.substr(6))));
+                                $('#lblDeliDate').text(deliDate.getDate() + '/' + (deliDate.getMonth() + 1) + '/' + deliDate.getFullYear());
+                                $('#lblDeliName').text(response.DeliveryModel.Recipient);
+                                $('#lblDeliPhone').text(response.DeliveryModel.Phone);
+                                $('#lblDeliAddress').text(response.DeliveryModel.Address);
+                            } else {
+                                $('#divDelivery').css('display', 'none');
+                            }
+
+                            $.each(response.LstTran, function (i, item) {
+                                var rows = "<tr class='row table-item'>"
+                                    + "<td class='col-md-2 col-lg-2'>" + item.ProductName + "</td>"
+                                    + "<td class='col-md-2 col-lg-2'>" + item.UnitVariant + "</td>"
+                                    + "<td class='col-md-2 col-lg-2'>" + item.Quantity + "</td>"
+                                    + "<td class='col-md-2 col-lg-2'>" + item.SalePrice + "</td>"
+                                    + "<td class='col-md-2 col-lg-2'>" + item.DiscountAmt + "</td>"
+                                    + "<td class='col-md-2 col-lg-2'>" + item.Amount + "</td>"
+                                    + "</tr>";
+                                $('#tblSaleDetail tbody').append(rows);
+                            });
+                        },
+                        failure: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        }
+                    });
+                } else if (actionValue == 2) {
+                    @*window.location.href = '@Url.Action("Sale", "Sale")?tranId=' + tranId;*@
+                    window.location.href = '@Url.Action("Sale", "Sale")?tranId=' + tranId + '&isMultiBranch=' + isMultiBranch + '&isMultiCurrency=' + isMultiCurrency + '&isMultiUnit=' + isMultiUnit + '&isBankPayment=' + isBankPayment + '&branchId=' + branchId + '&userId=' + userId;
+                } else if (actionValue == 3) { // delete
+                    $('#modalConfirm').modal('show');
+                }
+            });
+        });
+
+        $("#btnDelOk").click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SaleDeleteAction", "Sale")',
+                data: { "tranId": tranId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (selectedRow != null) {
+                        selectedRow.remove();
+                        location.reload();
+                        showToast(1, "Deleted Successfully!");                    
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnSearch").click(function () {
+            var fromDate = $("#txtFromDate").val();
+            var toDate = $("#txtToDate").val();
+            var voucherNo = $("#txtVoucherNo").val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SearchAction", "Sale")',
+                data: { "fromDate": fromDate, "toDate": toDate, "voucherNo": voucherNo },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    $("#tblSales").find("tbody").empty();
+                    $.each(response, function (i, item) {
+                        var date = new Date(parseInt((item.Date.substr(6))));
+                        var rows = "<tr class='row table-item'>"
+                            + "<td class='col-md-2 col-lg-2'>" + date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.Voucher + "</td>"
+                            + "<td class='col-md-1 col-lg-1'>" + item.UserName + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.CustomerName + "</td>"
+                            + "<td class='col-md-1 col-lg-1'>" + item.LocShortName + "</td>"
+                            + "<td class='col-md-1 col-lg-1'>" + item.PayKeyword + "</td>"
+                            + "<td class='col-md-1 col-lg-1'>" + item.CurrencyKeyword + "</td>"
+                            + "<td class='col-md-1 col-lg-1'>" + item.NetAmt + "</td>"
+                            + "<td class='col-md-1 col-lg-1'><div class='btn-group' role='group'><button id='btnDetail' onclick='action(1)' title='View' style='background-color:#ffffff;border:none;cursor:pointer' data-toggle='modal' data-target='#modalSaleDetail'><i class='fa fa-bars' style='color:#343a40;font-size:small'></i></button><button onclick='action(2)' title='Edit' style='background-color:#ffffff;border:none;cursor:pointer'><i class='fa fa-edit' style='color:#007bff;font-size:small'></i></button><button onclick='action(3)' title='Delete' style='background-color:#ffffff;border:none;cursor:pointer'><i class='fa fa-trash' style='color:#dc3545;font-size:small'></i></button></div></td>"
+                            + "<td style='display:none'>" + item.TranID + "</td>"
+                            + "</tr>";
+                        $('#tblSales tbody').append(rows);
+                    });
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnFilter").click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("FilterClickAction", "Sale")',
+                data: { "isMultiBranch": isMultiBranch, "branchId": branchId, "isMultiCurrency": isMultiCurrency },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    var main,sub,customer,payment,location,currency;
+                    //for (var i = 0; i < response.LstMainMenu.length; i++) {
+                    //    main += '<option value="' + response.LstMainMenu[i].MainMenuID + '">' + response.LstMainMenu[i].MainMenuName + '</option>';
+                    //}
+                    //$("#MainMenuID").html(main);
+                    //for (var i = 0; i < response.LstSubMenu.length; i++) {
+                    //    sub += '<option value="' + response.LstSubMenu[i].SubMenuID + '">' + response.LstSubMenu[i].SubMenuName + '</option>';
+                    //}
+                    //$("#SubMenuID").html(sub);
+                    for (var i = 0; i < response.LstCustomer.length; i++) {
+                        customer += '<option value="' + response.LstCustomer[i].CustomerID + '">' + response.LstCustomer[i].CustomerName + '</option>';
+                    }
+                    $("#CustomerID").html(customer);
+                    for (var i = 0; i < response.LstPayment.length; i++) {
+                        payment += '<option value="' + response.LstPayment[i].PaymentID + '">' + response.LstPayment[i].PayKeyword + '</option>';
+                    }
+                    $("#PaymentID").html(payment);
+                    for (var i = 0; i < response.LstLocation.length; i++) {
+                        location += '<option value="' + response.LstLocation[i].LocationID + '">' + response.LstLocation[i].LocShortName + '</option>';
+                    }
+                    $("#LocationID").html(location);
+                    if (response.LstCurrency.length == 0) {
+                        $("#divCurrency").css('display', 'none');
+                    } else {
+                        $("#divCurrency").show();
+                        for (var i = 0; i < response.LstCurrency.length; i++) {
+                            currency += '<option value="' + response.LstCurrency[i].CurrencyID + '">' + response.LstCurrency[i].CurKeyword + '</option>';
+                        }
+                        $("#CurrencyID").html(currency);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $('#MainMenuID').change(function () {
+            var val = $('#MainMenuID option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("MainMenuSelectAction", "Sale")',
+                data: { "mainMenuId": val },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    //if (response.lstSubMenu.length() == 0) { $("#SubMenuID").html(""); }
+                    //else {
+                    var sub;
+                    $("#SubMenuID").html("");
+                        for (var i = 0; i < response.lstSubMenu.length; i++) {
+                            sub += '<option value="' + response.lstSubMenu[i].SubMenuID + '">' + response.lstSubMenu[i].SubMenuName + '</option>';
+                        }
+                        //$("#SubMenuID").html("");
+                        $("#SubMenuID").append(sub);
+                    //}
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnFilterSearch").click(function () {
+            var fromDate = $("#txtFromDate").val();
+            var toDate = $("#txtToDate").val();
+            var voucherNo = $("#txtVoucherNo").text();
+            var customerId = $('#CustomerID option:selected').val();
+            var locationId = $('#LocationID option:selected').val();
+            var paymentId = $('#PaymentID option:selected').val();
+            var currencyId = $('#CurrencyID option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("AllSearchAction", "Sale")',
+                data: { "fromDate": fromDate, "toDate": toDate, "voucherNo": voucherNo, "customerId": customerId, "locationId": locationId, "paymentId": paymentId, "currencyId": currencyId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    $("#tblSales").find("tbody").empty();
+                    $.each(response, function (i, item) {
+                        var date = new Date(parseInt((item.Date.substr(6))));
+                        var rows = "<tr class='row table-item'>"
+                            + "<td class='col-md-2 col-lg-2'>" + date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.Voucher + "</td>"
+                            + "<td class='col-md-1 col-lg-1'>" + item.UserName + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.CustomerName + "</td>"
+                            + "<td class='col-md-1 col-lg-1'>" + item.LocShortName + "</td>"
+                            + "<td class='col-md-1 col-lg-1'>" + item.PayKeyword + "</td>"
+                            + "<td class='col-md-1 col-lg-1'>" + item.CurrencyKeyword + "</td>"
+                            + "<td class='col-md-1 col-lg-1'>" + item.NetAmt + "</td>"
+                            + "<td class='col-md-1 col-lg-1'><div class='btn-group' role='group'><button id='btnDetail' onclick='action(1)' title='View' style='background-color:#ffffff;border:none;cursor:pointer' data-toggle='modal' data-target='#modalSaleDetail'><i class='fa fa-bars' style='color:#343a40;font-size:small'></i></button><button onclick='action(2)' title='Edit' style='background-color:#ffffff;border:none;cursor:pointer'><i class='fa fa-edit' style='color:#007bff;font-size:small'></i></button><button onclick='action(3)' title='Delete' style='background-color:#ffffff;border:none;cursor:pointer'><i class='fa fa-trash' style='color:#dc3545;font-size:small'></i></button></div></td>"
+                            + "<td style='display:none'>" + item.TranID + "</td>"
+                            + "</tr>";
+                        $('#tblSales tbody').append(rows);
+                    });
+                    $('#modalFilter').modal('hide');
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnRefresh").click(function () {
+            window.location.reload();
+        });
+
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var today = now.getFullYear() + "-" + (month) + "-" + (day);
+        $('#txtFromDate').val(today);
+        $('#txtToDate').val(today);
+
+    });
+
+    function action(val) {
+        actionValue = val;
+    }
+
+</script>
+
+<div class="container-fluid content-bg" style="background-color:#ffffff">
+
+    <div class="row" style="padding:10px;border-bottom:1px solid #F4F4F4;">
+
+        <div class="col-md-3 col-lg-3">
+            <div class="form-group">
+                <label class="control-label">From Date</label>
+                <input type="date" id="txtFromDate" class="form-control control-label" />
+            </div>
+        </div>
+
+        <div class="col-md-3 col-lg-3 form-group">
+            <label class="control-label">To Date</label>
+            <input type="date" id="txtToDate" class="form-control control-label" />
+        </div>
+
+        <div class="col-md-3 col-lg-3 form-group">
+            <label class="control-label">Voucher No.</label>
+            <input type="text" id="txtVoucherNo" class="form-control control-label" />
+        </div>
+
+        <div class="col-md-3 col-lg-3 form-group">
+            <label class="control-label" style="color:transparent">#</label>
+            <div>
+                <input type="button" id="btnSearch" value="Search" class="btn btn-first" />
+                <button id="btnFilter" title="Other Filter" type="button" class="btn btn-second" style="margin-left:10px" data-toggle="modal" data-target="#modalFilter"><i class="fa fa-filter" style="color:#fff"></i><i style="margin-left:10px;color:#333" class="fa fa-caret-down"></i></button>
+                <button id="btnRefresh" title="Refresh" style="margin-left:10px" class="btn btn-light"><i class="fa fa-refresh refresh-icon"></i></button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblSales" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-2 col-lg-2">Date</th>
+                        <th class="col-md-2 col-lg-2">VoucherNo.</th>
+                        <th class="col-md-1 col-lg-1">User</th>
+                        <th class="col-md-2 col-lg-2">Customer</th>
+                        <th class="col-md-1 col-lg-1">Location</th>
+                        <th class="col-md-1 col-lg-1">Payment</th>
+                        <th class="col-md-1 col-lg-1">Ccy</th>
+                        <th class="col-md-1 col-lg-1">NetAmount</th>
+                        <th class="col-md-1 col-lg-1">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.SaleList.Count(); i++)
+                    {
+                        <tr class="row table-item">
+                            <td class="col-md-2 col-lg-2">@Model.SaleList[i].StrDate</td>
+                            <td class="col-md-2 col-lg-2">@Model.SaleList[i].Voucher</td>
+                            <td class="col-md-1 col-lg-1">@Model.SaleList[i].UserName</td>
+                            <td class="col-md-2 col-lg-2">@Model.SaleList[i].CustomerName</td>
+                            <td class="col-md-1 col-lg-1">@Model.SaleList[i].LocShortName</td>
+                            <td class="col-md-1 col-lg-1">@Model.SaleList[i].PayKeyword</td>
+                            <td class="col-md-1 col-lg-1">@Model.SaleList[i].CurrencyKeyword</td>
+                            <td class="col-md-1 col-lg-1">@Model.SaleList[i].NetAmt</td>
+                            <td class="col-md-1 col-lg-1">
+                                <div class="btn-group" role="group">
+                                    <button id="btnDetail" onclick="action('1')" title="View" data-toggle="modal" data-target="#modalSaleDetail" style="background-color:#ffffff;border:none;cursor:pointer">
+                                        <i class="fa fa-bars" style="color:#343a40;font-size:small"></i>
+                                    </button>
+                                    <button onclick="action('2')" title="Edit" style="background-color:#ffffff;border:none;cursor:pointer"><i class="fa fa-edit" style="color:#007bff;font-size:small"></i></button>
+                                    <button onclick="action('3')" title="Delete" style="background-color:#ffffff;border:none;cursor:pointer"><i class="fa fa-trash" style="color:#dc3545;font-size:small"></i></button>
+                                </div>
+                            </td>
+                            <td style="display:none">@Model.SaleList[i].TranID</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="modalSaleDetail" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="row general-view-data-background1">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Date:</label>
+                                <label id="lblDate" class="control-input font-weight-500"></label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Voucher:</label>
+                                <label id="lblVoucherNo" class="control-input font-weight-500"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background2">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Customer:</label>
+                                <label id="lblCustomer" class="control-input font-weight-500"></label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">User:</label>
+                                <label id="lblUser" class="control-input font-weight-500"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background1">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Location:</label>
+                                <label id="lblLocation" class="control-input font-weight-500"></label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Currency:</label>
+                                <label id="lblCurrency" class="control-input font-weight-500"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background2">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Payment:</label>
+                                <label id="lblPayment" class="control-input font-weight-500"></label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Credit Limit Day:</label>
+                                <label id="lblCreditDay" class="control-input font-weight-500"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row detail-modal-border" id="divDelivery">
+                    <div class="col-lg-12 col-md-12">
+                        <div class="row general-view-data-background1">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Delivery Date:</label>
+                                <label id="lblDeliDate" class="control-input font-weight-500"></label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Contact Name:</label>
+                                <label id="lblDeliName" class="control-input font-weight-500"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background2">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Contact Phone:</label>
+                                <label id="lblDeliPhone" class="control-input font-weight-500"></label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Address:</label>
+                                <label id="lblDeliAddress" class="control-input font-weight-500"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:2px">
+                    <div class="col-lg-12 col-md-12">
+                        <table id="tblSaleDetail" class="col-md-12 col-lg-12" role="grid">
+                            <thead>
+                                <tr class="row table-header">
+                                    <th class="col-md-2 col-lg-2">Product</th>
+                                    <th class="col-md-2 col-lg-2">Unit/Var</th>
+                                    <th class="col-md-2 col-lg-2">Quantity</th>
+                                    <th class="col-md-2 col-lg-2">SalePrice</th>
+                                    <th class="col-md-2 col-lg-2">Discount</th>
+                                    <th class="col-md-2 col-lg-2">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row detail-modal-border-radius">
+                    <div class="col-md-12 col-lg-12">
+                        <div class="row general-view-data-background1">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Voucher Discount:</label>
+                                <label id="lblVouDis" class="control-input font-weight-500" style="float:right"></label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Total Amount:</label>
+                                <label id="lblTotalAmt" class="control-input font-weight-500" style="float:right"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background2">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">FOC:</label>
+                                <label id="lblFoc" class="control-input font-weight-500" style="float:right"></label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label font-weight-500">Tax:</label>
+                                <label id="lblTax" class="control-input font-weight-500" style="float:right"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background1">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Advanced Pay:</label>
+                                <label id="lblAdvancedPay" class="control-input font-weight-500" style="float:right"></label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Charges:</label>
+                                <label id="lblCharges" class="control-input font-weight-500" style="float:right"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background2" style="display:flex;justify-content:center;">
+                            <div class="col-md-10 col-lg-10" style="background-color:#ddebd8;margin:10px 0px;display:flex;justify-content:center;">
+                                <label id="lblNetAmountLabel" class="control-label">Net Amount:</label>
+                                <label id="lblNetAmt" class="control-input" style="font-weight:bold;margin-left:5px;"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top:5px">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalFilter" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Filter</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        @*<div class="form-group">
+                                <label class="control-label">Main Menu</label>
+                                @Html.DropDownListFor(m => m.MainMenuID, Model.MainMenus, new { @class = "form-control control-label" })
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Sub Menu</label>
+                                @Html.DropDownListFor(m => m.SubMenuID, Model.SubMenus, new { @class = "form-control control-label" })
+                            </div>*@
+                        <div class="form-group">
+                            <label class="control-label">Customer</label>
+                            @Html.DropDownListFor(m => m.CustomerID, Model.Customers, new { @class = "form-control control-label" })
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Location</label>
+                            @Html.DropDownListFor(m => m.LocationID, Model.Locations, new { @class = "form-control control-label" })
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Payment</label>
+                            @Html.DropDownListFor(m => m.PaymentID, Model.Payments, new { @class = "form-control control-label" })
+                        </div>
+                        <div class="form-group" id="divCurrency">
+                            <label class="control-label">Currency</label>
+                            @Html.DropDownListFor(m => m.CurrencyID, Model.Currencies, new { @class = "form-control control-label" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btnFilterSearch" class="btn btn-second">Search</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg12">
+                        <label class="control-label">Are you sure you want to delete?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button id="btnDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,560 @@
+﻿@using Inventory.Models
+@model CLMasterSaleOrderModels
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <style>
+        .white-color 
+        {
+            color:white;
+        }
+        .button-boder {
+        }
+        .noHover{
+    pointer-events: none;
+}
+    </style>
+
+    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuMasterSaleOrder').className = 'active';
+    </script>
+</head>
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-4 col-lg-4">
+        <label class="page-title">All Sale Orders</label>
+       <!--<label class="page-title" id="fcount" hidden>All Sale Orders &nbsp;&nbsp;<span class="count-circle" id="count"></span></label>  -->           
+        </div>
+        <div class="col-md-8 col-lg-8">
+            <div class="btn-group" style="float:right">
+                <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox mr-10" />
+                <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
+                <button class="btn btn-light noHover"  style="margin-left:10px; border:none;width: 80px;" id="lsitcount"><span style="color: #4CAF50;">@ViewBag.Count</span></button>
+                <button class="btn btn-light noHover"  style="margin-left:10px; border:none;width: 80px;" id="fcount" hidden><span style="color: #4CAF50;" id="count"></span></button>  
+            </div>
+        </div>
+    </div>
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblSaleOrder" class="col-md-12 col-lg-12" rold="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-2 col-lg-2">Order Number</th>
+                        <th class="col-md-2 col-lg-2">Client</th>
+                        <th class="col-md-2 col-lg-2">Customer</th>
+                        <th class="col-md-2 col-lg-2">Date</th>
+                        <th class="col-md-2 col-lg-2">Total</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Lstmso.Count(); i++)
+                    {
+                        <tr class="row table-item">
+                            <td class="col-md-2 col-lg-2"><span>#</span>@Model.Lstmso[i].OrderNumber</td>
+                            <td class="col-md-2 col-lg-2">@Model.Lstmso[i].ClientName</td>
+                            <td class="col-md-2 col-lg-2">@Model.Lstmso[i].CustomerName</td>
+                            <td class="col-md-2 col-lg-2">@Model.Lstmso[i].OrderDateTime</td>
+                            <td class="col-md-2 col-lg-2"><span>@Model.Lstmso[i].DefaultCurrency</span>  @Model.Lstmso[i].Total.ToString("#,##0")</td>
+
+                            <td class="col-md-2 col-lg-2">
+                                <button id="btnView" class="btn btn-sm btn-primary btn-list-action" onclick="action('1')">Order Detail</button>
+                                <button id="" class="btn btn-sm border border-success btn-list-action" onclick="action('3')">Add</button>
+                            </td>
+
+                            <td style='display:none'>@Model.Lstmso[i].SaleOrderID</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade bd-example-modal-xl" id="modalView" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle"><b>Sale Order Deatail</b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="col-md-12 col-lg12">
+                            <div class="form-group">
+                                <div hidden><label id="lbSaleOrderID" class="control-input"></label></div>
+                                <h5 class="control-label"><b>Sale Order</b></h5>
+                                <div>#<label id="lblOrderNumber" class="control-input"></label> </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg12">
+                            <h5 class="control-label"><b>Order Date</b></h5>
+                            <label id="OrderDate" class="control-input"></label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="col-md-6" style="padding-left:10px;">
+                                <div class="card mb-1" style="max-width: 150px;background-color:#F3F3F3">
+                                    <div class="card-body">
+                                        <h5 class="control-label"><b>Client</b></h5>
+                                        <p class="card-text" id="ClientName"></p>
+                                        <p class="card-text" id="ClientPhone"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" style="padding-left:10px;">
+                                <div class="card mb-1" style="max-width: 150px;background-color:#F3F3F3">
+                                    <div class="card-body">
+                                        <h5 class="control-label"><b>Customer</b></h5>
+                                        <p id="CustomerName" class="card-text"></p>
+                                        <p class="card-text" id="CustomerPhone"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-md-12">
+                    <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row padding-10">
+                    <div class="col-md-12 col-lg-12">
+                        <table class="col-md-12 col-lg-12" rold="grid">
+                            <thead>
+                                <tr class="row table-header">
+                                    <th class="col-md-1 col-lg-1"></th>
+                                    <th class="col-md-1 col-lg-1">#</th>
+                                    <th class="col-md-4 col-lg-4">Product</th>
+                                    <th class="col-md-2 col-lg-2">Ordered Qty</th>
+                                    <th class="col-md-2 col-lg-2"><label1>Price</label1></th>
+                                    <th class="col-md-2 col-lg-2"><label1>Amount</label1></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbTranSaleOrder"></tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-12 col-lg-12">
+                        <div class="row">
+                            <div class="col-md-8"></div>
+                            <div class="col-md-4">
+                                <div class="card mb-1" style="background-color:#F3F3F3">
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div style="padding-left:10px">
+                                                <div><h5 class="control-label"><b>Subtotal</b></h5></div>
+                                                <div><h5 class="control-label"><b>Tax (5%)</b></h5></div>
+                                                <div><h5 class="control-label"><b>Charges (5%)</b></h5></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div><label1 id="Subtotal" class="card-text"></label1></div>
+                                            <div><label1 id="Tax" class="card-text"></label1></div>
+                                            <div><label1 id="Charges" class="card-text"></label1></div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div style="padding-left:10px">
+                                                <div><h5 class="control-label"><b>Total</b></h5></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div style="padding-left:23px"><b><label1><span id="DefaultCurrency" class="card-text"></span> &nbsp; <span id="Total" class="card-text"></span></label1></b></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-md-12 col-lg-12">
+                        <textarea class="txarea" id="Remark" rows="4"></textarea>
+                        </>
+                    </div>
+
+                </div>
+               
+            </div>
+            <div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg12">
+                        <label class="control-label">Are you sure you want to delete?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button id="btnDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
+<script type="text/javascript">
+    var actionValue, transaleId, saleorderId, quantity, subtotal, taxAmt, chargesAmt, total, saleOrderID;
+
+    $(function () {
+
+        $('#btnSave').click(function () {
+            saleOrderID = $('#lbSaleOrderID').text();
+            subtotal = $('#Subtotal').text();
+            taxAmt = $('#Tax').text();
+            chargesAmt = $('#Charges').text();
+            total = $('#Total').text();
+            console.log(total);
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("SaveAction", "CLSaleOrder")',
+                    data: { "saleOrderID": saleOrderID },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        alert("Success");
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+
+        });
+
+
+        $("#tbTranSaleOrder").on("change", "tr", function (event) {
+            selectedRow = $(this).parent('tr');
+            $(this).find("td:last").each(function () {
+                transaleId = $(this).text();
+                quantity = $('#qty' + transaleId).val();
+                console.log(quantity);
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("QuantityAction", "CLSaleOrder")',
+                    data: { "transaleId": transaleId, "quantity": quantity },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        let rows = "";
+                        for (var i = 0; i < response.TranSaleOrderList.length; i++) {
+                            rows += "<tr class='row table-item'>"
+                           + "<td class='col-md-1 col-lg-1'>"
+                           + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-window-close white-color' aria-hidden='true'></i></button>"
+                           + "</td>"
+                           + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
+                           + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
+                           + "<td class='col-md-2 col-lg-2'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
+                           + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+                           + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+                           + "<td>" + response.TranSaleOrderList[i].ID + "</td>"
+                           + "</tr>";
+                            $('#Subtotal').text(response.Subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                            $('#Tax').text(response.Tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                            $('#Charges').text(response.Charge.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                            $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);
+                            $('#Total').text(response.Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                            $('#tbTranSaleOrder').html(rows);
+
+                        }
+
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            });
+        });
+
+
+        
+
+
+        $("#tbTranSaleOrder").on("click", "tr", function (event) {
+            selectedRow = $(this).parent('tr');
+            $(this).find("td:last").each(function () {
+                transaleId = $(this).text();
+                if (actionValue == 4) {  // delete
+                    // $('#modalConfirm').modal('show');
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                type: "GET",
+                                url: '@Url.Action("DeleteAction", "CLSaleOrder")',
+                                data: { "transaleId": transaleId },
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                success: function (response) {
+                                    hideLoadingIcon();
+                                    $('#modalConfirm').modal('hide');
+                                    let rows = "";
+                                    for (var i = 0; i < response.TranSaleOrderList.length; i++) {
+
+                                        rows += "<tr class='row table-item'>"
+                                       + "<td class='col-md-1 col-lg-1'>"
+                                       + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-window-close white-color' aria-hidden='true'></i></button>"
+                                       + "</td>"
+                                       + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
+                                       + "<td class='col-md-3 col-lg-3'>" + response.TranSaleOrderList[i].ProductName + "</td>"
+                                       + "<td class='col-md-3 col-lg-3'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
+                                       + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+                                       + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+                                       + "<td>" + response.TranSaleOrderList[i].ID + "</td>"
+                                       + "</tr>";
+                                        $('#Subtotal').text(response.Subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                                        $('#Tax').text(response.Tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                                        $('#Charges').text(response.Charge.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                                        $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);
+                                        $('#Total').text(response.Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                                        $('#tbTranSaleOrder').html(rows);
+
+                                    }
+                                    $('#modalView').modal('show');
+
+                                },
+                                failure: function (response) {
+                                    hideLoadingIcon();
+                                    alert(response.responseText);
+                                },
+                                error: function (response) {
+                                    hideLoadingIcon();
+                                    alert(response.responseText);
+                                }
+                            });
+                        }
+                    })
+                }
+            });
+        });
+
+        $("#btnDelCancel").click(function () {
+             $('#modalConfirm').modal('hide');
+            $('#modalView').modal('show');
+        });
+
+        $("#btnDelOk").click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DeleteAction", "CLSaleOrder")',
+                data: { "transaleId": transaleId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                        $('#modalConfirm').modal('hide');
+                        let rows = "";
+                        for (var i = 0; i < response.TranSaleOrderList.length; i++) {
+
+                            rows += "<tr class='row table-item'>"
+                           + "<td class='col-md-1 col-lg-1'>"
+                           + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-window-close white-color' aria-hidden='true'></i></button>"
+                           + "</td>"
+                           + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
+                           + "<td class='col-md-3 col-lg-3'>" + response.TranSaleOrderList[i].ProductName + "</td>"
+                           + "<td class='col-md-3 col-lg-3'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
+                           + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+                           + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+                           + "<td>" + response.TranSaleOrderList[i].ID + "</td>"
+                           + "</tr>";
+                            $('#Subtotal').text(response.Subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                            $('#Tax').text(response.Tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                            $('#Charges').text(response.Charge.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                            $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);
+                            $('#Total').text(response.Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                            $('#tbTranSaleOrder').html(rows);
+
+                        }
+                        $('#modalView').modal('show');
+
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+
+        $('#tblSaleOrder').on("click", "tr", function (event) {
+            selectedRow = $(this).parent('tr');
+            $(this).find("td:last").each(function () {
+                saleorderId = $(this).text();
+                if (actionValue == 1) {   // view
+                    showLoadingIcon();
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("SaleOrderDetail", "CLSaleOrder")',
+                        data: { "saleorderId": saleorderId },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            hideLoadingIcon();
+                            $('#lbSaleOrderID').text(response.SaleOrderID);
+                            $('#lblOrderNumber').text(response.OrderNumber);
+                            $('#OrderDate').text(response.OrderDateTime);
+                            $('#ClientName').text(response.ClientName);
+                            $('#ClientPhone').text(response.ClientPhone);
+                            $('#CustomerName').text(response.CustomerName);
+                            $('#CustomerPhone').text(response.CustomerPhone);
+                            $('#Remark').text(response.Remark);
+                            let rows = "";
+                            for (var i = 0; i < response.TranSaleOrderList.length; i++) {
+                                rows += "<tr class='row table-item'>"
+                               + "<td class='col-md-1 col-lg-1'>"
+                               + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-window-close white-color' aria-hidden='true'></i></button>"
+                               + "</td>"
+                               + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
+                               + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
+                               + "<td class='col-md-2 col-lg-2'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
+                               + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+                               + "<td class='col-md-2 col-lg-2'>" + "<label1>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+                               + "<td>" + response.TranSaleOrderList[i].ID + "</td>"
+                               + "</tr>";
+                                $('#Subtotal').text(response.TranSaleOrderList[i].Subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                                $('#Tax').text(response.TranSaleOrderList[i].TaxAmt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                                $('#Charges').text(response.TranSaleOrderList[i].ChargesAmt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                                $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);
+                                $('#Total').text(response.TranSaleOrderList[i].Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                                $('#tbTranSaleOrder').html(rows);
+
+                            }
+                            $('#modalView').modal('show');
+                        },
+                        failure: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        }
+                    });
+                }
+            });
+        });
+
+        $('#btnSearch').click(function () {
+            var keyword = $('#tvSearch').val();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SearchCLMasterSaleOrder", "CLSaleOrder")',
+                data: { "keyword": keyword },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    $("#tblSaleOrder").find("tbody").empty();
+                    $.each(response, function (i, item) {
+                        if (item.SaleOrderID != null) {
+                            var rows = "<tr class='row table-item'>"
+                            + "<td class='col-md-2 col-lg-2'>" + "<span>#</span>" + item.OrderNumber + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.ClientName + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.CustomerName + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.OrderDateTime + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + "<span>" + item.DefaultCurrency + "&nbsp;" + "</span>" + item.Total + "</td>"
+                            + "<td class='col-md-2 col-lg-2'><button id='btnView'class='btn btn-sm btn-primary btn-list-action' onclick='action(1)'>Order Detail</button> <button id='btnDelete' class='btn btn-sm border border-success btn-list-action' onclick='action(3)'>Add</button></td>"
+                            + "<td style='display:none'>" + item.SaleOrderID + "</td>"
+                            + "</tr>";
+                            $('#count').text(item.Counts);
+                            $("#fcount").removeAttr("hidden");
+                            $('#lsitcount').hide();
+                            $('#tblSaleOrder tbody').append(rows);
+                        } else {
+                            var rows = "<tr class='row table-item'>"
+                           + "<td class='col-md-2 col-lg-2'>" + item.OrderNumber + "</td>"
+                           + "<td class='col-md-2 col-lg-2'>" + item.ClientName + "</td>"
+                           + "<td class='col-md-2 col-lg-2'>" + item.CustomerName + "</td>"
+                           + "<td class='col-md-2 col-lg-2'>" + item.Date + "</td>"
+                           + "<td class='col-md-2 col-lg-2'>" + "<span>" + item.DefaultCurrency + "&nbsp;" + "</span>" + item.Total + "</td>"
+                           + "<td class='col-md-2 col-lg-2'><button id='btnView'class='btn btn-sm btn-primary btn-list-action' onclick='action(1)'>Order Detail</button> <button id='btnDelete' class='btn btn-sm border border-success btn-list-action' onclick='action(3)'>Add</button></td>"
+                           + "<td style='display:none'>" + item.SaleOrderID + "</td>"
+                           + "</tr>";
+                            $('#count').text("");
+                            $('#tblSaleOrder tbody').append(rows);
+                        }
+                    });
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText)
+                }
+
+            });
+        });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+    });
+
+
+    function action(val) {
+        actionValue = val;
+    }
+</script>
+
+
+

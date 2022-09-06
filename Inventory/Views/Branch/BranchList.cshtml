@@ -1,0 +1,277 @@
+﻿@using Inventory.Models
+@model BranchModels.BranchModel
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuBranch').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">Branch</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("BranchEntry","Branch")?branchId=0'">ADD</button>
+        </div>
+    </div>
+    <div class="row setup-title-layout search-div">
+        <div class="col-md-12 col-lg-12">
+            <div class="btn-group" style="float:right">
+                <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox" />
+                <button id="btnSearch" class="btn btn-first setup-btn-search" style="margin-left:10px" title="Search"><i class="fa fa-search"></i></button>
+                <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblBranch" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-5 col-lg-5">Name</th>
+                        <th class="col-md-5 col-lg-5">Code</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @for (int i = 0; i < Model.LstBranch.Count(); i++)
+                    {
+                        <tr class="row table-item">
+                            <td class="col-md-5 col-lg-5">@Model.LstBranch[i].BranchName</td>
+                            <td class="col-md-5 col-lg-5">@Model.LstBranch[i].Code</td>
+                            <td class="col-md-2 col-lg-2">
+                                <button id="btnView" class="btn btn-sm btn-dark btn-list-action" onclick="action('1')">View</button>
+                                <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
+                                <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
+                            </td>
+                            <td style="display:none">@Model.LstBranch[i].BranchID</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg12">
+                        <label class="control-label">Are you sure you want to delete?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button id="btnDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalView" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">Branch Name:</label>
+                            <label id="lblBranchName" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Short Name:</label>
+                            <label id="lblShortName" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Description:</label>
+                            <label id="lblDescription" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Code:</label>
+                            <label id="lblCode" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Phone:</label>
+                            <label id="lblPhone" class="control-input"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">Email:</label>
+                            <label id="lblEmail" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Address:</label>
+                            <label id="lblAddress" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Tax:</label>
+                            <label id="lblTax" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Service Charges:</label>
+                            <label id="lblServiceCharges" class="control-input"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var actionValue, branchId;
+
+    $(function () {
+
+        $("#tblBranch").on("click", "tbody tr", function (event) {
+            selectedRow = $(this).parent('tr');
+            $(this).find("td:last").each(function () {
+                branchId = $(this).text();
+                if (actionValue == 1) {   // view
+                    showLoadingIcon();
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("ViewAction", "Branch")',
+                        data: { "branchId": branchId },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            hideLoadingIcon();
+                            $('#lblBranchName').text(response.BranchName);
+                            $('#lblShortName').text(response.ShortName);
+                            $('#lblDescription').text(response.Description);
+                            $('#lblCode').text(response.Code);
+                            $('#lblPhone').text(response.Phone);
+                            $('#lblEmail').text(response.Email);
+                            $('#lblAddress').text(response.Address);
+                            $('#lblTax').text(response.Tax);
+                            $('#lblServiceCharges').text(response.ServiceCharges);
+                            $('#modalView').modal('show');
+                        },
+                        failure: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        }
+                    });
+                }
+                else if (actionValue == 2) {  // edit
+                    window.location.href = '@Url.Action("BranchEntry", "Branch")?branchId=' + branchId;
+                } else if (actionValue == 3) {  // delete
+                    $('#modalConfirm').modal('show');
+                }
+            });
+        });
+
+        $("#btnSearch").click(function(){
+            var keyword = $('#tvSearch').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url:'@Url.Action("SearchAction", "Branch")',
+                data: { "keyword": keyword },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    $("#tblBranch").find("tbody").empty();
+                    $.each(response, function (i, item) {
+                        var rows = "<tr class='row table-item'>"
+                        + "<td class='col-md-5 col-lg-5'>" + item.BranchName + "</td>"
+                        + "<td class='col-md-5 col-lg-5'>" + item.Code + "</td>"
+                        + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:3px' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
+                        + "<td style='display:none'>" + item.BranchID + "</td>"
+                        + "</tr>";
+                        $('#tblBranch tbody').append(rows);
+                    });
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnDelOk").click(function () {
+            showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("DeleteAction", "Branch")',
+                    data: { "branchId": branchId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if(response.DELOK == 1){
+                            if (selectedRow != null) {
+                                selectedRow.remove();
+                                location.reload();
+                                showToast(1, "Deleted Successfully!");                             
+                            }
+                        } else if (response.DELOK == 0) {
+                            showToast(0, "This branch is using! Cannot Delete!");
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+    });
+
+    function action(val) {
+        actionValue = val;
+    }
+
+</script>
+
+
+

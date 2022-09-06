@@ -1,0 +1,172 @@
+﻿@using Inventory.Models
+@model BankModels
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuBank').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row">
+        <div class="col-md-8 col-lg-8">
+            <div class="row setup-title-layout">
+                <div class="col-md-6 col-lg-6">
+                    <label class="page-title">Create Bank</label>
+                </div>
+                <div class="col-md-6 col-lg-6">
+                    <button id="btnAll" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("BankList", "Bank")?p=1'">ALL</button>
+                </div>
+            </div>
+            <div class="row setup-entry-border margin-20">
+                <div class="col-md-12 col-lg-12">
+                    <div class="row setup-entry-header">
+                        <div class="col-md-11 col-lg-11">
+                            <label class="setup-entry-header-title">Fill Bank Detail</label>
+                        </div>
+                        <div class="col-md-1 col-lg-1" style="display:flex;align-items:center;justify-content:center">
+                            <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                        </div>
+                    </div>
+                    <div class="row padding-20">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label class="control-label">Name</label>
+                                @Html.TextBoxFor(m => m.Name, null, new { @class = "form-control control-input" })
+                                <label id="vldName" class="text-danger" style="display:none">Name Require!</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Short Name</label>
+                                @Html.TextBoxFor(m => m.ShortName, null, new { @class = "form-control control-input" })
+                                <label id="vldShortName" class="text-danger" style="display:none">Short Name Require!</label>
+                            </div>
+                            <div class="form-group">
+                                <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
+                                <button id="btnEdit" class="btn btn-first setup-btn-save-edit" style="display:none">Edit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 col-lg-4 empty-div"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var bankId, name, shortName;
+
+    $(function () {
+
+        $('#btnSave').click(function () {
+            if (validateControl()) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SaveAction", "Bank")',
+                    data: JSON.stringify({ "name": name, "shortName": shortName }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        clearControl();
+                        showToast(1, "Saved Successfully!");                                
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);                        
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        function validateControl() {
+            name = $('#Name').val();
+            shortName = $('#ShortName').val();
+
+            if (name.length == 0) {
+                $("#vldName").show();
+                return false;
+            } else if (shortName.length == 0) {
+                $("#vldShortName").show();
+                return false;
+            }
+            return true;
+        }
+
+        function clearControl() {
+            $("#Name").val("");
+            $("#ShortName").val("");
+        }
+
+        $('#btnEdit').click(function () {
+            if (validateControl()) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("EditAction", "Bank")',
+                    data: JSON.stringify({ "bankId": bankId, "name": name, "shortName": shortName }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        clearControl();
+                        showToast(1, "Edited Successfully!");
+                        window.location.href = '@Url.Action("BankList", "Bank")?p=1';
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);                        
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+        $("#Name").keypress(function () {
+            $("#vldName").hide();
+        });
+
+        $("#ShortName").keypress(function () {
+            $("#vldShortName").hide();
+        });
+
+        $(".alert").delay(4000).slideUp(200, function () {
+            $(this).alert('close');
+            $("#divMessage").hide();
+        });
+
+        var isEdit = '@ViewBag.IsEdit';
+        if (isEdit == 1) {
+            bankId = '@ViewBag.BankID';
+            $("#Name").val('@ViewBag.Name');
+            $("#ShortName").val('@ViewBag.ShortName');
+            $("#btnSave").css('display', 'none');
+            $("#btnEdit").show();
+        }
+
+    });
+</script>
+
+
+
+

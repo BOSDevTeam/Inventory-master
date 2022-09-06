@@ -1,0 +1,265 @@
+﻿@using Inventory.Models
+@model TechnicianSettingModels
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuTechnicianSetting').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-12 col-lg-12">
+            <label class="page-title">Technician Setting</label>
+        </div>
+    </div>
+    <div class="row margin-20">
+        <div class="col-md-6 col-lg-6">
+            <div class="row setup-entry-header">
+                <div class="col-md-12 col-lg-12">
+                    <label class="setup-entry-header-title">Shop Type</label>
+                </div>
+            </div>
+            <div class="row setup-entry-border padding-20">
+                <div class="col-md-12 col-lg-12">
+                    <div class="general-div">
+                        @for (int i = 0; i < Model.ShopTypes.Count(); i++)
+                        {
+                            <div class="p-1">
+                                @if (Model.ShopTypes[i].Value == ViewBag.ShopTypeID)
+                                {
+                                    @Html.RadioButtonFor(m => m.ShopTypeID, Model.ShopTypes[i].Value, new { @class = "rdoShopType", @checked = "checked" })
+                                }
+                                else
+                                {
+                                    @Html.RadioButtonFor(m => m.ShopTypeID, Model.ShopTypes[i].Value, new { @class = "rdoShopType" })
+                                }
+                                <span class="control-label">@Model.ShopTypes[i].Text</span>
+                            </div>
+                        }
+                    </div>
+                    <button id="btnSaveShopType" class="btn btn-first setup-btn-save-edit mt-2" style="float:left">Save</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <div class="row setup-entry-header">
+                <div class="col-md-12 col-lg-12">
+                    <label class="setup-entry-header-title">Other Settings</label>
+                </div>
+            </div>
+            <div class="row setup-entry-border padding-20">
+                <div class="col-md-12 col-lg-12">
+                    <div class="general-div">
+                        <div class="form-group">
+                            @Html.CheckBoxFor(m => m.IsMultiBranch, new { @class = "control-input", onchange = "IsMultiBranchCheck(this.checked)", id = "chkIsMultiBranch" }) <label class="control-label">Allow Multi Branch</label>
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(m => m.IsMultiUnit, new { @class = "control-input", onchange = "IsMultiUnitCheck(this.checked)", id = "chkIsMultiUnit" }) <label class="control-label">Allow Multi Unit</label>
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(m => m.IsMultiCurrency, new { @class = "control-input", onchange = "IsMultiCurrencyCheck(this.checked)", id = "chkIsMultiCurrency" }) <label class="control-label">Allow Multi Currency</label>
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(m => m.IsBankPayment, new { @class = "control-input", onchange = "IsBankPaymentCheck(this.checked)", id = "chkBankPayment" }) <label class="control-label">Allow Payment by Banking</label>
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(m => m.IsUseProductPhoto, new { @class = "control-input", onchange = "IsProductPhotoCheck(this.checked)", id = "chkPhotoInProduct" }) <label class="control-label">Use Photo in Product</label>
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(m => m.IsUseProductColor, new { @class = "control-input", onchange = "IsProductColorCheck(this.checked)", id = "chkUseProductColor" }) <label class="control-label">Use Color in Product</label>
+                        </div>
+                        <div class="form-group">
+                            @Html.CheckBoxFor(m => m.IsUseProductSize, new { @class = "control-input", onchange = "IsProductSizeCheck(this.checked)", id = "chkUseProductSize" }) <label class="control-label">Use Size in Product</label>
+                        </div>
+                    </div>
+                    <button id="btnSaveOtherSetting" class="btn btn-first setup-btn-save-edit mt-2" style="float:left">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+        var isMultiBranch = false, isMultiUnit = false, isMultiCurrency = false;
+        var isProductPhoto = false, isProductColor = false, isProductSize = false, isBankPayment = false;
+        var shopTypeId = 0;
+
+        $(function () {
+
+            $('#btnSaveShopType').click(function () {
+                showLoadingIcon();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SaveShopTypeAction", "Technician")',
+                    data: JSON.stringify({ "shopTypeId": shopTypeId }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        showToast(1, "Saved Successfully!");
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+            $('#btnSaveOtherSetting').click(function () {
+                showLoadingIcon();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SaveOtherSettingAction", "Technician")',
+                    data: JSON.stringify({ "isMultiBranch": isMultiBranch, "isMultiCurrency": isMultiCurrency, "isMultiUnit": isMultiUnit, "isBankPayment": isBankPayment, "isProductPhoto": isProductPhoto, "isProductColor": isProductColor, "isProductSize": isProductSize }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        showToast(1, "Saved Successfully!");
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+            $('.rdoShopType').click(function () {
+                shopTypeId = $(this).val();
+            });
+
+            if ('@ViewBag.IsMultiBranch' == 'True') {
+                $("#chkIsMultiBranch").prop("checked", true);
+                isMultiBranch = true;
+            } else {
+                $("#chkIsMultiBranch").prop("checked", false);
+                isMultiBranch = false;
+            }
+
+            if ('@ViewBag.IsMultiUnit' == 'True') {
+                $("#chkIsMultiUnit").prop("checked", true);
+                isMultiUnit = true;
+            } else {
+                $("#chkIsMultiUnit").prop("checked", false);
+                isMultiUnit = false;
+            }
+
+            if ('@ViewBag.IsMultiCurrency' == 'True') {
+                $("#chkIsMultiCurrency").prop("checked", true);
+                isMultiCurrency = true;
+            } else {
+                $("#chkIsMultiCurrency").prop("checked", false);
+                isMultiCurrency = false;
+            }
+
+            if ('@ViewBag.IsBankPayment' == 'True') {
+                $("#chkBankPayment").prop("checked", true);
+                isBankPayment = true;
+            } else {
+                $("#chkBankPayment").prop("checked", false);
+                isBankPayment = false;
+            }
+
+            if ('@ViewBag.IsProductPhoto' == 'True') {
+                $("#chkPhotoInProduct").prop("checked", true);
+                isProductPhoto = true;
+            } else {
+                $("#chkPhotoInProduct").prop("checked", false);
+                isProductPhoto = false;
+            }
+
+            if ('@ViewBag.IsProductColor' == 'True') {
+                $("#chkUseProductColor").prop("checked", true);
+                isProductColor = true;
+            } else {
+                $("#chkUseProductColor").prop("checked", false);
+                isProductColor = false;
+            }
+
+            if ('@ViewBag.IsProductSize' == 'True') {
+                $("#chkUseProductSize").prop("checked", true);
+                isProductSize = true;
+            } else {
+                $("#chkUseProductSize").prop("checked", false);
+                isProductSize = false;
+            }
+
+        });
+    function IsMultiBranchCheck(checked) {
+        if (checked == true) {
+            isMultiBranch = true;
+        }
+        else {
+            isMultiBranch = false;
+        }
+    }
+    function IsMultiUnitCheck(checked) {
+        if (checked == true) {
+            isMultiUnit = true;
+        }
+        else {
+            isMultiUnit = false;
+        }
+    }
+    function IsMultiCurrencyCheck(checked) {
+        if (checked == true) {
+            isMultiCurrency = true;
+        }
+        else {
+            isMultiCurrency = false;
+        }
+    }
+    function IsBankPaymentCheck(checked) {
+        if (checked == true) {
+            isBankPayment = true;
+        }
+        else {
+            isBankPayment = false;
+        }
+    }
+    function IsProductPhotoCheck(checked) {
+        if (checked == true) {
+            isProductPhoto = true;
+        }
+        else {
+            isProductPhoto = false;
+        }
+    }
+    function IsProductColorCheck(checked) {
+        if (checked == true) {
+            isProductColor = true;
+        }
+        else {
+            isProductColor = false;
+        }
+    }
+    function IsProductSizeCheck(checked) {
+        if (checked == true) {
+            isProductSize = true;
+        }
+        else {
+            isProductSize = false;
+        }
+    }
+
+</script>
+
+
+
+

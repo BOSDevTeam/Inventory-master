@@ -1,0 +1,400 @@
+﻿@using Inventory.Models
+@model VoucherSettingModels
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuVoucherSetting').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">Create Voucher Setting</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAll" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("VoucherSettingList", "VoucherSetting")'">ALL</button>
+        </div>
+    </div>
+    <div class="row margin-20">
+        <div class="col-md-12 col-lg-12">
+            <div class="row setup-entry-header">
+                <div class="col-md-11 col-lg-11">
+                    <label class="setup-entry-header-title">Fill Voucher Setting Detail</label>
+                </div>
+                <div class="col-md-1 col-lg-1" style="display:flex;align-items:center;justify-content:center">
+                    <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                </div>
+            </div>
+            <div class="row setup-entry-border padding-20">
+                <div class="col-md-6 col-md-6">
+                    @if (ViewBag.IsMultiBranch == true)
+                    {
+                        <div class="form-group">
+                            <label class="control-label">Branch</label>
+                            @Html.DropDownListFor(m => m.BranchID, Model.Branches, new { @class = "form-control control-input" })
+                        </div>
+                    }
+                    <div class="form-group">
+                        <label class="control-label">Location</label>
+                        @Html.DropDownListFor(m => m.LocationID, Model.Locations, new { @class = "form-control control-input" })
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Header Name</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            @Html.TextBoxFor(m => m.HeaderName, null, new { @class = "form-control control-input" })
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            @Html.TextBoxFor(m => m.HeaderName, new { @class = "form-control control-input", Value = Session["EditHeaderName"] })
+                        }
+                        <label id="vldName" class="text-danger" style="display:none">Header Name Require!</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Header Description</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            @Html.TextBoxFor(m => m.HeaderDesp, null, new { @class = "form-control control-input" })
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            @Html.TextBoxFor(m => m.HeaderDesp, new { @class = "form-control control-input", Value = Session["EditHeaderDesp"] })
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Header Phone</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            @Html.TextBoxFor(m => m.HeaderPhone, null, new { @class = "form-control control-input" })
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            @Html.TextBoxFor(m => m.HeaderPhone, new { @class = "form-control control-input", Value = Session["EditPhone"] })
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Header Address</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            @Html.TextArea("HeaderAddress", null, new { @class = "form-control control-input" })
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            @Html.TextArea("HeaderAddress", Session["EditAddress"].ToString(), new { @class = "form-control control-input" })
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Other Header (1)</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            @Html.TextBoxFor(m => m.OtherHeader1, null, new { @class = "form-control control-input" })
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            @Html.TextBoxFor(m => m.OtherHeader1, new { @class = "form-control control-input", Value = Session["EditOtherHeader1"] })
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Other Header (2)</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            @Html.TextBoxFor(m => m.OtherHeader2, null, new { @class = "form-control control-input" })
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            @Html.TextBoxFor(m => m.OtherHeader2, new { @class = "form-control control-input", Value = Session["EditOtherHeader2"] })
+                        }
+                    </div>
+                </div>
+                <div class="col-md-6 col-md-6">
+                    <div class="form-group">
+                        <label class="control-label">Footer Message (1)</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            @Html.TextBoxFor(m => m.FooterMessage1, null, new { @class = "form-control control-input" })
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            @Html.TextBoxFor(m => m.FooterMessage1, new { @class = "form-control control-input", Value = Session["EditFooterMessage1"] })
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Footer Message (2)</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            @Html.TextBoxFor(m => m.FooterMessage2, null, new { @class = "form-control control-input" })
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            @Html.TextBoxFor(m => m.FooterMessage2, new { @class = "form-control control-input", Value = Session["EditFooterMessage2"] })
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Footer Message (3)</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            @Html.TextBoxFor(m => m.FooterMessage3, null, new { @class = "form-control control-input" })
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            @Html.TextBoxFor(m => m.FooterMessage3, new { @class = "form-control control-input", Value = Session["EditFooterMessage3"] })
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Voucher Logo</label><br />
+                        @if (ViewBag.Photo == true)
+                        {
+                            <img src="@Url.Content("data:image/png;base64," + Convert.ToBase64String(Model.VoucherLogo, 0, Model.VoucherLogo.Length))" id="imgPreview" style="height:80px;height:80px;" />
+                        }
+                        else
+                        {
+                            <img src="~/Image/sample.png" id="imgPreview" style="width:80px;height:80px;" />
+                        }
+                        <span class="btn control-label">
+                            <input type="file" name="file" id="file" onchange="previewPhoto(this);" accept=".jpg,.jpeg,.png" />
+                        </span>
+                    </div>
+
+                    <div class="form-group">
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            <button id="btnEdit" class="btn btn-first setup-btn-save-edit">Edit</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var vldOk;
+    $(function () {
+
+        $('#file').on('change', function (e) {
+            var files = e.target.files;
+            if (files.length > 0) {
+                if (window.FormData !== undefined) {
+                    var data = new FormData();
+                    for (var x = 0; x < files.length; x++) {
+                        data.append("file" + x, files[x]);
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("UploadFile", "VoucherSetting")',
+                        contentType: false,
+                        processData: false,
+                        data: data,
+                        success: function (result) {
+                            $('#image').attr('src', '@Url.Content("~/Content/img/")' + result.fileName);
+                        },
+                        error: function (xhr, status, p3, p4) {
+                            var err = "Error " + " " + status + " " + p3 + " " + p4;
+                            if (xhr.responseText && xhr.responseText[0] == "{")
+                                err = JSON.parse(xhr.responseText).Message;
+                            console.log(err);
+                        }
+                    });
+                } else {
+                    alert("This browser doesn't support HTML5 file uploads!");
+                }
+            }
+        });
+
+        $('#BranchID').change(function () {
+            var val = $('#BranchID option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("BranchSelectAction", "VoucherSetting")',
+                data: { "branchId": val },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    var loc;
+                    $("#LocationID").html("");
+                    for (var i = 0; i < response.length; i++) {
+                        loc += '<option value="' + response[i].LocationID + '">' + response[i].LocationName + '</option>';
+                    }
+                    $("#LocationID").append(loc);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $('#btnSave').click(function () {
+            var headerName = $('#HeaderName').val();
+            var headerDesp = $('#HeaderDesp').val();
+            var headerPhone = $('#HeaderPhone').val();
+            var headerAddress = $('#HeaderAddress').val();
+            var otherHeader1 = $('#OtherHeader1').val();
+            var otherHeader2 = $('#OtherHeader2').val();
+            var footerMessage1 = $('#FooterMessage1').val();
+            var footerMessage2 = $('#FooterMessage2').val();
+            var footerMessage3 = $('#FooterMessage3').val();
+            var branchId = $('#BranchID option:selected').val();
+            var locationId = $('#LocationID option:selected').val();
+
+            if (headerName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            } else if (locationId == null) {
+                showToast(0, "Choose Location!");           
+                vldOk = 0;
+            }
+            else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("SaveAction", "VoucherSetting")',
+                    data: { "headerName": headerName, "headerDesp": headerDesp, "headerPhone": headerPhone, "headerAddress": headerAddress, "otherHeader1": otherHeader1, "otherHeader2": otherHeader2, "footerMessage1": footerMessage1, "footerMessage2": footerMessage2, "footerMessage3": footerMessage3, "branchId": branchId, "locationId": locationId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.SAVEOK == 1) {
+                            $('#HeaderName').val("");
+                            $('#HeaderDesp').val("");
+                            $('#HeaderPhone').val("");
+                            $('#HeaderAddress').val("");
+                            $('#OtherHeader1').val("");
+                            $('#OtherHeader2').val("");
+                            $('#FooterMessage1').val("");
+                            $('#FooterMessage2').val("");
+                            $('#FooterMessage3').val("");
+                            $('#imgPreview').attr('src', "");
+                            $("#vldName").hide();
+                            showToast(1, response.MESSAGE);
+                        } else if (response.SAVEOK == 0) {
+                            showToast(0, response.MESSAGE);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnEdit').click(function () {
+            var headerName = $('#HeaderName').val();
+            var headerDesp = $('#HeaderDesp').val();
+            var headerPhone = $('#HeaderPhone').val();
+            var headerAddress = $('#HeaderAddress').val();
+            var otherHeader1 = $('#OtherHeader1').val();
+            var otherHeader2 = $('#OtherHeader2').val();
+            var footerMessage1 = $('#FooterMessage1').val();
+            var footerMessage2 = $('#FooterMessage2').val();
+            var footerMessage3 = $('#FooterMessage3').val();
+            var branchId = $('#BranchID option:selected').val();
+            var locationId = $('#LocationID option:selected').val();
+
+            if (headerName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            } else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("EditAction", "VoucherSetting")',
+                    data: { "headerName": headerName, "headerDesp": headerDesp, "headerPhone": headerPhone, "headerAddress": headerAddress, "otherHeader1": otherHeader1, "otherHeader2": otherHeader2, "footerMessage1": footerMessage1, "footerMessage2": footerMessage2, "footerMessage3": footerMessage3, "branchId": branchId, "locationId": locationId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.EDITOK == 1) {
+                            showToast(1, response.MESSAGE);
+                            window.location.href = '@Url.Action("VoucherSettingList", "VoucherSetting")';
+                        } else if (response.EDITOK == 0) {
+                            showToast(0, response.MESSAGE);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnRefresh').click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("RefreshAction", "VoucherSetting")',
+                data: {},
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    window.location.reload();
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#HeaderName").keypress(function () {
+            $("#vldName").hide();
+        });
+
+        var editBranchID = '@Session["EditBranchID"]';
+        if (editBranchID.length != 0 && editBranchID != 0) $('#BranchID').val(editBranchID);
+        var editLocationID = '@Session["EditLocationID"]';
+        if (editLocationID.length != 0 && editLocationID != 0) $('#LocationID').val(editLocationID);
+
+    });
+
+    function previewPhoto(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#imgPreview').attr('src', e.target.result);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+</script>
+

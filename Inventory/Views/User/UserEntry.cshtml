@@ -1,0 +1,277 @@
+﻿@using Inventory.Models
+@model UserModels.UserModel
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuUser').className = 'active';
+    </script>
+</head>
+
+<div>
+
+    <div class="row">
+        <div class="col-md-8 col-lg-8">
+            <div class="row setup-title-layout">
+                <div class="col-md-6 col-lg-6">
+                    <label class="page-title">Create User</label>
+                </div>
+                <div class="col-md-6 col-lg-6">
+                    <button id="btnAll" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("UserList", "User")'">ALL</button>
+                </div>
+            </div>
+            <div class="row setup-entry-border margin-20">
+                <div class="col-md-12 col-lg-12">
+                    <div class="row setup-entry-header">
+                        <div class="col-md-11 col-lg-11">
+                            <label class="setup-entry-header-title">Fill User Detail</label>
+                        </div>
+                        <div class="col-md-1 col-lg-1" style="display:flex;align-items:center;justify-content:center">
+                            <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                        </div>
+                    </div>
+                    <div class="row padding-20">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label class="control-label">Name</label>
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    @Html.TextBoxFor(m => m.UserName, null, new { @class = "form-control control-input" })
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control control-input", Value = Session["EditUserName"] })
+                                }
+                                <label id="vldName" class="text-danger" style="display:none">Name Require!</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Password</label>
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    <input id="Password" type="password" class="form-control control-input" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" />
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    <input id="Password" type="password" class="form-control control-input" value="@Session["EditPassword"]" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" />
+                                }
+                                <label id="vldPassword" class="text-danger" style="display:none">Password Require!</label>
+                            </div>
+                            @if (ViewBag.IsMultiBranch == true)
+                            {
+                                <div class="form-group">
+                                    <label class="control-label">Branch</label>
+                                    @Html.DropDownListFor(m => m.BranchID, Model.Branches, new { @class = "form-control control-input" })
+                                </div>
+                            }
+                            <div class="form-group">
+                                @Html.CheckBoxFor(m => m.IsDefaultLocation, new { @class = "control-input", onchange = "ShowHide(this.checked)", id = "chkDefaultLocation" }) <label class="control-label">Default Location</label>
+                            </div>
+                            <div class="form-group" id="divLocation" style="display:none">
+                                <label class="control-label">Location</label>
+                                @Html.DropDownListFor(m => m.LocationID, Model.Locations, new { @class = "form-control control-input" })
+                            </div>
+                            <div class="form-group">
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    <button id="btnEdit" class="btn btn-first setup-btn-save-edit" value="@Session["EditUserID"]">Edit</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 col-lg-4 empty-div"></div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    var vldOk,isDefaultLocation = false;
+    $(function () {
+
+        $('#BranchID').change(function () {
+            var val = $('#BranchID option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("BranchSelectAction", "User")',
+                data: { "branchId": val },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    var loc;
+                    $("#LocationID").html("");
+                    for (var i = 0; i < response.length; i++) {
+                        loc += '<option value="' + response[i].LocationID + '">' + response[i].LocationName + '</option>';
+                    }
+                    $("#LocationID").append(loc);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $('#btnSave').click(function () {
+            var userName = $('#UserName').val();
+            var password = $('#Password').val();
+            var branchId = $('#BranchID option:selected').val();
+            var locationId = $('#LocationID option:selected').val();
+
+            if (userName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            } else if (password.length == 0) {
+                $("#vldPassword").show();
+                vldOk = 0;
+            } else if (isDefaultLocation) {
+                if (locationId == null) {
+                    showToast(0, "Choose Location!");
+                    vldOk = 0;
+                } else {
+                    vldOk = 1;
+                }
+            }else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("SaveAction", "User")',
+                    data: { "userName": userName, "password": password, "branchId": branchId, "isDefaultLocation": isDefaultLocation, "locationId": locationId, "isMultiBranch": isMultiBranch },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        $('#UserName').val("");
+                        $('#Password').val("");
+                        $("#vldName").hide();
+                        $("#vldPassword").hide();
+                        showToast(1, response.Message);
+                        //$("#divMessage").show();
+                        //$('#message').text(response.Message);
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnEdit').click(function () {
+            var userId = $('#btnEdit').val();
+            var userName = $('#UserName').val();
+            var password = $('#Password').val();
+            var branchId = $('#BranchID option:selected').val();
+            var locationId = $('#LocationID option:selected').val();
+
+            if (userName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            } else if (password.length == 0) {
+                $("#vldPassword").show();
+                vldOk = 0;
+            } else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("EditAction", "User")',
+                    data: { "userName": userName, "password": password, "branchId": branchId, "isDefaultLocation": isDefaultLocation, "locationId": locationId, "isMultiBranch": isMultiBranch, "userId": userId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        showToast(1, "Edited Successfully!");                      
+                        window.location.href = '@Url.Action("UserList", "User")';
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+        $("#UserName").keypress(function () {
+            $("#vldName").hide();
+        });
+
+        $("#Password").keypress(function () {
+            $("#vldPassword").hide();
+        });
+
+        $(".alert").delay(4000).slideUp(200, function () {
+            $(this).alert('close');
+            $("#divMessage").hide();
+        });
+
+        var isEdit = '@Session["IsEdit"]';
+        if (isEdit == 1) {
+            var branchId = '@Session["EditBranchID"]';
+            $("#BranchID").val(branchId);
+
+            var editIsDefaultLocation = '@Session["EditIsDefaultLocationVal"]';
+            if (editIsDefaultLocation == 1) {
+                $("#chkDefaultLocation").prop("checked", true);
+                $("#divLocation").show();
+                var locationId = '@Session["EditLocationID"]';
+                $("#LocationID").val(locationId);
+                isDefaultLocation = true;
+            } else if (editIsDefaultLocation == 0) {
+                $("#chkDefaultLocation").prop("checked", false);
+                $("#divLocation").hide();
+                isDefaultLocation = false;
+            }
+        }
+
+    });
+
+    function ShowHide(checked) {
+        if (checked == true) {
+            $("#divLocation").show();
+            isDefaultLocation = true;
+        }
+        else {
+            $("#divLocation").hide();
+            isDefaultLocation = false;
+        }
+    }
+
+</script>
+
+
+

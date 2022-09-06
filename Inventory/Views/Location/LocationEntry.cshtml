@@ -1,0 +1,259 @@
+﻿@using Inventory.Models
+@model LocationModels.LocationModel
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuLocation').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">Create Location</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAll" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("LocationList", "Location")'">ALL</button>
+        </div>
+    </div>
+    <div class="row margin-20">
+        <div class="col-md-12 col-lg-12">
+            <div class="row setup-entry-header">
+                <div class="col-md-11 col-lg-11">
+                    <label class="setup-entry-header-title">Fill Location Detail</label>
+                </div>
+                <div class="col-md-1 col-lg-1" style="display:flex;align-items:center;justify-content:center">
+                    <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                </div>
+            </div>
+            <div class="row setup-entry-border padding-20">
+                <div class="col-md-6 col-md-6">
+                    <div class="form-group">
+                        <label class="control-label">Name</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            @Html.TextBoxFor(m => m.LocationName, null, new { @class = "form-control control-input" })
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            @Html.TextBoxFor(m => m.LocationName, new { @class = "form-control control-input", Value = Session["EditLocationName"] })
+                        }
+                        <label id="vldName" class="text-danger" style="display:none">Name Require!</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Short Name</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            @Html.TextBoxFor(m => m.ShortName, null, new { @class = "form-control control-input" })
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            @Html.TextBoxFor(m => m.ShortName, new { @class = "form-control control-input", Value = Session["EditShortName"] })
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Description</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            @Html.TextBoxFor(m => m.Description, null, new { @class = "form-control control-input" })
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            @Html.TextBoxFor(m => m.Description, new { @class = "form-control control-input", Value = Session["EditDescription"] })
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Code</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            <input id="Code" class="form-control control-input" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" />
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            <input id="Code" class="form-control control-input" value="@Session["EditCode"]" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" />
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Phone</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            <input id="Phone" class="form-control control-input" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" />
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            <input id="Phone" class="form-control control-input" value="@Session["EditPhone"]" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" />
+                        }
+                    </div>
+
+                </div>
+                <div class="col-md-6 col-md-6">
+                    <div class="form-group">
+                        <label class="control-label">Email</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            <input id="Email" class="form-control control-input" onkeypress="return (event.charCode >= 64 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 46 && event.charCode <= 57)" />
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            <input id="Email" class="form-control control-input" value="@Session["EditEmail"]" onkeypress="return (event.charCode >= 64 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 46 && event.charCode <= 57)" />
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Address</label>
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            @Html.TextArea("Address", null, new { @class = "form-control control-input" })
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            @Html.TextArea("Address", Session["EditAddress"].ToString(), new { @class = "form-control control-input" })
+                        }
+                    </div>
+                    @if (ViewBag.IsMultiBranch == true)
+                    {
+                        <div class="form-group">
+                            <label class="control-label">Branch</label>
+                            @Html.DropDownListFor(m => m.BranchID, Model.Branches, new { @class = "form-control control-input" })
+                        </div>
+                    }
+                    <div class="form-group">
+                        @if (Session["IsEdit"].ToString() == "0")
+                        {
+                            <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
+                        }
+                        else if (Session["IsEdit"].ToString() == "1")
+                        {
+                            <button id="btnEdit" class="btn btn-first setup-btn-save-edit">Edit</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var vldOk;
+    $(function () {
+
+        $('#btnSave').click(function () {
+            var locationName = $('#LocationName').val();
+            var shortName = $('#ShortName').val();
+            var description = $('#Description').val();
+            var code = $('#Code').val();
+            var phone = $('#Phone').val();
+            var email = $('#Email').val();
+            var address = $('#Address').val();
+            var branchId = $('#BranchID option:selected').val();
+
+            if (locationName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            }else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("SaveAction", "Location")',
+                    data: { "locationName": locationName, "shortName": shortName, "description": description, "code": code, "phone": phone, "email": email, "address": address, "branchId": branchId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.SAVEOK == 1) {
+                            $('#LocationName').val("");
+                            $('#ShortName').val("");
+                            $('#Description').val("");
+                            $('#Code').val("");
+                            $('#Phone').val("");
+                            $('#Email').val("");
+                            $('#Address').val("");
+                            $("#vldName").hide();
+                            showToast(1, response.MESSAGE);                          
+                        } else if (response.SAVEOK == 0) {
+                            showToast(0, response.MESSAGE);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnEdit').click(function () {
+            var locationName = $('#LocationName').val();
+            var shortName = $('#ShortName').val();
+            var description = $('#Description').val();
+            var code = $('#Code').val();
+            var phone = $('#Phone').val();
+            var email = $('#Email').val();
+            var address = $('#Address').val();
+            var branchId = $('#BranchID option:selected').val();
+
+            if (locationName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            }else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("EditAction", "Location")',
+                    data: { "locationName": locationName, "shortName": shortName, "description": description, "code": code, "phone": phone, "email": email, "address": address, "branchId": branchId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.EDITOK == 1) {
+                            showToast(1, response.MESSAGE);
+                            window.location.href = '@Url.Action("LocationList", "Location")';
+                        } else if (response.EDITOK == 0) {
+                            showToast(0, response.MESSAGE);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+        $("#LocationName").keypress(function () {
+            $("#vldName").hide();
+        });
+
+        var editBranchID = '@Session["EditBranchID"]';
+        if (editBranchID.length != 0 && editBranchID != 0) $('#BranchID').val(editBranchID);
+
+    });
+</script>
+
+
+
+

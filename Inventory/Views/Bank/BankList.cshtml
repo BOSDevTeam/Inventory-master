@@ -1,0 +1,184 @@
+﻿@using Inventory.Models
+@model BankModels
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuBank').className = 'active';        
+    </script>
+</head>
+
+<div>
+
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">Bank</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("BankEntry","Bank")?bankId=0'">ADD</button>
+        </div>
+    </div>
+    <div class="row setup-title-layout search-div">
+        <div class="col-md-12 col-lg-12">
+            <div class="btn-group" style="float:right">
+                <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox" />
+                <button id="btnSearch" class="btn btn-first setup-btn-search" style="margin-left:10px" title="Search"><i class="fa fa-search"></i></button>
+                <button id="btnRefresh" class="btn btn-light" style="margin-left:10px" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblBank" class="col-md-12 col-lg-12" rold="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-5 col-lg-5">Name</th>
+                        <th class="col-md-5 col-lg-5">Short Name</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @for (int i = 0; i < Model.LstBank.Count(); i++)
+                    {
+                        <tr class="row table-item">
+                            <td class="col-md-5 col-lg-5">@Model.LstBank[i].Name</td>
+                            <td class="col-md-5 col-lg-5">@Model.LstBank[i].ShortName</td>
+                            <td class="col-md-2 col-lg-2">
+                                <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
+                                <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
+                            </td>
+                            <td style="display:none">@Model.LstBank[i].BankID</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg12">
+                        <label class="control-label">Are you sure you want to delete?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button id="btnDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+      
+        var actionValue, bankId;
+
+        $(function () {
+
+            $("#tblBank").on("click", "tbody tr", function (event) {               
+                selectedRow = $(this).parent('tr');
+                $(this).find("td:last").each(function () {
+                    bankId = $(this).text();
+                    if (actionValue == 2) {  // edit
+                        window.location.href = '@Url.Action("BankEntry", "Bank")?bankId=' + bankId;
+                    } else if (actionValue == 3) {  // delete
+                        $('#modalConfirm').modal('show');
+                    }
+                });
+            });
+
+            $("#btnSearch").click(function () {
+                var searchValue = $('#tvSearch').val();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("SearchAction", "Bank")',
+                    data: { "searchValue": searchValue, "currentPage": 1 },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        $("#tblBank").find("tbody").empty();
+                        $.each(response.LstBank, function (i, item) {
+                            var rows = "<tr class='row table-item'>"
+                            + "<td class='col-md-5 col-lg-5'>" + item.Name + "</td>"
+                            + "<td class='col-md-5 col-lg-5'>" + item.ShortName + "</td>"
+                            + "<td class='col-md-2 col-lg-2'><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
+                            + "<td style='display:none'>" + item.BankID + "</td>"
+                            + "</tr>";
+                            $('#tblBank tbody').append(rows);
+                        });
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+            $("#btnDelOk").click(function () {
+                showLoadingIcon();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("DeleteAction", "Bank")',
+                    data: JSON.stringify({ "bankId": bankId }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (selectedRow != null) {
+                            selectedRow.remove();
+                            location.reload();
+                            showToast(1, "Deleted Successfully!");
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+            $('#btnRefresh').click(function () {
+                window.location.reload();
+            });
+
+        });
+
+    function action(val) {       
+        actionValue = val;
+    }
+</script>
+
+
+
+

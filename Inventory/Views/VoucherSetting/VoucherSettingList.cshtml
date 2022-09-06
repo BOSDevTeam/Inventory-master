@@ -1,0 +1,322 @@
+﻿@using Inventory.Models
+@model VoucherSettingModels
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuVoucherSetting').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">Voucher Setting</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("VoucherSettingEntry","VoucherSetting")?Id=0'">ADD</button>
+        </div>
+    </div>
+    @if (ViewBag.IsMultiBranch == true)
+    {
+        <div class="row setup-title-layout search-div">
+            <div class="col-md-12 col-lg-12">
+                <div class="btn-group" style="float:right">
+                    @Html.DropDownListFor(m => m.BranchID, Model.Branches, new { @class = "form-control control-input width-200" })
+                    <button id="btnSearch" class="btn btn-first setup-btn-search" style="margin-left:10px" title="Search"><i class="fa fa-search"></i></button>
+                    <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblVoucherSetting" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        @if (ViewBag.IsMultiBranch == true)
+                        {
+                            <th class="col-md-3 col-lg-3">Branch</th>
+                        }
+                        else
+                        {
+                            <th class="col-md-3 col-lg-3"></th>
+                        }
+                        <th class="col-md-3 col-lg-3">Location</th>
+                        <th class="col-md-4 col-lg-4">Header</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @for (int i = 0; i < Model.LstVoucherSetting.Count(); i++)
+                    {
+                        <tr class="row table-item">
+                            @if (ViewBag.IsMultiBranch == true)
+                            {
+                                <td class="col-md-3 col-lg-3">@Model.LstVoucherSetting[i].BranchName</td>
+                            }
+                            else
+                            {
+                                <td class="col-md-3 col-lg-3"></td>
+                            }
+                            <td class="col-md-3 col-lg-3">@Model.LstVoucherSetting[i].LocationName</td>
+                            <td class="col-md-4 col-lg-4">@Model.LstVoucherSetting[i].HeaderName</td>
+                            <td class="col-md-2 col-lg-2">
+                                <button id="btnView" class="btn btn-sm btn-dark btn-list-action" onclick="action('1')">View</button>
+                                <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
+                                <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
+                            </td>
+                            <td style="display:none">@Model.LstVoucherSetting[i].ID</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg12">
+                        <label class="control-label">Are you sure you want to delete?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button id="btnDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalView" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        @if (ViewBag.IsMultiBranch == true)
+                        {
+                            <div class="form-group">
+                                <label class="control-label">Branch:</label>
+                                <label id="lblBranch" class="control-input"></label>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <label class="control-label">Location:</label>
+                            <label id="lblLocation" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Header Name:</label>
+                            <label id="lblHeaderName" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Header Description:</label>
+                            <label id="lblHeaderDesp" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Header Phone:</label>
+                            <label id="lblHeaderPhone" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Header Address:</label>
+                            <label id="lblHeaderAddress" class="control-input"></label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">Other Header (1):</label>
+                            <label id="lblOtherHeader1" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Other Header (2):</label>
+                            <label id="lblOtherHeader2" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Footer Message (1):</label>
+                            <label id="lblFooterMessage1" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Footer Message (2):</label>
+                            <label id="lblFooterMessage2" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Footer Message (3):</label>
+                            <label id="lblFooterMessage3" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Logo:</label>
+                            <img id="image" height="40" width="40" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var actionValue, Id;
+
+    $(function () {
+
+        $("#tblVoucherSetting").on("click", "tbody tr", function (event) {
+            selectedRow = $(this).parent('tr');
+            $(this).find("td:last").each(function () {
+                Id = $(this).text();
+                if (actionValue == 1) {   // view
+                    showLoadingIcon();
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("ViewAction", "VoucherSetting")',
+                        data: { "Id": Id },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            hideLoadingIcon();
+                            $('#lblBranch').text(response.BranchName);
+                            $('#lblLocation').text(response.LocationName);
+                            $('#lblHeaderName').text(response.HeaderName);
+                            $('#lblHeaderDesp').text(response.HeaderDesp);
+                            $('#lblHeaderPhone').text(response.HeaderPhone);
+                            $('#lblHeaderAddress').text(response.HeaderAddress);
+                            $('#lblOtherHeader1').text(response.OtherHeader1);
+                            $('#lblOtherHeader2').text(response.OtherHeader2);
+                            $('#lblFooterMessage1').text(response.FooterMessage1);
+                            $('#lblFooterMessage2').text(response.FooterMessage2);
+                            $('#lblFooterMessage3').text(response.FooterMessage3);
+                            $('#image').attr('src', 'data:image/png;base64,' + response.Base64Photo);
+                            $('#modalView').modal('show');
+                        },
+                        failure: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        }
+                    });
+                }
+                else if (actionValue == 2) {  // edit
+                    window.location.href = '@Url.Action("VoucherSettingEntry", "VoucherSetting")?Id=' + Id;
+                } else if (actionValue == 3) {  // delete
+                    $('#modalConfirm').modal('show');
+                }
+            });
+        });
+
+        $("#btnSearch").click(function(){
+            var branchId = $('#BranchID').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url:'@Url.Action("SearchAction", "VoucherSetting")',
+                data: { "branchId": branchId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    $("#tblVoucherSetting").find("tbody").empty();
+                    var isMultiBranch = '@ViewBag.IsMultiBranch';
+                    $.each(response, function (i, item) {
+                        if (isMultiBranch) {
+                            var rows = "<tr class='row table-item'>"
+                            + "<td class='col-md-3 col-lg-3'>" + item.BranchName + "</td>"
+                            + "<td class='col-md-3 col-lg-3'>" + item.LocationName + "</td>"
+                            + "<td class='col-md-4 col-lg-4'>" + item.HeaderName + "</td>"
+                            + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:3px' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
+                            + "<td style='display:none'>" + item.ID + "</td>"
+                            + "</tr>";
+                            $('#tblVoucherSetting tbody').append(rows);
+                        } else {
+                            var rows = "<tr class='row table-item'>"
+                            + "<td class='col-md-3 col-lg-3'></td>"
+                            + "<td class='col-md-3 col-lg-3'>" + item.LocationName + "</td>"
+                            + "<td class='col-md-4 col-lg-4'>" + item.HeaderName + "</td>"
+                            + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:3px' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
+                            + "<td style='display:none'>" + item.ID + "</td>"
+                            + "</tr>";
+                            $('#tblVoucherSetting tbody').append(rows);
+                        }
+                    });
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnDelOk").click(function () {
+            showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("DeleteAction", "VoucherSetting")',
+                    data: { "Id": Id },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (selectedRow != null) {
+                            selectedRow.remove();
+                            location.reload();
+                            showToast(1, "Deleted Successfully!");                         
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+    });
+
+    function action(val) {
+        actionValue = val;
+    }
+
+</script>
+
+

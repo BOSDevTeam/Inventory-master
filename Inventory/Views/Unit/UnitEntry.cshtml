@@ -1,0 +1,210 @@
+﻿@using Inventory.Models
+@model UnitModels
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuUnit').className = 'active';
+    </script>
+</head>
+
+<div>
+
+    <div class="row">
+        <div class="col-md-8 col-lg-8">
+            <div class="row setup-title-layout">
+                <div class="col-md-6 col-lg-6">
+                    <label class="page-title">Create Unit</label>
+                </div>
+                <div class="col-md-6 col-lg-6">
+                    <button id="btnAll" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("UnitList", "Unit")'">ALL</button>
+                </div>
+            </div>
+            <div class="row setup-entry-border margin-20">
+                <div class="col-md-12 col-lg-12">
+                    <div class="row setup-entry-header">
+                        <div class="col-md-11 col-lg-11">
+                            <label class="setup-entry-header-title">Fill Unit Detail</label>
+                        </div>
+                        <div class="col-md-1 col-lg-1" style="display:flex;align-items:center;justify-content:center">
+                            <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                        </div>
+                    </div>
+                    <div class="row padding-20">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label class="control-label">Name</label>
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    @Html.TextBoxFor(m => m.UnitName, null, new { @class = "form-control control-input" })
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    @Html.TextBoxFor(m => m.UnitName, new { @class = "form-control control-input", Value = Session["EditUnitName"] })
+                                }
+                                <label id="vldName" class="text-danger" style="display:none">Name Require!</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Keyword</label>
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    @Html.TextBoxFor(m => m.Keyword, null, new { @class = "form-control control-input" })
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    @Html.TextBoxFor(m => m.Keyword, new { @class = "form-control control-input", Value = Session["EditKeyword"] })
+                                }
+                                <label id="vldKeyword" class="text-danger" style="display:none">Keyword Require!</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Unit Level</label>
+                                @Html.DropDownListFor(m => m.ULID, Model.UnitLevels, new { @class = "form-control control-input" })
+                            </div>
+                            <div class="form-group">
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    <button id="btnEdit" class="btn btn-first setup-btn-save-edit">Edit</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 col-lg-4 empty-div"></div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    var vldOk;
+    $(function () {
+
+        $('#btnSave').click(function () {
+            var unitName = $('#UnitName').val();
+            var keyword = $('#Keyword').val();
+            var ulId = $('#ULID option:selected').val();
+
+            if (unitName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            } else if (keyword.length == 0) {
+                $("#vldKeyword").show();
+                vldOk = 0;
+            }else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("SaveAction", "Unit")',
+                    data: { "unitName": unitName, "keyword": keyword, "ulId": ulId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.SAVEOK == 1) {
+                            $('#UnitName').val("");
+                            $('#Keyword').val("");
+                            $("#vldName").hide();
+                            $("#vldKeyword").hide();
+                            showToast(1, response.MESSAGE);                        
+                        } else if (response.SAVEOK == 0) {
+                            showToast(0, response.MESSAGE);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnEdit').click(function () {
+            var unitName = $('#UnitName').val();
+            var keyword = $('#Keyword').val();
+            var ulId = $('#ULID option:selected').val();
+
+            if (unitName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            } else if (keyword.length == 0) {
+                $("#vldKeyword").show();
+                vldOk = 0;
+            } else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("EditAction", "Unit")',
+                    data: { "unitName": unitName, "keyword": keyword, "ulId": ulId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.EDITOK == 1) {
+                            showToast(1, response.MESSAGE);
+                            window.location.href = '@Url.Action("UnitList", "Unit")';
+                        } else if (response.EDITOK == 0) {
+                            showToast(0, response.MESSAGE);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+        $("#UnitName").keypress(function () {
+            $("#vldName").hide();
+        });
+
+        $("#Keyword").keypress(function () {
+            $("#vldKeyword").hide();
+        });
+
+        $(".alert").delay(4000).slideUp(200, function () {
+            $(this).alert('close');
+            $("#divMessage").hide();
+        });
+
+        var isEdit = '@Session["IsEdit"]';
+        if (isEdit == 1) {
+            var ulId = '@Session["EditULID"]';
+            $("#ULID").val(ulId);
+        }
+
+    });
+
+</script>
+
+
+

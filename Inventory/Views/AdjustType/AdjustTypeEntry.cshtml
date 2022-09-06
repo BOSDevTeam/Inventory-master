@@ -1,0 +1,218 @@
+﻿@using Inventory.Models
+@model AdjustTypeModels.AdjustTypeModel
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuAdjustType').className = 'active';
+    </script>
+</head>
+
+<div>
+
+    <div class="row">
+        <div class="col-md-8 col-lg-8">
+            <div class="row setup-title-layout">
+                <div class="col-md-6 col-lg-6">
+                    <label class="page-title">Create Adjust Type</label>
+                </div>
+                <div class="col-md-6 col-lg-6">
+                    <button id="btnAll" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("AdjustTypeList", "AdjustType")'">ALL</button>
+                </div>
+            </div>
+            <div class="row setup-entry-border margin-20">
+                <div class="col-md-12 col-lg-12">
+                    <div class="row setup-entry-header">
+                        <div class="col-md-11 col-lg-11">
+                            <label class="setup-entry-header-title">Fill Adjust Type Detail</label>
+                        </div>
+                        <div class="col-md-1 col-lg-1" style="display:flex;align-items:center;justify-content:center">
+                            <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                        </div>
+                    </div>
+                    <div class="row padding-20">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label class="control-label">Name</label>
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    @Html.TextBoxFor(m => m.AdjustTypeName, null, new { @class = "form-control control-input" })
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    @Html.TextBoxFor(m => m.AdjustTypeName, new { @class = "form-control control-input", Value = Session["EditAdjustTypeName"] })
+                                }
+                                <label id="vldName" class="text-danger" style="display:none">Name Require!</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Short Name</label>
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    @Html.TextBoxFor(m => m.ShortName, null, new { @class = "form-control control-input" })
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    @Html.TextBoxFor(m => m.ShortName, new { @class = "form-control control-input", Value = Session["EditShortName"] })
+                                }
+                                <label id="vldShort" class="text-danger" style="display:none">Short Name Require!</label>
+                            </div>
+                            <div class="form-group">
+                                @Html.CheckBoxFor(m => m.IsIncrease, new { @class = "control-input", onchange = "ShowHide(this.checked)", id = "chkIsIncrease" }) <label class="control-label">Increase</label>
+                            </div>
+                            <div class="form-group">
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    <button id="btnEdit" class="btn btn-first setup-btn-save-edit">Edit</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 col-lg-4 empty-div"></div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    var vldOk,isIncrease = false, sing ="-";
+    $(function () {
+
+        $('#btnSave').click(function () {
+            var adjustTypeName = $('#AdjustTypeName').val();
+            var shortName = $('#ShortName').val();
+
+            if (adjustTypeName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            } else if (shortName.length == 0) {
+                $("#vldShort").show();
+                vldOk = 0;
+            } else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("SaveAction", "AdjustType")',
+                    data: { "adjustTypeName": adjustTypeName, "shortName": shortName, "isIncrease": isIncrease, "sign": sing },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        $('#AdjustTypeName').val("");
+                        $('#ShortName').val("");
+                        $("#vldName").hide();
+                        $("#vldShort").hide();
+                        showToast(1, "Saved Successfully!");                    
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnEdit').click(function () {
+            var adjustTypeName = $('#AdjustTypeName').val();
+            var shortName = $('#ShortName').val();
+
+            if (adjustTypeName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            } else if (shortName.length == 0) {
+                $("#vldShort").show();
+                vldOk = 0;
+            } else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url:'@Url.Action("EditAction", "AdjustType")',
+                    data: { "adjustTypeName": adjustTypeName, "shortName": shortName, "isIncrease": isIncrease, "sign": sing },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        showToast(1, "Edited Successfully!");                     
+                        window.location.href = '@Url.Action("AdjustTypeList", "AdjustType")';
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+        $("#AdjustTypeName").keypress(function () {
+            $("#vldName").hide();
+        });
+
+        $("#ShortName").keypress(function () {
+            $("#vldShort").hide();
+        });
+
+        $(".alert").delay(4000).slideUp(200, function () {
+            $(this).alert('close');
+            $("#divMessage").hide();
+        });
+
+        var isEdit = '@Session["IsEdit"]';
+        if (isEdit == 1) {
+            var editIsIncrease = '@Session["EditIsIncreaseVal"]';
+            if (editIsIncrease == 1) {
+                $("#chkIsIncrease").prop("checked", true);
+                isIncrease = true;
+                sing = "+";
+            } else if (editIsDefaultLocation == 0) {
+                $("#chkIsIncrease").prop("checked", false);
+                isIncrease = false;
+                sing = "-";
+            }
+        }
+
+    });
+
+    function ShowHide(checked) {
+        if (checked == true) {
+            isIncrease = true;
+            sing = "+";
+        }
+        else {
+            isIncrease = false;
+            sing = "-";
+        }
+    }
+
+</script>
+
+
+

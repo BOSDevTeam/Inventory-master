@@ -1,0 +1,163 @@
+﻿@using Inventory.Models
+@model BankPaymentModels
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuBankPayment').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row">
+        <div class="col-md-8 col-lg-8">
+            <div class="row setup-title-layout">
+                <div class="col-md-6 col-lg-6">
+                    <label class="page-title">Create Bank Payment</label>
+                </div>
+                <div class="col-md-6 col-lg-6">
+                    <button id="btnAll" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("BankPaymentList", "BankPayment")?p=1'">ALL</button>
+                </div>
+            </div>
+            <div class="row setup-entry-border margin-20">
+                <div class="col-md-12 col-lg-12">
+                    <div class="row setup-entry-header">
+                        <div class="col-md-11 col-lg-11">
+                            <label class="setup-entry-header-title">Fill Bank Payment Detail</label>
+                        </div>
+                        <div class="col-md-1 col-lg-1" style="display:flex;align-items:center;justify-content:center">
+                            <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                        </div>
+                    </div>
+                    <div class="row padding-20">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label class="control-label">Name</label>
+                                @Html.TextBoxFor(m => m.Name, null, new { @class = "form-control control-input" })
+                                <label id="vldName" class="text-danger" style="display:none">Name Require!</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Bank</label>
+                                @Html.DropDownListFor(m => m.BankID, Model.Banks, new { @class = "form-control control-input" })
+                            </div>
+                            <div class="form-group">
+                                <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
+                                <button id="btnEdit" class="btn btn-first setup-btn-save-edit" style="display:none">Edit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 col-lg-4 empty-div"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var bankId, name, bankPaymentId;
+
+    $(function () {
+
+        $('#btnSave').click(function () {
+            if (validateControl()) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SaveAction", "BankPayment")',
+                    data: JSON.stringify({ "name": name, "bankId": bankId }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        clearControl();
+                        showToast(1, "Saved Successfully!");                     
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        function validateControl() {
+            name = $('#Name').val();
+            bankId = $('#BankID option:selected').val();
+            if (name.length == 0) {
+                $("#vldName").show();
+                return false;
+            }
+            return true;
+        }
+
+        function clearControl() {
+            $("#Name").val("");
+            $("#BankID").val('@ViewBag.TopBankID');
+        }
+
+        $('#btnEdit').click(function () {
+            if (validateControl()) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("EditAction", "BankPayment")',
+                    data: JSON.stringify({ "bankId": bankId, "name": name, "bankPaymentId": bankPaymentId }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        clearControl();
+                        showToast(1, "Edited Successfully!");
+                        window.location.href = '@Url.Action("BankPaymentList", "BankPayment")?p=1';
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+        $("#Name").keypress(function () {
+            $("#vldName").hide();
+        });
+
+        $(".alert").delay(4000).slideUp(200, function () {
+            $(this).alert('close');
+            $("#divMessage").hide();
+        });
+
+        var isEdit = '@ViewBag.IsEdit';
+        if (isEdit == 1) {
+            bankPaymentId = '@ViewBag.BankPaymentID';
+            $("#Name").val('@ViewBag.Name');
+            $("#BankID").val('@ViewBag.BankID');
+            $("#btnSave").css('display', 'none');
+            $("#btnEdit").show();
+        }
+
+    });
+</script>
+
+
+
+

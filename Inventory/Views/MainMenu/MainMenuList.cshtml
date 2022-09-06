@@ -1,0 +1,226 @@
+﻿@using Inventory.Models
+@model MainMenuModels.MainMenuModel
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuMainMenu').className = 'active';
+    </script>
+</head>
+
+<div>
+
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">MainMenu</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("MainMenuEntry","MainMenu")?mainMenuId=0'">ADD</button>
+        </div>
+    </div>
+    <div class="row setup-title-layout search-div">
+        <div class="col-md-12 col-lg-12">
+            <div class="btn-group" style="float:right">
+                <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox mr-10" />
+                <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblMainMenu" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        @if (ViewBag.IsProductPhoto == true)
+                        {
+                            <th class="col-md-2 col-lg-2">Photo</th>
+                        }
+                        else
+                        {
+                            <th class="col-md-2 col-lg-2"></th>
+                        }
+                        <th class="col-md-3 col-lg-3">Name</th>
+                        <th class="col-md-3 col-lg-3">Code</th>
+                        <th class="col-md-2 col-lg-2">Sort Code</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @for (int i = 0; i < Model.LstMainMenu.Count(); i++)
+                    {
+                        <tr class="row table-item">
+                            @if (ViewBag.IsProductPhoto == true)
+                            {
+                                if (Model.LstMainMenu[i].Base64Photo != null)
+                                {
+                                    <td class="col-md-2 col-lg-2"><img src="@Url.Content("data:image/png;base64," + Model.LstMainMenu[i].Base64Photo)" id="imgPreview" style="height:20px;height:20px;" /></td>
+                                }
+                                else
+                                {
+                                    <td class="col-md-2 col-lg-2"></td>
+                                }
+                            }
+                            else
+                            {
+                                <td class="col-md-2 col-lg-2"></td>
+                            }
+                            <td class="col-md-3 col-lg-3">@Model.LstMainMenu[i].MainMenuName</td>
+                            <td class="col-md-3 col-lg-3">@Model.LstMainMenu[i].Code</td>
+                            <td class="col-md-2 col-lg-2">@Model.LstMainMenu[i].SortCode</td>
+                            <td class="col-md-2 col-lg-2">
+                                <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
+                                <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
+                            </td>
+                            <td style="display:none">@Model.LstMainMenu[i].MainMenuID</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg12">
+                        <label class="control-label">Are you sure you want to delete?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button id="btnDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var actionValue, mainMenuId;
+
+    $(function () {
+
+        $("#tblMainMenu").on("click", "tbody tr", function (event) {
+            selectedRow = $(this).parent('tr');
+            $(this).find("td:last").each(function () {
+                mainMenuId = $(this).text();
+                if (actionValue == 2) {  // edit
+                    window.location.href = '@Url.Action("MainMenuEntry", "MainMenu")?mainMenuId=' + mainMenuId;
+                } else if (actionValue == 3) {  // delete
+                    $('#modalConfirm').modal('show');
+                }
+            });
+        });
+
+        $("#btnSearch").click(function () {
+            var keyword = $('#tvSearch').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SearchAction", "MainMenu")',
+                data: { "keyword": keyword },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    $("#tblMainMenu").find("tbody").empty();
+                    $.each(response, function (i, item) {
+                        if (item.Base64Photo != null) {
+                            var rows = "<tr class='row table-item'>"
+                            + "<td class='col-md-2 col-lg-2'> " + '<img width="20px" height="20px" src="data:image/png;base64,' + item.Base64Photo + '" />' + "</td>"
+                            + "<td class='col-md-3 col-lg-3'>" + item.MainMenuName + "</td>"
+                            + "<td class='col-md-3 col-lg-3'>" + item.Code + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.SortCode + "</td>"
+                            + "<td class='col-md-2 col-lg-2'><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
+                            + "<td style='display:none'>" + item.MainMenuID + "</td>"
+                            + "</tr>";
+                            $('#tblMainMenu tbody').append(rows);
+                        } else {
+                            var rows = "<tr class='row table-item'>"
+                            + "<td class='col-md-2 col-lg-2'></td>"
+                            + "<td class='col-md-3 col-lg-3'>" + item.MainMenuName + "</td>"
+                            + "<td class='col-md-3 col-lg-3'>" + item.Code + "</td>"
+                            + "<td class='col-md-2 col-lg-2'>" + item.SortCode + "</td>"
+                            + "<td class='col-md-2 col-lg-2'><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
+                            + "<td style='display:none'>" + item.MainMenuID + "</td>"
+                            + "</tr>";
+                            $('#tblMainMenu tbody').append(rows);
+                        }
+                     });
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnDelOk").click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DeleteAction", "MainMenu")',
+                data: { "mainMenuId": mainMenuId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (response.DELOK ==1) {
+                        if (selectedRow != null) {
+                            selectedRow.remove();
+                            location.reload();
+                            showToast(1, "Deleted Successfully!");                         
+                        }
+                    } else if (response.DELOK == 0) {
+                        showToast(0, "This Main Menu is using! Cannot Delete!");                     
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+    });
+
+    function action(val) {
+        actionValue = val;
+    }
+
+</script>
+
+

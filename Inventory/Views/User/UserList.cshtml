@@ -1,0 +1,216 @@
+﻿@using Inventory.Models
+@model UserModels.UserModel
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuUser').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">User</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("UserEntry","User")?userId=0'">ADD</button>
+        </div>
+    </div>
+    <div class="row setup-title-layout search-div">
+        <div class="col-md-12 col-lg-12">
+            <div class="btn-group" style="float:right">
+                <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox mr-10" />
+                <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblUser" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-4 col-lg-4">Name</th>
+                        @if (ViewBag.IsMultiBranch == true)
+                        {
+                            <th class="col-md-3 col-lg-3">Branch</th>
+                        }
+                        else
+                        {
+                            <th class="col-md-3 col-lg-3"></th>
+                        }
+                        <th class="col-md-3 col-lg-3">Default Location</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @for (int i = 0; i < Model.LstUser.Count(); i++)
+                    {
+                        <tr class="row table-item">
+                            <td class="col-md-4 col-lg-4">@Model.LstUser[i].UserName</td>
+                            @if (ViewBag.IsMultiBranch == true)
+                            {
+                                <td class="col-md-3 col-lg-3">@Model.LstUser[i].BranchName</td>
+                            }
+                            else
+                            {
+                                <td class="col-md-3 col-lg-3"></td>
+                            }
+                            <td class="col-md-3 col-lg-3">@Model.LstUser[i].LocationName</td>
+                            <td class="col-md-2 col-lg-2">
+                                <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
+                                <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
+                            </td>
+                            <td style="display:none">@Model.LstUser[i].UserID</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg12">
+                        <label class="control-label">Are you sure you want to delete?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button id="btnDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var actionValue, userId;
+
+    $(function () {
+
+        $('#btnAdd').click(function () {
+            window.location.href = '@Url.Action("UserEntry", "User")?userId=0&isMultiBranch=' + isMultiBranch;
+        });
+
+        $("#tblUser").on("click", "tbody tr", function (event) {
+            selectedRow = $(this).parent('tr');
+            $(this).find("td:last").each(function () {
+                userId = $(this).text();
+                if (actionValue == 2) { // edit
+                    window.location.href = '@Url.Action("UserEntry", "User")?userId=' + userId + '&isMultiBranch=' + isMultiBranch;
+                } else if (actionValue == 3) { // delete
+                    $('#modalConfirm').modal('show');
+                }
+            });
+        });
+
+        $("#btnSearch").click(function(){
+            var keyword = $('#tvSearch').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url:'@Url.Action("SearchAction", "User")',
+                data: { "keyword": keyword },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    $("#tblUser").find("tbody").empty();
+                    var isMultiBranch = '@ViewBag.IsMultiBranch';
+                    $.each(response, function (i, item) {
+                        if (isMultiBranch) {
+                            var rows = "<tr class='row table-item'>"
+                            + "<td class='col-md-4 col-lg-4'>" + item.UserName + "</td>"
+                            + "<td class='col-md-3 col-lg-3'>" + item.BranchName + "</td>"
+                            + "<td class='col-md-3 col-lg-3'>" + item.LocationName + "</td>"
+                            + "<td class='col-md-2 col-lg-2'><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
+                            + "<td style='display:none'>" + item.UserID + "</td>"
+                            + "</tr>";
+                            $('#tblUser tbody').append(rows);
+                        } else {
+                            var rows = "<tr class='row table-item'>"
+                           + "<td class='col-md-4 col-lg-4'>" + item.UserName + "</td>"
+                           + "<td class='col-md-3 col-lg-3'></td>"
+                           + "<td class='col-md-3 col-lg-3'>" + item.LocationName + "</td>"
+                           + "<td class='col-md-2 col-lg-2'><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
+                           + "<td style='display:none'>" + item.UserID + "</td>"
+                           + "</tr>";
+                            $('#tblUser tbody').append(rows);
+                        }
+
+                    });
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnDelOk").click(function () {
+            showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("DeleteAction", "User")',
+                    data: { "userId": userId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (selectedRow != null) {
+                            selectedRow.remove();
+                            location.reload();
+                            showToast(1, "Deleted Successfully!");
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+    });
+
+    function action(val) {
+        actionValue = val;
+    }
+
+</script>
+
+
+

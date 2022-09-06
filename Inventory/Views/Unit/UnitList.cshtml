@@ -1,0 +1,146 @@
+﻿@using Inventory.Models
+@model UnitModels
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuUnit').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">Unit</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("UnitEntry","Unit")?unitId=0'">ADD</button>
+        </div>
+    </div>
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblUnit" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-4 col-lg-4">Name</th>
+                        <th class="col-md-3 col-lg-3">Keyword</th>
+                        <th class="col-md-3 col-lg-3">Unit Level</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @for (int i = 0; i < Model.LstUnit.Count(); i++)
+                    {
+                        <tr class="row table-item">
+                            <td class="col-md-4 col-lg-4">@Model.LstUnit[i].UnitName</td>
+                            <td class="col-md-3 col-lg-3">@Model.LstUnit[i].Keyword</td>
+                            <td class="col-md-3 col-lg-3">@Model.LstUnit[i].ULName</td>
+                            <td class="col-md-2 col-lg-2">
+                                <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
+                                <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
+                            </td>
+                            <td style="display:none">@Model.LstUnit[i].UnitID</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg12">
+                        <label class="control-label">Are you sure you want to delete?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button id="btnDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var actionValue, unitId;
+
+    $(function () {
+
+        $("#tblUnit").on("click", "tbody tr", function (event) {
+            selectedRow = $(this).parent('tr');
+            $(this).find("td:last").each(function () {
+                unitId = $(this).text();
+                if (actionValue == 2) { // edit
+                    window.location.href = '@Url.Action("UnitEntry", "Unit")?unitId=' + unitId;
+                } else if (actionValue == 3) { // delete
+                    $('#modalConfirm').modal('show');
+                }
+            });
+        });
+
+        $("#btnDelOk").click(function () {
+            showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("DeleteAction", "Unit")',
+                    data: { "unitId": unitId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.DELOK == 1) {
+                            if (selectedRow != null) {
+                                selectedRow.remove();
+                                location.reload();
+                                showToast(1, "Deleted Successfully!");                           
+                            }
+                        } else if (response.DELOK == 0) {
+                            showToast(0, "This Unit is using! Cannot Delete!");                       
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+    });
+
+    function action(val) {
+        actionValue = val;
+    }
+
+</script>
+
+
+

@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<!-- settings23:07-->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="~/assets/img/favicon.ico">
+    <title>QuickInventory - POS & Inventory Management</title>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap-datetimepicker.min.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <!--[if lt IE 9]>
+        <script src="assets/js/html5shiv.min.js"></script>
+        <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+  
+    <div class="main-wrapper">        
+        <div class="header">
+            <div class="header-left">
+                <a href="#" class="logo">
+                    <img src="~/assets/img/logo.png" width="35" height="35" alt="">
+                </a>
+            </div>
+            <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <div class="page-title-box float-left">
+                <h3>QuickInventory</h3>
+            </div>
+            <div class="toast" data-autohide="true" style="position:absolute;right:0;">
+                <div class="toast-header">
+                    <strong id="lblToastHeader" class="mr-auto">header</strong>                    
+                </div>
+                <div class="toast-body">
+                    <label id="lblToastMessage">message</label>
+                </div>
+            </div>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">
+                <li class="nav-item dropdown d-none d-sm-block" title="POS">
+                    <a href="#" class="nav-link"><i class="fa fa-dollar"></i></a>
+                </li>
+                <li class="nav-item dropdown d-none d-sm-block" title="Settings">
+                    <a href="#" class="nav-link"><i class="fa fa-cog"></i></a>
+                </li>
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <span class="user-img">
+                            <img class="rounded-circle" src="~/assets/img/user.jpg" width="24" alt="Admin">
+                            <span class="status online"></span>
+                        </span>
+                        <span id="loginUser"></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">My Profile</a>
+                        <a class="dropdown-item" href="#">Edit Profile</a>
+                        <a class="dropdown-item" href="~/CompanySetting/CompanySettingEntry">Settings</a>
+                        <a class="dropdown-item" href="~/User/Login">Logout</a>
+                    </div>
+                </li>
+            </ul>
+            <div class="dropdown mobile-user-menu float-right">
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#">My Profile</a>
+                    <a class="dropdown-item" href="#">Edit Profile</a>
+                    <a class="dropdown-item" href="~/CompanySetting/CompanySettingEntry">Settings</a>
+                    <a class="dropdown-item" href="~/User/Login">Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div class="sidebar-menu">
+                    <ul>
+                        <li>
+                            <a href="~/Home/Dashboard"><i class="fa fa-home back-icon"></i> <span>Back to Home</span></a>
+                        </li>
+                        <li class="menu-title">Settings</li>
+                        <li id="menuCompanySetting">
+                            <a href="~/CompanySetting/CompanySettingEntry"><i class="fa fa-building"></i> <span>Company Setting</span></a>
+                        </li>   
+                        <li id="menuBranch">
+                            <a href="~/Branch/BranchList?p=1"><i class="fa fa-building-o"></i> <span>Branch</span></a>
+                        </li>
+                        <li id="menuLocation">
+                            <a href="~/Location/LocationList?p=1"><i class="fa fa-map-marker"></i> <span>Location</span></a>
+                        </li>
+                        <li id="menuDivision">
+                            <a href="~/Division/DivisionList?p=1"><i class="fa fa-th"></i> <span>Division</span></a>
+                        </li> 
+                        <li id="menuTownship">
+                            <a href="~/Township/TownshipList?p=1"><i class="fa fa-th"></i> <span>Township</span></a>
+                        </li> 
+                        <li id="menuCustomer">
+                            <a href="~/Customer/CustomerList?p=1"><i class="fa fa-user"></i> <span>Customer</span></a>
+                        </li> 
+                        <li id="menuSupplier">
+                            <a href="~/Supplier/SupplierList?p=1"><i class="fa fa-user"></i> <span>Supplier</span></a>
+                        </li> 
+                        <li id="menuMainMenu">
+                            <a href="~/MainMenu/MainMenuList?p=1"><i class="fa fa-file-text-o"></i> <span>Main Menu</span></a>
+                        </li>  
+                        <li id="menuSubMenu">
+                            <a href="~/SubMenu/SubMenuList?p=1"><i class="fa fa-file-text-o"></i> <span>Sub Menu</span></a>
+                        </li>    
+                        <li id="menuProduct">
+                            <a href="#"><i class="fa fa-cube"></i> <span>Product</span></a>
+                        </li>    
+                        <li id="menuBank">
+                            <a href="~/Bank/BankList?p=1"><i class="fa fa-bank"></i> <span>Bank</span></a>
+                        </li>
+                        <li id="menuBankPayment">
+                            <a href="~/BankPayment/BankPaymentList?p=1"><i class="fa fa-money"></i> <span>Bank Payment</span></a>
+                        </li>                                                                  
+                        <li id="menuUser">
+                            <a href="~/User/UserList?p=1"><i class="fa fa-user"></i> <span>User</span></a>
+                        </li> 
+                        <li id="menuUnit">
+                            <a href="~/Unit/UnitList?p=1"><i class="fa fa-dot-circle-o"></i> <span>Unit</span></a>
+                        </li> 
+                        <li id="menuAdjustType">
+                            <a href="~/AdjustType/AdjustTypeList?p=1"><i class="fa fa-adjust"></i> <span>Adjust Type</span></a>
+                        </li> 
+                        <li id="menuBarcodeSetting">
+                            <a href="#"><i class="fa fa-barcode"></i> <span>Barcode Setting</span></a>
+                        </li> 
+                        <li id="menuVoucherFormat">
+                            <a href="~/VoucherFormat/VoucherFormatList"><i class="fa fa-file-text-o"></i> <span>Voucher Format</span></a>
+                        </li> 
+                        <li id="menuVoucherSetting">
+                            <a href="~/VoucherSetting/VoucherSettingList"><i class="fa fa-file-text-o"></i> <span>Voucher Setting</span></a>
+                        </li> 
+                        <li id="menuTechnicianSetting">
+                            <a href="~/Technician/TechnicianSetting"><i class="fa fa-desktop"></i> <span>Technician Setting</span></a>
+                        </li>                      
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-wrapper">
+            <div class="content">            
+                @RenderBody()
+            </div>        
+        </div>
+    </div>
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script src="~/assets/js/popper.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/jquery.slimscroll.js"></script>
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/assets/js/select2.min.js"></script>
+    <script src="~/assets/js/moment.min.js"></script>
+    <script src="~/assets/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/Site.js"></script>
+
+    <script>      
+        var isMultiBranch = false, isMultiCurrency = false, isMultiUnit = false, isBankPayment = false,
+            isProductPhoto = false, userId = 0, branchId = 0, userName, isDifProductByBranch = false,
+            isBarcode = false, isQRcode = false, isProductVariant = false, isProductColor = false, isProductSize = false;
+
+        isMultiBranch = localStorage.getItem("IsMultiBranch");
+        isMultiCurrency = localStorage.getItem("IsMultiCurrency");
+        isMultiUnit = localStorage.getItem("IsMultiUnit");
+        isBankPayment = localStorage.getItem("IsBankPayment");
+        isProductPhoto = localStorage.getItem("IsProductPhoto");
+        userId = localStorage.getItem("UserID");
+        userName = localStorage.getItem("UserName");
+        branchId = localStorage.getItem("BranchID");
+        isDifProductByBranch = localStorage.getItem("IsDifProductByBranch");
+        isBarcode = localStorage.getItem("IsBarcode");
+        isQRcode = localStorage.getItem("IsQRcode");
+        isProductVariant = localStorage.getItem("IsProductVariant");
+        isProductColor = localStorage.getItem("IsProductColor");
+        isProductSize = localStorage.getItem("IsProductSize");
+
+        $("#loginUser").text(userName);
+
+        $(function () {
+            $('#menuProduct').click(function () {
+                window.location.href = '@Url.Action("ProductList", "Product")?isMultiUnit=' + isMultiUnit + '&isProductPhoto=' + isProductPhoto + '&isProductVariant=' + isProductVariant + '&p=1';
+            });
+            $('.toast').toast({
+                delay: 3000
+            });
+        });
+
+        function showToast(type,message){
+            $('.toast').toast('show');
+            if (type == 1) {
+                $('#lblToastHeader').text("Success");
+                $('.toast-header').removeClass("toast-error");
+                $('.toast-header').addClass("toast-success");
+            } else if (type == 0) {
+                $('#lblToastHeader').text("Alert");
+                $('.toast-header').removeClass("toast-success");
+                $('.toast-header').addClass("toast-error");
+            }
+            $('#lblToastMessage').text(message);
+        }
+
+    </script>
+</body>
+
+<!-- settings23:11-->
+</html>

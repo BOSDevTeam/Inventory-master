@@ -1,0 +1,338 @@
+﻿@using Inventory.Models
+@model SubMenuModels.SubMenuModel
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuSubMenu').className = 'active';
+    </script>
+</head>
+
+<div>
+
+    <div class="row">
+        <div class="col-md-8 col-lg-8">
+            <div class="row setup-title-layout">
+                <div class="col-md-6 col-lg-6">
+                    <label class="page-title">Create Sub Menu</label>
+                </div>
+                <div class="col-md-6 col-lg-6">
+                    <button id="btnAll" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("SubMenuList", "SubMenu")'">ALL</button>
+                </div>
+            </div>
+            <div class="row setup-entry-border margin-20">
+                <div class="col-md-12 col-lg-12">
+                    <div class="row setup-entry-header">
+                        <div class="col-md-11 col-lg-11">
+                            <label class="setup-entry-header-title">Fill Sub Menu Detail</label>
+                        </div>
+                        <div class="col-md-1 col-lg-1" style="display:flex;align-items:center;justify-content:center">
+                            <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                        </div>
+                    </div>
+                    <div class="row padding-20">
+                        <div class="col-md-12 col-lg-12">
+                            @if (ViewBag.IsProductPhoto == true)
+                            {
+                                <div class="form-group">
+                                    <label class="control-label">Photo <span style="color:red">(Recommended Size 200*200)</span> </label><br />
+                                    @if (ViewBag.Photo == true)
+                                    {
+                                        <img src="@Url.Content("data:image/png;base64," + Convert.ToBase64String(Model.Photo, 0, Model.Photo.Length))" id="imgPreview" style="height:80px;height:80px;" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/Image/sample.png" id="imgPreview" style="width:80px;height:80px;" />
+                                    }
+                                    <span class="btn control-label">
+                                        <input type="file" name="file" id="file" onchange="previewPhoto(this);" accept=".jpg,.jpeg,.png" />
+                                    </span>
+                                    <div id="error" style="display:none"><span style="color:red">Photo is larger than 200pixels!</span></div>
+                                </div>
+                            }
+                            <div class="form-group">
+                                <label class="control-label">Code</label>
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    @Html.TextBoxFor(m => m.Code, null, new { @class = "form-control control-input" })
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    @Html.TextBoxFor(m => m.Code, new { @class = "form-control control-input", Value = Session["EditCode"] })
+                                }
+                                <label id="vldCode" class="text-danger" style="display:none">Code Require!</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Name</label>
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    @Html.TextBoxFor(m => m.SubMenuName, null, new { @class = "form-control control-input" })
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    @Html.TextBoxFor(m => m.SubMenuName, new { @class = "form-control control-input", Value = Session["EditSubMenuName"] })
+                                }
+                                <label id="vldName" class="text-danger" style="display:none">Name Require!</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Sort Code</label>
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    @Html.TextBoxFor(m => m.SortCode, null, new { @class = "form-control control-input", @type = "number" })
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    @Html.TextBoxFor(m => m.SortCode, new { @class = "form-control control-input", Value = Session["EditSortCode"], @type = "number" })
+                                }
+                                <label id="vldSortCode" class="text-danger" style="display:none">Sort Code Require!</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Main Menu</label>
+                                @Html.DropDownListFor(m => m.MainMenuID, Model.MainMenus, new { @class = "form-control control-input" })
+                            </div>
+                            <div class="form-group">
+                                @if (Session["IsEdit"].ToString() == "0")
+                                {
+                                    <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
+                                }
+                                else if (Session["IsEdit"].ToString() == "1")
+                                {
+                                    <button id="btnEdit" class="btn btn-first setup-btn-save-edit">Edit</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4 col-lg-4 empty-div"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var vldOk;
+    $(function () {
+
+        $('#btnSave').click(function () {
+            var subMenuName = $('#SubMenuName').val();
+            var code = $('#Code').val();
+            var sortCode = $('#SortCode').val();
+            var mainMenuId = $('#MainMenuID option:selected').val();
+
+            if (code.length == 0) {
+                $("#vldCode").show();
+                vldOk = 0;
+            } else if (subMenuName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            } else if (sortCode.length == 0) {
+                $("#vldSortCode").show();
+                vldOk = 0;
+            } else if (sortCode == 0) {
+                $("#vldSortCode").show();
+                vldOk = 0;
+            } else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("SaveAction", "SubMenu")',
+                    data: { "subMenuName": subMenuName, "code": code, "sortCode": sortCode, "mainMenuId": mainMenuId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.SAVEOK == 1) {
+                            $('#SubMenuName').val("");
+                            $('#Code').val("");
+                            $('#SortCode').val("");
+                            $("#vldName").hide();
+                            $('#imgPreview').attr('src', "");
+                            $("#vldCode").hide();
+                            $("#vldSortCode").hide();
+                            showToast(1, response.MESSAGE);                     
+                        } else if (response.SAVEOK == 0) {
+                            showToast(0, response.MESSAGE);                         
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnEdit').click(function () {
+            var subMenuName = $('#SubMenuName').val();
+            var code = $('#Code').val();
+            var sortCode = $('#SortCode').val();
+            var mainMenuId = $('#MainMenuID option:selected').val();
+
+            if (code.length == 0) {
+                $("#vldCode").show();
+                vldOk = 0;
+            } else if (subMenuName.length == 0) {
+                $("#vldName").show();
+                vldOk = 0;
+            } else if (sortCode.length == 0) {
+                $("#vldSortCode").show();
+                vldOk = 0;
+            } else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("EditAction", "SubMenu")',
+                    data: { "subMenuName": subMenuName, "code": code, "sortCode": sortCode, "mainMenuId": mainMenuId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.EDITOK == 1) {
+                            showToast(1, response.MESSAGE);                      
+                            window.location.href = '@Url.Action("SubMenuList", "SubMenu")';
+                        } else if (response.EDITOK == 0) {
+                            showToast(0, response.MESSAGE);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnRefresh').click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("RefreshAction", "MainMenu")',
+                data: {},
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    window.location.reload();
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#SubMenuName").keypress(function () {
+            $("#vldName").hide();
+        });
+
+        $("#Code").keypress(function () {
+            $("#vldCode").hide();
+        });
+
+        $("#SortCode").keypress(function () {
+            $("#vldSortCode").hide();
+        });
+
+        $(".alert").delay(4000).slideUp(200, function () {
+            $(this).alert('close');
+            $("#divMessage").hide();
+        });
+
+        var editMainMenuID = '@Session["EditMainMenuID"]';
+        if (editMainMenuID.length != 0 && editMainMenuID != 0) $('#MainMenuID').val(editMainMenuID);
+
+    });
+
+    function previewPhoto(input)
+    {
+        img = new Image();
+        var objectUrl = window.URL.createObjectURL(input.files[0]);
+        img.onload = function () {
+            if (this.width > 200 || this.height > 200)
+            {
+                $('#error').show();
+                $('#file').val('');
+            }   
+            else {
+                document.getElementById('imgPreview').src = objectUrl;
+            }
+
+        }
+        img.src = objectUrl;
+    }
+
+    var _URL = window.URL || window.webkitURL;
+    $("#file").change(function (e) {
+        var file, img;
+        if ((file = this.files[0])) {
+            img = new Image();
+            img.onload = function () {
+                var width = this.width;
+                var height = this.height;
+                if (width > 200 || height > 200) {
+                    $("#error").show();
+                    $('#file').val('');
+                }
+                else {
+                    var file = e.target.files;
+                    if (file.length > 0) {
+                        if (window.FormData !== undefined) {
+                            var data = new FormData();
+                            for (var x = 0; x < file.length; x++) {
+                                data.append("file" + x, file[x]);
+                            }
+
+                            $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("UploadFile", "SubMenu")',
+                                contentType: false,
+                                processData: false,
+                                data: data,
+                                success: function (result) {
+                                    $('#image').attr('src', '@Url.Content("~/Content/img/")' + result.fileName);
+                                },
+                                error: function (xhr, status, p3, p4) {
+                                    var err = "Error " + " " + status + " " + p3 + " " + p4;
+                                    if (xhr.responseText && xhr.responseText[0] == "{")
+                                        err = JSON.parse(xhr.responseText).Message;
+                                    console.log(err);
+                                }
+                            });
+                        } else {
+                            alert("This browser doesn't support HTML5 file uploads!");
+                        }
+                    };
+                }
+            };
+            img.src = _URL.createObjectURL(file);
+        }
+    });
+
+</script>
+
+
+

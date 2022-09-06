@@ -1,0 +1,30 @@
+﻿@using Inventory.Models
+@model MasterPurchaseModels
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuPurchase').className = 'active';
+    </script>
+</head>
+
+<div class="container-fluid content-bg">
+
+    <div class="row border-gray" style="padding:10px;background-color:#ffffff">
+        <div class="col-md-2 col-lg-2">
+            <input id="datePicker" type="date" class="form-control control-input" />
+        </div>
+        <div class="col-md-2 col-lg-2 border-left-gray">
+            @Html.DropDownListFor(m => m.SupplierID, Model.Suppliers, new { @class = "form-control control-input" })
+        </div>
+    </div>
+
+</div>
+
+
+

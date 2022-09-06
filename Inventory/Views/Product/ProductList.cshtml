@@ -1,0 +1,553 @@
+﻿@using Inventory.Models
+@model ProductModels.ProductModel
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuProduct').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">Product</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right">ADD</button>
+        </div>
+    </div>
+    <div class="row setup-title-layout search-div">
+        <div class="col-md-12 col-lg-12">
+            <div class="btn-group" style="float:right">
+                <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox" style="margin-right:10px" />
+                @Html.DropDownListFor(m => m.MainMenuID, Model.MainMenus, new { @class = "form-control control-input width-200" })
+                @Html.DropDownListFor(m => m.SubMenuID, Model.SubMenus, new { @class = "form-control control-input width-200 ml-10" })
+                <button id="btnSearch" class="btn btn-first setup-btn-search" style="margin-left:10px" title="Search"><i class="fa fa-search"></i></button>
+                <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblProduct" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-2 col-lg-2">Name</th>
+                        <th class="col-md-2 col-lg-2">Code</th>
+                        <th class="col-md-2 col-lg-2">Main Menu</th>
+                        <th class="col-md-2 col-lg-2">Sub Menu</th>
+                        <th class="col-md-2 col-lg-2">Sale Price</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @for (int i = 0; i < Model.LstProduct.Count(); i++)
+                    {
+                        <tr class="row table-item">
+                            <td class="col-md-2 col-lg-2">@Model.LstProduct[i].ProductName</td>
+                            <td class="col-md-2 col-lg-2">@Model.LstProduct[i].Code</td>
+                            <td class="col-md-2 col-lg-2">@Model.LstProduct[i].MainMenuName</td>
+                            <td class="col-md-2 col-lg-2">@Model.LstProduct[i].SubMenuName</td>
+                            <td class="col-md-2 col-lg-2">@Model.LstProduct[i].SalePrice</td>
+                            <td class="col-md-2 col-lg-2">
+                                <button id="btnView" class="btn btn-sm btn-dark btn-list-action" onclick="action('1')">View</button>
+                                <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
+                                <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
+                            </td>
+                            <td style="display:none">@Model.LstProduct[i].ProductID</td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+    <div class="row mt-3" id="divPaging" style="float:right">
+        <div class="col-md-12 col-lg-12 aligh-right">
+            <label id="lblPageNumber" class="page-num">@Session["PageNumber"]</label>
+        </div>
+        <div id="divPagingItem" class="col-md-12 col-lg-12 paging-div">
+            @for (int i = 1; i <= Model.TotalPageNum; i++)
+            {
+                <button class="btnPage btn paging-item">@i</button>
+            }
+        </div>
+    </div>
+
+</div>
+
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg12">
+                        <label class="control-label">Are you sure you want to delete?</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button id="btnDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalView" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg-12">
+                        <div class="row general-view-data-background1">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Product Name:</label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label id="lblProductName" class="control-input"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background2">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Code:</label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label id="lblCode" class="control-input"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background1">
+                            <div class="col-md-6 col=lg-6">
+                                <label class="control-label">Sort Code:</label>
+                            </div>
+                            <div class="col-md-6 col=lg-6">
+                                <label id="lblSortCode" class="control-input"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background2">
+                            <div class="col-md-6 col=lg-6">
+                                <label class="control-label">Main Menu:</label>
+                            </div>
+                            <div class="col-md-6 col=lg-6">
+                                <label id="lblMainMenu" class="control-input"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background1">
+                            <div class="col-md-6 col=lg-6">
+                                <label class="control-label">Sub Menu:</label>
+                            </div>
+                            <div class="col-md-6 col=lg-6">
+                                <label id="lblSubMenu" class="control-input"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background2">
+                            <div class="col-md-6 col=lg-6">
+                                <label class="control-label">Description:</label>
+                            </div>
+                            <div class="col-md-6 col=lg-6">
+                                <label id="lblDescription" class="control-input"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background1">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Purchase Price:</label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label id="lblPurPrice" class="control-input"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background2">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Sale Price:</label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label id="lblSalePrice" class="control-input"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background1">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Whole Sale Price:</label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label id="lblWholeSalePrice" class="control-input"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background2">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Alert Quantity:</label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label id="lblAlertQty" class="control-input"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background1">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Discount (%):</label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label id="lblDiscount" class="control-input"></label>
+                            </div>
+                        </div>
+                        <div class="row general-view-data-background2">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">IsStock:</label>
+                            </div>
+                            <div class="col-md-6 col-lg-6">
+                                <label id="lblIsStock" class="control-input"></label>
+                            </div>
+                        </div>
+                        @if (ViewBag.IsProductPhoto == true)
+                        {
+                            <div class="row general-view-data-background1">
+                                <div class="col-md-6 col-lg-6">
+                                    <label class="control-label">Photo:</label>
+                                </div>
+                                <div class="col-md-6 col-lg-6" style="padding:3px 0 3px 0">
+                                    <img id="image" height="40" width="40" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+
+                @if (ViewBag.IsMultiUnit == true)
+                {
+                    <div class="row general-view-data-background2">
+                        <div class="col-md-12 col-lg-12">
+                            <label class="product-entry-title" style="font-weight:bold">Unit</label>
+                        </div>
+                    </div>
+                    <div class="row" style="padding:5px">
+                        <table id="tblUnit" class="col-md-12 col-lg-12">
+                            <thead>
+                                <tr class="row table-header-no-color">
+                                    <th class="col-md-2 col-lg-2">Unit</th>
+                                    <th class="col-md-2 col-lg-2">Pur Price</th>
+                                    <th class="col-md-2 col-lg-2">Sale Price</th>
+                                    <th class="col-md-2 col-lg-2">Discount(%)</th>
+                                    <th class="col-md-4 col-lg-4">Description</th>
+                                </tr>
+                            </thead>
+
+                            <tbody></tbody>
+
+                        </table>
+                    </div>
+                }
+
+                @if (ViewBag.IsProductVariant == true)
+                {
+                    <div class="row general-view-data-background2">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label class="product-entry-title" style="font-weight:bold">Variant</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="padding:5px">
+                        <table id="tblVariant" class="col-md-12 col-lg-12">
+                            <thead>
+                                <tr class="row table-header-no-color">
+                                    <th class="col-md-12 col-lg-12">Variant</th>
+                                </tr>
+                            </thead>
+
+                            <tbody></tbody>
+
+                        </table>
+                    </div>
+                }
+            </div>
+
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var actionValue, productId, currentPage = 1, keyword = "", mainMenuId = 0, subMenuId = 0;
+
+    $(function () {
+
+        $('#btnAdd').click(function () {
+            window.location.href = '@Url.Action("ProductEntry", "Product")?productId=0&isMultiUnit=' + isMultiUnit + '&isDifProductByBranch=' + isDifProductByBranch + '&isProductVariant=' + isProductVariant + '&isBarcode=' + isBarcode + '&isQRcode=' + isQRcode + '&isProductPhoto=' + isProductPhoto;
+        });
+
+        $('#MainMenuID').change(function () {
+            var val = $('#MainMenuID option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("MainMenuSelectAction", "Product")',
+                data: { "mainMenuId": val },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    var loc;
+                    $("#SubMenuID").html("");
+                    for (var i = 0; i < response.length; i++) {
+                        loc += '<option value="' + response[i].SubMenuID + '">' + response[i].SubMenuName + '</option>';
+                    }
+                    $("#SubMenuID").append(loc);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#tblProduct").on("click", "tbody tr", function (event) {
+            selectedRow = $(this).parent('tr');
+            $(this).find("td:last").each(function () {
+                productId = $(this).text();
+                if (actionValue == 1) {   // view
+                    showLoadingIcon();
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("ViewAction", "Product")',
+                        data: { "productId": productId },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            hideLoadingIcon();
+                            $('#lblProductName').text(response.ProductName);
+                            $('#lblCode').text(response.Code);
+                            $('#lblMainMenu').text(response.MainMenu);
+                            $('#lblSubMenu').text(response.SubMenu);
+                            $('#lblDescription').text(response.Description);
+                            $('#lblSortCode').text(response.SortCode);
+                            $('#lblAlertQty').text(response.AlertQty);
+                            $('#lblDiscount').text(response.Discount);
+                            $('#lblIsStock').text(response.IsStock);
+                            $('#lblPurPrice').text(response.PurPrice);
+                            $('#lblSalePrice').text(response.SalePrice);
+                            $('#lblWholeSalePrice').text(response.WholeSalePrice);
+                            $('#image').attr('src', 'data:image/png;base64,' + response.Base64Photo);
+
+                            $("#tblUnit").find("tbody").empty();
+                            $.each(response.LstProductUnitList, function (i, item) {
+                                var rows = "<tr class='row table-item-no-color'>"
+                                + "<td class='col-md-2 col-lg-2'>" + item.UnitKeyword + "</td>"
+                                + "<td class='col-md-2 col-lg-2'>" + item.PurchasePrice + "</td>"
+                                + "<td class='col-md-2 col-lg-2'>" + item.SalePrice + "</td>"
+                                + "<td class='col-md-2 col-lg-2'>" + item.DiscountPercent + "</td>"
+                                + "<td class='col-md-4 col-lg-4'>" + item.Description + "</td>"
+                                + "</tr>";
+                                $('#tblUnit tbody').append(rows);
+                            })
+
+                            $("#tblVariant").find("tbody").empty();
+                            $.each(response.LstProductVariantList, function (i, item) {
+                                var rows = "<tr class='row table-item-no-color'>"
+                                + "<td class='col-md-12 col-lg-12'>" + item.Variant + "</td>"
+                                + "</tr>";
+                                $('#tblVariant tbody').append(rows);
+                            })
+
+                            $('#modalView').modal('show');
+                        },
+                        failure: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        }
+                    });
+                }
+                else if (actionValue == 2) {  // edit
+                    window.location.href = '@Url.Action("ProductEntry", "Product")?productId=' + productId + '&isMultiUnit=' + isMultiUnit + '&isDifProductByBranch=' + isDifProductByBranch + '&isProductVariant=' + isProductVariant + '&isBarcode=' + isBarcode + '&isQRcode=' + isQRcode + '&isProductPhoto=' + isProductPhoto;
+                } else if (actionValue == 3) {  // delete
+                    $('#modalConfirm').modal('show');
+                }
+            });
+        });
+
+        $("#btnSearch").click(function(){
+            keyword = $('#tvSearch').val();
+            mainMenuId = $('#MainMenuID').val();
+            subMenuId = $('#SubMenuID').val();
+            if (subMenuId == null) subMenuId = 0;
+            currentPage = 1;
+            searchAction(false);
+            @*showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url:'@Url.Action("SearchAction", "Product")',
+                data: { "keyword": keyword, "mainMenuId": mainMenuId, "subMenuId": subMenuId, "isProductPhoto": isProductPhoto },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    $("#tblProduct").find("tbody").empty();
+                    $.each(response, function (i, item) {
+                        var rows = "<tr class='row table-item'>"
+                        + "<td class='col-md-2 col-lg-2'>" + item.ProductName + "</td>"
+                        + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
+                        + "<td class='col-md-2 col-lg-2'>" + item.MainMenuName + "</td>"
+                        + "<td class='col-md-2 col-lg-2'>" + item.SubMenuName + "</td>"
+                        + "<td class='col-md-2 col-lg-2'>" + item.SalePrice + "</td>"
+                        + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:10px' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:10px' onclick='action(3)'>Delete</button></td>"
+                        + "<td style='display:none'>" + item.ProductID + "</td>"
+                        + "</tr>";
+                        $('#tblProduct tbody').append(rows);
+                    });
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });*@
+        });
+
+        $("#btnDelOk").click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DeleteAction", "Product")',
+                data: { "productId": productId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (response.ISSUCCESS == true) {
+                        if (selectedRow != null) {
+                            if (selectedRow != null) searchAction(true);                               
+                        }
+                    } else if (response.ISSUCCESS == false) {
+                        showToast(0, response.MESSAGE);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $('#btnRefresh').click(function () {
+            clearData();
+            searchAction(false);
+        });
+
+        $(document).on('click', '.btnPage', function (e) {
+            currentPage = $(this).text();
+            searchAction(false);
+        });
+
+        function searchAction(isDelete) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SearchAction", "Product")',
+                data: { "keyword": keyword, "mainMenuId": mainMenuId, "subMenuId": subMenuId, "isProductPhoto": isProductPhoto, "p": currentPage },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createTable(response);
+                    createPaging(response);
+                    if (isDelete) showToast(1, "Deleted Successfully!");
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        }
+
+        function createTable(response) {
+            $("#tblProduct").find("tbody").empty();
+            $.each(response.LstProduct, function (i, item) {
+                var rows = "<tr class='row table-item'>"
+                + "<td class='col-md-2 col-lg-2'>" + item.ProductName + "</td>"
+                + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
+                + "<td class='col-md-2 col-lg-2'>" + item.MainMenuName + "</td>"
+                + "<td class='col-md-2 col-lg-2'>" + item.SubMenuName + "</td>"
+                + "<td class='col-md-2 col-lg-2'>" + item.SalePrice + "</td>"
+                + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:4px' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:4px' onclick='action(3)'>Delete</button></td>"
+                + "<td style='display:none'>" + item.ProductID + "</td>"
+                + "</tr>";
+                $('#tblProduct tbody').append(rows);
+            });
+        }
+
+        function createPaging(response) {
+            $("#divPagingItem").empty();
+
+            var totalPage = response.TotalPageNum;
+            var pageItem;
+
+            if (totalPage == 0) $("#lblPageNumber").text("");
+            else $("#lblPageNumber").text("Page : " + currentPage);
+
+            for (var i = 1; i <= totalPage; i++) {
+                pageItem += '<button class="btnPage btn paging-item">' + i + '</button>'
+            }
+
+            $('#divPagingItem').append(pageItem);
+        }
+
+        function clearData() {
+            $("#tvSearch").val("");
+            $("#MainMenuID").val("0");
+            $("#SubMenuID").val("0");
+            keyword = "";
+            mainMenuId = 0;
+            subMenuId = 0;
+            currentPage = 1;
+        }
+
+    });
+
+    function action(val) {
+        actionValue = val;
+    }
+
+</script>
+
+

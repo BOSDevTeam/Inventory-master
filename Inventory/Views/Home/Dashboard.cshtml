@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuDashboard').className = 'active';
+    </script>
+</head>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+    })
+
+    localStorage.setItem("UserID", '@Session["LoginUserID"]');
+    localStorage.setItem("UserName", '@Session["LoginUserName"]');
+    if ('@Session["LoginBranchID"]' != '') {
+        localStorage.setItem("BranchID", '@Session["LoginBranchID"]');
+        localStorage.setItem("BranchName", '@Session["LoginBranchName"]');
+    } else {
+        localStorage.setItem("BranchID", 0);
+        localStorage.setItem("BranchName", '');
+    }
+    localStorage.setItem("IsMultiCurrency", '@Session["IsMultiCurrency"]');
+    localStorage.setItem("IsMultiUnit", '@Session["IsMultiUnit"]');
+    localStorage.setItem("IsProductPhoto", '@Session["IsProductPhoto"]');
+    localStorage.setItem("IsBankPayment", '@Session["IsBankPayment"]');
+    localStorage.setItem("IsDifProductByBranch", '@Session["IsDifProductByBranch"]');
+    localStorage.setItem("IsBarcode", '@Session["IsBarcode"]');
+    localStorage.setItem("IsQRcode", '@Session["IsQRcode"]');
+    localStorage.setItem("IsProductVariant", '@Session["IsProductVariant"]');
+    localStorage.setItem("IsProductColor", '@Session["IsProductColor"]');
+    localStorage.setItem("IsProductSize", '@Session["IsProductSize"]');
+
+</script>
+
+   
