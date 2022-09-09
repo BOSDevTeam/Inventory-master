@@ -36,30 +36,6 @@ namespace Inventory.Controllers
                     if ((e.Tax != null && e.Tax != "0") || (e.ServiceCharges != null && e.ServiceCharges != "0")) Session["EditIsTaxChargesVal"] = 1;
                     else Session["EditIsTaxChargesVal"] = 0;
 
-                    if (e.IsMultiCurrency == true) Session["EditIsMultiCurrencyVal"] = 1;
-                    else Session["EditIsMultiCurrencyVal"] = 0;
-
-                    if (e.IsMultiUnit == true) Session["EditIsMultiUnitVal"] = 1;
-                    else Session["EditIsMultiUnitVal"] = 0;
-
-                    if (e.IsMultiBranch == true) Session["EditIsMultiBranchVal"] = 1;
-                    else Session["EditIsMultiBranchVal"] = 0;
-
-                    if (e.IsDifProductByBranch == true) Session["EditIsDifProductByBranchVal"] = 1;
-                    else Session["EditIsDifProductByBranchVal"] = 0;
-
-                    if (e.IsBarcode == true) Session["EditIsBarcodeVal"] = 1;
-                    else Session["EditIsBarcodeVal"] = 0;
-
-                    if (e.IsProductPhoto == true) Session["EditIsProductPhotoVal"] = 1;
-                    else Session["EditIsProductPhotoVal"] = 0;
-
-                    if (e.IsQRcode == true) Session["EditIsQRcodeVal"] = 1;
-                    else Session["EditIsQRcodeVal"] = 0;
-
-                    if (e.IsProductVariant == true) Session["EditIsProductVariantVal"] = 1;
-                    else Session["EditIsProductVariantVal"] = 0;
-
                     if (e.Logo != null)
                     {
                         ViewBag.Photo = true;
@@ -81,7 +57,7 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SaveAction(string companyName, string description, string phone, string email, string website, string address, string tax, string serviceCharges, bool isMultiBranch, bool isMultiUnit, bool isMultiCurrency, bool isBarcode, bool isQRcode, bool isProductVariant, bool isProductPhoto, bool isDifProductByBranch)
+        public JsonResult SaveAction(string companyName, string description, string phone, string email, string website, string address, string tax, string serviceCharges)
         {
             S_CompanySetting table = new S_CompanySetting();
             table.CompanyName = companyName;
@@ -94,14 +70,6 @@ namespace Inventory.Controllers
             else table.Tax = "0";
             if (serviceCharges.Length != 0) table.ServiceCharges = serviceCharges;
             else table.ServiceCharges = "0";
-            table.IsMultiBranch = isMultiBranch;
-            table.IsMultiUnit = isMultiUnit;
-            table.IsMultiCurrency = isMultiCurrency;
-            table.IsBarcode = isBarcode;
-            table.IsQRcode = isQRcode;
-            table.IsProductVariant = isProductVariant;
-            table.IsProductPhoto = isProductPhoto;
-            table.IsDifProductByBranch = isDifProductByBranch;           
 
             if (Session["PhotoFile"] != null)
             {
@@ -118,7 +86,7 @@ namespace Inventory.Controllers
             }
 
             Entities.S_CompanySetting.Add(table);
-            Entities.SaveChanges();          
+            Entities.SaveChanges();
 
             var Result = new
             {
@@ -128,7 +96,7 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult EditAction(string companyName, string description, string phone, string email, string website, string address, string tax, string serviceCharges, bool isMultiBranch, bool isMultiUnit, bool isMultiCurrency, bool isBarcode, bool isQRcode, bool isProductVariant, bool isProductPhoto, bool isDifProductByBranch)
+        public JsonResult EditAction(string companyName, string description, string phone, string email, string website, string address, string tax, string serviceCharges)
         {
             var result = Entities.S_CompanySetting.SingleOrDefault(c => c.CompanyID == editID);
             if (result != null)
@@ -141,14 +109,6 @@ namespace Inventory.Controllers
                 result.Address = address;
                 result.Tax = tax;
                 result.ServiceCharges = serviceCharges;
-                result.IsMultiBranch = isMultiBranch;
-                result.IsMultiUnit = isMultiUnit;
-                result.IsMultiCurrency = isMultiCurrency;
-                result.IsBarcode = isBarcode;
-                result.IsQRcode = isQRcode;
-                result.IsProductVariant = isProductVariant;
-                result.IsProductPhoto = isProductPhoto;
-                result.IsDifProductByBranch = isDifProductByBranch;
 
                 if (Session["PhotoFile"] != null)
                 {
@@ -162,8 +122,8 @@ namespace Inventory.Controllers
                         }
                     }
                     clearSessionPhoto();
-                }             
-                Entities.SaveChanges();              
+                }
+                Entities.SaveChanges();
             }
 
             var Result = new
@@ -179,7 +139,7 @@ namespace Inventory.Controllers
             if (Request.Files.Count > 0)
             {
                 HttpPostedFileBase file = Request.Files[0];
-                Session["PhotoFile"] = file;               
+                Session["PhotoFile"] = file;
             }
             return Json("");
         }

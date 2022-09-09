@@ -33,14 +33,7 @@
                 </div>
             </div>
             <div class="row setup-entry-border padding-20">
-                <div class="col-md-6 col-md-6">
-                    @if (ViewBag.IsMultiBranch == true)
-                    {
-                        <div class="form-group">
-                            <label class="control-label">Branch</label>
-                            @Html.DropDownListFor(m => m.BranchID, Model.Branches, new { @class = "form-control control-input" })
-                        </div>
-                    }
+                <div class="col-md-6 col-md-6">                 
                     <div class="form-group">
                         <label class="control-label">Location</label>
                         @Html.DropDownListFor(m => m.LocationID, Model.Locations, new { @class = "form-control control-input" })
@@ -211,36 +204,7 @@
                     alert("This browser doesn't support HTML5 file uploads!");
                 }
             }
-        });
-
-        $('#BranchID').change(function () {
-            var val = $('#BranchID option:selected').val();
-            showLoadingIcon();
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("BranchSelectAction", "VoucherSetting")',
-                data: { "branchId": val },
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    hideLoadingIcon();
-                    var loc;
-                    $("#LocationID").html("");
-                    for (var i = 0; i < response.length; i++) {
-                        loc += '<option value="' + response[i].LocationID + '">' + response[i].LocationName + '</option>';
-                    }
-                    $("#LocationID").append(loc);
-                },
-                failure: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                }
-            });
-        });
+        });        
 
         $('#btnSave').click(function () {
             var headerName = $('#HeaderName').val();
@@ -252,7 +216,6 @@
             var footerMessage1 = $('#FooterMessage1').val();
             var footerMessage2 = $('#FooterMessage2').val();
             var footerMessage3 = $('#FooterMessage3').val();
-            var branchId = $('#BranchID option:selected').val();
             var locationId = $('#LocationID option:selected').val();
 
             if (headerName.length == 0) {
@@ -270,7 +233,7 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("SaveAction", "VoucherSetting")',
-                    data: { "headerName": headerName, "headerDesp": headerDesp, "headerPhone": headerPhone, "headerAddress": headerAddress, "otherHeader1": otherHeader1, "otherHeader2": otherHeader2, "footerMessage1": footerMessage1, "footerMessage2": footerMessage2, "footerMessage3": footerMessage3, "branchId": branchId, "locationId": locationId },
+                    data: { "headerName": headerName, "headerDesp": headerDesp, "headerPhone": headerPhone, "headerAddress": headerAddress, "otherHeader1": otherHeader1, "otherHeader2": otherHeader2, "footerMessage1": footerMessage1, "footerMessage2": footerMessage2, "footerMessage3": footerMessage3, "locationId": locationId },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
@@ -314,7 +277,6 @@
             var footerMessage1 = $('#FooterMessage1').val();
             var footerMessage2 = $('#FooterMessage2').val();
             var footerMessage3 = $('#FooterMessage3').val();
-            var branchId = $('#BranchID option:selected').val();
             var locationId = $('#LocationID option:selected').val();
 
             if (headerName.length == 0) {
@@ -328,7 +290,7 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("EditAction", "VoucherSetting")',
-                    data: { "headerName": headerName, "headerDesp": headerDesp, "headerPhone": headerPhone, "headerAddress": headerAddress, "otherHeader1": otherHeader1, "otherHeader2": otherHeader2, "footerMessage1": footerMessage1, "footerMessage2": footerMessage2, "footerMessage3": footerMessage3, "branchId": branchId, "locationId": locationId },
+                    data: { "headerName": headerName, "headerDesp": headerDesp, "headerPhone": headerPhone, "headerAddress": headerAddress, "otherHeader1": otherHeader1, "otherHeader2": otherHeader2, "footerMessage1": footerMessage1, "footerMessage2": footerMessage2, "footerMessage3": footerMessage3, "locationId": locationId },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
@@ -379,8 +341,6 @@
             $("#vldName").hide();
         });
 
-        var editBranchID = '@Session["EditBranchID"]';
-        if (editBranchID.length != 0 && editBranchID != 0) $('#BranchID').val(editBranchID);
         var editLocationID = '@Session["EditLocationID"]';
         if (editLocationID.length != 0 && editLocationID != 0) $('#LocationID').val(editLocationID);
 

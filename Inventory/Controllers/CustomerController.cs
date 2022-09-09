@@ -17,13 +17,9 @@ namespace Inventory.Controllers
         static int editCustomerID;
 
         public ActionResult CustomerEntry(int customerId)
-        {
-            ViewBag.IsMultiBranch = isMultiBranch();
-            if (isMultiBranch()) GetBranch();
+        {           
             GetDivision();
            
-
-
             if (customerId != 0)
             {
                 Session["IsEdit"] = 1;
@@ -37,7 +33,6 @@ namespace Inventory.Controllers
                     Session["EditEmail"] = e.Email;
                     Session["EditContact"] = e.Contact;
                     Session["EditAddress"] = e.Address;
-                    Session["EditBranchID"] = e.BranchID;
                     Session["EditTownshipID"] = e.TownshipID;
                     Session["EditDivisionID"] = e.DivisionID;
                     GetTownship(e.DivisionID);
@@ -55,8 +50,6 @@ namespace Inventory.Controllers
 
         public ActionResult CustomerList()
         {
-            ViewBag.IsMultiBranch = isMultiBranch();
-            if (isMultiBranch()) GetBranchDefaultInclude();
             GetTownshipDefaultInclude();
 
             CustomerModels.CustomerModel customerModel = new CustomerModels.CustomerModel();
@@ -76,9 +69,7 @@ namespace Inventory.Controllers
                 else customerModel.Credit = "Not Allow Credit";
                 customerModel.IsDefault = customer.IsDefault;
                 customerModel.Address = customer.Address;
-                customerModel.Email = customer.Email;
-                customerModel.BranchID = customer.BranchID;
-                customerModel.BranchName = customer.BranchName;
+                customerModel.Email = customer.Email;             
                 customerModel.TownshipID = customer.TownshipID;
                 customerModel.TownshipName = customer.TownshipName;
                 customerModel.DivisionID = Convert.ToInt32(customer.DivisionID);
@@ -92,14 +83,14 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SaveAction(string customerName, string code, string phone, string email, string contact, string address, int townshipId, int? branchId, bool isCredit,int divisionId)
+        public JsonResult SaveAction(string customerName, string code, string phone, string email, string contact, string address, int townshipId, bool isCredit,int divisionId)
         {
             string message;
             int saveOk;
             var cust = (from cus in Entities.S_Customer where cus.Code == code select cus).ToList();
             if (cust.Count() == 0)
             {
-                Entities.PrcInsertCustomer(customerName, code, phone, email, address, contact, townshipId, branchId, isCredit, divisionId);
+                Entities.PrcInsertCustomer(customerName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
                 message = "Saved Successfully!";
                 saveOk = 1;
             }
@@ -120,7 +111,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult ViewAction(int customerId)
         {
-            string customerName = "", code = "", phone = "", email = "", address = "", branchName = "", contact = "", townshipName = "", credit = "" , divisionName = "";
+            string customerName = "", code = "", phone = "", email = "", address = "", contact = "", townshipName = "", credit = "" , divisionName = "";
             var viewCustomer = lstCustomerList.Where(c => c.CustomerID == customerId);
             foreach (var e in viewCustomer)
             {
@@ -128,8 +119,7 @@ namespace Inventory.Controllers
                 code = e.Code;
                 phone = e.Phone;
                 email = e.Email;
-                address = e.Address;
-                branchName = e.BranchName;
+                address = e.Address;               
                 contact = e.Contact;
                 townshipName = e.TownshipName;
                 divisionName = e.DivisionName;
@@ -143,8 +133,7 @@ namespace Inventory.Controllers
                 Code = code,
                 Phone = phone,
                 Email = email,
-                Address = address,
-                BranchName = branchName,
+                Address = address,              
                 Contact = contact,
                 TownshipName = townshipName,
                 DivisionName = divisionName,
@@ -155,14 +144,14 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult EditAction(string customerName, string code, string phone, string email, string contact, string address, int townshipId, int? branchId, bool isCredit,int divisionId)
+        public JsonResult EditAction(string customerName, string code, string phone, string email, string contact, string address, int townshipId, bool isCredit,int divisionId)
         {
             string message;
             int editOk;
             var cust = (from cus in Entities.S_Customer where cus.Code == code where cus.CustomerID != editCustomerID select cus).ToList();
             if (cust.Count() == 0)
             {
-                Entities.PrcUpdateCustomer(editCustomerID, customerName, code, phone, email, address, contact, townshipId, branchId, isCredit, divisionId);
+                Entities.PrcUpdateCustomer(editCustomerID, customerName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
                 message = "Edited Successfully!";
                 editOk = 1;
             }
@@ -182,13 +171,13 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SearchAction(string keyword, int? branchId, int? townshipId)
+        public JsonResult SearchAction(string keyword, int? townshipId)
         {
             CustomerModels.CustomerModel customerModel = new CustomerModels.CustomerModel();
             model.LstCustomer = new List<CustomerModels.CustomerModel>();
             lstCustomerList = new List<CustomerModels.CustomerModel>();
 
-            foreach (var customer in Entities.PrcSearchCustomer(keyword, branchId, townshipId))
+            foreach (var customer in Entities.PrcSearchCustomer(keyword, townshipId))
             {
                 customerModel = new CustomerModels.CustomerModel();
                 customerModel.CustomerID = customer.CustomerID;
@@ -201,9 +190,7 @@ namespace Inventory.Controllers
                 else customerModel.Credit = "Not Allow Credit";
                 customerModel.IsDefault = customer.IsDefault;
                 customerModel.Address = customer.Address;
-                customerModel.Email = customer.Email;
-                customerModel.BranchID = customer.BranchID;
-                customerModel.BranchName = customer.BranchName;
+                customerModel.Email = customer.Email;              
                 customerModel.TownshipID = customer.TownshipID;
                 customerModel.TownshipName = customer.TownshipName;
                 customerModel.DivisionID = customer.DivisionID;
@@ -272,31 +259,6 @@ namespace Inventory.Controllers
                 lstwon.Add(town);
             }
             return Json(lstwon, JsonRequestBehavior.AllowGet);
-        }
-
-        private void GetBranch()
-        {
-            foreach (var branch in Entities.S_Branch.OrderBy(m => m.Code))
-            {
-                model.Branches.Add(new SelectListItem { Text = branch.BranchName, Value = branch.BranchID.ToString() });
-            }
-        }
-
-        private void GetBranchDefaultInclude()
-        {
-            model.Branches.Add(new SelectListItem { Text = "Branch", Value = "0" });
-            foreach (var branch in Entities.S_Branch.OrderBy(m => m.Code))
-            {
-                model.Branches.Add(new SelectListItem { Text = branch.BranchName, Value = branch.BranchID.ToString() });
-            }
-        }
-
-        private bool isMultiBranch()
-        {
-            CompanySettingModels cModel = new CompanySettingModels();
-            var isMultiBranch = Entities.S_CompanySetting.Select(c => c.IsMultiBranch);
-            cModel.IsMultiBranch = isMultiBranch.FirstOrDefault();
-            return Convert.ToBoolean(cModel.IsMultiBranch);
         }
 
         private void GetTownship(int editdivisionId)

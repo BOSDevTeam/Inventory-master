@@ -17,13 +17,8 @@ namespace Inventory.Controllers
 
         public ActionResult SupplierEntry(int supplierId)
         {         
-            ViewBag.IsMultiBranch = isMultiBranch();
-            if (isMultiBranch()) GetBranch();
             GetDivision();
            
-            
-
-
             if (supplierId != 0)
             {
                 
@@ -37,8 +32,7 @@ namespace Inventory.Controllers
                     Session["EditPhone"] = e.Phone;
                     Session["EditEmail"] = e.Email;
                     Session["EditContact"] = e.Contact;
-                    Session["EditAddress"] = e.Address;
-                    Session["EditBranchID"] = e.BranchID;
+                    Session["EditAddress"] = e.Address;                 
                     Session["EditTownshipID"] = e.TownshipID;
                     Session["EditDivisionID"] = e.DivisionID;
                     GetTownship(e.DivisionID);
@@ -56,8 +50,6 @@ namespace Inventory.Controllers
 
         public ActionResult SupplierList()
         {           
-            ViewBag.IsMultiBranch = isMultiBranch();
-            if (isMultiBranch()) GetBranchDefaultInclude();
             GetTownshipDefaultInclude();
             SupplierModels.SupplierModel supplierModel = new SupplierModels.SupplierModel();
             model.LstSupplier = new List<SupplierModels.SupplierModel>();
@@ -76,9 +68,7 @@ namespace Inventory.Controllers
                 else supplierModel.Credit = "Not Allow Credit";
                 supplierModel.IsDefault = supplier.IsDefault;
                 supplierModel.Address = supplier.Address;
-                supplierModel.Email = supplier.Email;
-                supplierModel.BranchID = supplier.BranchID;
-                supplierModel.BranchName = supplier.BranchName;
+                supplierModel.Email = supplier.Email;               
                 supplierModel.TownshipID = supplier.TownshipID;
                 supplierModel.TownshipName = supplier.TownshipName;
                 supplierModel.DivisionID = supplier.DivisionID;
@@ -92,14 +82,14 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SaveAction(string supplierName, string code, string phone, string email, string contact, string address, int townshipId, int? branchId, bool isCredit, int divisionId)
+        public JsonResult SaveAction(string supplierName, string code, string phone, string email, string contact, string address, int townshipId, bool isCredit, int divisionId)
         {
             string message;
             int saveOk;
             var supt = (from sup in Entities.S_Supplier where sup.Code == code select sup).ToList();
             if (supt.Count() == 0)
             {
-                Entities.PrcInsertSupplier(supplierName, code, phone, email, address, contact, townshipId, branchId, isCredit, divisionId);
+                Entities.PrcInsertSupplier(supplierName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
                 message = "Saved Successfully!";
                 saveOk = 1;
             }
@@ -120,7 +110,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult ViewAction(int supplierId)
         {
-            string supplierName = "", code = "", phone = "", email = "", address = "", branchName = "", contact = "", townshipName = "", credit = "", divisionName ="";
+            string supplierName = "", code = "", phone = "", email = "", address = "", contact = "", townshipName = "", credit = "", divisionName ="";
             var viewSupplier = lstSupplierList.Where(c => c.SupplierID == supplierId);
             foreach (var e in viewSupplier)
             {
@@ -128,8 +118,7 @@ namespace Inventory.Controllers
                 code = e.Code;
                 phone = e.Phone;
                 email = e.Email;
-                address = e.Address;
-                branchName = e.BranchName;
+                address = e.Address;           
                 contact = e.Contact;
                 townshipName = e.TownshipName;
                 divisionName = e.DivisionName;
@@ -143,8 +132,7 @@ namespace Inventory.Controllers
                 Code = code,
                 Phone = phone,
                 Email = email,
-                Address = address,
-                BranchName = branchName,
+                Address = address,               
                 Contact = contact,
                 TownshipName = townshipName,
                 DivisionName = divisionName,
@@ -155,14 +143,14 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult EditAction(string supplierName, string code, string phone, string email, string contact, string address, int townshipId, int? branchId, bool isCredit, int divisionId)
+        public JsonResult EditAction(string supplierName, string code, string phone, string email, string contact, string address, int townshipId, bool isCredit, int divisionId)
         {
             string message;
             int editOk;
             var supt = (from sup in Entities.S_Supplier where sup.Code == code where sup.SupplierID != editSupplierID select sup).ToList();
             if (supt.Count() == 0)
             {
-                Entities.PrcUpdateSupplier(editSupplierID, supplierName, code, phone, email, address, contact, townshipId, branchId, isCredit, divisionId);
+                Entities.PrcUpdateSupplier(editSupplierID, supplierName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
                 message = "Edited Successfully!";
                 editOk = 1;
             }
@@ -197,25 +185,14 @@ namespace Inventory.Controllers
             return Json(lstwon, JsonRequestBehavior.AllowGet);
         }
 
-        /*
         [HttpGet]
-        private void getTownshipByDivision(int divisionId)
-        {
-            foreach (var town in Entities.PrcGetDivisionSelectTownship(divisionId))
-            {
-                model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
-            }
-        }
-        */
-
-        [HttpGet]
-        public JsonResult SearchAction(string keyword, int? branchId, int? townshipId)
+        public JsonResult SearchAction(string keyword, int? townshipId)
         {
             SupplierModels.SupplierModel supplierModel = new SupplierModels.SupplierModel();
             model.LstSupplier = new List<SupplierModels.SupplierModel>();
             lstSupplierList = new List<SupplierModels.SupplierModel>();
 
-            foreach (var supplier in Entities.PrcSearchSupplier(keyword, branchId, townshipId))
+            foreach (var supplier in Entities.PrcSearchSupplier(keyword, townshipId))
             {
                 supplierModel = new SupplierModels.SupplierModel();
                 supplierModel.SupplierID = supplier.SupplierID;
@@ -228,9 +205,7 @@ namespace Inventory.Controllers
                 else supplierModel.Credit = "Not Allow Credit";
                 supplierModel.IsDefault = supplier.IsDefault;
                 supplierModel.Address = supplier.Address;
-                supplierModel.Email = supplier.Email;
-                supplierModel.BranchID = supplier.BranchID;
-                supplierModel.BranchName = supplier.BranchName;
+                supplierModel.Email = supplier.Email;              
                 supplierModel.TownshipID = supplier.TownshipID;
                 supplierModel.TownshipName = supplier.TownshipName;
                 supplierModel.DivisionID = supplier.DivisionID;
@@ -266,31 +241,6 @@ namespace Inventory.Controllers
             };
 
             return Json(myResult, JsonRequestBehavior.AllowGet);
-        }
-
-        private void GetBranch()
-        {
-            foreach (var branch in Entities.S_Branch.OrderBy(m => m.Code))
-            {
-                model.Branches.Add(new SelectListItem { Text = branch.BranchName, Value = branch.BranchID.ToString() });
-            }
-        }
-
-        private void GetBranchDefaultInclude()
-        {
-            model.Branches.Add(new SelectListItem { Text = "Branch", Value = "0" });
-            foreach (var branch in Entities.S_Branch.OrderBy(m => m.Code))
-            {
-                model.Branches.Add(new SelectListItem { Text = branch.BranchName, Value = branch.BranchID.ToString() });
-            }
-        }
-
-        private bool isMultiBranch()
-        {
-            CompanySettingModels cModel = new CompanySettingModels();
-            var isMultiBranch = Entities.S_CompanySetting.Select(c => c.IsMultiBranch);
-            cModel.IsMultiBranch = isMultiBranch.FirstOrDefault();
-            return Convert.ToBoolean(cModel.IsMultiBranch);
         }
 
         private void GetDivision()

@@ -116,41 +116,7 @@
                         <div id="error" style="display:none"><span style="color:red">Photo is larger than 200pixels!</span></div>
                     </div>
 
-                    <div class="form-group general-div">
-                        @*<div class="form-group">
-                                @Html.CheckBoxFor(m => m.IsMultiBranch, new { @class = "control-input", onchange = "IsMultiBranchCheck(this.checked)", id = "chkIsMultiBranch" }) <label class="control-label">Allow Multi Branch</label>
-                                <div class="row" style="padding:10px;display:none" id="divRadio">
-                                    <div class="col-md-6 col-lg-6">
-                                        @Html.RadioButtonFor(m => m.IsSameProductByBranch, new { id = "rdoSameProduct", onchange = "IsSameProductByBranchCheck(this.checked)" })  <label class="control-label" style="color:#09c8d0">Same Product in All Branch</label>
-                                    </div>
-                                    <div class="col-md-6 col-lg-6">
-                                        @Html.RadioButtonFor(m => m.IsDifProductByBranch, new { id = "rdoDifProduct", onchange = "IsDifProductByBranchCheck(this.checked)" })  <label class="control-label" style="color:#09c8d0">Difference Product by Branch</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                @Html.CheckBoxFor(m => m.IsMultiUnit, new { @class = "control-input", onchange = "IsMultiUnitCheck(this.checked)", id = "chkIsMultiUnit" }) <label class="control-label">Allow Multi Unit</label>
-                                <div class="row" style="padding:10px">
-                                    <div class="col-md-6 col-lg-6">
-                                        @Html.CheckBoxFor(m => m.IsMultiUnit, new { @class = "control-input", onchange = "IsMultiUnitCheck(this.checked)", id = "chkIsMultiUnit" }) <label class="control-label">Allow Multi Unit</label>
-                                    </div>
-                                    <div class="col-md-6 col-lg-6">
-                                        @Html.CheckBoxFor(m => m.IsProductVariant, new { @class = "control-input", onchange = "IsProductVariantCheck(this.checked)", id = "chkProductVariant" }) <label class="control-label">Use Product Variant</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                @Html.CheckBoxFor(m => m.IsMultiCurrency, new { @class = "control-input", onchange = "IsMultiCurrencyCheck(this.checked)", id = "chkIsMultiCurrency" }) <label class="control-label">Allow Multi Currency</label>
-                            </div>
-                            <div class="form-group" style="display:none">
-                                @Html.CheckBoxFor(m => m.IsBarcode, new { @class = "control-input", onchange = "IsBarcodeCheck(this.checked)", id = "chkBarcode" }) <label class="control-label">Use Barcode</label>
-                            </div>
-                            <div class="form-group" style="display:none">
-                                @Html.CheckBoxFor(m => m.IsQRcode, new { @class = "control-input", onchange = "IsQRcodeCheck(this.checked)", id = "chkQRCode" }) <label class="control-label">Use QR Code</label>
-                            </div>
-                            <div class="form-group">
-                                @Html.CheckBoxFor(m => m.IsProductPhoto, new { @class = "control-input", onchange = "IsProductPhotoCheck(this.checked)", id = "chkPhotoInProduct" }) <label class="control-label">Use Photo in Product</label>
-                            </div>*@
+                    <div class="form-group general-div">                        
                         <div class="form-group">
                             @Html.CheckBoxFor(m => m.IsUseTaxServiceCharges, new { @class = "control-input", onchange = "IsUseTaxServiceChargesCheck(this.checked)", id = "chkTaxServiceCharges" }) <label class="control-label">Tax & Service Charges</label>
                         </div>
@@ -196,8 +162,7 @@
 
 <script type="text/javascript">
 
-        var isMultiBranch = false, isUserTaxServiceCharges = false, isMultiUnit = false, isMultiCurrency = false, isBarcode = false;
-        var isQRcode = false, isProductVariant = false, isProductPhoto = false, isDifProductByBranch=false;
+    var isUserTaxServiceCharges = false;
 
         $(function () {
 
@@ -269,7 +234,7 @@
                     $.ajax({
                         type: "GET",
                         url: '@Url.Action("SaveAction", "CompanySetting")',
-                        data: { "companyName": companyName, "description": description, "phone": phone, "email": email, "website": website, "address": address, "tax": tax, "serviceCharges": serviceCharges, "isMultiBranch": isMultiBranch, "isMultiUnit": isMultiUnit, "isMultiCurrency": isMultiCurrency, "isBarcode": isBarcode, "isQRcode": isQRcode, "isProductVariant": isProductVariant, "isProductPhoto": isProductPhoto, "isDifProductByBranch": isDifProductByBranch },
+                        data: { "companyName": companyName, "description": description, "phone": phone, "email": email, "website": website, "address": address, "tax": tax, "serviceCharges": serviceCharges },
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (response) {
@@ -311,7 +276,7 @@
                     $.ajax({
                         type: "GET",
                         url: '@Url.Action("EditAction", "CompanySetting")',
-                        data: { "companyName": companyName, "description": description, "phone": phone, "email": email, "website": website, "address": address, "tax": tax, "serviceCharges": serviceCharges, "isMultiBranch": isMultiBranch, "isMultiUnit": isMultiUnit, "isMultiCurrency": isMultiCurrency, "isBarcode": isBarcode, "isQRcode": isQRcode, "isProductVariant": isProductVariant, "isProductPhoto": isProductPhoto, "isDifProductByBranch": isDifProductByBranch },
+                        data: { "companyName": companyName, "description": description, "phone": phone, "email": email, "website": website, "address": address, "tax": tax, "serviceCharges": serviceCharges },
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (response) {
@@ -347,29 +312,7 @@
             });
 
             var isEdit = '@Session["IsEdit"]';
-            if (isEdit == 1) {
-                var editIsMultiBranch = '@Session["EditIsMultiBranchVal"]';
-                if (editIsMultiBranch == 1) {
-                    $("#chkIsMultiBranch").prop("checked", true);
-                    $("#divRadio").hide();
-                    isMultiBranch = true;
-                } else if (editIsMultiBranch == 0) {
-                    $("#chkIsMultiBranch").prop("checked", false);
-                    $("#divRadio").hide();
-                    isMultiBranch = false;
-                }
-
-                var editIsDifProductByBranch = '@Session["EditIsDifProductByBranchVal"]';
-                if (editIsDifProductByBranch == 1) {
-                    $("#IsDifProductByBranch").attr("checked", true);
-                    $("#IsSameProductByBranch").attr("checked", false);
-                    isDifProductByBranch = true;
-                } else if (editIsDifProductByBranch == 0) {
-                    $("#IsDifProductByBranch").attr("checked", false);
-                    $("#IsSameProductByBranch").attr("checked", true);
-                    isDifProductByBranch = false;
-                }
-
+            if (isEdit == 1) {               
                 var editIsTaxCharges = '@Session["EditIsTaxChargesVal"]';
                 if (editIsTaxCharges == 1) {
                     $("#chkTaxServiceCharges").prop("checked", true);
@@ -381,61 +324,7 @@
                     $("#divTax").hide();
                     $("#divServiceCharges").hide();
                     isUserTaxServiceCharges = false;
-                }
-
-                var editIsMultiCurrency = '@Session["EditIsMultiCurrencyVal"]';
-                if (editIsMultiCurrency == 1) {
-                    $("#chkIsMultiCurrency").prop("checked", true);
-                    isMultiCurrency = true;
-                } else if (editIsMultiCurrency == 0) {
-                    $("#chkIsMultiCurrency").prop("checked", false);
-                    isMultiCurrency = false;
-                }
-
-                var editIsMultiUnit = '@Session["EditIsMultiUnitVal"]';
-                if (editIsMultiUnit == 1) {
-                    $("#chkIsMultiUnit").prop("checked", true);
-                    isMultiUnit = true;
-                } else if (editIsMultiUnit == 0) {
-                    $("#chkIsMultiUnit").prop("checked", false);
-                    isMultiUnit = false;
-                }
-
-                var editIsBarcode = '@Session["EditIsBarcodeVal"]';
-                if (editIsBarcode == 1) {
-                    $("#chkBarcode").prop("checked", true);
-                    isBarcode = true;
-                } else if (editIsBarcode == 0) {
-                    $("#chkBarcode").prop("checked", false);
-                    isBarcode = false;
-                }
-
-                var editIsQRcode = '@Session["EditIsQRcodeVal"]';
-                if (editIsQRcode == 1) {
-                    $("#chkQRCode").prop("checked", true);
-                    isQRcode = true;
-                } else if (editIsQRcode == 0) {
-                    $("#chkQRCode").prop("checked", false);
-                    isQRcode = false;
-                }
-
-                var editIsProductVariant = '@Session["EditIsProductVariantVal"]';
-                if (editIsProductVariant == 1) {
-                    $("#chkProductVariant").prop("checked", true);
-                    isProductVariant = true;
-                } else if (editIsProductVariant == 0) {
-                    $("#chkProductVariant").prop("checked", false);
-                    isProductVariant = false;
-                }
-
-                var editIsProductPhoto = '@Session["EditIsProductPhotoVal"]';
-                if (editIsProductPhoto == 1) {
-                    $("#chkPhotoInProduct").prop("checked", true);
-                    isProductPhoto = true;
-                } else if (editIsProductPhoto == 0) {
-                    $("#chkPhotoInProduct").prop("checked", false);
-                    isProductPhoto = false;
-                }
+                }                  
             }
 
         });
@@ -454,19 +343,7 @@
         }
         img.src = objectURL;
 
-    };
-
-
-        function IsMultiBranchCheck(checked) {
-            if (checked == true) {
-                $("#divRadio").hide();
-                isMultiBranch = true;
-            }
-            else {
-                $("#divRadio").hide();
-                isMultiBranch = false;
-            }
-        }
+    };      
         function IsUseTaxServiceChargesCheck(checked) {
             if (checked == true) {
                 $("#divTax").show();
@@ -480,80 +357,7 @@
                 $('#Tax').val('0');
                 $('#ServiceCharges').val('0');
             }
-        }
-        //function IsSameProductByBranchCheck(checked) {
-        //    alert("HI");
-        //    if (checked == true) {
-        //        $("#IsDifProductByBranch").attr("checked", false);
-        //        isDifProductByBranch = false;
-        //    }
-        //    else {
-        //        $("#IsDifProductByBranch").attr("checked", true);
-        //        isDifProductByBranch = true;
-        //    }
-        //}
-        //function IsDifProductByBranchCheck(checked) {
-        //    alert("HI");
-        //    if (checked == true) {
-        //        $("#IsSameProductByBranch").attr("checked", false);
-        //        isDifProductByBranch = true;
-        //    }
-        //    else {
-        //        $("#IsSameProductByBranch").attr("checked", true);
-        //        isDifProductByBranch = false;
-        //    }
-        //}
-        function IsMultiUnitCheck(checked) {
-            if (checked == true) {
-                isMultiUnit = true;
-            }
-            else {
-                isMultiUnit = false;
-            }
-        }
-        function IsMultiCurrencyCheck(checked) {
-            if (checked == true) {
-                isMultiCurrency = true;
-            }
-            else {
-                isMultiCurrency = false;
-            }
-        }
-        function IsBarcodeCheck(checked) {
-            if (checked == true) {
-                isBarcode = true;
-                alert(checked)
-            }
-            else {
-                isBarcode = false;
-                alert(checked)
-            }
-        }
-        function IsQRcodeCheck(checked) {
-            if (checked == true) {
-                isQRcode = true;
-            }
-            else {
-                isQRcode = false;
-            }
-        }
-        function IsProductVariantCheck(checked) {
-            if (checked == true) {
-                isProductVariant = true;
-            }
-            else {
-                isProductVariant = false;
-            }
-        }
-        function IsProductPhotoCheck(checked) {
-            if (checked == true) {
-                isProductPhoto = true;
-            }
-            else {
-                isProductPhoto = false;
-            }
-        }
-
+        }    
 </script>
 
 

@@ -13,12 +13,10 @@ namespace Inventory.Models
         public class LocationModel
         {
             public LocationModel()
-            {
-                this.Branches = new List<SelectListItem>();
+            {             
                 this.LstLocation = new List<LocationModels.LocationModel>();
             }
-            public List<LocationModels.LocationModel> LstLocation { get; set; }
-            public List<SelectListItem> Branches { get; set; }
+            public List<LocationModels.LocationModel> LstLocation { get; set; }          
             public int LocationID { get; set; }
             [DisplayName("Name")]
             [Required(ErrorMessage = "Please Enter Location Name")]
@@ -33,10 +31,7 @@ namespace Inventory.Models
             public string Phone { get; set; }
             public string Address { get; set; }
             [EmailAddress(ErrorMessage = "Invalid Email Address")]
-            public string Email { get; set; }
-            public int? BranchID { get; set; }
-            [DisplayName("Branch")]
-            public string BranchName { get; set; }
+            public string Email { get; set; }          
         }
     }
 }

@@ -16,8 +16,7 @@ namespace Inventory.Controllers
         static int editVouSettingID;
 
         public ActionResult VoucherSettingEntry(int Id)
-        {           
-            ViewBag.IsMultiBranch = isMultiBranch();
+        {
             clearSessionPhoto();
             if (Id != 0)
             {
@@ -25,8 +24,7 @@ namespace Inventory.Controllers
                 editVouSettingID = Id;
                 var editVouSetting = lstVouSettingList.Where(c => c.ID == Id);
                 foreach (var e in editVouSetting)
-                {
-                    Session["EditBranchID"] = e.BranchID;
+                {                  
                     Session["EditLocationID"] = e.LocationID;
                     Session["EditHeaderName"] = e.HeaderName;
                     Session["EditHeaderDesp"] = e.HeaderDesp;
@@ -49,10 +47,7 @@ namespace Inventory.Controllers
                         ViewBag.Photo = false;
                     }
 
-                    if (e.BranchID != 0) GetLocation(e.BranchID);
-                    else GetAllLocation();
-
-                    if (isMultiBranch()) GetBranch();
+                    GetAllLocation();
 
                     break;
                 }
@@ -60,23 +55,13 @@ namespace Inventory.Controllers
             else
             {
                 Session["IsEdit"] = 0;
-                if (isMultiBranch())
-                {
-                    GetBranch();
-                    GetLocation();
-                }
-                else
-                {
-                    GetAllLocation();
-                }
+                GetAllLocation();
             }
             return View(model);
         }
 
         public ActionResult VoucherSettingList()
         {           
-            ViewBag.IsMultiBranch = isMultiBranch();
-            if (isMultiBranch()) GetBranchDefaultInclude();
             GetLocationDefaultInclude();
             VoucherSettingModels vouSettingModel = new VoucherSettingModels();
             model.LstVoucherSetting = new List<VoucherSettingModels>();
@@ -85,9 +70,7 @@ namespace Inventory.Controllers
             foreach (var vou in Entities.PrcGetVoucherSetting())
             {
                 vouSettingModel = new VoucherSettingModels();
-                vouSettingModel.ID = vou.ID;
-                vouSettingModel.BranchID = vou.BranchID;
-                vouSettingModel.BranchName = vou.BranchName;
+                vouSettingModel.ID = vou.ID;               
                 vouSettingModel.LocationID = vou.LocationID;
                 vouSettingModel.LocationName = vou.LocationName;
                 vouSettingModel.HeaderName = vou.HeaderName;
@@ -114,18 +97,16 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SearchAction(int branchId)
+        public JsonResult SearchAction()
         {
             VoucherSettingModels vouSettingModel = new VoucherSettingModels();
             model.LstVoucherSetting = new List<VoucherSettingModels>();
             lstVouSettingList = new List<VoucherSettingModels>();
 
-            foreach (var vou in Entities.PrcSearchVoucherSetting(branchId))
+            foreach (var vou in Entities.PrcGetVoucherSetting())
             {
                 vouSettingModel = new VoucherSettingModels();
-                vouSettingModel.ID = vou.ID;
-                vouSettingModel.BranchID = vou.BranchID;
-                vouSettingModel.BranchName = vou.BranchName;
+                vouSettingModel.ID = vou.ID;             
                 vouSettingModel.LocationID = vou.LocationID;
                 vouSettingModel.LocationName = vou.LocationName;
                 vouSettingModel.HeaderName = vou.HeaderName;
@@ -152,97 +133,50 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SaveAction(string headerName, string headerDesp, string headerPhone, string headerAddress, string otherHeader1, string otherHeader2, string footerMessage1, string footerMessage2, string footerMessage3, int? branchId, int locationId)
+        public JsonResult SaveAction(string headerName, string headerDesp, string headerPhone, string headerAddress, string otherHeader1, string otherHeader2, string footerMessage1, string footerMessage2, string footerMessage3, int locationId)
         {
             string message;
             int saveOk;
-            if (!isMultiBranch())
-            {
-                var settings = (from setting in Entities.S_VoucherSetting where setting.LocationID == locationId select setting).ToList();
-                if (settings.Count() == 0)
-                {
-                    S_VoucherSetting table = new S_VoucherSetting();
-                    table.HeaderName = headerName;
-                    table.HeaderDesp = headerDesp;
-                    table.HeaderPhone = headerPhone;
-                    table.HeaderAddress = headerAddress;
-                    table.OtherHeader1 = otherHeader1;
-                    table.OtherHeader2 = otherHeader2;
-                    table.FooterMessage1 = footerMessage1;
-                    table.FooterMessage2 = footerMessage2;
-                    table.FooterMessage3 = footerMessage3;
-                    table.BranchID = branchId;
-                    table.LocationID = locationId;
-                
-                    if (Session["PhotoFile"] != null)
-                    {
-                        HttpPostedFileBase file = (HttpPostedFileBase)Session["PhotoFile"];
-                        if (file != null)
-                        {
-                            if (file.ContentLength > 0)
-                            {
-                                table.VoucherLogo = new byte[file.ContentLength];
-                                file.InputStream.Read(table.VoucherLogo, 0, file.ContentLength);
-                            }
-                        }
-                        clearSessionPhoto();
-                    }
 
-                    Entities.S_VoucherSetting.Add(table);
-                    Entities.SaveChanges();
-               
-                    message = "Saved Successfully!";
-                    saveOk = 1;
-                }
-                else
+            var settings = (from setting in Entities.S_VoucherSetting where setting.LocationID == locationId select setting).ToList();
+            if (settings.Count() == 0)
+            {
+                S_VoucherSetting table = new S_VoucherSetting();
+                table.HeaderName = headerName;
+                table.HeaderDesp = headerDesp;
+                table.HeaderPhone = headerPhone;
+                table.HeaderAddress = headerAddress;
+                table.OtherHeader1 = otherHeader1;
+                table.OtherHeader2 = otherHeader2;
+                table.FooterMessage1 = footerMessage1;
+                table.FooterMessage2 = footerMessage2;
+                table.FooterMessage3 = footerMessage3;              
+                table.LocationID = locationId;
+
+                if (Session["PhotoFile"] != null)
                 {
-                    message = "Allow Only One Voucher Setting for One Location!";
-                    saveOk = 0;
+                    HttpPostedFileBase file = (HttpPostedFileBase)Session["PhotoFile"];
+                    if (file != null)
+                    {
+                        if (file.ContentLength > 0)
+                        {
+                            table.VoucherLogo = new byte[file.ContentLength];
+                            file.InputStream.Read(table.VoucherLogo, 0, file.ContentLength);
+                        }
+                    }
+                    clearSessionPhoto();
                 }
+
+                Entities.S_VoucherSetting.Add(table);
+                Entities.SaveChanges();
+
+                message = "Saved Successfully!";
+                saveOk = 1;
             }
             else
             {
-                var settings = (from setting in Entities.S_VoucherSetting where setting.BranchID == branchId where setting.LocationID == locationId select setting).ToList();
-                if (settings.Count() == 0)
-                {
-                    S_VoucherSetting table = new S_VoucherSetting();
-                    table.HeaderName = headerName;
-                    table.HeaderDesp = headerDesp;
-                    table.HeaderPhone = headerPhone;
-                    table.HeaderAddress = headerAddress;
-                    table.OtherHeader1 = otherHeader1;
-                    table.OtherHeader2 = otherHeader2;
-                    table.FooterMessage1 = footerMessage1;
-                    table.FooterMessage2 = footerMessage2;
-                    table.FooterMessage3 = footerMessage3;
-                    table.BranchID = branchId;
-                    table.LocationID = locationId;
-
-                    if (Session["PhotoFile"] != null)
-                    {
-                        HttpPostedFileBase file = (HttpPostedFileBase)Session["PhotoFile"];
-                        if (file != null)
-                        {
-                            if (file.ContentLength > 0)
-                            {
-                                table.VoucherLogo = new byte[file.ContentLength];
-                                file.InputStream.Read(table.VoucherLogo, 0, file.ContentLength);
-                            }
-                        }
-                        clearSessionPhoto();
-                    }
-              
-                    Entities.S_VoucherSetting.Add(table);
-                    Entities.SaveChanges();
-                 
-                    message = "Saved Successfully!";
-                    saveOk = 1;
-                }
-                else
-                {
-                    message = "Allow Only One Voucher Setting for One Branch and One Location!";
-                    saveOk = 0;
-                }
+                message = "Allow Only One Voucher Setting for One Location!";
+                saveOk = 0;
             }
 
             var Result = new
@@ -254,102 +188,53 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult EditAction(string headerName, string headerDesp, string headerPhone, string headerAddress, string otherHeader1, string otherHeader2, string footerMessage1, string footerMessage2, string footerMessage3, int? branchId, int locationId)
+        public JsonResult EditAction(string headerName, string headerDesp, string headerPhone, string headerAddress, string otherHeader1, string otherHeader2, string footerMessage1, string footerMessage2, string footerMessage3, int locationId)
         {
             string message = "";
             int editOk = 0;
-            if (isMultiBranch())
+
+            var settings = (from setting in Entities.S_VoucherSetting where setting.ID != editVouSettingID where setting.LocationID == locationId select setting).ToList();
+            if (settings.Count() == 0)
             {
-                var settings = (from setting in Entities.S_VoucherSetting where setting.ID != editVouSettingID where setting.BranchID == branchId where setting.LocationID == locationId select setting).ToList();
-                if (settings.Count() == 0)
+                var result = Entities.S_VoucherSetting.SingleOrDefault(c => c.ID == editVouSettingID);
+                if (result != null)
                 {
-                    var result = Entities.S_VoucherSetting.SingleOrDefault(c => c.ID == editVouSettingID);
-                    if (result != null)
+                    S_VoucherSetting table = new S_VoucherSetting();
+                    table.HeaderName = headerName;
+                    table.HeaderDesp = headerDesp;
+                    table.HeaderPhone = headerPhone;
+                    table.HeaderAddress = headerAddress;
+                    table.OtherHeader1 = otherHeader1;
+                    table.OtherHeader2 = otherHeader2;
+                    table.FooterMessage1 = footerMessage1;
+                    table.FooterMessage2 = footerMessage2;
+                    table.FooterMessage3 = footerMessage3;                 
+                    table.LocationID = locationId;
+
+                    if (Session["PhotoFile"] != null)
                     {
-                        result.HeaderName = headerName;
-                        result.HeaderDesp = headerDesp;
-                        result.HeaderPhone = headerPhone;
-                        result.HeaderAddress = headerAddress;
-                        result.OtherHeader1 = otherHeader1;
-                        result.OtherHeader2 = otherHeader2;
-                        result.FooterMessage1 = footerMessage1;
-                        result.FooterMessage2 = footerMessage2;
-                        result.FooterMessage3 = footerMessage3;
-                        result.BranchID = branchId;
-                        result.LocationID = locationId;
-
-                        if (Session["PhotoFile"] != null)
+                        HttpPostedFileBase file = (HttpPostedFileBase)Session["PhotoFile"];
+                        if (file != null)
                         {
-                            HttpPostedFileBase file = (HttpPostedFileBase)Session["PhotoFile"];
-                            if (file != null)
+                            if (file.ContentLength > 0)
                             {
-                                if (file.ContentLength > 0)
-                                {
-                                    result.VoucherLogo = new byte[file.ContentLength];
-                                    file.InputStream.Read(result.VoucherLogo, 0, file.ContentLength);
-                                }
+                                table.VoucherLogo = new byte[file.ContentLength];
+                                file.InputStream.Read(table.VoucherLogo, 0, file.ContentLength);
                             }
-                            clearSessionPhoto();
                         }
-                      
-                        Entities.SaveChanges();                       
-
-                        message = "Edited Successfully!";
-                        editOk = 1;
+                        clearSessionPhoto();
                     }
-                }
-                else
-                {
-                    message = "Allow Only One Voucher Setting for One Branch and One Location!";
-                    editOk = 0;
+
+                    Entities.SaveChanges();
+
+                    message = "Edited Successfully!";
+                    editOk = 1;
                 }
             }
             else
             {
-                var settings = (from setting in Entities.S_VoucherSetting where setting.ID != editVouSettingID where setting.LocationID == locationId select setting).ToList();
-                if (settings.Count() == 0)
-                {
-                    var result = Entities.S_VoucherSetting.SingleOrDefault(c => c.ID == editVouSettingID);
-                    if (result != null)
-                    {
-                        S_VoucherSetting table = new S_VoucherSetting();
-                        table.HeaderName = headerName;
-                        table.HeaderDesp = headerDesp;
-                        table.HeaderPhone = headerPhone;
-                        table.HeaderAddress = headerAddress;
-                        table.OtherHeader1 = otherHeader1;
-                        table.OtherHeader2 = otherHeader2;
-                        table.FooterMessage1 = footerMessage1;
-                        table.FooterMessage2 = footerMessage2;
-                        table.FooterMessage3 = footerMessage3;
-                        table.BranchID = branchId;
-                        table.LocationID = locationId;
-
-                        if (Session["PhotoFile"] != null)
-                        {
-                            HttpPostedFileBase file = (HttpPostedFileBase)Session["PhotoFile"];
-                            if (file != null)
-                            {
-                                if (file.ContentLength > 0)
-                                {
-                                    table.VoucherLogo = new byte[file.ContentLength];
-                                    file.InputStream.Read(table.VoucherLogo, 0, file.ContentLength);
-                                }
-                            }
-                            clearSessionPhoto();
-                        }
-
-                        Entities.SaveChanges();                     
-
-                        message = "Edited Successfully!";
-                        editOk = 1;
-                    }
-                }
-                else
-                {
-                    message = "Allow Only One Voucher Setting for One Location!";
-                    editOk = 0;
-                }
+                message = "Allow Only One Voucher Setting for One Location!";
+                editOk = 0;
             }
 
             var Result = new
@@ -363,11 +248,10 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult ViewAction(int Id)
         {
-            string branchName = "", locationName = "", headerName = "", headerDesp = "", headerPhone = "", headerAddress = "", otherHeader1 = "", otherHeader2 = "", footerMessage1 = "", footerMessage2 = "", footerMessage3 = "", base64Photo = "";
+            string locationName = "", headerName = "", headerDesp = "", headerPhone = "", headerAddress = "", otherHeader1 = "", otherHeader2 = "", footerMessage1 = "", footerMessage2 = "", footerMessage3 = "", base64Photo = "";
             var viewVouSetting = lstVouSettingList.Where(c => c.ID == Id);
             foreach (var e in viewVouSetting)
-            {
-                branchName = e.BranchName;
+            {              
                 locationName = e.LocationName;
                 headerName = e.HeaderName;
                 headerDesp = e.HeaderDesp;
@@ -383,8 +267,7 @@ namespace Inventory.Controllers
             }
 
             var myResult = new
-            {
-                BranchName = branchName,
+            {              
                 LocationName = locationName,
                 HeaderName = headerName,
                 HeaderDesp = headerDesp,
@@ -410,41 +293,6 @@ namespace Inventory.Controllers
             return Json("", JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
-        public JsonResult BranchSelectAction(int branchId)
-        {
-            LocationModels.LocationModel locationModel = new LocationModels.LocationModel();
-            List<LocationModels.LocationModel> lstLocation = new List<LocationModels.LocationModel>();
-
-            var locs = (from loc in Entities.S_Location where loc.BranchID == branchId select loc).ToList();
-            for (int i = 0; i < locs.Count(); i++)
-            {
-                locationModel = new LocationModels.LocationModel();
-                locationModel.LocationID = locs[i].LocationID;
-                locationModel.LocationName = locs[i].LocationName;
-                lstLocation.Add(locationModel);
-            }
-
-            return Json(lstLocation, JsonRequestBehavior.AllowGet);
-        }
-
-        private void GetBranch()
-        {
-            foreach (var branch in Entities.S_Branch.OrderBy(m => m.Code))
-            {
-                model.Branches.Add(new SelectListItem { Text = branch.BranchName, Value = branch.BranchID.ToString() });
-            }
-        }
-
-        private void GetBranchDefaultInclude()
-        {
-            model.Branches.Add(new SelectListItem { Text = "Branch", Value = "0" });
-            foreach (var branch in Entities.S_Branch.OrderBy(m => m.Code))
-            {
-                model.Branches.Add(new SelectListItem { Text = branch.BranchName, Value = branch.BranchID.ToString() });
-            }
-        }
-
         private void GetLocationDefaultInclude()
         {
             model.Locations.Add(new SelectListItem { Text = "Location", Value = "0" });
@@ -456,33 +304,11 @@ namespace Inventory.Controllers
 
         private void GetLocation()
         {
-            if (isMultiBranch())
-            {
-                var firstBranch = Entities.S_Branch.OrderBy(c => c.Code).Select(c => c.BranchID);
-                int firstBranchId = firstBranch.FirstOrDefault();
-                var locations = (from location in Entities.S_Location where location.BranchID == firstBranchId orderby location.Code select location).ToList();
-                foreach (var location in locations)
-                {
-                    model.Locations.Add(new SelectListItem { Text = location.LocationName, Value = location.LocationID.ToString() });
-                }
-            }
-            else
-            {
-                foreach (var location in Entities.S_Location.OrderBy(m => m.Code))
-                {
-                    model.Locations.Add(new SelectListItem { Text = location.LocationName, Value = location.LocationID.ToString() });
-                }
-            }
-        }
-
-        private void GetLocation(int? branchId)
-        {
-            var locations = (from location in Entities.S_Location where location.BranchID == branchId orderby location.Code select location).ToList();
-            foreach (var location in locations)
+            foreach (var location in Entities.S_Location.OrderBy(m => m.Code))
             {
                 model.Locations.Add(new SelectListItem { Text = location.LocationName, Value = location.LocationID.ToString() });
             }
-        }
+        }       
 
         private void GetAllLocation()
         {
@@ -491,14 +317,6 @@ namespace Inventory.Controllers
             {
                 model.Locations.Add(new SelectListItem { Text = location.LocationName, Value = location.LocationID.ToString() });
             }
-        }
-
-        private bool isMultiBranch()
-        {
-            CompanySettingModels cModel = new CompanySettingModels();
-            var isMultiBranch = Entities.S_CompanySetting.Select(c => c.IsMultiBranch);
-            cModel.IsMultiBranch = isMultiBranch.FirstOrDefault();
-            return Convert.ToBoolean(cModel.IsMultiBranch);
         }
 
         [HttpPost]

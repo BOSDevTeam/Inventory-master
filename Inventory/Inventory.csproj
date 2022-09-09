@@ -164,7 +164,6 @@
     <Compile Include="Controllers\AdjustTypeController.cs" />
     <Compile Include="Controllers\BankController.cs" />
     <Compile Include="Controllers\BankPaymentController.cs" />
-    <Compile Include="Controllers\BranchController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\CompanySettingController.cs" />
     <Compile Include="Controllers\DivisionController.cs" />
@@ -206,7 +205,6 @@
     <Compile Include="Models\AdjustTypeModels.cs" />
     <Compile Include="Models\BankModels.cs" />
     <Compile Include="Models\BankPaymentModels.cs" />
-    <Compile Include="Models\BranchModels.cs" />
     <Compile Include="Models\CLTranSaleOrderModels.cs" />
     <Compile Include="Models\CompanySettingModels.cs" />
     <Compile Include="Models\CustomerModels.cs" />
@@ -247,27 +245,6 @@
     <Compile Include="PrcGetLocation_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="PrcGetMasterSaleByTranID_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcGetMasterSaleList_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcGetMasterSaleOrderByTranID_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcGetMasterSaleOrderList_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcGetMasterSaleReturnByTranID_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcGetMasterSaleReturnList_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcGetProductUnitByProductID_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
     <Compile Include="PrcGetProduct_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
@@ -277,31 +254,13 @@
     <Compile Include="PrcGetSupplier_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="PrcGetTempProductUnit_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
     <Compile Include="PrcGetTownship_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcGetTranSaleByTranID_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcGetTranSaleOrderByTranID_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcGetTranSaleReturnByTranID_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcGetUnitByProductID_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="PrcGetUnit_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="PrcGetUser_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcGetVariantByProductID_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="PrcGetVoucherFormat_Result.cs">
@@ -319,9 +278,6 @@
     <Compile Include="PrcSearchBank_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="PrcSearchBranch_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
     <Compile Include="PrcSearchByFirstKeyword_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
@@ -332,12 +288,6 @@
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="PrcSearchCustomer_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcSearchDeliveryByDateVoucher_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcSearchDeliveryHistoryByDateVoucher_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="PrcSearchLocation_Result.cs">
@@ -352,27 +302,6 @@
     <Compile Include="PrcSearchProduct_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="PrcSearchSaleByAllFilter_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcSearchSaleByDateVoucher_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcSearchSaleByDateVouCus_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcSearchSaleOrderByAllFilter_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcSearchSaleOrderByDateVoucher_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcSearchSaleReturnByAllFilter_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcSearchSaleReturnByDateVoucher_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
     <Compile Include="PrcSearchSubMenu_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
@@ -383,12 +312,6 @@
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="PrcSearchUser_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcSearchVoucherFormat_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PrcSearchVoucherSetting_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -412,25 +335,10 @@
     <Compile Include="Sys_Currency.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="Sys_EntryModule.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Sys_MainModule.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
     <Compile Include="Sys_Payment.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Sys_PayMethod.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Sys_ProductNature.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Sys_ReportModule.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Sys_SetupModule.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Sys_ShopType.cs">
@@ -446,9 +354,6 @@
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="S_BankPayment.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_Branch.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="S_CompanySetting.cs">
@@ -467,15 +372,6 @@
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="S_Product.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_ProductBranch.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_ProductUnit.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_ProductVariant.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="S_SlipID.cs">
@@ -499,25 +395,10 @@
     <Compile Include="S_User.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="S_UserRightEntry.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_UserRightReport.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_UserRightSetup.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
     <Compile Include="S_VoucherFormat.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="S_VoucherSetting.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Temp_Delivery.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Temp_ProductVariant.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="T_CLMasterSaleOrder.cs">
@@ -526,28 +407,10 @@
     <Compile Include="T_CLTranSaleOrder.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="T_Delivery.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="T_DeliveryHistory.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
     <Compile Include="T_MasterSale.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="T_TranSale.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="T_TranSaleReturn.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="xSys_AppWord.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="xSys_Language.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="xSys_MainLanguage.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -676,8 +539,6 @@
     <Content Include="Views\BankPayment\BankPaymentEntry.cshtml" />
     <Content Include="Views\BankPayment\BankPaymentList.cshtml" />
     <Content Include="Views\Technician\TechnicianSetting.cshtml" />
-    <Content Include="Views\Branch\BranchEntry.cshtml" />
-    <Content Include="Views\Branch\BranchList.cshtml" />
     <Content Include="Views\Location\LocationEntry.cshtml" />
     <Content Include="Views\Location\LocationList.cshtml" />
     <Content Include="Views\Township\TownshipList.cshtml" />

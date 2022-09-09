@@ -53,7 +53,7 @@ namespace Inventory.Controllers
             BankPaymentModels bankPaymentModel = new BankPaymentModels();
 
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcSearchBankPayment, (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand(Procedure.PrcSearchBankPayment, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@keyword", searchValue);
             cmd.Parameters.AddWithValue("@BankID", bankId);
@@ -130,7 +130,7 @@ namespace Inventory.Controllers
         public JsonResult SaveAction(string name, int bankId)
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcInsertBankPayment, (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand(Procedure.PrcInsertBankPayment, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Name", name);
             cmd.Parameters.AddWithValue("@BankID", bankId);
@@ -144,7 +144,7 @@ namespace Inventory.Controllers
         public JsonResult EditAction(int bankId, string name, int bankPaymentId)
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcUpdateBankPayment, (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateBankPayment, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@BankPaymentID", bankPaymentId);
             cmd.Parameters.AddWithValue("@BankID", bankId);
@@ -161,7 +161,7 @@ namespace Inventory.Controllers
         public JsonResult DeleteAction(int bankPaymentId)
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcDeleteBankPayment, (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand(Procedure.PrcDeleteBankPayment, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@BankPaymentID", bankPaymentId);
 

@@ -19,7 +19,7 @@ namespace Inventory.Models
         public string ClientName { get; set; }
         public string ClientPhone { get; set; }
         public bool? IsClientSalePerson { get; set; }
-        public string Subtotal { get; set; }
+        public int Subtotal { get; set; }
         public int Tax { get; set; }
         public int TaxAmt { get; set; }
         public int Charges { get; set; }

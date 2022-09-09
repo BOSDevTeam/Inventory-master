@@ -27,7 +27,7 @@ namespace Inventory.Controllers
         public JsonResult SaveShopTypeAction(string shopTypeId)
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcSaveShopType, (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand(Procedure.PrcSaveShopType, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@ShopTypeID", Convert.ToInt32(shopTypeId));
             cmd.ExecuteNonQuery();
@@ -37,18 +37,15 @@ namespace Inventory.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveOtherSettingAction(string isMultiBranch, string isMultiCurrency, string isMultiUnit, string isBankPayment, string isProductPhoto, string isProductColor, string isProductSize)
+        public JsonResult SaveOtherSettingAction(string isMultiCurrency, string isMultiUnit, string isBankPayment,string isClientPhoneVerify)
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcSaveOtherSetting, (SqlConnection)Session["SQLConnection"]);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@IsMultiBranch", Convert.ToBoolean(isMultiBranch));
+            SqlCommand cmd = new SqlCommand(Procedure.PrcSaveOtherSetting, (SqlConnection)Session["SQLConnection"]);
+            cmd.CommandType = CommandType.StoredProcedure;           
             cmd.Parameters.AddWithValue("@IsMultiCurrency", Convert.ToBoolean(isMultiCurrency));
             cmd.Parameters.AddWithValue("@IsMultiUnit", Convert.ToBoolean(isMultiUnit));
             cmd.Parameters.AddWithValue("@IsBankPayment", Convert.ToBoolean(isBankPayment));
-            cmd.Parameters.AddWithValue("@IsProductPhoto", Convert.ToBoolean(isProductPhoto));
-            cmd.Parameters.AddWithValue("@IsProductColor", Convert.ToBoolean(isProductColor));
-            cmd.Parameters.AddWithValue("@IsProductSize", Convert.ToBoolean(isProductSize));
+            cmd.Parameters.AddWithValue("@IsClientPhoneVerify", Convert.ToBoolean(isClientPhoneVerify));
             cmd.ExecuteNonQuery();
             dataConnectorSQL.Close();
 
@@ -73,19 +70,16 @@ namespace Inventory.Controllers
         private void getCompanySetting()
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcGetCompanySetting, (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetCompanySetting, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
 
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.Read())
-            {
-                ViewBag.IsMultiBranch = reader["IsMultiBranch"];
+            {              
                 ViewBag.IsMultiUnit = reader["IsMultiUnit"];
                 ViewBag.IsMultiCurrency = reader["IsMultiCurrency"];
                 ViewBag.IsBankPayment = reader["IsBankPayment"];
-                ViewBag.IsProductPhoto = reader["IsProductPhoto"];
-                ViewBag.IsProductColor = reader["IsProductColor"];
-                ViewBag.IsProductSize = reader["IsProductSize"];
+                ViewBag.IsClientPhoneVerify = reader["IsClientPhoneVerify"];              
                 ViewBag.ShopTypeID = reader["ShopTypeID"].ToString();
             }
             reader.Close();

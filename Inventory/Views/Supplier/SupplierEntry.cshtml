@@ -92,14 +92,7 @@
                         }
                     </div>
                 </div>
-                <div class="col-md-6 col-md-6">
-                    @if (ViewBag.IsMultiBranch == true)
-                    {
-                        <div class="form-group">
-                            <label class="control-label">Branch</label>
-                            @Html.DropDownListFor(m => m.BranchID, Model.Branches, new { @class = "form-control control-input" })
-                        </div>
-                    }
+                <div class="col-md-6 col-md-6">                   
                     <div class="form-group">
                         <label class="control-label">Division</label>
                         @Html.DropDownListFor(m =>m.DivisionID, Model.Divisions, new { @class ="form-control control-input" })
@@ -177,8 +170,7 @@
             var phone = $('#Phone').val();
             var email = $('#Email').val();
             var contact = $('#Contact').val();
-            var address = $('#Address').val();
-            var branchId = $('#BranchID option:selected').val();
+            var address = $('#Address').val();           
             var townshipId = $('#TownshipID option:selected').val();
             var divisionId = $('#DivisionID option:selected').val();
 
@@ -196,7 +188,7 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("SaveAction", "Supplier")',
-                    data: { "supplierName": supplierName, "code": code, "phone": phone, "email": email, "contact": contact, "address": address, "townshipId": townshipId, "branchId": branchId, "isCredit": isCredit, "divisionId": divisionId },
+                    data: { "supplierName": supplierName, "code": code, "phone": phone, "email": email, "contact": contact, "address": address, "townshipId": townshipId, "isCredit": isCredit, "divisionId": divisionId },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
@@ -233,8 +225,7 @@
             var phone = $('#Phone').val();
             var email = $('#Email').val();
             var contact = $('#Contact').val();
-            var address = $('#Address').val();
-            var branchId = $('#BranchID option:selected').val();
+            var address = $('#Address').val();           
             var townshipId = $('#TownshipID option:selected').val();
             var divisionId = $('#DivisionID option:selected').val();
 
@@ -252,7 +243,7 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("EditAction", "Supplier")',
-                    data: { "supplierName": supplierName, "code": code, "phone": phone, "email": email, "contact": contact, "address": address, "townshipId": townshipId, "branchId": branchId, "isCredit": isCredit, "divisionId": divisionId },
+                    data: { "supplierName": supplierName, "code": code, "phone": phone, "email": email, "contact": contact, "address": address, "townshipId": townshipId, "isCredit": isCredit, "divisionId": divisionId },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
@@ -286,10 +277,7 @@
 
         $("#Code").keypress(function () {
             $("#vldCode").hide();
-        });
-
-        var editBranchID = '@Session["EditBranchID"]';
-        if (editBranchID.length != 0 && editBranchID != 0) $('#BranchID').val(editBranchID);
+        });    
 
         var editDivisionID = '@Session["EditDivisionID"]';
         $('#DivisionID').val(editDivisionID);

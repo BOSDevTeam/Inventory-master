@@ -13,14 +13,12 @@ namespace Inventory.Models
         public class CustomerModel
         {
             public CustomerModel()
-            {
-                this.Branches = new List<SelectListItem>();
+            {              
                 this.Townships = new List<SelectListItem>();
                 this.LstCustomer = new List<CustomerModels.CustomerModel>();
                 this.Divisions = new List<SelectListItem>();
             }
-            public List<CustomerModels.CustomerModel> LstCustomer { get; set; }
-            public List<SelectListItem> Branches { get; set; }
+            public List<CustomerModels.CustomerModel> LstCustomer { get; set; }          
             public List<SelectListItem> Townships { get; set; }
             public List<SelectListItem> Divisions { get; set; }
             public int CustomerID { get; set; }
@@ -37,10 +35,7 @@ namespace Inventory.Models
             [RegularExpression(@"^(\d{11})$", ErrorMessage = "Invalid Phone Number")]
             public string Phone { get; set; }
             [EmailAddress(ErrorMessage = "Invalid Email Address")]
-            public string Email { get; set; }
-            public int BranchID { get; set; }
-            [DisplayName("Branch")]
-            public string BranchName { get; set; }
+            public string Email { get; set; }         
             public bool IsCredit { get; set; }
             public string Credit { get; set; }
             public bool? IsDefault { get; set; }

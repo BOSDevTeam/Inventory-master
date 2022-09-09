@@ -34,19 +34,6 @@
                     </div> 
                     @using (Html.BeginForm("Login", "User", FormMethod.Post))
                     {                      
-
-                        if (ViewBag.IsMultiBranch == true)
-                        {
-                            <div class="row" style="padding:10px 30px 0 30px">
-                                <div class="col-md-12 col-sm-12">
-                                    <div class="form-group">
-                                        @Html.HiddenFor(m => m.BranchName)
-                                        @Html.DropDownListFor(m => m.BranchID, Model.Branches, new { @class = "form-control", onchange = "document.forms[0].submit();" })
-                                    </div>
-                                </div>
-                            </div>
-                        }
-
                         <div class="row" style="padding:10px 30px 0 30px">
                             <div class="col-md-12 col-sm-12">
                                 <div class="form-group">
@@ -115,12 +102,6 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
-
-            $("#BranchID").change(function () {
-                var branchName = $("#BranchID option:selected").text();
-                $("#BranchName").val(branchName);
-            });
-
             $("#UserID").change(function () {
                 var userName = $("#UserID option:selected").text();
                 $("#UserName").val(userName);
@@ -129,8 +110,6 @@
             $("#btnLogin").click(function () {
                 var userName = $("#UserID option:selected").text();
                 $("#UserName").val(userName);
-                var branchName = $("#BranchID option:selected").text();
-                $("#BranchName").val(branchName);
                 $("#ClickedLogin").val(true);
             });
 
@@ -139,9 +118,7 @@
                 $("#ClickedLogin").val(false);
             });
 
-        })
-
-        localStorage.setItem("IsMultiBranch", '@ViewBag.IsMultiBranch');     
+        }) 
 
     </script>
 

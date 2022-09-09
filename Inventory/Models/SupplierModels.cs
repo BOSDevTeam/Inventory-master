@@ -13,14 +13,12 @@ namespace Inventory.Models
         public class SupplierModel
         {
             public SupplierModel()
-            {
-                this.Branches = new List<SelectListItem>();
+            {               
                 this.Townships = new List<SelectListItem>();
                 this.LstSupplier = new List<SupplierModels.SupplierModel>();
                 this.Divisions = new List<SelectListItem>();
             }
-            public List<SupplierModels.SupplierModel> LstSupplier { get; set; }
-            public List<SelectListItem> Branches { get; set; }
+            public List<SupplierModels.SupplierModel> LstSupplier { get; set; }           
             public List<SelectListItem> Divisions { get; set; }
             public List<SelectListItem> Townships { get; set; }
             public int SupplierID { get; set; }
@@ -37,10 +35,7 @@ namespace Inventory.Models
             public string Email { get; set; }
             public bool IsCredit { get; set; }
             public string Credit { get; set; }
-            public bool? IsDefault { get; set; }
-            public int BranchID { get; set; }
-            [DisplayName("Branch")]
-            public string BranchName { get; set; }
+            public bool? IsDefault { get; set; }           
             public int TownshipID { get; set; }
             [DisplayName("Township")]
             public string TownshipName { get; set; }

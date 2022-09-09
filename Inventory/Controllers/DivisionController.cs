@@ -49,7 +49,7 @@ namespace Inventory.Controllers
             if (editdivision.Count == 0)
             {
                 if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-                SqlCommand cmd = new SqlCommand(procedure.PrcUpdateDivision, (SqlConnection)Session["SQLConnection"]);
+                SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateDivision, (SqlConnection)Session["SQLConnection"]);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@DivisionID", DivisionID);
                 cmd.Parameters.AddWithValue("@Code", Code);
@@ -83,7 +83,7 @@ namespace Inventory.Controllers
             if (division.Count() == 0)
             {
                 if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-                SqlCommand cmd = new SqlCommand(procedure.PrcInsertDivision, (SqlConnection)Session["SQLConnection"]);
+                SqlCommand cmd = new SqlCommand(Procedure.PrcInsertDivision, (SqlConnection)Session["SQLConnection"]);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("Code", Code);
                 cmd.Parameters.AddWithValue("DivisionName", DivisionName);
@@ -111,7 +111,7 @@ namespace Inventory.Controllers
             List<DivisionModels> DivList = new List<DivisionModels>();
             DivisionModels divisionmodel = new DivisionModels();
             if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcDeleteDivision, (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand(Procedure.PrcDeleteDivision, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@DivisionID", divisionId);
             cmd.ExecuteNonQuery();
@@ -124,7 +124,7 @@ namespace Inventory.Controllers
             List<DivisionModels> DivList = new List<DivisionModels>();
             DivisionModels divisionModel = new DivisionModels();
             if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcGetDivision, (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetDivision, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             SqlDataReader rd = cmd.ExecuteReader();
             while (rd.Read())
@@ -148,7 +148,7 @@ namespace Inventory.Controllers
             List<DivisionModels> DivList = new List<DivisionModels>();
             DivisionModels divisionModel = new DivisionModels();
             if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcSearchDivision, (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand(Procedure.PrcSearchDivision, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Keyword", Keyword);
             SqlDataReader rd = cmd.ExecuteReader();

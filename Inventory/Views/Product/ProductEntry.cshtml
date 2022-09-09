@@ -99,29 +99,26 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    @if (ViewBag.IsProductPhoto == true)
-                    {
-                        <div class="row setup-title-layout" id="divPhoto">
-                            <div class="col-md-12 col-lg-12">
-                                <div class="form-group">
-                                    <label class="product-entry-title">Photo <span style="color:red">(Recommended Size 200*200)</span></label><br />
-                                    @if (ViewBag.Photo == true)
-                                    {
-                                        <img src="@Url.Content("data:image/png;base64," + Convert.ToBase64String(Model.Photo, 0, Model.Photo.Length))" id="imgPreview" style="height:80px;height:80px;" />
-                                    }
-                                    else
-                                    {
-                                        <img src="~/Image/sample.png" id="imgPreview" style="width:80px;height:80px;" />
-                                    }
-                                    <span class="btn control-label">
-                                        <input type="file" name="file" id="file" onchange="previewPhoto(this);" accept=".jpg,.jpeg,.png" />
-                                    </span>
-                                    <div id="error" style="display:none"><span style="color:red">Photo is larger than 200pixels!</span></div>
-                                </div>
+                    </div>                   
+                    <div class="row setup-title-layout" id="divPhoto">
+                        <div class="col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label class="product-entry-title">Photo <span style="color:red">(Recommended Size 200*200)</span></label><br />
+                                @if (ViewBag.Photo == true)
+                                {
+                                    <img src="@Url.Content("data:image/png;base64," + Convert.ToBase64String(Model.Photo, 0, Model.Photo.Length))" id="imgPreview" style="height:80px;height:80px;" />
+                                }
+                                else
+                                {
+                                    <img src="~/Image/sample.png" id="imgPreview" style="width:80px;height:80px;" />
+                                }
+                                <span class="btn control-label">
+                                    <input type="file" name="file" id="file" onchange="previewPhoto(this);" accept=".jpg,.jpeg,.png" />
+                                </span>
+                                <div id="error" style="display:none"><span style="color:red">Photo is larger than 200pixels!</span></div>
                             </div>
                         </div>
-                    }
+                    </div>                  
                     <div class="row setup-title-layout">
                         <div class="col-md-12 col-lg-12">
                             <label class="product-entry-title">Product Price</label>
@@ -165,170 +162,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    @if (ViewBag.IsMultiUnit == true)
-                    {
-                        <div id="divUnit" class="row setup-title-layout">
-                            <div class="col-md-12 col-lg-12">
-                                <label class="product-entry-title">Unit</label>
-                                <div class="row">
-                                    <div class="col-md-2 col-lg-2">
-                                        <div class="form-group">
-                                            @Html.DropDownListFor(m => m.UnitID, Model.Units, new { @class = "form-control control-input" })
-                                        </div>
-                                    </div>
-                                    <div class="col-md-10 col-lg-10">
-                                        <button id="btnUnitAdd" class="btn btn-sm btn-first">ADD</button>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <table id="tblUnit" class="col-md-12 col-lg-12">
-                                        <thead>
-                                            <tr class="row table-header">
-                                                <th class="col-md-2 col-lg-2">Unit</th>
-                                                <th class="col-md-2 col-lg-2">Purchase Price</th>
-                                                <th class="col-md-2 col-lg-2">Sale Price</th>
-                                                <th class="col-md-2 col-lg-2">Discount(%)</th>
-                                                <th class="col-md-2 col-lg-2">Description</th>
-                                                <th class="col-md-2 col-lg-2">Action</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-
-                                            @if (Session["IsEdit"].ToString() == "0")
-                                            {
-                                                for (int i = 0; i < Model.LstUnit.Count(); i++)
-                                                {
-                                                    <tr class="row table-item">
-                                                        <td class="col-md-2 col-lg-2">@Model.LstUnit[i].UnitKeyword</td>
-                                                        <td class="col-md-2 col-lg-2">@Model.LstUnit[i].PurchasePrice</td>
-                                                        <td class="col-md-2 col-lg-2">@Model.LstUnit[i].SalePrice</td>
-                                                        <td class="col-md-2 col-lg-2">@Model.LstUnit[i].DiscountPercent</td>
-                                                        <td class="col-md-2 col-lg-2">@Model.LstUnit[i].Description</td>
-                                                        <td class="col-md-2 col-lg-2 btn-group">
-                                                            <button id="btnEdit" class="btn btn-sm btn-primary" style="font-size:0.7em" onclick="action('2')">Edit</button>
-                                                            <button id="btnDelete" class="btn btn-sm btn-danger" style="font-size:0.7em" onclick="action('3')">Delete</button>
-                                                        </td>
-                                                        <td style="display:none">@Model.LstUnit[i].UnitID</td>
-                                                    </tr>
-                                                }
-                                            }
-                                            else if (Session["IsEdit"].ToString() == "1")
-                                            {
-                                                var units = (List<ProductModels.ProductUnit>)ViewData["EditLstProductUnit"]; // Cast the list
-                                                foreach (var c in units)
-                                                {
-                                                    <tr class="row table-item" style="cursor:pointer">
-                                                        <td class="col-md-2 col-lg-2">
-                                                            @c.UnitKeyword
-                                                        </td>
-                                                        <td class="col-md-2 col-lg-2">
-                                                            @c.PurchasePrice
-                                                        </td>
-                                                        <td class="col-md-2 col-lg-2">
-                                                            @c.SalePrice
-                                                        </td>
-                                                        <td class="col-md-2 col-lg-2">
-                                                            @c.DiscountPercent
-                                                        </td>
-                                                        <td class="col-md-2 col-lg-2">
-                                                            @c.Description
-                                                        </td>
-                                                        <td class="col-md-2 col-lg-2 btn-group">
-                                                            <button id="btnEdit" class="btn btn-sm btn-primary" style="font-size:0.7em" onclick="action('2')">Edit</button>
-                                                            <button id="btnDelete" class="btn btn-sm btn-danger" style="font-size:0.7em" onclick="action('3')">Delete</button>
-                                                        </td>
-                                                        <td style="display:none">
-                                                            @c.UnitID
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            }
-
-                                        </tbody>
-
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    @if (ViewBag.IsProductVariant == true)
-                    {
-                        <div id="divVariant" class="row setup-title-layout">
-                            <div class="col-md-12 col-lg-12">
-                                <label class="product-entry-title">Variant</label>
-                                <div class="row">
-                                    <div class="col-md-2 col-lg-2">
-                                        <div class="form-group">
-                                            @Html.TextBoxFor(m => m.Variant, null, new { @class = "form-control control-input" })
-                                        </div>
-                                    </div>
-                                    <div class="col-md-10 col-lg-10">
-                                        <button id="btnVariantAdd" class="btn btn-sm btn-second">ADD</button>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <table id="tblVariant" class="col-md-12 col-lg-12">
-                                        <thead>
-                                            <tr class="row table-header">
-                                                <th class="col-md-10 col-lg-10">Variant</th>
-                                                <th class="col-md-2 col-lg-2">Action</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            @if (Session["IsEdit"].ToString() == "0")
-                                            {
-                                                for (int i = 0; i < Model.LstVariant.Count(); i++)
-                                                {
-                                                    <tr class="row table-item">
-                                                        <td class="col-md-10 col-lg-10">@Model.LstVariant[i].Variant</td>
-                                                        <td class="col-md-2 col-lg-2 btn-group">
-                                                            <button id="btnDelete" class="btn btn-sm btn-danger" style="font-size:0.7em" onclick="action('3')">Delete</button>
-                                                        </td>
-                                                        <td style="display:none">@Model.LstVariant[i].ID</td>
-                                                    </tr>
-                                                }
-                                            }
-                                            else if (Session["IsEdit"].ToString() == "1")
-                                            {
-                                                var variants = (List<ProductModels.ProductVariant>)ViewData["EditLstProductVariant"]; // Cast the list
-                                                foreach (var c in variants)
-                                                {
-                                                    <tr class="row table-item" style="cursor:pointer">
-                                                        <td class="col-md-10 col-lg-10">
-                                                            @c.Variant
-                                                        </td>
-                                                        <td class="col-md-2 col-lg-2 btn-group">
-                                                            <button id="btnDelete" class="btn btn-sm btn-danger" style="font-size:0.7em" onclick="action('3')">Delete</button>
-                                                        </td>
-                                                        <td style="display:none">
-                                                            @c.ID
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            }
-
-                                        </tbody>
-
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    @if (ViewBag.IsBarcode == true)
-                    {
-                        <div id="divBarcode" class="row setup-title-layout" style="display:none"></div>
-                    }
-                    @if (ViewBag.IsQRcode == true)
-                    {
-                        <div id="divQRcode" class="row setup-title-layout" style="display:none"></div>
-                    }
-                    @if (ViewBag.IsDifProductByBranch == true)
-                    {
-                        <div id="divBranch" class="row setup-title-layout" style="display:none"></div>
-                    }
+                    </div>                                                
                     <div class="row setup-title-layout">
                         <div class="col-md-12 col-lg-12">
                             <label class="product-entry-title">Other</label>
@@ -519,7 +353,7 @@
     $(function () {
 
         $('#btnAll').click(function () {
-            window.location.href = '@Url.Action("ProductList", "Product")?isMultiUnit=' + isMultiUnit + '&isProductPhoto=' + isProductPhoto + '&isProductVariant=' + isProductVariant + '&p=1';
+            window.location.href = '@Url.Action("ProductList", "Product")?p=1';
         });
 
         $('#MainMenuID').change(function () {
@@ -592,7 +426,7 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("SaveAction", "Product")',
-                    data: { "productName": productName, "sortCode": sortCode, "description": description, "code": code, "purchasePrice": purchasePrice, "wholeSalePrice": wholeSalePrice, "salePrice": salePrice, "alertQty": alertQty, "disPercent": disPercent, "isStock": isStock, "subMenuId": subMenuId, "isProductPhoto": isProductPhoto },
+                    data: { "productName": productName, "sortCode": sortCode, "description": description, "code": code, "purchasePrice": purchasePrice, "wholeSalePrice": wholeSalePrice, "salePrice": salePrice, "alertQty": alertQty, "disPercent": disPercent, "isStock": isStock, "subMenuId": subMenuId },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
@@ -673,14 +507,14 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("EditAction", "Product")',
-                    data: { "productName": productName, "sortCode": sortCode, "description": description, "code": code, "purchasePrice": purchasePrice, "wholeSalePrice": wholeSalePrice, "salePrice": salePrice, "alertQty": alertQty, "disPercent": disPercent, "isStock": isStock, "subMenuId": subMenuId, "isProductPhoto": isProductPhoto },
+                    data: { "productName": productName, "sortCode": sortCode, "description": description, "code": code, "purchasePrice": purchasePrice, "wholeSalePrice": wholeSalePrice, "salePrice": salePrice, "alertQty": alertQty, "disPercent": disPercent, "isStock": isStock, "subMenuId": subMenuId },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
                         if (response.ISSUCCESS == true) {
                             showToast(1, response.MESSAGE);
-                            window.location.href = '@Url.Action("ProductList", "Product")?isMultiUnit=' + isMultiUnit + '&isProductPhoto=' + isProductPhoto + '&isProductVariant=' + isProductVariant + '&p=1';
+                            window.location.href = '@Url.Action("ProductList", "Product")?p=1';
                         } else if (response.ISSUCCESS == false) {
                             showToast(0, response.MESSAGE);
                         }

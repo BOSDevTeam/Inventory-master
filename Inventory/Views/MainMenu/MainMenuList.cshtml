@@ -36,15 +36,8 @@
         <div class="col-md-12 col-lg-12">
             <table id="tblMainMenu" class="col-md-12 col-lg-12" role="grid">
                 <thead>
-                    <tr class="row table-header">
-                        @if (ViewBag.IsProductPhoto == true)
-                        {
-                            <th class="col-md-2 col-lg-2">Photo</th>
-                        }
-                        else
-                        {
-                            <th class="col-md-2 col-lg-2"></th>
-                        }
+                    <tr class="row table-header">                       
+                        <th class="col-md-2 col-lg-2">Photo</th>                        
                         <th class="col-md-3 col-lg-3">Name</th>
                         <th class="col-md-3 col-lg-3">Code</th>
                         <th class="col-md-2 col-lg-2">Sort Code</th>
@@ -56,22 +49,15 @@
 
                     @for (int i = 0; i < Model.LstMainMenu.Count(); i++)
                     {
-                        <tr class="row table-item">
-                            @if (ViewBag.IsProductPhoto == true)
+                        <tr class="row table-item">                          
+                            @if (Model.LstMainMenu[i].Base64Photo != null)
                             {
-                                if (Model.LstMainMenu[i].Base64Photo != null)
-                                {
-                                    <td class="col-md-2 col-lg-2"><img src="@Url.Content("data:image/png;base64," + Model.LstMainMenu[i].Base64Photo)" id="imgPreview" style="height:20px;height:20px;" /></td>
-                                }
-                                else
-                                {
-                                    <td class="col-md-2 col-lg-2"></td>
-                                }
+                                <td class="col-md-2 col-lg-2"><img src="@Url.Content("data:image/png;base64," + Model.LstMainMenu[i].Base64Photo)" id="imgPreview" style="height:20px;height:20px;" /></td>
                             }
                             else
                             {
                                 <td class="col-md-2 col-lg-2"></td>
-                            }
+                            }                                                   
                             <td class="col-md-3 col-lg-3">@Model.LstMainMenu[i].MainMenuName</td>
                             <td class="col-md-3 col-lg-3">@Model.LstMainMenu[i].Code</td>
                             <td class="col-md-2 col-lg-2">@Model.LstMainMenu[i].SortCode</td>

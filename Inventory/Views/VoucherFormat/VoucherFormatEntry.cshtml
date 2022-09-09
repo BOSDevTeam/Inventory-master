@@ -72,14 +72,7 @@
                                     @Html.TextBoxFor(m => m.PostFormat, new { @class = "form-control control-input number", @type = "number", Value = Session["EditPostFormat"], @min = "0" })
                                 }
                                 <label id="vldPostFormat" class="text-danger" style="display:none">PostFormat Require!</label>
-                            </div>
-                            @if (ViewBag.IsMultiBranch == true)
-                            {
-                                <div class="form-group">
-                                    <label class="control-label">Branch</label>
-                                    @Html.DropDownListFor(m => m.BranchID, Model.Branches, new { @class = "form-control control-input" })
-                                </div>
-                            }
+                            </div>                          
                             <div class="form-group">
                                 @if (Session["IsEdit"].ToString() == "0")
                                 {
@@ -108,8 +101,7 @@
         $('#btnSave').click(function () {
             var preFormat = $('#PreFormat').val();
             var midFormat = $('#MidFormat').val();
-            var postFormat = $('#PostFormat').val();
-            var branchId = $('#BranchID option:selected').val();
+            var postFormat = $('#PostFormat').val();        
 
             if (preFormat.length == 0) {
                 $("#vldPreFormat").show();
@@ -128,7 +120,7 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("SaveAction", "VoucherFormat")',
-                    data: { "branchId": branchId, "preFormat": preFormat, "midFormat": midFormat, "postFormat": postFormat },
+                    data: { "preFormat": preFormat, "midFormat": midFormat, "postFormat": postFormat },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
@@ -160,8 +152,7 @@
         $('#btnEdit').click(function () {
             var preFormat = $('#PreFormat').val();
             var midFormat = $('#MidFormat').val();
-            var postFormat = $('#PostFormat').val();
-            var branchId = $('#BranchID option:selected').val();
+            var postFormat = $('#PostFormat').val();          
 
             if (preFormat.length == 0) {
                 $("#vldPreFormat").show();
@@ -180,7 +171,7 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("EditAction", "VoucherFormat")',
-                    data: { "branchId": branchId, "preFormat": preFormat, "midFormat": midFormat, "postFormat": postFormat },
+                    data: { "preFormat": preFormat, "midFormat": midFormat, "postFormat": postFormat },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
@@ -230,13 +221,7 @@
             if (!txt.match(/^[0-9]*$/)) {
                 return false;
             }
-        });
-
-        var isEdit = '@Session["IsEdit"]';
-        if (isEdit == 1) {
-            var branchId = '@Session["EditBranchID"]';
-            $("#BranchID").val(branchId);
-        }
+        });      
 
     });
 

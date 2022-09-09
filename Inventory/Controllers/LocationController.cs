@@ -18,9 +18,6 @@ namespace Inventory.Controllers
 
         public ActionResult LocationEntry(int locationId)
         {
-            ViewBag.IsMultiBranch = isMultiBranch();
-            if (isMultiBranch()) GetBranch();
-
             if (locationId != 0)
             {
                 Session["IsEdit"] = 1;
@@ -34,8 +31,7 @@ namespace Inventory.Controllers
                     Session["EditCode"] = e.Code;
                     Session["EditPhone"] = e.Phone;
                     Session["EditEmail"] = e.Email;
-                    Session["EditAddress"] = e.Address;
-                    Session["EditBranchID"] = e.BranchID;
+                    Session["EditAddress"] = e.Address;                  
                     break;
                 }
             }
@@ -48,8 +44,6 @@ namespace Inventory.Controllers
 
         public ActionResult LocationList()
         {
-            ViewBag.IsMultiBranch = isMultiBranch();
-            if (isMultiBranch()) GetBranchDefaultInclude();
             LocationModels.LocationModel locationModel = new LocationModels.LocationModel();
             model.LstLocation = new List<LocationModels.LocationModel>();
             lstLocationList = new List<LocationModels.LocationModel>();
@@ -64,9 +58,7 @@ namespace Inventory.Controllers
                 locationModel.Code = location.Code;
                 locationModel.Phone = location.Phone;
                 locationModel.Address = location.Address;
-                locationModel.Email = location.Email;
-                locationModel.BranchID = location.BranchID;
-                locationModel.BranchName = location.BranchName;
+                locationModel.Email = location.Email;              
 
                 model.LstLocation.Add(locationModel);
                 lstLocationList.Add(locationModel);
@@ -76,14 +68,14 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SaveAction(string locationName, string shortName, string description, string code, string phone, string email, string address, int? branchId)
+        public JsonResult SaveAction(string locationName, string shortName, string description, string code, string phone, string email, string address)
         {
             string message;
             int saveOk;
             var locs = (from loc in Entities.S_Location where loc.Code == code select loc).ToList();
             if (locs.Count() == 0)
             {
-                Entities.PrcInsertLocation(locationName, shortName, description, code, phone, email, address, branchId);
+                Entities.PrcInsertLocation(locationName, shortName, description, code, phone, email, address);
                 message = "Saved Successfully!";
                 saveOk = 1;
             }
@@ -104,7 +96,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult ViewAction(int locationId)
         {
-            string locationName = "", shortName = "", description = "", code = "", phone = "", email = "", address = "", branchName = "";
+            string locationName = "", shortName = "", description = "", code = "", phone = "", email = "", address = "";
             var viewLocation = lstLocationList.Where(c => c.LocationID == locationId);
             foreach (var e in viewLocation)
             {
@@ -114,8 +106,7 @@ namespace Inventory.Controllers
                 code = e.Code;
                 phone = e.Phone;
                 email = e.Email;
-                address = e.Address;
-                branchName = e.BranchName;
+                address = e.Address;              
                 break;
             }
 
@@ -127,22 +118,21 @@ namespace Inventory.Controllers
                 Code = code,
                 Phone = phone,
                 Email = email,
-                Address = address,
-                BranchName = branchName
+                Address = address              
             };
 
             return Json(myResult, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
-        public JsonResult EditAction(string locationName, string shortName, string description, string code, string phone, string email, string address, int? branchId)
+        public JsonResult EditAction(string locationName, string shortName, string description, string code, string phone, string email, string address)
         {
             string message;
             int editOk;
             var locs = (from loc in Entities.S_Location where loc.Code == code where loc.LocationID != editLocationID select loc).ToList();
             if (locs.Count() == 0)
             {
-                Entities.PrcUpdateLocation(editLocationID, locationName, shortName, description, code, phone, email, address, branchId);
+                Entities.PrcUpdateLocation(editLocationID, locationName, shortName, description, code, phone, email, address);
                 message = "Edited Successfully!";
                 editOk = 1;
             }
@@ -162,13 +152,13 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SearchAction(string keyword, int branchId)
+        public JsonResult SearchAction(string keyword)
         {
             LocationModels.LocationModel locationModel = new LocationModels.LocationModel();
             model.LstLocation = new List<LocationModels.LocationModel>();
             lstLocationList = new List<LocationModels.LocationModel>();
 
-            foreach (var location in Entities.PrcSearchLocation(keyword, branchId))
+            foreach (var location in Entities.PrcSearchLocation(keyword))
             {
                 locationModel = new LocationModels.LocationModel();
                 locationModel.LocationID = location.LocationID;
@@ -179,9 +169,7 @@ namespace Inventory.Controllers
                 locationModel.Phone = location.Phone;
                 locationModel.Address = location.Address;
                 locationModel.Email = location.Email;
-                locationModel.BranchID = location.BranchID;
-                locationModel.BranchName = location.BranchName;
-
+              
                 model.LstLocation.Add(locationModel);
                 lstLocationList.Add(locationModel);
             }
@@ -212,31 +200,6 @@ namespace Inventory.Controllers
             };
 
             return Json(myResult, JsonRequestBehavior.AllowGet);
-        }
-
-        private void GetBranch()
-        {
-            foreach (var branch in Entities.S_Branch.OrderBy(m => m.Code))
-            {
-                model.Branches.Add(new SelectListItem { Text = branch.BranchName, Value = branch.BranchID.ToString() });
-            }
-        }
-
-        private void GetBranchDefaultInclude()
-        {
-            model.Branches.Add(new SelectListItem { Text = "Branch", Value = "0" });
-            foreach (var branch in Entities.S_Branch.OrderBy(m => m.Code))
-            {
-                model.Branches.Add(new SelectListItem { Text = branch.BranchName, Value = branch.BranchID.ToString() });
-            }
-        }
-
-        private bool isMultiBranch()
-        {
-            CompanySettingModels cModel = new CompanySettingModels();
-            var isMultiBranch = Entities.S_CompanySetting.Select(c => c.IsMultiBranch);
-            cModel.IsMultiBranch = isMultiBranch.FirstOrDefault();
-            return Convert.ToBoolean(cModel.IsMultiBranch);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Inventory.Controllers
                     dt.Rows.Add(list[i].ID, list[i].Quantity, list[i].Amount);
                 }
                 if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-                SqlCommand cmd = new SqlCommand(procedure.PrcCLUpdateTranSaleOrder, (SqlConnection)Session["SQLConnection"]);
+                SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateCLTranSaleOrder, (SqlConnection)Session["SQLConnection"]);
                 cmd.Parameters.AddWithValue("@SaleOrderID", saleOrderID);
                 cmd.Parameters.AddWithValue("@Subtotal", Convert.ToInt32(Session["TotalAmt"]));
                 cmd.Parameters.AddWithValue("@TaxAmt", Convert.ToInt32(Session["TaxAmt"]));
@@ -165,6 +165,7 @@ namespace Inventory.Controllers
             tranmodel.TsoList = new List<CLTranSaleOrderModels>();
             transaleList = new List<CLTranSaleOrderModels>();
             string saleordernumber = "", clientname = "", clientphone = "", customername = "", customerphone = "", datetime = "", remark = "";
+            int subtotal = 0, taxAmt=0,tax =0, charges=0, chargesAmt=0, total=0;
             List<CLMasterSaleOrderModels> lstMsale = Session["LstMSale"] as List<CLMasterSaleOrderModels>;
             var viewclsaleorder = lstMsale.Where(c => c.SaleOrderID == saleorderId);
             foreach (var e in viewclsaleorder)
@@ -177,6 +178,12 @@ namespace Inventory.Controllers
                 customername = e.CustomerName;
                 customerphone = e.CustomerPhone;
                 remark = e.Remark;
+                subtotal = e.Subtotal;
+                tax = e.Tax;
+                taxAmt = e.TaxAmt;
+                charges = e.Charges;
+                chargesAmt = e.ChargesAmt;
+                total = e.Total;
             }
 
             foreach (var transale in Entities.PrcGetCLTranSaleOrderBySaleOrderID(saleorderId))
@@ -186,18 +193,13 @@ namespace Inventory.Controllers
                 transaleModel.ProductName = transale.ProductName;
                 transaleModel.Quantity = transale.Quantity;
                 transaleModel.SalePrice = transale.Price;
-                transaleModel.Subtotal = transale.Subtotal;
-                transaleModel.TaxAmt = transale.TaxAmt;
-                transaleModel.Tax = transale.Tax;
-                transaleModel.ChargesAmt = transale.ChargesAmt;
-                transaleModel.Charges = transale.Charges;
                 transaleModel.DefaultCurrency = transale.Currency;
-                transaleModel.Total = transale.Total;
                 transaleModel.Amount = transale.Amount;
                 tranmodel.TsoList.Add(transaleModel);
                 transaleList.Add(transaleModel);
+                Session["TranSaleList"] = transaleList;
             }
-
+            
             var myResult = new
             {
                 TranSaleOrderList = transaleList,
@@ -210,9 +212,7 @@ namespace Inventory.Controllers
                 CustomerPhone = customerphone,
                 Remark = remark
             };
-
-            var lstTSale = transaleList;
-            Session["TranSaleList"] = lstTSale;
+           
             return Json(myResult, JsonRequestBehavior.AllowGet);
         }
 
@@ -267,15 +267,20 @@ namespace Inventory.Controllers
                 }
             }
 
-            
-
             if (result != null)
             {
                 totalAmt = calculateSubtotal();
                 tax = (totalAmt * result.Tax) / 100;
                 charge = (totalAmt * result.Charges) / 100;
                 total = totalAmt + tax + charge;
+
+                Session["DeleteTotalAmt"] = totalAmt;
+                Session["DeleteTaxAmt"] = tax;
+                Session["DeleteChargeAmt"] = charge;
+                Session["DeleteTotal"] = total;
             }
+
+            
             var myResult = new
             {
                 Subtotal = totalAmt,
@@ -290,6 +295,23 @@ namespace Inventory.Controllers
 
             return jsonResult;
         }
+
+        [HttpGet]
+        public JsonResult DeleteAction2(int saleOrderID)
+        {
+                if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
+                SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateCLMasterSaleOrder, (SqlConnection)Session["SQLConnection"]);
+                cmd.Parameters.AddWithValue("@SaleOrderID", saleOrderID);
+                cmd.Parameters.AddWithValue("@Subtotal", Convert.ToInt32(Session["DeleteTotalAmt"]));
+                cmd.Parameters.AddWithValue("@TaxAmt", Convert.ToInt32(Session["DeleteTaxAmt"]));
+                cmd.Parameters.AddWithValue("@ChargesAmt", Convert.ToInt32(Session["DeleteChargeAmt"]));
+                cmd.Parameters.AddWithValue("@Total", Convert.ToInt32(Session["DeleteTotal"]));
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.ExecuteNonQuery();
+                dataConnectorSQL.Close();
+            return Json("", JsonRequestBehavior.AllowGet);
+        }
+
 
 
         [HttpGet]

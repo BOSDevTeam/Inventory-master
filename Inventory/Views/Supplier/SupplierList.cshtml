@@ -26,11 +26,7 @@
         <div class="col-md-12 col-lg-12">
             <div class="btn-group" style="float:right">
                 <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox mr-10" />
-                @Html.DropDownListFor(m => m.TownshipID, Model.Townships, new { @class = "form-control control-input width-200 mr-10" })
-                @if (ViewBag.IsMultiBranch == true)
-                {
-                    @Html.DropDownListFor(m => m.BranchID, Model.Branches, new { @class = "form-control control-input width-200 mr-10" })
-                }
+                @Html.DropDownListFor(m => m.TownshipID, Model.Townships, new { @class = "form-control control-input width-200 mr-10" })              
                 <button id="btnSearch" class="btn btn-first setup-btn-search mr-10" title="Search"><i class="fa fa-search"></i></button>
                 <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
             </div>
@@ -41,18 +37,10 @@
             <table id="tblSupplier" class="col-md-12 col-lg-12" role="grid">
                 <thead>
                     <tr class="row table-header">
-                        <th class="col-md-2 col-lg-2">Name</th>
+                        <th class="col-md-4 col-lg-4">Name</th>
                         <th class="col-md-2 col-lg-2">Code</th>
                         <th class="col-md-2  col-lg-2">Division</th>
-                        <th class="col-md-2 col-lg-2">Township</th>
-                        @if (ViewBag.IsMultiBranch == true)
-                        {
-                            <th class="col-md-2 col-lg-2">Branch</th>
-                        }
-                        else
-                        {
-                            <th class="col-md-2 col-lg-2"></th>
-                        }
+                        <th class="col-md-2 col-lg-2">Township</th>                        
                         <th class="col-md-2 col-lg-2">Action</th>
                     </tr>
                 </thead>
@@ -62,18 +50,10 @@
                     @for (int i = 0; i < Model.LstSupplier.Count(); i++)
                     {
                         <tr class="row table-item">
-                            <td class="col-md-2 col-lg-2">@Model.LstSupplier[i].SupplierName</td>
+                            <td class="col-md-4 col-lg-4">@Model.LstSupplier[i].SupplierName</td>
                             <td class="col-md-2 col-lg-2">@Model.LstSupplier[i].Code</td>
                             <td class="col-md-2 col-lg-2">@Model.LstSupplier[i].DivisionName</td>
-                            <td class="col-md-2 col-lg-2">@Model.LstSupplier[i].TownshipName</td>
-                            @if (ViewBag.IsMultiBranch == true)
-                            {
-                                <td class="col-md-2 col-lg-2">@Model.LstSupplier[i].BranchName</td>
-                            }
-                            else
-                            {
-                                <td class="col-md-2 col-lg-2"></td>
-                            }
+                            <td class="col-md-2 col-lg-2">@Model.LstSupplier[i].TownshipName</td>                          
                             @if (Model.LstSupplier[i].IsDefault != true)
                             {
                                 <td class="col-md-2 col-lg-2">
@@ -162,14 +142,7 @@
                         <div class="form-group">
                             <label class="control-label">Township:</label>
                             <label id="lblTownship" class="control-input"></label>
-                        </div>
-                        @if (ViewBag.IsMultiBranch == true)
-                        {
-                            <div class="form-group">
-                                <label class="control-label">Branch:</label>
-                                <label id="lblBranch" class="control-input"></label>
-                            </div>
-                        }
+                        </div>                      
                         <div class="form-group">
                             <label class="control-label">Credit:</label>
                             <label id="lblCredit" class="control-input"></label>
@@ -208,8 +181,7 @@
                             $('#lblPhone').text(response.Phone);
                             $('#lblEmail').text(response.Email);
                             $('#lblContact').text(response.Contact);
-                            $('#lblAddress').text(response.Address);
-                            $('#lblBranch').text(response.BranchName);
+                            $('#lblAddress').text(response.Address);                          
                             $('#lblDivision').text(response.DivisionName);
                             $('#lblTownship').text(response.TownshipName);
                             $('#lblCredit').text(response.Credit);
@@ -235,68 +207,39 @@
 
         $("#btnSearch").click(function(){
             var keyword = $('#tvSearch').val();
-            var branchId = $('#BranchID').val();
             var townshipId = $('#TownshipID').val();
             showLoadingIcon();
             $.ajax({
                 type: "GET",
                 url:'@Url.Action("SearchAction", "Supplier")',
-                data: { "keyword": keyword, "branchId": branchId, "townshipId": townshipId },
+                data: { "keyword": keyword, "townshipId": townshipId },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    $("#tblSupplier").find("tbody").empty();
-                    var isMultiBranch = '@ViewBag.IsMultiBranch';
-                    $.each(response, function (i, item) {
-                        if (isMultiBranch) {
+                    $("#tblSupplier").find("tbody").empty();                   
+                    $.each(response, function (i, item) {                        
                             if (item.IsDefault != true) {
                                 var rows = "<tr class='row table-item'>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.SupplierName + "</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.DivisionName + "</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.TownshipName + "</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.BranchName + "</td>"
-                                + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:3px' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
-                                + "<td style='display:none'>" + item.SupplierID + "</td>"
-                                + "</tr>";
-                                $('#tblSupplier tbody').append(rows);
-                            } else {
-                                var rows = "<tr class='row table-item'>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.SupplierName + "</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.DivisionName + "</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.TownshipName + "</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.BranchName + "</td>"
-                                + "<td style='display:none'>" + item.SupplierID + "</td>"
-                                + "</tr>";
-                                $('#tblSupplier tbody').append(rows);
-                            }
-                        } else {
-                            if (item.IsDefault != true) {
-                                var rows = "<tr class='row table-item'>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.SupplierName + "</td>"
+                                + "<td class='col-md-4 col-lg-4'>" + item.SupplierName + "</td>"
                                 + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
                                 + "<td class='col-md-2 col-lg-2'>" + item.DivisionName +"</td>"
                                 + "<td class='col-md-2 col-lg-2'>" + item.TownshipName + "</td>"
-                                + "<td class='col-md-2 col-lg-2'></td>"
                                 + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:3px' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
                                 + "<td style='display:none'>" + item.SupplierID + "</td>"
                                 + "</tr>";
                                 $('#tblSupplier tbody').append(rows);
                             } else {
                                 var rows = "<tr class='row table-item'>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.SupplierName + "</td>"
+                                + "<td class='col-md-4 col-lg-4'>" + item.SupplierName + "</td>"
                                 + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
                                 + "<td class='col-md-2 col-lg-2'>" + item.DivisionName + "</td>"
                                 + "<td class='col-md-2 col-lg-2'>" + item.TownshipName + "</td>"
-                                + "<td class='col-md-2 col-lg-2'></td>"
                                 + "<td class='col-md-2 col-lg-2'></td>"
                                 + "<td style='display:none'>" + item.SupplierID + "</td>"
                                 + "</tr>";
                                 $('#tblSupplier tbody').append(rows);
                             }
-                        }
                     });
                 },
                 failure: function (response) {

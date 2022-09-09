@@ -36,25 +36,22 @@
                         </div>
                     </div>
                     <div class="row padding-20">
-                        <div class="col-md-12 col-lg-12">
-                            @if (ViewBag.IsProductPhoto == true)
-                            {
-                                <div class="form-group">
-                                    <label class="control-label">Photo <span style="color:red">(Recommended Size 200*200)</span> </label><br />
-                                    @if (ViewBag.Photo == true)
-                                    {
-                                        <img src="@Url.Content("data:image/png;base64," + Convert.ToBase64String(Model.Photo, 0, Model.Photo.Length))" id="imgPreview" style="height:80px;height:80px;" />
-                                    }
-                                    else
-                                    {
-                                        <img src="~/Image/sample.png" id="imgPreview" style="width:80px;height:80px;" />
-                                    }
-                                    <span class="btn control-label">
-                                        <input type="file" name="file" id="file" onchange="previewPhoto(this);" accept=".jpg,.jpeg,.png" />
-                                    </span>
-                                    <div id="error" style="display:none"><span style="color:red">Photo is larger than 200pixels!</span></div>
-                                </div>
-                            }
+                        <div class="col-md-12 col-lg-12">                            
+                            <div class="form-group">
+                                <label class="control-label">Photo <span style="color:red">(Recommended Size 200*200)</span> </label><br />
+                                @if (ViewBag.Photo == true)
+                                {
+                                    <img src="@Url.Content("data:image/png;base64," + Convert.ToBase64String(Model.Photo, 0, Model.Photo.Length))" id="imgPreview" style="height:80px;height:80px;" />
+                                }
+                                else
+                                {
+                                    <img src="~/Image/sample.png" id="imgPreview" style="width:80px;height:80px;" />
+                                }
+                                <span class="btn control-label">
+                                    <input type="file" name="file" id="file" onchange="previewPhoto(this);" accept=".jpg,.jpeg,.png" />
+                                </span>
+                                <div id="error" style="display:none"><span style="color:red">Photo is larger than 200pixels!</span></div>
+                            </div>                         
                             <div class="form-group">
                                 <label class="control-label">Code</label>
                                 @if (Session["IsEdit"].ToString() == "0")

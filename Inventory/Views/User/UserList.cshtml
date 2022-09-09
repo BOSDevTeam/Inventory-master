@@ -36,16 +36,8 @@
             <table id="tblUser" class="col-md-12 col-lg-12" role="grid">
                 <thead>
                     <tr class="row table-header">
-                        <th class="col-md-4 col-lg-4">Name</th>
-                        @if (ViewBag.IsMultiBranch == true)
-                        {
-                            <th class="col-md-3 col-lg-3">Branch</th>
-                        }
-                        else
-                        {
-                            <th class="col-md-3 col-lg-3"></th>
-                        }
-                        <th class="col-md-3 col-lg-3">Default Location</th>
+                        <th class="col-md-6 col-lg-6">Name</th>
+                        <th class="col-md-4 col-lg-4">Default Location</th>
                         <th class="col-md-2 col-lg-2">Action</th>
                     </tr>
                 </thead>
@@ -55,16 +47,8 @@
                     @for (int i = 0; i < Model.LstUser.Count(); i++)
                     {
                         <tr class="row table-item">
-                            <td class="col-md-4 col-lg-4">@Model.LstUser[i].UserName</td>
-                            @if (ViewBag.IsMultiBranch == true)
-                            {
-                                <td class="col-md-3 col-lg-3">@Model.LstUser[i].BranchName</td>
-                            }
-                            else
-                            {
-                                <td class="col-md-3 col-lg-3"></td>
-                            }
-                            <td class="col-md-3 col-lg-3">@Model.LstUser[i].LocationName</td>
+                            <td class="col-md-6 col-lg-6">@Model.LstUser[i].UserName</td>
+                            <td class="col-md-4 col-lg-4">@Model.LstUser[i].LocationName</td>
                             <td class="col-md-2 col-lg-2">
                                 <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
                                 <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
@@ -111,7 +95,7 @@
     $(function () {
 
         $('#btnAdd').click(function () {
-            window.location.href = '@Url.Action("UserEntry", "User")?userId=0&isMultiBranch=' + isMultiBranch;
+            window.location.href = '@Url.Action("UserEntry", "User")?userId=0';
         });
 
         $("#tblUser").on("click", "tbody tr", function (event) {
@@ -119,7 +103,7 @@
             $(this).find("td:last").each(function () {
                 userId = $(this).text();
                 if (actionValue == 2) { // edit
-                    window.location.href = '@Url.Action("UserEntry", "User")?userId=' + userId + '&isMultiBranch=' + isMultiBranch;
+                    window.location.href = '@Url.Action("UserEntry", "User")?userId=' + userId;
                 } else if (actionValue == 3) { // delete
                     $('#modalConfirm').modal('show');
                 }
@@ -137,29 +121,15 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    $("#tblUser").find("tbody").empty();
-                    var isMultiBranch = '@ViewBag.IsMultiBranch';
-                    $.each(response, function (i, item) {
-                        if (isMultiBranch) {
+                    $("#tblUser").find("tbody").empty();                 
+                    $.each(response, function (i, item) {                      
                             var rows = "<tr class='row table-item'>"
-                            + "<td class='col-md-4 col-lg-4'>" + item.UserName + "</td>"
-                            + "<td class='col-md-3 col-lg-3'>" + item.BranchName + "</td>"
-                            + "<td class='col-md-3 col-lg-3'>" + item.LocationName + "</td>"
-                            + "<td class='col-md-2 col-lg-2'><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
-                            + "<td style='display:none'>" + item.UserID + "</td>"
-                            + "</tr>";
-                            $('#tblUser tbody').append(rows);
-                        } else {
-                            var rows = "<tr class='row table-item'>"
-                           + "<td class='col-md-4 col-lg-4'>" + item.UserName + "</td>"
-                           + "<td class='col-md-3 col-lg-3'></td>"
-                           + "<td class='col-md-3 col-lg-3'>" + item.LocationName + "</td>"
+                           + "<td class='col-md-6 col-lg-6'>" + item.UserName + "</td>"                          
+                           + "<td class='col-md-4 col-lg-4'>" + item.LocationName + "</td>"
                            + "<td class='col-md-2 col-lg-2'><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
                            + "<td style='display:none'>" + item.UserID + "</td>"
                            + "</tr>";
-                            $('#tblUser tbody').append(rows);
-                        }
-
+                            $('#tblUser tbody').append(rows);                       
                     });
                 },
                 failure: function (response) {

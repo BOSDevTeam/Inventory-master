@@ -25,11 +25,7 @@
     <div class="row setup-title-layout search-div">
         <div class="col-md-12 col-lg-12">
             <div class="btn-group" style="float:right">
-                <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox mr-10"/>
-                @if (ViewBag.IsMultiBranch == true)
-                {
-                    @Html.DropDownListFor(m => m.BranchID, Model.Branches, new { @class = "form-control control-input width-200" })
-                }
+                <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox mr-10"/>               
                 <button id="btnSearch" class="btn btn-first setup-btn-search" style="margin-left:10px" title="Search"><i class="fa fa-search"></i></button>
                 <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
             </div>
@@ -40,16 +36,8 @@
             <table id="tblLocation" class="col-md-12 col-lg-12" role="grid">
                 <thead>
                     <tr class="row table-header">
-                        <th class="col-md-4 col-lg-4">Name</th>
-                        <th class="col-md-2 col-lg-2">Code</th>
-                        @if (ViewBag.IsMultiBranch == true)
-                        {
-                            <th class="col-md-4 col-lg-4">Branch</th>
-                        }
-                        else
-                        {
-                            <th class="col-md-4 col-lg-4"></th>
-                        }
+                        <th class="col-md-6 col-lg-6">Name</th>
+                        <th class="col-md-4 col-lg-4">Code</th>                       
                         <th class="col-md-2 col-lg-2">Action</th>
                     </tr>
                 </thead>
@@ -59,16 +47,8 @@
                     @for (int i = 0; i < Model.LstLocation.Count(); i++)
                     {
                         <tr class="row table-item">
-                            <td class="col-md-4 col-lg-4">@Model.LstLocation[i].LocationName</td>
-                            <td class="col-md-2 col-lg-2">@Model.LstLocation[i].Code</td>
-                            @if (ViewBag.IsMultiBranch == true)
-                            {
-                                <td class="col-md-4 col-lg-4">@Model.LstLocation[i].BranchName</td>
-                            }
-                            else
-                            {
-                                <td class="col-md-4 col-lg-4"></td>
-                            }
+                            <td class="col-md-6 col-lg-6">@Model.LstLocation[i].LocationName</td>
+                            <td class="col-md-4 col-lg-4">@Model.LstLocation[i].Code</td>                            
                             <td class="col-md-2 col-lg-2">
                                 <button id="btnView" class="btn btn-sm btn-dark btn-list-action" onclick="action('1')">View</button>
                                 <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
@@ -150,14 +130,7 @@
                         <div class="form-group">
                             <label class="control-label">Address:</label>
                             <label id="lblAddress" class="control-input"></label>
-                        </div>
-                        @if (ViewBag.IsMultiBranch == true)
-                        {
-                            <div class="form-group">
-                                <label class="control-label">Branch:</label>
-                                <label id="lblBranch" class="control-input"></label>
-                            </div>
-                        }
+                        </div>                      
                     </div>
                 </div>
             </div>
@@ -193,8 +166,7 @@
                             $('#lblCode').text(response.Code);
                             $('#lblPhone').text(response.Phone);
                             $('#lblEmail').text(response.Email);
-                            $('#lblAddress').text(response.Address);
-                            $('#lblBranch').text(response.BranchName);
+                            $('#lblAddress').text(response.Address);                          
                             $('#modalView').modal('show');
                         },
                         failure: function (response) {
@@ -216,39 +188,25 @@
         });
 
         $("#btnSearch").click(function(){
-            var keyword = $('#tvSearch').val();
-            var branchId = $('#BranchID').val();
+            var keyword = $('#tvSearch').val();          
             showLoadingIcon();
             $.ajax({
                 type: "GET",
                 url:'@Url.Action("SearchAction", "Location")',
-                data: { "keyword": keyword, "branchId": branchId },
+                data: { "keyword": keyword },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    $("#tblLocation").find("tbody").empty();
-                    var isMultiBranch = '@ViewBag.IsMultiBranch';
-                    $.each(response, function (i, item) {
-                        if (isMultiBranch) {
-                            var rows = "<tr class='row table-item'>"
-                            + "<td class='col-md-4 col-lg-4'>" + item.LocationName + "</td>"
-                            + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
-                            + "<td class='col-md-4 col-lg-4'>" + item.BranchName + "</td>"
-                            + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:3px' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
-                            + "<td style='display:none'>" + item.LocationID + "</td>"
-                            + "</tr>";
-                            $('#tblLocation tbody').append(rows);
-                        } else {
-                            var rows = "<tr class='row table-item'>"
-                            + "<td class='col-md-4 col-lg-4'>" + item.LocationName + "</td>"
-                            + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
-                            + "<td class='col-md-4 col-lg-4'></td>"
-                            + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:3px' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
-                            + "<td style='display:none'>" + item.LocationID + "</td>"
-                            + "</tr>";
-                            $('#tblLocation tbody').append(rows);
-                        }
+                    $("#tblLocation").find("tbody").empty();                    
+                    $.each(response, function (i, item) {                       
+                        var rows = "<tr class='row table-item'>"
+                        + "<td class='col-md-6 col-lg-6'>" + item.LocationName + "</td>"
+                        + "<td class='col-md-4 col-lg-4'>" + item.Code + "</td>"
+                        + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:3px' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
+                        + "<td style='display:none'>" + item.LocationID + "</td>"
+                        + "</tr>";
+                        $('#tblLocation tbody').append(rows);                        
                     });
                 },
                 failure: function (response) {

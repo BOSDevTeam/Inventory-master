@@ -10,14 +10,10 @@ namespace Inventory.Models
     {
         public VoucherFormatModels()
         {
-            this.LstVoucherFormat = new List<VoucherFormatModels>();
-            this.Branches = new List<SelectListItem>();
-        }
-        public List<SelectListItem> Branches { get; set; }
+            this.LstVoucherFormat = new List<VoucherFormatModels>();         
+        }      
         public List<VoucherFormatModels> LstVoucherFormat { get; set; }
-        public int ID { get; set; }
-        public int? BranchID { get; set; }
-        public string BranchName { get; set; }
+        public int ID { get; set; }      
         public string PreFormat { get; set; }
         public string MidFormat { get; set; }
         public int PostFormat { get; set; }

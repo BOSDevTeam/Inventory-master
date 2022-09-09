@@ -51,7 +51,7 @@ namespace Inventory.Controllers
             BankModels bankModel = new BankModels();
 
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcSearchBank, (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand(Procedure.PrcSearchBank, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@keyword", searchValue);
 
@@ -126,7 +126,7 @@ namespace Inventory.Controllers
         public JsonResult SaveAction(string name, string shortName)
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcInsertBank, (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand(Procedure.PrcInsertBank, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Name", name);
             cmd.Parameters.AddWithValue("@ShortName", shortName);
@@ -140,7 +140,7 @@ namespace Inventory.Controllers
         public JsonResult EditAction(int bankId, string name, string shortName)
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcUpdateBank, (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateBank, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@BankID", bankId);
             cmd.Parameters.AddWithValue("@Name", name);
@@ -156,7 +156,7 @@ namespace Inventory.Controllers
         public JsonResult DeleteAction(int bankId)
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand(procedure.PrcDeleteBank, (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand(Procedure.PrcDeleteBank, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@BankID", bankId);
 

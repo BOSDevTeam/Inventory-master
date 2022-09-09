@@ -41,7 +41,7 @@
             </div>
             <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
             <ul class="nav user-menu float-right">
-                <li class="nav-item dropdown d-none d-sm-block" title="POS">
+                <li class="nav-item dropdown d-none d-sm-block" title="Opened Bills">
                     <a href="#" class="nav-link"><i class="fa fa-dollar"></i></a>
                 </li>
                 <li class="nav-item dropdown d-none d-sm-block" title="Settings">
@@ -84,9 +84,6 @@
                         <li id="menuCompanySetting">
                             <a href="~/CompanySetting/CompanySettingEntry"><i class="fa fa-building"></i> <span>Company Setting</span></a>
                         </li>   
-                        <li id="menuBranch">
-                            <a href="~/Branch/BranchList?p=1"><i class="fa fa-building-o"></i> <span>Branch</span></a>
-                        </li>
                         <li id="menuLocation">
                             <a href="~/Location/LocationList?p=1"><i class="fa fa-map-marker"></i> <span>Location</span></a>
                         </li>
@@ -109,7 +106,7 @@
                             <a href="~/SubMenu/SubMenuList?p=1"><i class="fa fa-file-text-o"></i> <span>Sub Menu</span></a>
                         </li>    
                         <li id="menuProduct">
-                            <a href="#"><i class="fa fa-cube"></i> <span>Product</span></a>
+                            <a href="~/Product/ProductList?p=1"><i class="fa fa-cube"></i> <span>Product</span></a>
                         </li>    
                         <li id="menuBank">
                             <a href="~/Bank/BankList?p=1"><i class="fa fa-bank"></i> <span>Bank</span></a>
@@ -120,14 +117,11 @@
                         <li id="menuUser">
                             <a href="~/User/UserList?p=1"><i class="fa fa-user"></i> <span>User</span></a>
                         </li> 
-                        <li id="menuUnit">
-                            <a href="~/Unit/UnitList?p=1"><i class="fa fa-dot-circle-o"></i> <span>Unit</span></a>
+                        <li id="menuClient">
+                            <a href="#"><i class="fa fa-user"></i> <span>Client</span></a>
                         </li> 
                         <li id="menuAdjustType">
                             <a href="~/AdjustType/AdjustTypeList?p=1"><i class="fa fa-adjust"></i> <span>Adjust Type</span></a>
-                        </li> 
-                        <li id="menuBarcodeSetting">
-                            <a href="#"><i class="fa fa-barcode"></i> <span>Barcode Setting</span></a>
                         </li> 
                         <li id="menuVoucherFormat">
                             <a href="~/VoucherFormat/VoucherFormatList"><i class="fa fa-file-text-o"></i> <span>Voucher Format</span></a>
@@ -161,31 +155,18 @@
     <script src="~/Scripts/Site.js"></script>
 
     <script>      
-        var isMultiBranch = false, isMultiCurrency = false, isMultiUnit = false, isBankPayment = false,
-            isProductPhoto = false, userId = 0, branchId = 0, userName, isDifProductByBranch = false,
-            isBarcode = false, isQRcode = false, isProductVariant = false, isProductColor = false, isProductSize = false;
-
-        isMultiBranch = localStorage.getItem("IsMultiBranch");
+        var isMultiCurrency = false, isMultiUnit = false, isBankPayment = false,
+            userId = 0, userName;
+      
         isMultiCurrency = localStorage.getItem("IsMultiCurrency");
         isMultiUnit = localStorage.getItem("IsMultiUnit");
-        isBankPayment = localStorage.getItem("IsBankPayment");
-        isProductPhoto = localStorage.getItem("IsProductPhoto");
+        isBankPayment = localStorage.getItem("IsBankPayment");      
         userId = localStorage.getItem("UserID");
-        userName = localStorage.getItem("UserName");
-        branchId = localStorage.getItem("BranchID");
-        isDifProductByBranch = localStorage.getItem("IsDifProductByBranch");
-        isBarcode = localStorage.getItem("IsBarcode");
-        isQRcode = localStorage.getItem("IsQRcode");
-        isProductVariant = localStorage.getItem("IsProductVariant");
-        isProductColor = localStorage.getItem("IsProductColor");
-        isProductSize = localStorage.getItem("IsProductSize");
+        userName = localStorage.getItem("UserName");     
 
         $("#loginUser").text(userName);
 
         $(function () {
-            $('#menuProduct').click(function () {
-                window.location.href = '@Url.Action("ProductList", "Product")?isMultiUnit=' + isMultiUnit + '&isProductPhoto=' + isProductPhoto + '&isProductVariant=' + isProductVariant + '&p=1';
-            });
             $('.toast').toast({
                 delay: 3000
             });

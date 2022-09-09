@@ -216,18 +216,15 @@
                             <div class="col-md-6 col-lg-6">
                                 <label id="lblIsStock" class="control-input"></label>
                             </div>
-                        </div>
-                        @if (ViewBag.IsProductPhoto == true)
-                        {
-                            <div class="row general-view-data-background1">
-                                <div class="col-md-6 col-lg-6">
-                                    <label class="control-label">Photo:</label>
-                                </div>
-                                <div class="col-md-6 col-lg-6" style="padding:3px 0 3px 0">
-                                    <img id="image" height="40" width="40" />
-                                </div>
+                        </div>                       
+                        <div class="row general-view-data-background1">
+                            <div class="col-md-6 col-lg-6">
+                                <label class="control-label">Photo:</label>
                             </div>
-                        }
+                            <div class="col-md-6 col-lg-6" style="padding:3px 0 3px 0">
+                                <img id="image" height="40" width="40" />
+                            </div>
+                        </div>                       
                     </div>
                 </div>
 
@@ -257,29 +254,6 @@
                     </div>
                 }
 
-                @if (ViewBag.IsProductVariant == true)
-                {
-                    <div class="row general-view-data-background2">
-                        <div class="col-md-12 col-lg-12">
-                            <div class="form-group">
-                                <label class="product-entry-title" style="font-weight:bold">Variant</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row" style="padding:5px">
-                        <table id="tblVariant" class="col-md-12 col-lg-12">
-                            <thead>
-                                <tr class="row table-header-no-color">
-                                    <th class="col-md-12 col-lg-12">Variant</th>
-                                </tr>
-                            </thead>
-
-                            <tbody></tbody>
-
-                        </table>
-                    </div>
-                }
             </div>
 
             <div class="modal-footer">
@@ -295,7 +269,7 @@
     $(function () {
 
         $('#btnAdd').click(function () {
-            window.location.href = '@Url.Action("ProductEntry", "Product")?productId=0&isMultiUnit=' + isMultiUnit + '&isDifProductByBranch=' + isDifProductByBranch + '&isProductVariant=' + isProductVariant + '&isBarcode=' + isBarcode + '&isQRcode=' + isQRcode + '&isProductPhoto=' + isProductPhoto;
+            window.location.href = '@Url.Action("ProductEntry", "Product")?productId=0';
         });
 
         $('#MainMenuID').change(function () {
@@ -388,7 +362,7 @@
                     });
                 }
                 else if (actionValue == 2) {  // edit
-                    window.location.href = '@Url.Action("ProductEntry", "Product")?productId=' + productId + '&isMultiUnit=' + isMultiUnit + '&isDifProductByBranch=' + isDifProductByBranch + '&isProductVariant=' + isProductVariant + '&isBarcode=' + isBarcode + '&isQRcode=' + isQRcode + '&isProductPhoto=' + isProductPhoto;
+                    window.location.href = '@Url.Action("ProductEntry", "Product")?productId=' + productId;
                 } else if (actionValue == 3) {  // delete
                     $('#modalConfirm').modal('show');
                 }
@@ -401,39 +375,7 @@
             subMenuId = $('#SubMenuID').val();
             if (subMenuId == null) subMenuId = 0;
             currentPage = 1;
-            searchAction(false);
-            @*showLoadingIcon();
-            $.ajax({
-                type: "GET",
-                url:'@Url.Action("SearchAction", "Product")',
-                data: { "keyword": keyword, "mainMenuId": mainMenuId, "subMenuId": subMenuId, "isProductPhoto": isProductPhoto },
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    hideLoadingIcon();
-                    $("#tblProduct").find("tbody").empty();
-                    $.each(response, function (i, item) {
-                        var rows = "<tr class='row table-item'>"
-                        + "<td class='col-md-2 col-lg-2'>" + item.ProductName + "</td>"
-                        + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
-                        + "<td class='col-md-2 col-lg-2'>" + item.MainMenuName + "</td>"
-                        + "<td class='col-md-2 col-lg-2'>" + item.SubMenuName + "</td>"
-                        + "<td class='col-md-2 col-lg-2'>" + item.SalePrice + "</td>"
-                        + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:10px' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:10px' onclick='action(3)'>Delete</button></td>"
-                        + "<td style='display:none'>" + item.ProductID + "</td>"
-                        + "</tr>";
-                        $('#tblProduct tbody').append(rows);
-                    });
-                },
-                failure: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                }
-            });*@
+            searchAction(false);            
         });
 
         $("#btnDelOk").click(function () {
@@ -480,7 +422,7 @@
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("SearchAction", "Product")',
-                data: { "keyword": keyword, "mainMenuId": mainMenuId, "subMenuId": subMenuId, "isProductPhoto": isProductPhoto, "p": currentPage },
+                data: { "keyword": keyword, "mainMenuId": mainMenuId, "subMenuId": subMenuId, "p": currentPage },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {

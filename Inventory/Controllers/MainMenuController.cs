@@ -16,8 +16,7 @@ namespace Inventory.Controllers
         static int editMainMenuID;
 
         public ActionResult MainMenuEntry(int mainMenuId)
-        {           
-            ViewBag.IsProductPhoto = isProductPhoto();
+        {                    
             clearSessionPhoto();
             if (mainMenuId != 0)
             {
@@ -51,8 +50,7 @@ namespace Inventory.Controllers
         }
 
         public ActionResult MainMenuList()
-        {         
-            ViewBag.IsProductPhoto = isProductPhoto();
+        {                   
             MainMenuModels.MainMenuModel mainMenuModel = new MainMenuModels.MainMenuModel();
             model.LstMainMenu = new List<MainMenuModels.MainMenuModel>();
             lstMainMenuList = new List<MainMenuModels.MainMenuModel>();
@@ -63,15 +61,12 @@ namespace Inventory.Controllers
                 mainMenuModel.MainMenuID = main.MainMenuID;
                 mainMenuModel.MainMenuName = main.MainMenuName;
                 mainMenuModel.Code = main.Code;
-                mainMenuModel.SortCode = main.SortCode;
-                if (isProductPhoto())
+                mainMenuModel.SortCode = main.SortCode;              
+                if (main.Photo != null)
                 {
-                    if (main.Photo != null)
-                    {
-                        mainMenuModel.Photo = main.Photo;
-                        mainMenuModel.Base64Photo = Convert.ToBase64String(main.Photo);
-                    }
-                }
+                    mainMenuModel.Photo = main.Photo;
+                    mainMenuModel.Base64Photo = Convert.ToBase64String(main.Photo);
+                }           
 
                 model.LstMainMenu.Add(mainMenuModel);
                 lstMainMenuList.Add(mainMenuModel);
@@ -95,23 +90,20 @@ namespace Inventory.Controllers
                     table.MainMenuName = mainMenuName;
                     table.Code = code;
                     table.SortCode = sortCode;
-
-                    if (isProductPhoto())
+                   
+                    if (Session["PhotoFile"] != null)
                     {
-                        if (Session["PhotoFile"] != null)
+                        HttpPostedFileBase file = (HttpPostedFileBase)Session["PhotoFile"];
+                        if (file != null)
                         {
-                            HttpPostedFileBase file = (HttpPostedFileBase)Session["PhotoFile"];
-                            if (file != null)
+                            if (file.ContentLength > 0)
                             {
-                                if (file.ContentLength > 0)
-                                {
-                                    table.Photo = new byte[file.ContentLength];
-                                    file.InputStream.Read(table.Photo, 0, file.ContentLength);
-                                }
+                                table.Photo = new byte[file.ContentLength];
+                                file.InputStream.Read(table.Photo, 0, file.ContentLength);
                             }
-                            clearSessionPhoto();
-                        }                     
-                    }
+                        }
+                        clearSessionPhoto();
+                    }                                      
 
                     Entities.S_MainMenu.Add(table);
                     Entities.SaveChanges();
@@ -156,23 +148,20 @@ namespace Inventory.Controllers
                         result.MainMenuName = mainMenuName;
                         result.Code = code;
                         result.SortCode = sortCode;
-
-                        if (isProductPhoto())
+                      
+                        if (Session["PhotoFile"] != null)
                         {
-                            if (Session["PhotoFile"] != null)
+                            HttpPostedFileBase file = (HttpPostedFileBase)Session["PhotoFile"];
+                            if (file != null)
                             {
-                                HttpPostedFileBase file = (HttpPostedFileBase)Session["PhotoFile"];
-                                if (file != null)
+                                if (file.ContentLength > 0)
                                 {
-                                    if (file.ContentLength > 0)
-                                    {
-                                        result.Photo = new byte[file.ContentLength];
-                                        file.InputStream.Read(result.Photo, 0, file.ContentLength);
-                                    }
+                                    result.Photo = new byte[file.ContentLength];
+                                    file.InputStream.Read(result.Photo, 0, file.ContentLength);
                                 }
-                                clearSessionPhoto();
-                            }                       
-                        }
+                            }
+                            clearSessionPhoto();
+                        }                                             
 
                         Entities.SaveChanges();
 
@@ -214,15 +203,12 @@ namespace Inventory.Controllers
                 mainMenuModel.MainMenuID = main.MainMenuID;
                 mainMenuModel.MainMenuName = main.MainMenuName;
                 mainMenuModel.Code = main.Code;
-                mainMenuModel.SortCode = main.SortCode;
-                if (isProductPhoto())
+                mainMenuModel.SortCode = main.SortCode;              
+                if (main.Photo != null)
                 {
-                    if (main.Photo != null)
-                    {
-                        mainMenuModel.Photo = main.Photo;
-                        mainMenuModel.Base64Photo = Convert.ToBase64String(main.Photo);
-                    }
-                }
+                    mainMenuModel.Photo = main.Photo;
+                    mainMenuModel.Base64Photo = Convert.ToBase64String(main.Photo);
+                }               
 
                 model.LstMainMenu.Add(mainMenuModel);
                 lstMainMenuList.Add(mainMenuModel);
@@ -278,14 +264,6 @@ namespace Inventory.Controllers
         private void clearSessionPhoto()
         {
             Session["PhotoFile"] = null;
-        }      
-
-        private bool isProductPhoto()
-        {
-            CompanySettingModels cModel = new CompanySettingModels();
-            var isProductPhoto = Entities.S_CompanySetting.Select(c => c.IsProductPhoto);
-            cModel.IsProductPhoto = isProductPhoto.FirstOrDefault();
-            return Convert.ToBoolean(cModel.IsProductPhoto);
-        }
+        }           
     }
 }

@@ -10,16 +10,12 @@ namespace Inventory.Models
     {
         public VoucherSettingModels()
         {
-            this.LstVoucherSetting = new List<VoucherSettingModels>();
-            this.Branches = new List<SelectListItem>();
+            this.LstVoucherSetting = new List<VoucherSettingModels>();         
             this.Locations = new List<SelectListItem>();
-        }
-        public List<SelectListItem> Branches { get; set; }
+        }      
         public List<SelectListItem> Locations { get; set; }
         public List<VoucherSettingModels> LstVoucherSetting { get; set; }
-        public int ID { get; set; }
-        public int? BranchID { get; set; }
-        public string BranchName { get; set; }
+        public int ID { get; set; }       
         public int LocationID { get; set; }
         public string LocationName { get; set; }
         public string HeaderName { get; set; }

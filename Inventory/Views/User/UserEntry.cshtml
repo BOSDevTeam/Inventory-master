@@ -61,13 +61,6 @@
                                 }
                                 <label id="vldPassword" class="text-danger" style="display:none">Password Require!</label>
                             </div>
-                            @if (ViewBag.IsMultiBranch == true)
-                            {
-                                <div class="form-group">
-                                    <label class="control-label">Branch</label>
-                                    @Html.DropDownListFor(m => m.BranchID, Model.Branches, new { @class = "form-control control-input" })
-                                </div>
-                            }
                             <div class="form-group">
                                 @Html.CheckBoxFor(m => m.IsDefaultLocation, new { @class = "control-input", onchange = "ShowHide(this.checked)", id = "chkDefaultLocation" }) <label class="control-label">Default Location</label>
                             </div>
@@ -99,40 +92,9 @@
 <script type="text/javascript">
     var vldOk,isDefaultLocation = false;
     $(function () {
-
-        $('#BranchID').change(function () {
-            var val = $('#BranchID option:selected').val();
-            showLoadingIcon();
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("BranchSelectAction", "User")',
-                data: { "branchId": val },
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    hideLoadingIcon();
-                    var loc;
-                    $("#LocationID").html("");
-                    for (var i = 0; i < response.length; i++) {
-                        loc += '<option value="' + response[i].LocationID + '">' + response[i].LocationName + '</option>';
-                    }
-                    $("#LocationID").append(loc);
-                },
-                failure: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                }
-            });
-        });
-
         $('#btnSave').click(function () {
             var userName = $('#UserName').val();
             var password = $('#Password').val();
-            var branchId = $('#BranchID option:selected').val();
             var locationId = $('#LocationID option:selected').val();
 
             if (userName.length == 0) {
@@ -156,7 +118,7 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("SaveAction", "User")',
-                    data: { "userName": userName, "password": password, "branchId": branchId, "isDefaultLocation": isDefaultLocation, "locationId": locationId, "isMultiBranch": isMultiBranch },
+                    data: { "userName": userName, "password": password, "isDefaultLocation": isDefaultLocation, "locationId": locationId },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
@@ -166,8 +128,6 @@
                         $("#vldName").hide();
                         $("#vldPassword").hide();
                         showToast(1, response.Message);
-                        //$("#divMessage").show();
-                        //$('#message').text(response.Message);
                     },
                     failure: function (response) {
                         hideLoadingIcon();
@@ -185,7 +145,6 @@
             var userId = $('#btnEdit').val();
             var userName = $('#UserName').val();
             var password = $('#Password').val();
-            var branchId = $('#BranchID option:selected').val();
             var locationId = $('#LocationID option:selected').val();
 
             if (userName.length == 0) {
@@ -202,7 +161,7 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("EditAction", "User")',
-                    data: { "userName": userName, "password": password, "branchId": branchId, "isDefaultLocation": isDefaultLocation, "locationId": locationId, "isMultiBranch": isMultiBranch, "userId": userId },
+                    data: { "userName": userName, "password": password, "isDefaultLocation": isDefaultLocation, "locationId": locationId, "userId": userId },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
@@ -241,9 +200,6 @@
 
         var isEdit = '@Session["IsEdit"]';
         if (isEdit == 1) {
-            var branchId = '@Session["EditBranchID"]';
-            $("#BranchID").val(branchId);
-
             var editIsDefaultLocation = '@Session["EditIsDefaultLocationVal"]';
             if (editIsDefaultLocation == 1) {
                 $("#chkDefaultLocation").prop("checked", true);

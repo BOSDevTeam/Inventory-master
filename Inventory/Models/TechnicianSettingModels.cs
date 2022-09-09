@@ -14,11 +14,8 @@ namespace Inventory.Models
         }
         public bool IsMultiCurrency { get; set; }
         public bool IsMultiUnit { get; set; }
-        public bool IsMultiBranch { get; set; }
-        public bool IsUseProductPhoto { get; set; }
-        public bool IsUseProductColor { get; set; }
-        public bool IsUseProductSize { get; set; }
         public bool IsBankPayment { get; set; }
+        public bool IsClientPhoneVerify { get; set; }
         public List<SelectListItem> ShopTypes { get; set; }
         public int ShopTypeID { get; set; }
     }

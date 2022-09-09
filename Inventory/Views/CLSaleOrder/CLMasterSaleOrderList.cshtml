@@ -4,40 +4,33 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <head>
-    <style>
-        .white-color 
-        {
-            color:white;
-        }
-        .button-boder {
-        }
-        .noHover{
-    pointer-events: none;
-}
-    </style>
-
     <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
     <link href="~/Content/Site.css" rel="stylesheet" />
     <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <style type="text/css">
+        #subMenuSaleGp {
+            display: block;
+        }
+    </style>
     <script type="text/javascript">
-        document.getElementById('menuMasterSaleOrder').className = 'active';
+        document.getElementById('subMenuClientSaleOrder').className = 'active';
     </script>
 </head>
 <div>
     <div class="row setup-title-layout">
         <div class="col-md-4 col-lg-4">
-        <label class="page-title">All Sale Orders</label>
-       <!--<label class="page-title" id="fcount" hidden>All Sale Orders &nbsp;&nbsp;<span class="count-circle" id="count"></span></label>  -->           
+            <label class="page-title">All Sale Orders</label>
+            <!--<label class="page-title" id="fcount" hidden>All Sale Orders &nbsp;&nbsp;<span class="count-circle" id="count"></span></label>  -->
         </div>
         <div class="col-md-8 col-lg-8">
             <div class="btn-group" style="float:right">
                 <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox mr-10" />
                 <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
                 <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
-                <button class="btn btn-light noHover"  style="margin-left:10px; border:none;width: 80px;" id="lsitcount"><span style="color: #4CAF50;">@ViewBag.Count</span></button>
-                <button class="btn btn-light noHover"  style="margin-left:10px; border:none;width: 80px;" id="fcount" hidden><span style="color: #4CAF50;" id="count"></span></button>  
+                <button class="btn btn-light noHover" style="margin-left:10px; border:none;width: 80px;" id="lsitcount"><span style="color: #4CAF50;">@ViewBag.Count</span></button>
+                <button class="btn btn-light noHover" style="margin-left:10px; border:none;width: 80px;" id="fcount" hidden><span style="color: #4CAF50;" id="count"></span></button>
             </div>
         </div>
     </div>
@@ -195,35 +188,11 @@
                     </div>
 
                 </div>
-               
+
             </div>
             <div>
             </div>
 
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12 col-lg12">
-                        <label class="control-label">Are you sure you want to delete?</label>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="btnDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button id="btnDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
-            </div>
         </div>
     </div>
 </div>
@@ -311,16 +280,11 @@
             });
         });
 
-
-        
-
-
         $("#tbTranSaleOrder").on("click", "tr", function (event) {
             selectedRow = $(this).parent('tr');
             $(this).find("td:last").each(function () {
                 transaleId = $(this).text();
                 if (actionValue == 4) {  // delete
-                    // $('#modalConfirm').modal('show');
                     Swal.fire({
                         title: 'Are you sure?',
                         text: "",
@@ -339,30 +303,11 @@
                                 dataType: "json",
                                 success: function (response) {
                                     hideLoadingIcon();
-                                    $('#modalConfirm').modal('hide');
-                                    let rows = "";
-                                    for (var i = 0; i < response.TranSaleOrderList.length; i++) {
-
-                                        rows += "<tr class='row table-item'>"
-                                       + "<td class='col-md-1 col-lg-1'>"
-                                       + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-window-close white-color' aria-hidden='true'></i></button>"
-                                       + "</td>"
-                                       + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
-                                       + "<td class='col-md-3 col-lg-3'>" + response.TranSaleOrderList[i].ProductName + "</td>"
-                                       + "<td class='col-md-3 col-lg-3'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
-                                       + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
-                                       + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
-                                       + "<td>" + response.TranSaleOrderList[i].ID + "</td>"
-                                       + "</tr>";
-                                        $('#Subtotal').text(response.Subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                                        $('#Tax').text(response.Tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                                        $('#Charges').text(response.Charge.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                                        $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);
-                                        $('#Total').text(response.Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                                        $('#tbTranSaleOrder').html(rows);
-
-                                    }
+                                    //deleteUpdateTransale();
+                                    //deleteTranSale();
+                                    transaleorder(response);
                                     $('#modalView').modal('show');
+
 
                                 },
                                 failure: function (response) {
@@ -380,63 +325,11 @@
             });
         });
 
-        $("#btnDelCancel").click(function () {
-             $('#modalConfirm').modal('hide');
-            $('#modalView').modal('show');
-        });
-
-        $("#btnDelOk").click(function () {
-            showLoadingIcon();
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("DeleteAction", "CLSaleOrder")',
-                data: { "transaleId": transaleId },
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    hideLoadingIcon();
-                        $('#modalConfirm').modal('hide');
-                        let rows = "";
-                        for (var i = 0; i < response.TranSaleOrderList.length; i++) {
-
-                            rows += "<tr class='row table-item'>"
-                           + "<td class='col-md-1 col-lg-1'>"
-                           + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-window-close white-color' aria-hidden='true'></i></button>"
-                           + "</td>"
-                           + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
-                           + "<td class='col-md-3 col-lg-3'>" + response.TranSaleOrderList[i].ProductName + "</td>"
-                           + "<td class='col-md-3 col-lg-3'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
-                           + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
-                           + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
-                           + "<td>" + response.TranSaleOrderList[i].ID + "</td>"
-                           + "</tr>";
-                            $('#Subtotal').text(response.Subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                            $('#Tax').text(response.Tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                            $('#Charges').text(response.Charge.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                            $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);
-                            $('#Total').text(response.Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                            $('#tbTranSaleOrder').html(rows);
-
-                        }
-                        $('#modalView').modal('show');
-
-                },
-                failure: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                }
-            });
-        });
-
-
         $('#tblSaleOrder').on("click", "tr", function (event) {
             selectedRow = $(this).parent('tr');
             $(this).find("td:last").each(function () {
                 saleorderId = $(this).text();
+                console.log(saleorderId);
                 if (actionValue == 1) {   // view
                     showLoadingIcon();
                     $.ajax({
@@ -455,27 +348,7 @@
                             $('#CustomerName').text(response.CustomerName);
                             $('#CustomerPhone').text(response.CustomerPhone);
                             $('#Remark').text(response.Remark);
-                            let rows = "";
-                            for (var i = 0; i < response.TranSaleOrderList.length; i++) {
-                                rows += "<tr class='row table-item'>"
-                               + "<td class='col-md-1 col-lg-1'>"
-                               + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-window-close white-color' aria-hidden='true'></i></button>"
-                               + "</td>"
-                               + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
-                               + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
-                               + "<td class='col-md-2 col-lg-2'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
-                               + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
-                               + "<td class='col-md-2 col-lg-2'>" + "<label1>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
-                               + "<td>" + response.TranSaleOrderList[i].ID + "</td>"
-                               + "</tr>";
-                                $('#Subtotal').text(response.TranSaleOrderList[i].Subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                                $('#Tax').text(response.TranSaleOrderList[i].TaxAmt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                                $('#Charges').text(response.TranSaleOrderList[i].ChargesAmt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                                $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);
-                                $('#Total').text(response.TranSaleOrderList[i].Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                                $('#tbTranSaleOrder').html(rows);
-
-                            }
+                            transaleorder(response);
                             $('#modalView').modal('show');
                         },
                         failure: function (response) {
@@ -550,9 +423,72 @@
 
     });
 
-
     function action(val) {
         actionValue = val;
+    }
+
+    function deleteTranSale() {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("DeleteRealAction", "CLSaleOrder")',
+            data: { "transaleId": transaleId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+    function deleteUpdateTransale() {
+        saleOrderID = $('#lbSaleOrderID').text();
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("DeleteAction2", "CLSaleOrder")',
+            data: { "saleOrderID": saleOrderID },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+            },
+            failure: function (response) {
+                alert(response.responseText);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+
+    function transaleorder(response) {
+        $("#tbTranSaleOrder").find("tbody").empty();
+        $.each(response.TranSaleOrderList, function (i, item) {
+            var rows = "<tr class='row'>"
+               + "<td class='col-md-1 col-lg-1'>"
+               + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-window-close white-color' aria-hidden='true'></i></button>"
+               + "</td>"
+               + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
+               + "<td class='col-md-4 col-lg-4'>" + item.ProductName + "</td>"
+               + "<td class='col-md-2 col-lg-2'>" + "<input type='number' id='qty" + item.ID + "' min='1' max='1000' value='" + item.Quantity + "' />" + "</td>"
+               + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + item.SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+               + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + item.Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+               + "<td>" + item.ID + "</td>"
+               + "</tr>";
+               
+            $('#tbTranSaleOrder').html(rows);
+            $('#Subtotal').text(response.Subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#Tax').text(response.Tax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#Charges').text(response.Charge.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+            $('#DefaultCurrency').text(item.DefaultCurrency);
+            $('#Total').text(response.Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+
+        });
+
+   
     }
 </script>
 

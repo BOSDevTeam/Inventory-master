@@ -37,7 +37,7 @@
             </div>
             <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
             <ul class="nav user-menu float-right">
-                <li class="nav-item dropdown d-none d-sm-block" title="POS">
+                <li class="nav-item dropdown d-none d-sm-block" title="Opened Bills">
                     <a href="#" class="nav-link"><i class="fa fa-dollar"></i></a>                   
                 </li>               
                 <li class="nav-item dropdown d-none d-sm-block" title="Settings">
@@ -76,19 +76,16 @@
                         <li class="menu-title">Main</li>
                         <li id="menuDashboard">
                             <a href="~/Home/Dashboard"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
-                        </li>
-                        <li id="menuSale">
-                            <a href="#"><i class="fa fa-dollar"></i> <span>POS</span></a>
-                        </li>
-                        <li id="menuSaleList">
-                            <a href="~/Sale/SaleList"><i class="fa fa-sticky-note"></i> <span>Sale List</span></a>
-                        </li>  
-                        <li id="menuMasterSaleOrder">
-                            <a href="~/CLSaleOrder/CLMasterSaleOrderList"><i class="fa fa-sticky-note"></i> <span>Sale Order</span></a>
-                        </li> 
-                        <li id="menuPurchase">
-                            <a href="~/Purchase/Purchase"><i class="fa fa-dollar"></i> <span>Purchase</span></a>
-                        </li>                    
+                        </li>       
+                        <li class="submenu">
+                            <a href=""><i class="fa fa-dollar"></i> <span> Sale </span> <span class="menu-arrow"></span></a>
+                            <ul id="subMenuSaleGp">
+                                <li id="subMenuSale"><a href="#">Sale</a></li>
+                                <li id="subMenuClientSaleOrder"><a href="~/CLSaleOrder/CLMasterSaleOrderList">Client Sale Order</a></li>
+                                <li id="subMenuSaleOrder"><a href="#">Sale Order</a></li>
+                                <li id="subMenuSaleReturn"><a href="#">Sale Return</a></li>
+                            </ul>
+                        </li>           
                         <li>
                             <a href="~/CompanySetting/CompanySettingEntry"><i class="fa fa-cog"></i> <span>Settings</span></a>
                         </li>                                            
@@ -115,17 +112,10 @@
     <script src="~/Scripts/Site.js"></script>
 
     <script>
-        var isMultiBranch = false, isMultiCurrency = false, isMultiUnit = false, isBankPayment = false,
-            isProductPhoto = false, userId = 0, branchId = 0, userName;
-
-        isMultiBranch = localStorage.getItem("IsMultiBranch");
-        isMultiCurrency = localStorage.getItem("IsMultiCurrency");
-        isMultiUnit = localStorage.getItem("IsMultiUnit");
-        isBankPayment = localStorage.getItem("IsBankPayment");
-        isProductPhoto = localStorage.getItem("IsProductPhoto");
+        var userId = 0, userName;
+       
         userId = localStorage.getItem("UserID");
-        userName = localStorage.getItem("UserName");
-        branchId = localStorage.getItem("BranchID");
+        userName = localStorage.getItem("UserName");     
 
         $("#loginUser").text(userName);
 
