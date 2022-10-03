@@ -27,9 +27,10 @@
             <table id="tblVoucherFormat" class="col-md-12 col-lg-12" role="grid">
                 <thead>
                     <tr class="row table-header">                       
-                        <th class="col-md-4 col-lg-4">Pre</th>
-                        <th class="col-md-4 col-lg-4">Mid</th>
+                        <th class="col-md-3 col-lg-3">Pre</th>
+                        <th class="col-md-3 col-lg-3">Mid</th>
                         <th class="col-md-2 col-lg-2">Post</th>
+                        <th class="col-md-2 col-lg-2">Module Name</th>
                         <th class="col-md-2 col-lg-2">Action</th>
                     </tr>
                 </thead>
@@ -39,9 +40,10 @@
                     @for (int i = 0; i < Model.LstVoucherFormat.Count(); i++)
                     {
                         <tr class="row table-item">                          
-                            <td class="col-md-4 col-lg-4">@Model.LstVoucherFormat[i].PreFormat</td>
-                            <td class="col-md-4 col-lg-4">@Model.LstVoucherFormat[i].MidFormat</td>
+                            <td class="col-md-3 col-lg-3">@Model.LstVoucherFormat[i].PreFormat</td>
+                            <td class="col-md-3 col-lg-3">@Model.LstVoucherFormat[i].MidFormat</td>
                             <td class="col-md-2 col-lg-2">@Model.LstVoucherFormat[i].PostFormat</td>
+                            <td class="col-md-2 col-lg-2">@Model.LstVoucherFormat[i].ModuleName</td>
                             <td class="col-md-2 col-lg-2">
                                 <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
                                 <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>

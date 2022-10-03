@@ -19,7 +19,8 @@ namespace Inventory.Controllers
         public ActionResult CustomerEntry(int customerId)
         {           
             GetDivision();
-           
+            GetTownship();
+
             if (customerId != 0)
             {
                 Session["IsEdit"] = 1;
@@ -35,7 +36,7 @@ namespace Inventory.Controllers
                     Session["EditAddress"] = e.Address;
                     Session["EditTownshipID"] = e.TownshipID;
                     Session["EditDivisionID"] = e.DivisionID;
-                    GetTownship(e.DivisionID);
+                    GetTownshipByDivision(e.DivisionID);
                     if (e.IsCredit) Session["EditIsCreditVal"] = 1;
                     else Session["EditIsCreditVal"] = 0;
                     break;
@@ -50,6 +51,7 @@ namespace Inventory.Controllers
 
         public ActionResult CustomerList()
         {
+            GetDivisionDefaultInclude();
             GetTownshipDefaultInclude();
 
             CustomerModels.CustomerModel customerModel = new CustomerModels.CustomerModel();
@@ -73,6 +75,7 @@ namespace Inventory.Controllers
                 customerModel.TownshipID = customer.TownshipID;
                 customerModel.TownshipName = customer.TownshipName;
                 customerModel.DivisionID = Convert.ToInt32(customer.DivisionID);
+                GetTownshipByDivision(customer.DivisionID);
                 customerModel.DivisionName = customer.DivisionName;
 
                 model.LstCustomer.Add(customerModel);
@@ -90,9 +93,19 @@ namespace Inventory.Controllers
             var cust = (from cus in Entities.S_Customer where cus.Code == code select cus).ToList();
             if (cust.Count() == 0)
             {
-                Entities.PrcInsertCustomer(customerName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
-                message = "Saved Successfully!";
-                saveOk = 1;
+                var custphone = (from cus in Entities.S_Customer where cus.Phone == phone where cus.Phone != "" select cus).ToList();
+                if (custphone.Count == 0)
+                {
+                    Entities.PrcInsertCustomer(customerName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
+                    message = "Saved Successfully!";
+                    saveOk = 1;
+                }
+                else
+                {
+                    message = "Phone Duplicate";
+                    saveOk = 0;
+                }
+                
             }
             else
             {
@@ -151,9 +164,19 @@ namespace Inventory.Controllers
             var cust = (from cus in Entities.S_Customer where cus.Code == code where cus.CustomerID != editCustomerID select cus).ToList();
             if (cust.Count() == 0)
             {
-                Entities.PrcUpdateCustomer(editCustomerID, customerName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
-                message = "Edited Successfully!";
-                editOk = 1;
+                var editcustphone = (from cus in Entities.S_Customer where cus.Phone == phone where cus.Phone != "" where cus.CustomerID != editCustomerID select cus).ToList();
+                if (editcustphone.Count == 0)
+                {
+                    Entities.PrcUpdateCustomer(editCustomerID, customerName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
+                    message = "Edited Successfully!";
+                    editOk = 1;
+                }
+                else
+                {
+                    message = "Phone Duplicate!";
+                    editOk = 0;
+                }
+               
             }
             else
             {
@@ -171,13 +194,13 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SearchAction(string keyword, int? townshipId)
+        public JsonResult SearchAction(string keyword,int divisionId, int? townshipId)
         {
             CustomerModels.CustomerModel customerModel = new CustomerModels.CustomerModel();
             model.LstCustomer = new List<CustomerModels.CustomerModel>();
             lstCustomerList = new List<CustomerModels.CustomerModel>();
 
-            foreach (var customer in Entities.PrcSearchCustomer(keyword, townshipId))
+            foreach (var customer in Entities.PrcSearchCustomer(keyword, divisionId, townshipId))
             {
                 customerModel = new CustomerModels.CustomerModel();
                 customerModel.CustomerID = customer.CustomerID;
@@ -247,7 +270,7 @@ namespace Inventory.Controllers
         }
         */
 
-        public JsonResult GetDivsionSelectTownship(int divisionId)
+        public JsonResult GetDivsionSelectTownship(int? divisionId)
         {
             TownshipModels.TownshipModel town = new TownshipModels.TownshipModel();
             List<TownshipModels.TownshipModel> lstwon = new List<TownshipModels.TownshipModel>();
@@ -256,16 +279,40 @@ namespace Inventory.Controllers
                 town = new TownshipModels.TownshipModel();
                 town.TownshipID = township.TownshipID;
                 town.TownshipName = township.TownshipName;
-                lstwon.Add(town);
+                lstwon.Add(town);              
             }
+
+            if (lstwon.Count == 0)
+            {
+                Session["TownshipID"] = 0;
+            }
+
             return Json(lstwon, JsonRequestBehavior.AllowGet);
         }
 
-        private void GetTownship(int editdivisionId)
+        private void GetTownshipByDivision(int? editdivisionId)
         {
             foreach (var town in Entities.S_Township.Where(m=>m.DivisionID == editdivisionId).OrderBy(m => m.Code))
             {
                 model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
+            }
+        }
+        private void GetTownship()
+        {
+            foreach (var town in Entities.S_Township.OrderBy(m => m.Code))
+            {
+                model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
+            }
+        }
+
+
+
+        private void GetDivisionDefaultInclude()
+        {
+            model.Divisions.Add(new SelectListItem { Text = "Division", Value = "0" });
+            foreach (var div in Entities.S_Division.OrderBy(m => m.Code))
+            {
+                model.Divisions.Add(new SelectListItem { Text = div.DivisionName, Value = div.DivisionID.ToString() });
             }
         }
 

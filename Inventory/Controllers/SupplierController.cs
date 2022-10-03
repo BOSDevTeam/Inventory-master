@@ -18,7 +18,7 @@ namespace Inventory.Controllers
         public ActionResult SupplierEntry(int supplierId)
         {         
             GetDivision();
-           
+            GetTownship();
             if (supplierId != 0)
             {
                 
@@ -35,7 +35,7 @@ namespace Inventory.Controllers
                     Session["EditAddress"] = e.Address;                 
                     Session["EditTownshipID"] = e.TownshipID;
                     Session["EditDivisionID"] = e.DivisionID;
-                    GetTownship(e.DivisionID);
+                    GetTownshipByDivision(e.DivisionID);
                     if (e.IsCredit) Session["EditIsCreditVal"] = 1;
                     else Session["EditIsCreditVal"] = 0;
                     break;
@@ -49,7 +49,8 @@ namespace Inventory.Controllers
         }
 
         public ActionResult SupplierList()
-        {           
+        {
+            GetDivisionDefaultInclude();
             GetTownshipDefaultInclude();
             SupplierModels.SupplierModel supplierModel = new SupplierModels.SupplierModel();
             model.LstSupplier = new List<SupplierModels.SupplierModel>();
@@ -89,9 +90,18 @@ namespace Inventory.Controllers
             var supt = (from sup in Entities.S_Supplier where sup.Code == code select sup).ToList();
             if (supt.Count() == 0)
             {
-                Entities.PrcInsertSupplier(supplierName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
-                message = "Saved Successfully!";
-                saveOk = 1;
+                var supPhone = (from sup in Entities.S_Supplier where sup.Phone == phone where sup.Phone != null select sup).ToList();
+                if (supPhone.Count == 0 )
+                {
+                    Entities.PrcInsertSupplier(supplierName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
+                    message = "Saved Successfully!";
+                    saveOk = 1;
+                }
+                else
+                {
+                    message = "Phone Duplicate!";
+                    saveOk = 0;
+                }
             }
             else
             {
@@ -150,9 +160,21 @@ namespace Inventory.Controllers
             var supt = (from sup in Entities.S_Supplier where sup.Code == code where sup.SupplierID != editSupplierID select sup).ToList();
             if (supt.Count() == 0)
             {
-                Entities.PrcUpdateSupplier(editSupplierID, supplierName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
-                message = "Edited Successfully!";
-                editOk = 1;
+                var suptPhone = (from sup in Entities.S_Supplier where sup.Phone == phone where sup.Phone != null where sup.SupplierID != editSupplierID select sup).ToList();
+                if (suptPhone.Count == 0)
+                {
+                    Entities.PrcUpdateSupplier(editSupplierID, supplierName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
+                    message = "Edited Successfully!";
+                    editOk = 1;
+                }
+                else
+                {
+                    message = "Phone Duplicate!";
+                    editOk = 0;
+                }
+                
+
+               
             }
             else
             {
@@ -186,13 +208,13 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SearchAction(string keyword, int? townshipId)
+        public JsonResult SearchAction(string keyword,int divisionId, int? townshipId)
         {
             SupplierModels.SupplierModel supplierModel = new SupplierModels.SupplierModel();
             model.LstSupplier = new List<SupplierModels.SupplierModel>();
             lstSupplierList = new List<SupplierModels.SupplierModel>();
 
-            foreach (var supplier in Entities.PrcSearchSupplier(keyword, townshipId))
+            foreach (var supplier in Entities.PrcSearchSupplier(keyword, divisionId, townshipId))
             {
                 supplierModel = new SupplierModels.SupplierModel();
                 supplierModel.SupplierID = supplier.SupplierID;
@@ -251,11 +273,29 @@ namespace Inventory.Controllers
             }
         }
 
-        private void GetTownship(int editdivisionId)
+        private void GetTownshipByDivision(int editdivisionId)
         {
             foreach (var town in Entities.S_Township.Where(m=>m.DivisionID == editdivisionId).OrderBy(m => m.Code))
             {
                 model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
+            }
+        }
+
+        private void GetTownship()
+        {
+            foreach (var town in Entities.S_Township.OrderBy(m => m.Code))
+            {
+                model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
+            }
+        }
+
+
+        private void GetDivisionDefaultInclude()
+        {
+            model.Divisions.Add(new SelectListItem { Text = "Division", Value = "0" });
+            foreach (var div in Entities.S_Division.OrderBy(m => m.Code))
+            {
+                model.Divisions.Add(new SelectListItem { Text = div.DivisionName, Value = div.DivisionID.ToString() });
             }
         }
 

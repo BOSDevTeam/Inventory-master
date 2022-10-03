@@ -39,5 +39,7 @@ namespace Inventory.Common
         public const string PrcGetTownship = "PrcGetTownship";
         public const string PrcUpdateCLMasterSaleOrder = "PrcUpdateCLMasterSaleOrder";
         public const string PrcUpdateCLTranSaleOrder = "PrcUpdateCLTranSaleOrder";
+        public const string PrcGetClient = "PrcGetClient";
+        public const string PrcSearchClient = "PrcSearchClient";
     }
 }

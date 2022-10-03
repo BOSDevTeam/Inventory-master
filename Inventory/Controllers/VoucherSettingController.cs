@@ -199,17 +199,16 @@ namespace Inventory.Controllers
                 var result = Entities.S_VoucherSetting.SingleOrDefault(c => c.ID == editVouSettingID);
                 if (result != null)
                 {
-                    S_VoucherSetting table = new S_VoucherSetting();
-                    table.HeaderName = headerName;
-                    table.HeaderDesp = headerDesp;
-                    table.HeaderPhone = headerPhone;
-                    table.HeaderAddress = headerAddress;
-                    table.OtherHeader1 = otherHeader1;
-                    table.OtherHeader2 = otherHeader2;
-                    table.FooterMessage1 = footerMessage1;
-                    table.FooterMessage2 = footerMessage2;
-                    table.FooterMessage3 = footerMessage3;                 
-                    table.LocationID = locationId;
+                    result.HeaderName = headerName;
+                    result.HeaderDesp = headerDesp;
+                    result.HeaderPhone = headerPhone;
+                    result.HeaderAddress = headerAddress;
+                    result.OtherHeader1 = otherHeader1;
+                    result.OtherHeader2 = otherHeader2;
+                    result.FooterMessage1 = footerMessage1;
+                    result.FooterMessage2 = footerMessage2;
+                    result.FooterMessage3 = footerMessage3;
+                    result.LocationID = locationId;
 
                     if (Session["PhotoFile"] != null)
                     {
@@ -218,8 +217,8 @@ namespace Inventory.Controllers
                         {
                             if (file.ContentLength > 0)
                             {
-                                table.VoucherLogo = new byte[file.ContentLength];
-                                file.InputStream.Read(table.VoucherLogo, 0, file.ContentLength);
+                                result.VoucherLogo = new byte[file.ContentLength];
+                                file.InputStream.Read(result.VoucherLogo, 0, file.ContentLength);
                             }
                         }
                         clearSessionPhoto();
@@ -257,6 +256,7 @@ namespace Inventory.Controllers
                 headerDesp = e.HeaderDesp;
                 headerPhone = e.HeaderPhone;
                 headerAddress = e.HeaderAddress;
+                
                 otherHeader1 = e.OtherHeader1;
                 otherHeader2 = e.OtherHeader2;
                 footerMessage1 = e.FooterMessage1;

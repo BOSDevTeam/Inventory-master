@@ -42,8 +42,6 @@ namespace Inventory
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<S_Division> S_Division { get; set; }
         public virtual DbSet<T_CLTranSaleOrder> T_CLTranSaleOrder { get; set; }
-        public virtual DbSet<T_MasterSale> T_MasterSale { get; set; }
-        public virtual DbSet<T_TranSale> T_TranSale { get; set; }
         public virtual DbSet<S_TranID> S_TranID { get; set; }
         public virtual DbSet<Sys_UnitLevel> Sys_UnitLevel { get; set; }
         public virtual DbSet<T_CLMasterSaleOrder> T_CLMasterSaleOrder { get; set; }
@@ -56,6 +54,8 @@ namespace Inventory
         public virtual DbSet<S_CompanySetting> S_CompanySetting { get; set; }
         public virtual DbSet<S_Product> S_Product { get; set; }
         public virtual DbSet<S_User> S_User { get; set; }
+        public virtual DbSet<T_MasterSale> T_MasterSale { get; set; }
+        public virtual DbSet<Sys_Module> Sys_Module { get; set; }
     
         public virtual int PrcDeleteBank(Nullable<int> bankID)
         {
@@ -617,15 +617,6 @@ namespace Inventory
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_upgraddiagrams");
         }
     
-        public virtual ObjectResult<PrcSearchTownship_Result> PrcSearchTownship(string keyword)
-        {
-            var keywordParameter = keyword != null ?
-                new ObjectParameter("keyword", keyword) :
-                new ObjectParameter("keyword", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcSearchTownship_Result>("PrcSearchTownship", keywordParameter);
-        }
-    
         public virtual ObjectResult<PrcGetDivisionSelectTownship_Result> PrcGetDivisionSelectTownship(Nullable<int> divisionID)
         {
             var divisionIDParameter = divisionID.HasValue ?
@@ -635,11 +626,6 @@ namespace Inventory
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetDivisionSelectTownship_Result>("PrcGetDivisionSelectTownship", divisionIDParameter);
         }
     
-        public virtual ObjectResult<PrcGetTownship_Result> PrcGetTownship()
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetTownship_Result>("PrcGetTownship");
-        }
-    
         public virtual int PrcDeleteCLTranSaleOrder(Nullable<int> iD)
         {
             var iDParameter = iD.HasValue ?
@@ -647,20 +633,6 @@ namespace Inventory
                 new ObjectParameter("ID", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcDeleteCLTranSaleOrder", iDParameter);
-        }
-    
-        public virtual ObjectResult<PrcGetCLMasterSaleOrder_Result> PrcGetCLMasterSaleOrder()
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetCLMasterSaleOrder_Result>("PrcGetCLMasterSaleOrder");
-        }
-    
-        public virtual ObjectResult<PrcGetCLTranSaleOrderBySaleOrderID_Result> PrcGetCLTranSaleOrderBySaleOrderID(Nullable<int> saleOrderID)
-        {
-            var saleOrderIDParameter = saleOrderID.HasValue ?
-                new ObjectParameter("SaleOrderID", saleOrderID) :
-                new ObjectParameter("SaleOrderID", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetCLTranSaleOrderBySaleOrderID_Result>("PrcGetCLTranSaleOrderBySaleOrderID", saleOrderIDParameter);
         }
     
         public virtual ObjectResult<PrcSearchCLMasterSaleOrder_Result> PrcSearchCLMasterSaleOrder(string keywords)
@@ -787,36 +759,6 @@ namespace Inventory
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcInsertSupplier", supplierNameParameter, codeParameter, phoneParameter, emailParameter, addressParameter, contactParameter, townshipIDParameter, isCreditParameter, divisionIDParameter);
         }
     
-        public virtual int PrcInsertVoucherFormat(string preFormat, string midFormat, Nullable<int> postFormat)
-        {
-            var preFormatParameter = preFormat != null ?
-                new ObjectParameter("PreFormat", preFormat) :
-                new ObjectParameter("PreFormat", typeof(string));
-    
-            var midFormatParameter = midFormat != null ?
-                new ObjectParameter("MidFormat", midFormat) :
-                new ObjectParameter("MidFormat", typeof(string));
-    
-            var postFormatParameter = postFormat.HasValue ?
-                new ObjectParameter("PostFormat", postFormat) :
-                new ObjectParameter("PostFormat", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcInsertVoucherFormat", preFormatParameter, midFormatParameter, postFormatParameter);
-        }
-    
-        public virtual ObjectResult<PrcSearchCustomer_Result> PrcSearchCustomer(string keyword, Nullable<int> townshipID)
-        {
-            var keywordParameter = keyword != null ?
-                new ObjectParameter("keyword", keyword) :
-                new ObjectParameter("keyword", typeof(string));
-    
-            var townshipIDParameter = townshipID.HasValue ?
-                new ObjectParameter("TownshipID", townshipID) :
-                new ObjectParameter("TownshipID", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcSearchCustomer_Result>("PrcSearchCustomer", keywordParameter, townshipIDParameter);
-        }
-    
         public virtual ObjectResult<PrcSearchLocation_Result> PrcSearchLocation(string keyword)
         {
             var keywordParameter = keyword != null ?
@@ -824,19 +766,6 @@ namespace Inventory
                 new ObjectParameter("keyword", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcSearchLocation_Result>("PrcSearchLocation", keywordParameter);
-        }
-    
-        public virtual ObjectResult<PrcSearchSupplier_Result> PrcSearchSupplier(string keyword, Nullable<int> townshipID)
-        {
-            var keywordParameter = keyword != null ?
-                new ObjectParameter("keyword", keyword) :
-                new ObjectParameter("keyword", typeof(string));
-    
-            var townshipIDParameter = townshipID.HasValue ?
-                new ObjectParameter("TownshipID", townshipID) :
-                new ObjectParameter("TownshipID", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcSearchSupplier_Result>("PrcSearchSupplier", keywordParameter, townshipIDParameter);
         }
     
         public virtual int PrcUpdateCustomer(Nullable<int> customerID, string customerName, string code, string phone, string email, string address, string contact, Nullable<int> townshipID, Nullable<bool> isCredit, Nullable<int> divisionID)
@@ -966,45 +895,9 @@ namespace Inventory
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcUpdateSupplier", supplierIDParameter, supplierNameParameter, codeParameter, phoneParameter, emailParameter, addressParameter, contactParameter, townshipIDParameter, isCreditParameter, divisionIDParameter);
         }
     
-        public virtual int PrcUpdateVoucherFormat(Nullable<int> iD, string preFormat, string midFormat, Nullable<int> postFormat)
-        {
-            var iDParameter = iD.HasValue ?
-                new ObjectParameter("ID", iD) :
-                new ObjectParameter("ID", typeof(int));
-    
-            var preFormatParameter = preFormat != null ?
-                new ObjectParameter("PreFormat", preFormat) :
-                new ObjectParameter("PreFormat", typeof(string));
-    
-            var midFormatParameter = midFormat != null ?
-                new ObjectParameter("MidFormat", midFormat) :
-                new ObjectParameter("MidFormat", typeof(string));
-    
-            var postFormatParameter = postFormat.HasValue ?
-                new ObjectParameter("PostFormat", postFormat) :
-                new ObjectParameter("PostFormat", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcUpdateVoucherFormat", iDParameter, preFormatParameter, midFormatParameter, postFormatParameter);
-        }
-    
         public virtual ObjectResult<PrcGetLocation_Result> PrcGetLocation()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetLocation_Result>("PrcGetLocation");
-        }
-    
-        public virtual ObjectResult<PrcGetCustomer_Result> PrcGetCustomer()
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetCustomer_Result>("PrcGetCustomer");
-        }
-    
-        public virtual ObjectResult<PrcGetSupplier_Result> PrcGetSupplier()
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetSupplier_Result>("PrcGetSupplier");
-        }
-    
-        public virtual ObjectResult<PrcGetVoucherFormat_Result> PrcGetVoucherFormat()
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetVoucherFormat_Result>("PrcGetVoucherFormat");
         }
     
         public virtual ObjectResult<PrcGetVoucherSetting_Result> PrcGetVoucherSetting()
@@ -1012,11 +905,15 @@ namespace Inventory
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetVoucherSetting_Result>("PrcGetVoucherSetting");
         }
     
-        public virtual int PrcUpdateCLMasterSaleOrder(Nullable<int> saleOrderID, Nullable<int> subtotal, Nullable<int> taxAmt, Nullable<int> chargesAmt, Nullable<int> total)
+        public virtual int PrcUpdateCLMasterSaleOrder(Nullable<int> saleOrderID, Nullable<int> iD, Nullable<int> subtotal, Nullable<int> taxAmt, Nullable<int> chargesAmt, Nullable<int> total)
         {
             var saleOrderIDParameter = saleOrderID.HasValue ?
                 new ObjectParameter("SaleOrderID", saleOrderID) :
                 new ObjectParameter("SaleOrderID", typeof(int));
+    
+            var iDParameter = iD.HasValue ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(int));
     
             var subtotalParameter = subtotal.HasValue ?
                 new ObjectParameter("Subtotal", subtotal) :
@@ -1034,7 +931,7 @@ namespace Inventory
                 new ObjectParameter("Total", total) :
                 new ObjectParameter("Total", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcUpdateCLMasterSaleOrder", saleOrderIDParameter, subtotalParameter, taxAmtParameter, chargesAmtParameter, totalParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcUpdateCLMasterSaleOrder", saleOrderIDParameter, iDParameter, subtotalParameter, taxAmtParameter, chargesAmtParameter, totalParameter);
         }
     
         public virtual int PrcUpdateCLTranSaleOrder(Nullable<int> saleOrderID, Nullable<int> subtotal, Nullable<int> taxAmt, Nullable<int> chargesAmt, Nullable<int> total)
@@ -1060,6 +957,133 @@ namespace Inventory
                 new ObjectParameter("Total", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcUpdateCLTranSaleOrder", saleOrderIDParameter, subtotalParameter, taxAmtParameter, chargesAmtParameter, totalParameter);
+        }
+    
+        public virtual ObjectResult<PrcGetCLMasterSaleOrder_Result> PrcGetCLMasterSaleOrder()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetCLMasterSaleOrder_Result>("PrcGetCLMasterSaleOrder");
+        }
+    
+        public virtual ObjectResult<PrcGetCLTranSaleOrderBySaleOrderID_Result> PrcGetCLTranSaleOrderBySaleOrderID(Nullable<int> saleOrderID)
+        {
+            var saleOrderIDParameter = saleOrderID.HasValue ?
+                new ObjectParameter("SaleOrderID", saleOrderID) :
+                new ObjectParameter("SaleOrderID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetCLTranSaleOrderBySaleOrderID_Result>("PrcGetCLTranSaleOrderBySaleOrderID", saleOrderIDParameter);
+        }
+    
+        public virtual ObjectResult<PrcGetCustomer_Result> PrcGetCustomer()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetCustomer_Result>("PrcGetCustomer");
+        }
+    
+        public virtual ObjectResult<PrcGetSupplier_Result> PrcGetSupplier()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetSupplier_Result>("PrcGetSupplier");
+        }
+    
+        public virtual ObjectResult<PrcGetTownship_Result> PrcGetTownship()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetTownship_Result>("PrcGetTownship");
+        }
+    
+        public virtual ObjectResult<PrcSearchTownship_Result> PrcSearchTownship(string keyword, Nullable<int> divisionID)
+        {
+            var keywordParameter = keyword != null ?
+                new ObjectParameter("keyword", keyword) :
+                new ObjectParameter("keyword", typeof(string));
+    
+            var divisionIDParameter = divisionID.HasValue ?
+                new ObjectParameter("DivisionID", divisionID) :
+                new ObjectParameter("DivisionID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcSearchTownship_Result>("PrcSearchTownship", keywordParameter, divisionIDParameter);
+        }
+    
+        public virtual ObjectResult<PrcSearchCustomer_Result> PrcSearchCustomer(string keyword, Nullable<int> divisionID, Nullable<int> townshipID)
+        {
+            var keywordParameter = keyword != null ?
+                new ObjectParameter("keyword", keyword) :
+                new ObjectParameter("keyword", typeof(string));
+    
+            var divisionIDParameter = divisionID.HasValue ?
+                new ObjectParameter("DivisionID", divisionID) :
+                new ObjectParameter("DivisionID", typeof(int));
+    
+            var townshipIDParameter = townshipID.HasValue ?
+                new ObjectParameter("TownshipID", townshipID) :
+                new ObjectParameter("TownshipID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcSearchCustomer_Result>("PrcSearchCustomer", keywordParameter, divisionIDParameter, townshipIDParameter);
+        }
+    
+        public virtual ObjectResult<PrcSearchSupplier_Result> PrcSearchSupplier(string keyword, Nullable<int> divisionID, Nullable<int> townshipID)
+        {
+            var keywordParameter = keyword != null ?
+                new ObjectParameter("keyword", keyword) :
+                new ObjectParameter("keyword", typeof(string));
+    
+            var divisionIDParameter = divisionID.HasValue ?
+                new ObjectParameter("DivisionID", divisionID) :
+                new ObjectParameter("DivisionID", typeof(int));
+    
+            var townshipIDParameter = townshipID.HasValue ?
+                new ObjectParameter("TownshipID", townshipID) :
+                new ObjectParameter("TownshipID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcSearchSupplier_Result>("PrcSearchSupplier", keywordParameter, divisionIDParameter, townshipIDParameter);
+        }
+    
+        public virtual ObjectResult<PrcGetVoucherFormat_Result> PrcGetVoucherFormat()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetVoucherFormat_Result>("PrcGetVoucherFormat");
+        }
+    
+        public virtual int PrcInsertVoucherFormat(string preFormat, string midFormat, Nullable<int> postFormat, string module)
+        {
+            var preFormatParameter = preFormat != null ?
+                new ObjectParameter("PreFormat", preFormat) :
+                new ObjectParameter("PreFormat", typeof(string));
+    
+            var midFormatParameter = midFormat != null ?
+                new ObjectParameter("MidFormat", midFormat) :
+                new ObjectParameter("MidFormat", typeof(string));
+    
+            var postFormatParameter = postFormat.HasValue ?
+                new ObjectParameter("PostFormat", postFormat) :
+                new ObjectParameter("PostFormat", typeof(int));
+    
+            var moduleParameter = module != null ?
+                new ObjectParameter("Module", module) :
+                new ObjectParameter("Module", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcInsertVoucherFormat", preFormatParameter, midFormatParameter, postFormatParameter, moduleParameter);
+        }
+    
+        public virtual int PrcUpdateVoucherFormat(Nullable<int> iD, string preFormat, string midFormat, Nullable<int> postFormat, string module)
+        {
+            var iDParameter = iD.HasValue ?
+                new ObjectParameter("ID", iD) :
+                new ObjectParameter("ID", typeof(int));
+    
+            var preFormatParameter = preFormat != null ?
+                new ObjectParameter("PreFormat", preFormat) :
+                new ObjectParameter("PreFormat", typeof(string));
+    
+            var midFormatParameter = midFormat != null ?
+                new ObjectParameter("MidFormat", midFormat) :
+                new ObjectParameter("MidFormat", typeof(string));
+    
+            var postFormatParameter = postFormat.HasValue ?
+                new ObjectParameter("PostFormat", postFormat) :
+                new ObjectParameter("PostFormat", typeof(int));
+    
+            var moduleParameter = module != null ?
+                new ObjectParameter("Module", module) :
+                new ObjectParameter("Module", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcUpdateVoucherFormat", iDParameter, preFormatParameter, midFormatParameter, postFormatParameter, moduleParameter);
         }
     }
 }

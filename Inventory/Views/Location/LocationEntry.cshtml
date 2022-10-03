@@ -83,11 +83,11 @@
                         <label class="control-label">Phone</label>
                         @if (Session["IsEdit"].ToString() == "0")
                         {
-                            <input id="Phone" class="form-control control-input" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" />
+                            <input type="text" id="Phone" class="form-control control-input integerInput" />
                         }
                         else if (Session["IsEdit"].ToString() == "1")
                         {
-                            <input id="Phone" class="form-control control-input" value="@Session["EditPhone"]" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" />
+                            <input type="text" id="Phone" class="form-control control-input integerInput" value="@Session["EditPhone"]" />
                         }
                     </div>
 
@@ -237,6 +237,14 @@
 
         $("#LocationName").keypress(function () {
             $("#vldName").hide();
+        });
+
+        $(function () {
+            $('.integerInput').on('input', function () {
+                this.value = this.value
+                  .replace(/[^\d]/g, '');// numbers and decimals only
+
+            });
         });
 
     });

@@ -27,6 +27,7 @@
         <div class="col-md-12 col-lg-12">
             <div class="btn-group" style="float:right">
                 <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox mr-10" />
+                 @Html.DropDownListFor(m => m.DivisionID, Model.Division, new { @class = "form-control control-input width-200 mr-10" }) 
                 <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
                 <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
             </div>
@@ -115,11 +116,12 @@
 
         $("#btnSearch").click(function () {
             var keyword = $('#tvSearch').val();
+            var divisionId = $('#DivisionID').val();
             showLoadingIcon();
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("SearchAction", "Township")',
-                data: { "keyword": keyword },
+                data: { "keyword": keyword, "divisionId": divisionId },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {

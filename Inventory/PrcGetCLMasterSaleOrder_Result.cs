@@ -17,13 +17,18 @@ namespace Inventory
         public int SaleOrderID { get; set; }
         public string Date { get; set; }
         public string Remark { get; set; }
+        public Nullable<int> Subtotal { get; set; }
+        public Nullable<int> Tax { get; set; }
+        public Nullable<int> TaxAmt { get; set; }
+        public Nullable<int> Charges { get; set; }
+        public Nullable<int> ChargesAmt { get; set; }
+        public Nullable<int> Total { get; set; }
         public int ClientID { get; set; }
         public string ClientName { get; set; }
         public string ClientPhone { get; set; }
         public int CustomerID { get; set; }
         public string CustomerName { get; set; }
         public string CustomerPhone { get; set; }
-        public Nullable<int> Total { get; set; }
         public string Currency { get; set; }
     }
 }

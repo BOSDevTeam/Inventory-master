@@ -48,8 +48,8 @@ namespace Inventory.Controllers
                     Session["EditDisPercent"] = e.DisPercent;
                     Session["EditMainMenuID"] = e.MainMenuID;
                     Session["EditSubMenuID"] = e.SubMenuID;
-                    if (e.IsStock == true) Session["EditIsStockVal"] = 1;
-                    else Session["EditIsStockVal"] = 0;
+                    if (e.IsStock == true) ViewBag.EditIsStockVal = 1;
+                    else ViewBag.EditIsStockVal = 0;
                     if (e.Photo != null)
                     {
                         ViewBag.Photo = true;

@@ -118,7 +118,7 @@
                             $('#Code').val("");
                             $("#vldName").hide();
                             $("#vldCode").hide();
-                            showToast(1, response.MESSAGE);                        
+                            showToast(1, response.MESSAGE);
                         } else if (response.SAVEOK == 0) {
                             showToast(0, response.MESSAGE);
                         }
@@ -195,8 +195,8 @@
             $("#divMessage").hide();
         });
 
-        var editTownshipID = '@Session["EditDivisionID"]';
-        $('#DivisionID').val(editTownshipID);
+        var editDivisionId = '@Session["EditDivisionID"]';
+        if (editDivisionId.length != 0 && editDivisionId != 0) $('#DivisionID').val(editDivisionId);
 
     });
 </script>

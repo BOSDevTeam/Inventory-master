@@ -1,0 +1,183 @@
+﻿@using Inventory.Models
+@model ClientModels
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+<head>
+    <style>
+        table {
+            table-layout: fixed;
+            width: 400px;
+            font: larger monospace;
+            border-collapse: collapse;
+        }
+
+        th:nth-child(1) {
+            width: 20%;
+        }
+
+        th:nth-child(3) {
+            width: 20%;
+        }
+
+        divC {
+            display: inline-block;
+            position: relative;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: top;
+        }
+
+            divC:hover {
+                z-index: 1;
+                width: auto;
+                background-color: greenyellow;
+            }
+    </style>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuClient').className = 'active';
+    </script>
+</head>
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">Client</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+        </div>
+    </div>
+    <div class="row setup-title-layout search-div">
+        <div class="col-md-12 col-lg-12">
+            <div class="btn-group" style="float:right">
+                <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox mr-10" />
+                @Html.DropDownListFor(m => m.DivisionID, Model.Divisions, new { @class = "form-control control-input mr-10" })
+                @Html.DropDownListFor(m => m.TownshipID, Model.Townships, new { @class = "form-control control-input mr-10" })
+                <select name="client" id="Client" class="form-control control-input">
+                    <option value="0">Client Type</option>
+                    <option value="1">Sale Person</option>
+                    <option value="2">Work In Client</option>
+                </select>
+                <button id="btnSearch" class="btn btn-first setup-btn-search" style="margin-left:10px" title="Search"><i class="fa fa-search"></i></button>
+                <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
+            </div>
+        </div>
+    </div>
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblClient" class="col-md-12 col-lg-12" rold="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-2 col-lg-2">Client Name</th>
+                        <th class="col-md-2 col-lg-2">Shop Name</th>
+                        <th class="col-md-2 col-lg-2">Phone</th>
+                        <th class="col-md-2 col-lg-2">Division Name</th>
+                        <th class="col-md-2 col-lg-2">Township Name</th>
+                        <th class="col-md-1 col-lg-1">Address</th>
+                        <th class="col-md-1 col-lg-1"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.LstClient.Count(); i++)
+                    {
+                        <tr class="row table-item">
+                            <td class="col-md-2 col-lg-2"><divC>@Model.LstClient[i].ClientName</divC></td>
+                            <td class="col-md-2 col-lg-2"><divC>@Model.LstClient[i].ShopName</divC></td>
+                            <td class="col-md-2 col-lg-2"><divC>@Model.LstClient[i].Phone</divC></td>
+                            <td class="col-md-2 col-lg-2"><divC>@Model.LstClient[i].DivisionName</divC></td>
+                            <td class="col-md-2 col-lg-2"><divC>@Model.LstClient[i].TownshipName</divC></td>
+                            <td class="col-md-1 col-lg-1"><divC>@Model.LstClient[i].Address</divC></td>
+                           @if (Model.LstClient[i].IsSalePerson != true)
+                           {
+                            <td class="col-md-1 col-lg-1"></td>
+                           }
+                           else
+                           {
+                            <td class="col-md-1 col-lg-1"><divC>Sale Person</divC></td>
+                           }
+
+                            <td style="display:none">@Model.LstClient[i].ClientID</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(function () {
+
+        $("#btnSearch").click(function () {
+            var keyword = $('#tvSearch').val();
+            var divisionId = $('#DivisionID').val();
+            var townshipId = $('#TownshipID').val();
+            var clienttype = $('#Client option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SearchClient", "Client")',
+                data: { "keyword": keyword, "divisionId": divisionId, "townshipId": townshipId, "clienttype": clienttype },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    $("#tblClient").find("tbody").empty();
+                    $.each(response, function (i, item) {
+                        if (item.IsSalePerson != true)
+                        {
+                            var rows = "<tr class='row table-item'>"
+                       + "<td class='col-md-2 col-lg-2'>" +"<divC>" + item.ClientName + "</div>"+ "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.ShopName + "</div>" + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.Phone + "</div>" + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.DivisionName + "</div>" + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.TownshipName + "</div>" + "</td>"
+                       + "<td class='col-md-1 col-lg-1'>" + "<divC>" + item.Address + "</div>" + "</td>"
+                       + "<td class='col-md-1 col-lg-1'>" +  + "</td>"
+                       + "<td style='display:none'>" + item.ClientID + "</td>"
+                       + "</tr>";
+                            $('#tblClient tbody').append(rows);
+                        }
+                        else {
+                            var rows = "<tr class='row table-item'>"
+                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.ClientName + "</div>" + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.ShopName + "</div>" + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.Phone + "</div>" + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.DivisionName + "</div>" + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.TownshipName + "</div>" + "</td>"
+                       + "<td class='col-md-1 col-lg-1'>" + "<divC>" + item.Address + "</div>" + "</td>"
+                       + "<td class='col-md-1 col-lg-1'>" + "<divC>"+ "Sale Person" + "</div>" + "</td>"
+                       + "<td style='display:none'>" + item.ClientID + "</td>"
+                       + "</tr>";
+                            $('#tblClient tbody').append(rows);
+                        }
+
+
+                    });
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+    });
+
+</script>
+
+

@@ -126,7 +126,7 @@
                                 <label class="control-label">Product Name:</label>
                             </div>
                             <div class="col-md-6 col-lg-6">
-                                <label id="lblProductName" class="control-input"></label>
+                                <label id="lblProductName" class="control-input"></label>  <span id="productname" style="display:none;">---</span>
                             </div>
                         </div>
                         <div class="row general-view-data-background2">
@@ -134,7 +134,7 @@
                                 <label class="control-label">Code:</label>
                             </div>
                             <div class="col-md-6 col-lg-6">
-                                <label id="lblCode" class="control-input"></label>
+                                <label id="lblCode" class="control-input"></label> <span id="code" style="display:none;">---</span>
                             </div>
                         </div>
                         <div class="row general-view-data-background1">
@@ -142,7 +142,7 @@
                                 <label class="control-label">Sort Code:</label>
                             </div>
                             <div class="col-md-6 col=lg-6">
-                                <label id="lblSortCode" class="control-input"></label>
+                                <label id="lblSortCode" class="control-input"></label> <span id="sortcode" style="display:none;">---</span>
                             </div>
                         </div>
                         <div class="row general-view-data-background2">
@@ -150,7 +150,7 @@
                                 <label class="control-label">Main Menu:</label>
                             </div>
                             <div class="col-md-6 col=lg-6">
-                                <label id="lblMainMenu" class="control-input"></label>
+                                <label id="lblMainMenu" class="control-input"></label> <span id="mainmenu" style="display:none;">---</span>
                             </div>
                         </div>
                         <div class="row general-view-data-background1">
@@ -158,7 +158,7 @@
                                 <label class="control-label">Sub Menu:</label>
                             </div>
                             <div class="col-md-6 col=lg-6">
-                                <label id="lblSubMenu" class="control-input"></label>
+                                <label id="lblSubMenu" class="control-input"></label> <span id="submenu" style="display:none;">---</span>
                             </div>
                         </div>
                         <div class="row general-view-data-background2">
@@ -166,7 +166,7 @@
                                 <label class="control-label">Description:</label>
                             </div>
                             <div class="col-md-6 col=lg-6">
-                                <label id="lblDescription" class="control-input"></label>
+                                <label id="lblDescription" class="control-input"></label> <span id="desp" style="display:none;">---</span>
                             </div>
                         </div>
                         <div class="row general-view-data-background1">
@@ -174,7 +174,7 @@
                                 <label class="control-label">Purchase Price:</label>
                             </div>
                             <div class="col-md-6 col-lg-6">
-                                <label id="lblPurPrice" class="control-input"></label>
+                                <label id="lblPurPrice" class="control-input"></label> <span id="purprice" style="display:none;">---</span>
                             </div>
                         </div>
                         <div class="row general-view-data-background2">
@@ -182,7 +182,7 @@
                                 <label class="control-label">Sale Price:</label>
                             </div>
                             <div class="col-md-6 col-lg-6">
-                                <label id="lblSalePrice" class="control-input"></label>
+                                <label id="lblSalePrice" class="control-input"></label> <span id="slaeprice" style="display:none;">---</span>
                             </div>
                         </div>
                         <div class="row general-view-data-background1">
@@ -190,7 +190,7 @@
                                 <label class="control-label">Whole Sale Price:</label>
                             </div>
                             <div class="col-md-6 col-lg-6">
-                                <label id="lblWholeSalePrice" class="control-input"></label>
+                                <label id="lblWholeSalePrice" class="control-input"></label> <span id="wslaeprice" style="display:none;">---</span>
                             </div>
                         </div>
                         <div class="row general-view-data-background2">
@@ -198,7 +198,7 @@
                                 <label class="control-label">Alert Quantity:</label>
                             </div>
                             <div class="col-md-6 col-lg-6">
-                                <label id="lblAlertQty" class="control-input"></label>
+                                <label id="lblAlertQty" class="control-input"></label> <span id="alertquantity" style="display:none;">---</span>
                             </div>
                         </div>
                         <div class="row general-view-data-background1">
@@ -206,7 +206,7 @@
                                 <label class="control-label">Discount (%):</label>
                             </div>
                             <div class="col-md-6 col-lg-6">
-                                <label id="lblDiscount" class="control-input"></label>
+                                <label id="lblDiscount" class="control-input"></label> <span id="discount" style="display:none;">---</span>
                             </div>
                         </div>
                         <div class="row general-view-data-background2">
@@ -214,7 +214,7 @@
                                 <label class="control-label">IsStock:</label>
                             </div>
                             <div class="col-md-6 col-lg-6">
-                                <label id="lblIsStock" class="control-input"></label>
+                                <label id="lblIsStock" class="control-input"></label> <span id="stock" style="display:none;">---</span>
                             </div>
                         </div>                       
                         <div class="row general-view-data-background1">
@@ -222,7 +222,7 @@
                                 <label class="control-label">Photo:</label>
                             </div>
                             <div class="col-md-6 col-lg-6" style="padding:3px 0 3px 0">
-                                <img id="image" height="40" width="40" />
+                                <img id="image" height="40" width="40" /> <span id="photo" style="display:none;">---</span>
                             </div>
                         </div>                       
                     </div>
@@ -315,19 +315,110 @@
                         dataType: "json",
                         success: function (response) {
                             hideLoadingIcon();
-                            $('#lblProductName').text(response.ProductName);
-                            $('#lblCode').text(response.Code);
-                            $('#lblMainMenu').text(response.MainMenu);
-                            $('#lblSubMenu').text(response.SubMenu);
-                            $('#lblDescription').text(response.Description);
-                            $('#lblSortCode').text(response.SortCode);
-                            $('#lblAlertQty').text(response.AlertQty);
-                            $('#lblDiscount').text(response.Discount);
-                            $('#lblIsStock').text(response.IsStock);
-                            $('#lblPurPrice').text(response.PurPrice);
-                            $('#lblSalePrice').text(response.SalePrice);
-                            $('#lblWholeSalePrice').text(response.WholeSalePrice);
-                            $('#image').attr('src', 'data:image/png;base64,' + response.Base64Photo);
+                            if (response.ProductName != 0) {
+                                $('#productname').hide();
+                                $('#lblProductName').text(response.ProductName).show();
+                            }
+                            else {
+                                $('#productname').show();
+                                $('#lblProductName').text(response.ProductName).hide();
+                            }
+                            if (response.Code != null) {
+                                $('#code').hide();
+                                $('#lblCode').text(response.Code).show();
+                            }
+                            else {
+                                $('#code').show();
+                                $('#lblCode').text(response.Code).hide();
+                            }
+                            if (response.MainMenu != 0) {
+                                $('#mainmenu').hide();
+                                $('#lblMainMenu').text(response.MainMenu).show();
+                            }
+                            else {
+                                $('#mainmenu').show();
+                                $('#lblMainMenu').text(response.MainMenu).hide();
+                            }
+                            if (response.SubMenu != 0) {
+                                $('#submenu').hide();
+                                $('#lblSubMenu').text(response.SubMenu).show();
+                            }
+                            else {
+                                $('#submenu').show();
+                                $('#lblSubMenu').text(response.SubMenu).hide();
+                            }
+                            if (response.Description != 0) {
+                                $('#desp').hide();
+                                $('#lblDescription').text(response.Description).show();
+                            }
+                            else {
+                                $('#desp').show();
+                                $('#lblDescription').text(response.Description).hide();
+                            }
+                            if (response.PurPrice != 0) {
+                                $('#purprice').hide();
+                                $('#lblPurPrice').text(response.PurPrice).show();
+                            }
+                            else {
+                                $('#purprice').show();
+                                $('#lblPurPrice').text(response.PurPrice).hide();
+                            }
+                            if (response.SalePrice != 0) {
+                                $('#slaeprice').hide();
+                                $('#lblSalePrice').text(response.SalePrice).show();
+                            }
+                            else {
+                                $('#slaeprice').show();
+                                $('#lblSalePrice').text(response.SalePrice).hide();
+                            }
+                            if (response.WholeSalePrice != 0) {
+                                $('#wslaeprice').hide();
+                                $('#lblWholeSalePrice').text(response.WholeSalePrice).show();
+                            }
+                            else {
+                                $('#wslaeprice').show();
+                                $('#lblWholeSalePrice').text(response.WholeSalePrice).hide();
+                            }
+                            if (response.AlertQty != 0) {
+                                $('#alertquantity').hide();
+                                $('#lblAlertQty').text(response.AlertQty).show();
+                            }
+                            else {
+                                $('#alertquantity').show();
+                                $('#lblAlertQty').text(response.AlertQty).hide();
+                            }
+                            if (response.Discount != 0) {
+                                $('#discount').hide();
+                                $('#lblDiscount').text(response.Discount).show();
+                            }
+                            else {
+                                $('#discount').show();
+                                $('#lblDiscount').text(response.Discount).hide();
+                            }
+                            if (response.SortCode != 0) {
+                                $('#sortcode').hide();
+                                $('#lblSortCode').text(response.SortCode).show();
+                            }
+                            else {
+                                $('#sortcode').show();
+                                $('#lblSortCode').text(response.SortCode).hide();
+                            }
+                            if (response.IsStock != 0) {
+                                $('#stock').hide();
+                                $('#lblIsStock').text(response.IsStock).show();
+                            }
+                            else {
+                                $('#stock').show();
+                                $('#lblIsStock').text(response.IsStock).hide();
+                            }
+                            if (response.Base64Photo != 0) {
+                                $('#photo').hide();
+                                $('#image').attr('src', 'data:image/png;base64,' + response.Base64Photo).show();
+                            }
+                            else {
+                                $('#photo').show();
+                                $('#image').attr('src', 'data:image/png;base64,' + response.Base64Photo).hide();
+                            }
 
                             $("#tblUnit").find("tbody").empty();
                             $.each(response.LstProductUnitList, function (i, item) {
@@ -408,8 +499,9 @@
         });
 
         $('#btnRefresh').click(function () {
-            clearData();
-            searchAction(false);
+            //clearData();
+            //searchAction(false);
+            window.location.reload();
         });
 
         $(document).on('click', '.btnPage', function (e) {

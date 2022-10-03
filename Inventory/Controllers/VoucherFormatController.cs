@@ -17,7 +17,8 @@ namespace Inventory.Controllers
         static int editVouFormatID;
 
         public ActionResult VoucherFormatEntry(int Id)
-        {          
+        {
+            GetModule();
             if (Id != 0)
             {
                 Session["IsEdit"] = 1;
@@ -28,6 +29,7 @@ namespace Inventory.Controllers
                     Session["EditPreFormat"] = e.PreFormat;
                     Session["EditMidFormat"] = e.MidFormat;
                     Session["EditPostFormat"] = e.PostFormat;
+                    Session["EditModuleCode"] = e.ModuleCode;
                     break;
                 }
             }
@@ -51,7 +53,8 @@ namespace Inventory.Controllers
                 vouFormatModel.PreFormat = format.PreFormat;
                 vouFormatModel.MidFormat = format.MidFormat;
                 vouFormatModel.PostFormat = format.PostFormat;
-
+                vouFormatModel.ModuleCode = format.ModuleCode;
+                vouFormatModel.ModuleName = format.ModuleName;
                 model.LstVoucherFormat.Add(vouFormatModel);
                 lstVouFormatList.Add(vouFormatModel);
             }
@@ -60,15 +63,15 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SaveAction(string preFormat, string midFormat, int postFormat)
+        public JsonResult SaveAction(string preFormat, string midFormat, int postFormat , string module)
         {
             string message;
             int saveOk;
 
-            var formats = (from format in Entities.S_VoucherFormat select format).ToList();
+            var formats = (from format in Entities.S_VoucherFormat where format.ModuleCode == module select format).ToList();
             if (formats.Count() == 0)
             {
-                Entities.PrcInsertVoucherFormat(preFormat, midFormat, postFormat);
+                Entities.PrcInsertVoucherFormat(preFormat, midFormat, postFormat, module);
                 message = "Saved Successfully!";
                 saveOk = 1;
             }
@@ -88,14 +91,24 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult EditAction(string preFormat, string midFormat, int postFormat)
+        public JsonResult EditAction(string preFormat, string midFormat, int postFormat, string modulecode)
         {
             string message;
             int editOk;
+            var formats = (from format in Entities.S_VoucherFormat where format.ModuleCode == modulecode where format.ID != editVouFormatID select format).ToList();
+            if (formats.Count == 0)
+            {
+                Entities.PrcUpdateVoucherFormat(editVouFormatID, preFormat, midFormat, postFormat, modulecode);
+                message = "Edited Successfully!";
+                editOk = 1;
+            }
+            else
+            {
+                message = "Allow Only One Voucher Format!";
+                editOk = 0;
+            }
 
-            Entities.PrcUpdateVoucherFormat(editVouFormatID, preFormat, midFormat, postFormat);
-            message = "Edited Successfully!";
-            editOk = 1;
+           
 
             var Result = new
             {
@@ -135,6 +148,14 @@ namespace Inventory.Controllers
             Entities.S_VoucherFormat.Remove(format);
             Entities.SaveChanges();
             return Json("", JsonRequestBehavior.AllowGet);
+        }
+
+        public void GetModule()
+        {
+            foreach(var module in Entities.Sys_Module.OrderBy(m => m.ModuleCode))
+            {
+                model.LstModule.Add(new SelectListItem { Text = module.ModuleName, Value = module.ModuleCode.ToString() });
+            }
         }
     }
 }

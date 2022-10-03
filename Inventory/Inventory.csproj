@@ -164,6 +164,7 @@
     <Compile Include="Controllers\AdjustTypeController.cs" />
     <Compile Include="Controllers\BankController.cs" />
     <Compile Include="Controllers\BankPaymentController.cs" />
+    <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
     <Compile Include="Controllers\CompanySettingController.cs" />
     <Compile Include="Controllers\DivisionController.cs" />
@@ -205,6 +206,7 @@
     <Compile Include="Models\AdjustTypeModels.cs" />
     <Compile Include="Models\BankModels.cs" />
     <Compile Include="Models\BankPaymentModels.cs" />
+    <Compile Include="Models\ClientModels.cs" />
     <Compile Include="Models\CLTranSaleOrderModels.cs" />
     <Compile Include="Models\CompanySettingModels.cs" />
     <Compile Include="Models\CustomerModels.cs" />
@@ -335,6 +337,9 @@
     <Compile Include="Sys_Currency.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
+    <Compile Include="Sys_Module.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
     <Compile Include="Sys_Payment.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
@@ -408,9 +413,6 @@
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="T_MasterSale.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="T_TranSale.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -568,6 +570,7 @@
     <Content Include="Views\Division\DivisionList.cshtml" />
     <Content Include="Views\Division\DivisionEntry.cshtml" />
     <Content Include="Views\CLSaleOrder\CLMasterSaleOrderList.cshtml" />
+    <Content Include="Views\Client\ClientList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

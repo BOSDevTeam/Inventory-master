@@ -5,6 +5,13 @@
 .fee-box:hover{border-color:#009efb}
 .aligh-right{display:flex;justify-content:right;}
 
+/**Longer data in column **/
+ table {table-layout: fixed;width: 400px;font: larger monospace;border-collapse: collapse;}
+th:nth-child(1) {width: 20%;}
+th:nth-child(3) {width: 20%;}
+divC {display: inline-block;position: relative;width: 100%;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;
+      vertical-align: top;}
+divC:hover {z-index: 1;width: auto;background-color: greenyellow;}
 /** countcirle */
 .count-circle {
    padding: 10px;

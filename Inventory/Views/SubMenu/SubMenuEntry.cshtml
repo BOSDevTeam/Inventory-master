@@ -80,11 +80,11 @@
                                 <label class="control-label">Sort Code</label>
                                 @if (Session["IsEdit"].ToString() == "0")
                                 {
-                                    @Html.TextBoxFor(m => m.SortCode, null, new { @class = "form-control control-input", @type = "number" })
+                                    @Html.TextBoxFor(m => m.SortCode, null, new { @class = "form-control control-input integerInput", @type = "text" })
                                 }
                                 else if (Session["IsEdit"].ToString() == "1")
                                 {
-                                    @Html.TextBoxFor(m => m.SortCode, new { @class = "form-control control-input", Value = Session["EditSortCode"], @type = "number" })
+                                    @Html.TextBoxFor(m => m.SortCode, new { @class = "form-control control-input integerInput", Value = Session["EditSortCode"], @type = "text" })
                                 }
                                 <label id="vldSortCode" class="text-danger" style="display:none">Sort Code Require!</label>
                             </div>
@@ -242,8 +242,20 @@
             });
         });
 
+        $(function () {
+            $('.integerInput').on('input', function () {
+                this.value = this.value
+                  .replace(/[^\d]/g, '');// numbers and decimals only
+
+            });
+        });
+
         $("#SubMenuName").keypress(function () {
             $("#vldName").hide();
+        });
+
+        $('#file').change(function () {
+            $('#error').hide();
         });
 
         $("#Code").keypress(function () {

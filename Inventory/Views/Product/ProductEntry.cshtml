@@ -84,11 +84,11 @@
                                         <label class="control-label">Sort Code</label>
                                         @if (Session["IsEdit"].ToString() == "0")
                                         {
-                                            @Html.TextBoxFor(m => m.SortCode, null, new { @class = "form-control control-input", @type = "number" })
+                                            @Html.TextBoxFor(m => m.SortCode, null, new { @class = "form-control control-input integerInput", @type = "text" })
                                         }
                                         else if (Session["IsEdit"].ToString() == "1")
                                         {
-                                            @Html.TextBoxFor(m => m.SortCode, new { @class = "form-control control-input", Value = Session["EditSortCode"], @type = "number" })
+                                            @Html.TextBoxFor(m => m.SortCode, new { @class = "form-control control-input integerInput", Value = Session["EditSortCode"], @type = "text" })
                                         }
                                         <label id="vldSortCode" class="text-danger" style="display:none">Sort Code Require!</label>
                                     </div>
@@ -215,134 +215,6 @@
                     </div>
 
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalUnit" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="adminModalLongTitle">Unit</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12 col-lg12">
-                        <label id="lblUnit" class="product-entry-title"></label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4 col-lg-4">
-                        <div class="form-group">
-                            <label class="control-label">Purchase Price</label>
-                            @if (Session["IsEdit"].ToString() == "0")
-                            {
-                                <input id="UnitPurPrice" class="form-control control-input number" type="text" />
-                            }
-                            else if (Session["IsEdit"].ToString() == "1")
-                            {
-                                <input id="UnitPurPrice" class="form-control control-input number" type="text" value="@Session["EditUnitPurPrice"]" />
-                            }
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-lg-4">
-                        <div class="form-group">
-                            <label class="control-label">Sale Price</label>
-                            @if (Session["IsEdit"].ToString() == "0")
-                            {
-                                <input id="UnitSalePrice" class="form-control control-input number" type="text" />
-                            }
-                            else if (Session["IsEdit"].ToString() == "1")
-                            {
-                                <input id="UnitSalePrice" class="form-control control-input number" type="text" value="@Session["EditUnitSalePrice"]" />
-                            }
-                        </div>
-                    </div>
-                    <div class="col-md-4 col-lg-4">
-                        <div class="form-group">
-                            <label class="control-label">Discount (%)</label>
-                            @if (Session["IsEdit"].ToString() == "0")
-                            {
-                                <input id="UnitDiscount" class="form-control control-input number" type="number" min="0" max="100" />
-                            }
-                            else if (Session["IsEdit"].ToString() == "1")
-                            {
-                                <input id="UnitDiscount" class="form-control control-input number" type="number" min="0" max="100" value="@Session["EditUnitDiscount"]" />
-                            }
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 col-lg-12">
-                        <div class="form-group">
-                            <label class="control-label">Description</label>
-                            @if (Session["IsEdit"].ToString() == "0")
-                            {
-                                <input id="UnitDescription" class="form-control control-input" />
-                            }
-                            else if (Session["IsEdit"].ToString() == "1")
-                            {
-                                <input id="UnitDescription" class="form-control control-input" value="@Session["EditUnitDescription"]" />
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="btnUnitSave" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">SAVE</button>
-                <button id="btnUnitEdit" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close" style="display:none">EDIT</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalUnitConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12 col-lg12">
-                        <label class="control-label">Are you sure you want to delete?</label>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="btnUnitDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button id="btnUnitDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalVariantConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12 col-lg12">
-                        <label class="control-label">Are you sure you want to delete?</label>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="btnVariantDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button id="btnVariantDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
             </div>
         </div>
     </div>
@@ -816,7 +688,7 @@
                     hideLoadingIcon();
                     alert(response.responseText);
                 }
-            });            
+            });
         });
 
         $("#ProductName").keypress(function () {
@@ -831,21 +703,37 @@
             $("#vldSortCode").hide();
         });
 
+        $(function () {
+            $('.integerInput').on('input', function () {
+                this.value = this.value
+                  .replace(/[^\d]/g, '');// numbers and decimals only
+
+            });
+        });
+
         $(".number").keypress(function (e) {
             var txt = String.fromCharCode(e.which);
-            if (!txt.match(/^[0-9]*$/)) { 
+            if (!txt.match(/^[0-9]*$/)) {
                 return false;
             }
         });
 
-        var editIsStock = '@Session["EditIsStockVal"]';
-        if (editIsStock == 1) {
-            $("#chkIsStock").prop("checked", false);
-            isStock = true;
-        } else {
-            $("#chkIsStock").prop("checked", true);
-            isStock = false;
+        var isEdit = '@Session["IsEdit"]';
+        if (isEdit.length != 0 && isEdit != 0) {
+            let editIsStock = '@ViewBag.EditIsStockVal';
+            if (editIsStock == 1) {
+                $("#chkIsStock").prop("checked", false);
+                isStock = true;
+            } else if (editIsStock == 0) {
+                $("#chkIsStock").prop("checked", true);
+                isStock = false;
+            } else {
+                $("#chkIsStock").prop("checked", false);
+                isStock = true;
+            }
         }
+       
+
         var editMainMenuID = '@Session["EditMainMenuID"]';
         if (editMainMenuID.length != 0 && editMainMenuID != 0) $("#MainMenuID").val(editMainMenuID);
         var editSubMenuID = '@Session["EditSubMenuID"]';
@@ -880,6 +768,9 @@
         img.src = objectUrl;
     }
 
+    $('#file').change(function () {
+        $('#error').hide();
+    });
     var _URL = window.URL || window.webkitURL;
     $("#file").change(function (e) {
         var file, img;

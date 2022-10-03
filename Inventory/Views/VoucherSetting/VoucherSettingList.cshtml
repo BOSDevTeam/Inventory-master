@@ -93,49 +93,49 @@
                 <div class="row">
                     <div class="col-md-6 col-sm-6">
                         <div class="form-group">
-                            <label class="control-label">Location:</label>
+                            <label class="control-label">Location:</label> <span id="location" style="display:none;">---</span>
                             <label id="lblLocation" class="control-input"></label>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Header Name:</label>
+                            <label class="control-label">Header Name:</label> <span id="name" style="display:none;">---</span>
                             <label id="lblHeaderName" class="control-input"></label>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Header Description:</label>
+                            <label class="control-label">Header Description:</label> <span id="desp" style="display:none;">---</span>
                             <label id="lblHeaderDesp" class="control-input"></label>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Header Phone:</label>
+                            <label class="control-label">Header Phone:</label> <span id="phone" style="display:none;">---</span>
                             <label id="lblHeaderPhone" class="control-input"></label>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Header Address:</label>
+                            <label class="control-label">Header Address:</label> <span id="address" style="display:none;">---</span>
                             <label id="lblHeaderAddress" class="control-input"></label>
                         </div>
                     </div>
                     <div class="col-md-6 col-sm-6">
                         <div class="form-group">
-                            <label class="control-label">Other Header (1):</label>
+                            <label class="control-label">Other Header (1):</label> <span id="header1" style="display:none;">---</span>
                             <label id="lblOtherHeader1" class="control-input"></label>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Other Header (2):</label>
+                            <label class="control-label">Other Header (2):</label> <span id="header2" style="display:none;">---</span>
                             <label id="lblOtherHeader2" class="control-input"></label>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Footer Message (1):</label>
+                            <label class="control-label">Footer Message (1):</label> <span id="message1" style="display:none;">---</span>
                             <label id="lblFooterMessage1" class="control-input"></label>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Footer Message (2):</label>
+                            <label class="control-label">Footer Message (2):</label> <span id="message2" style="display:none;">---</span>
                             <label id="lblFooterMessage2" class="control-input"></label>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Footer Message (3):</label>
+                            <label class="control-label">Footer Message (3):</label> <span id="message3" style="display:none;">---</span>
                             <label id="lblFooterMessage3" class="control-input"></label>
                         </div>
                         <div class="form-group">
-                            <label class="control-label">Logo:</label>
+                            <label class="control-label">Logo:</label> <span id="photo" style="display:none;">---</span>
                             <img id="image" height="40" width="40" />
                         </div>
                     </div>
@@ -166,18 +166,98 @@
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function (response) {
-                            hideLoadingIcon();                          
-                            $('#lblLocation').text(response.LocationName);
-                            $('#lblHeaderName').text(response.HeaderName);
-                            $('#lblHeaderDesp').text(response.HeaderDesp);
-                            $('#lblHeaderPhone').text(response.HeaderPhone);
-                            $('#lblHeaderAddress').text(response.HeaderAddress);
-                            $('#lblOtherHeader1').text(response.OtherHeader1);
-                            $('#lblOtherHeader2').text(response.OtherHeader2);
-                            $('#lblFooterMessage1').text(response.FooterMessage1);
-                            $('#lblFooterMessage2').text(response.FooterMessage2);
-                            $('#lblFooterMessage3').text(response.FooterMessage3);
-                            $('#image').attr('src', 'data:image/png;base64,' + response.Base64Photo);
+                            hideLoadingIcon();
+                            if (response.LocationName != 0) {
+                                $('#location').hide();
+                                $('#lblLocation').text(response.LocationName).show();
+                            }
+                            else {
+                                $('#location').show();
+                                $('#lblLocation').text(response.LocationName).hide();
+                            }                          
+                            if (response.HeaderName != 0) {
+                                $('#name').hide();
+                                $('#lblHeaderName').text(response.HeaderName).show();
+                            }
+                            else {
+                                $('#name').show();
+                                $('#lblHeaderName').text(response.HeaderName).hide();
+                            }
+                            
+                            if (response.HeaderDesp != 0) {
+                                $('#desp').hide();
+                                $('#lblHeaderDesp').text(response.HeaderDesp).show();
+                            }
+                            else {
+                                $('#desp').show();
+                                $('#lblHeaderDesp').text(response.HeaderDesp).hide();
+                            }                         
+                            if (response.HeaderPhone != 0) {
+                                $('#phone').hide();
+                                $('#lblHeaderPhone').text(response.HeaderPhone).show();
+                            }
+                            else {
+                                $('#phone').show();
+                                $('#lblHeaderPhone').text(response.HeaderPhone).hide();
+                            }                          
+                            if (response.HeaderAddress != 0) {
+                                $('#address').hide();
+                                $('#lblHeaderAddress').text(response.HeaderAddress).show();
+                            }
+                            else {
+                                $('#address').show();
+                                $('#lblHeaderAddress').text(response.HeaderAddress).hide();
+                            }
+                            if (response.OtherHeader1 != 0) {
+                                $('#header1').hide();
+                                $('#lblOtherHeader1').text(response.OtherHeader1).show();
+                            }
+                            else {
+                                $('#header1').show();
+                                $('#lblOtherHeader1').text(response.OtherHeader1).hide();
+                            }
+                            if (response.OtherHeader2 != 0) {
+                                $('#header2').hide();                        
+                                $('#lblOtherHeader2').text(response.OtherHeader2).show();                               
+                            }
+                            else {
+                                $('#header2').show();                              
+                                $('#lblOtherHeader2').text(response.OtherHeader2).hide();                                
+                            }
+                            if (response.FooterMessage1 != 0) {
+                                $('#message1').hide();
+                                $('#lblFooterMessage1').text(response.FooterMessage1).show();
+                            }
+                            else {
+                                $('#message1').show();
+                                $('#lblFooterMessage1').text(response.FooterMessage1).hide();
+
+                            }
+                            if (response.FooterMessage2 != 0) {
+                                $('#message2').hide();
+                                $('#lblFooterMessage2').text(response.FooterMessage2).show();                              
+                            }
+                            else {
+                                $('#message2').show();
+                                $('#lblFooterMessage2').text(response.FooterMessage2).hide();                               
+                            }
+                            if (response.FooterMessage3 != 0) {
+                                $('#message3').hide();
+                                $('#lblFooterMessage3').text(response.FooterMessage3).show();
+                            }
+                            else {
+                                $('#message3').show();
+                                $('#lblFooterMessage3').text(response.FooterMessage3).hide();
+                            }
+                            if(response.Base64Photo != 0){
+                                $('#photo').hide();
+                                $('#image').attr('src', 'data:image/png;base64,' + response.Base64Photo).show();
+                            }
+                            else {
+                                $('#photo').show();
+                                $('#image').attr('src', 'data:image/png;base64,' + response.Base64Photo).hide();
+                            }
+   
                             $('#modalView').modal('show');
                         },
                         failure: function (response) {

@@ -15,34 +15,33 @@ namespace Inventory
     public partial class T_MasterSale
     {
         public int SaleID { get; set; }
-        public int TranID { get; set; }
-        public Nullable<System.DateTime> Date { get; set; }
-        public string Voucher { get; set; }
+        public Nullable<System.DateTime> SaleDateTime { get; set; }
+        public string SystemVoucherNo { get; set; }
+        public string UserVoucherNo { get; set; }
+        public string VoucherID { get; set; }
+        public Nullable<bool> IsClientSale { get; set; }
         public Nullable<int> UserID { get; set; }
+        public Nullable<int> ClientID { get; set; }
         public Nullable<int> CustomerID { get; set; }
         public Nullable<int> LocationID { get; set; }
         public Nullable<int> PaymentID { get; set; }
-        public Nullable<int> CurrencyID { get; set; }
-        public Nullable<bool> IsDelivery { get; set; }
-        public Nullable<int> VoucherDis { get; set; }
-        public Nullable<int> AdvancedPayAmt { get; set; }
-        public Nullable<int> FOCAmt { get; set; }
-        public Nullable<int> TaxAmt { get; set; }
-        public Nullable<int> ChargesAmt { get; set; }
-        public Nullable<int> TotalAmt { get; set; }
-        public Nullable<int> NetAmt { get; set; }
-        public Nullable<int> CreditLimitDay { get; set; }
-        public Nullable<int> VouDisPercent { get; set; }
-        public Nullable<int> VouDisAmount { get; set; }
         public Nullable<int> PayMethodID { get; set; }
         public Nullable<int> BankPaymentID { get; set; }
-        public Nullable<int> PaymentPercent { get; set; }
-        public Nullable<bool> IsClient { get; set; }
-        public Nullable<int> ClientID { get; set; }
-        public Nullable<int> LimitedDayID { get; set; }
-        public Nullable<int> PayPercentAmt { get; set; }
-        public string Remark { get; set; }
         public Nullable<int> SlipID { get; set; }
-        public string UserVoucherNo { get; set; }
+        public Nullable<int> LimitedDayID { get; set; }
+        public string Remark { get; set; }
+        public Nullable<int> Subtotal { get; set; }
+        public Nullable<int> Tax { get; set; }
+        public Nullable<int> TaxAmt { get; set; }
+        public Nullable<int> Charges { get; set; }
+        public Nullable<int> ChargesAmt { get; set; }
+        public Nullable<int> Total { get; set; }
+        public Nullable<int> VouDisPercent { get; set; }
+        public Nullable<int> VouDisAmount { get; set; }
+        public Nullable<int> VoucherDiscount { get; set; }
+        public Nullable<int> AdvancedPay { get; set; }
+        public Nullable<int> PaymentPercent { get; set; }
+        public Nullable<int> PayPercentAmt { get; set; }
+        public Nullable<int> Grandtotal { get; set; }
     }
 }

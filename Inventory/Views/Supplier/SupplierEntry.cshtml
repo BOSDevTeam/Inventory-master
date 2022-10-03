@@ -62,11 +62,11 @@
                         <label class="control-label">Phone</label>
                         @if (Session["IsEdit"].ToString() == "0")
                         {
-                            <input id="Phone" class="form-control control-input" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" />
+                            <input id="Phone" class="form-control control-input integerInput" />
                         }
                         else if (Session["IsEdit"].ToString() == "1")
                         {
-                            <input id="Phone" class="form-control control-input" value="@Session["EditPhone"]" onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || (event.charCode >= 48 && event.charCode <= 57)" />
+                            <input id="Phone" class="form-control control-input integerInput" value="@Session["EditPhone"]" />
                         }
                     </div>
                     <div class="form-group">
@@ -100,6 +100,7 @@
                     <div class="form-group">
                         <label class="control-label">Township</label>
                         @Html.DropDownListFor(m => m.TownshipID, Model.Townships, new { @class = "form-control control-input" })
+                        <label id="vldTownship" class="text-danger" style="display:none">Township Require!</label>
                     </div>
                     <div class="form-group">
                         <label class="control-label">Address</label>
@@ -171,7 +172,7 @@
             var email = $('#Email').val();
             var contact = $('#Contact').val();
             var address = $('#Address').val();           
-            var townshipId = $('#TownshipID option:selected').val();
+            var townshipId = $('#TownshipID option:selected').val() || 0;
             var divisionId = $('#DivisionID option:selected').val();
 
             if (supplierName.length == 0) {
@@ -180,7 +181,9 @@
             } else if (code.length == 0) {
                 $("#vldCode").show();
                 vldOk = 0;
-            }else {
+            } else if (townshipId == 0) {
+                $('#vldTownship').show();
+            } else {
                 vldOk = 1;
             }
             if (vldOk == 1) {
@@ -226,7 +229,7 @@
             var email = $('#Email').val();
             var contact = $('#Contact').val();
             var address = $('#Address').val();           
-            var townshipId = $('#TownshipID option:selected').val();
+            var townshipId = $('#TownshipID option:selected').val() || 0;
             var divisionId = $('#DivisionID option:selected').val();
 
             if (supplierName.length == 0) {
@@ -235,6 +238,8 @@
             } else if (code.length == 0) {
                 $("#vldCode").show();
                 vldOk = 0;
+            } else if (townshipId == 0) {
+                $('#vldTownship').show();
             } else {
                 vldOk = 1;
             }
@@ -271,16 +276,27 @@
             window.location.reload();
         });
 
+        $(function () {
+            $('.integerInput').on('input', function () {
+                this.value = this.value
+                  .replace(/[^\d]/g, '');// numbers and decimals only
+
+            });
+        });
+
         $("#SupplierName").keypress(function () {
             $("#vldName").hide();
         });
 
         $("#Code").keypress(function () {
             $("#vldCode").hide();
-        });    
+        });
+        $('#DivisionID').change(function () {
+            $('#vldTownship').hide();
+        });
 
         var editDivisionID = '@Session["EditDivisionID"]';
-        $('#DivisionID').val(editDivisionID);
+        if(editDivisionID != 0 && editDivisionID.length != 0) $('#DivisionID').val(editDivisionID);
 
         var editTownshipID = '@Session["EditTownshipID"]';
         if (editTownshipID.length != 0 && editTownshipID != 0) $('#TownshipID').val(editTownshipID);

@@ -50,6 +50,7 @@ namespace Inventory.Controllers
         
         public ActionResult TownshipList()
         {
+            GetDivision();
             TownshipModels.TownshipModel townshipModel = new TownshipModels.TownshipModel();
             model.LstTownship = new List<TownshipModels.TownshipModel>();
             lstTownshipList = new List<TownshipModels.TownshipModel>();
@@ -126,13 +127,14 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SearchAction(string keyword)
+        public JsonResult SearchAction(string keyword, int? divisionId)
         {
+
             TownshipModels.TownshipModel townshipModel = new TownshipModels.TownshipModel();
             model.LstTownship = new List<TownshipModels.TownshipModel>();
             lstTownshipList = new List<TownshipModels.TownshipModel>();
 
-            foreach (var town in Entities.PrcSearchTownship(keyword))
+            foreach (var town in Entities.PrcSearchTownship(keyword, divisionId))
             {
                 townshipModel = new TownshipModels.TownshipModel();  
                 townshipModel.TownshipID = town.TownshipID;

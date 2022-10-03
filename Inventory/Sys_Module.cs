@@ -10,14 +10,12 @@
 namespace Inventory
 {
     using System;
+    using System.Collections.Generic;
     
-    public partial class PrcGetVoucherFormat_Result
+    public partial class Sys_Module
     {
-        public int ID { get; set; }
-        public string PreFormat { get; set; }
-        public string MidFormat { get; set; }
-        public int PostFormat { get; set; }
-        public string ModuleCode { get; set; }
+        public int ModuleID { get; set; }
         public string ModuleName { get; set; }
+        public string ModuleCode { get; set; }
     }
 }
