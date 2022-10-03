@@ -80,7 +80,9 @@
                         <li class="submenu">
                             <a href=""><i class="fa fa-dollar"></i> <span> Sale </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuSaleGp">
-                                <li id="subMenuSale"><a href="#">Sale</a></li>
+                                <li id="subMenuSale"><a href="#">POS</a></li>
+                                <li id="subMenuOpenedBill"><a href="#">Opened Bills</a></li>
+                                <li id="subMenuSaleList"><a href="#">Sale List</a></li>
                                 <li id="subMenuClientSaleOrder"><a href="~/CLSaleOrder/CLMasterSaleOrderList">Client Sale Order</a></li>
                                 <li id="subMenuSaleOrder"><a href="#">Sale Order</a></li>
                                 <li id="subMenuSaleReturn"><a href="#">Sale Return</a></li>
@@ -101,6 +103,30 @@
     </div>
     <div class="sidebar-overlay" data-reff=""></div>
 
+    <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 col-lg12">
+                            <label class="control-label">Are you sure you want to delete?</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
+                    <button id="btnDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="~/assets/js/jquery-3.2.1.min.js"></script>
     <script src="~/assets/js/popper.min.js"></script>
     <script src="~/assets/js/bootstrap.min.js"></script>
@@ -112,10 +138,13 @@
     <script src="~/Scripts/Site.js"></script>
 
     <script>
-        var userId = 0, userName;
-       
+        var userId = 0, userName, isMultiUnit = false, isMultiCurrency = false, isBankPayment = false;
+
         userId = localStorage.getItem("UserID");
-        userName = localStorage.getItem("UserName");     
+        userName = localStorage.getItem("UserName");
+        isMultiUnit = localStorage.getItem("IsMultiUnit");
+        isMultiCurrency = localStorage.getItem("IsMultiCurrency");
+        isBankPayment = localStorage.getItem("IsBankPayment");
 
         $("#loginUser").text(userName);
 
@@ -126,9 +155,12 @@
 			$('#datetimepicker4').datetimepicker({
                 format: 'LT'
 			});
-			$('#menuSale').click(function () {
-			    window.location.href = '@Url.Action("Sale", "Sale")?tranId=0&isMultiBranch=' + isMultiBranch + '&isMultiCurrency=' + isMultiCurrency + '&isMultiUnit=' + isMultiUnit + '&isBankPayment=' + isBankPayment + '&branchId=' + branchId + '&userId=' + userId;
+			$('#subMenuSale').click(function () {
+			    window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId + '&saleId=' + null;
 			});
+            $('#subMenuSaleList').click(function () {
+                window.location.href = '@Url.Action("ListSale", "Sale")?userId=' + userId;
+            });
             $('.toast').toast({
                 delay: 3000
             });
@@ -147,6 +179,25 @@
             }
             $('#lblToastMessage').text(message);
         }
+
+        function redirectToLogin() {
+            window.location.href = '@Url.Action("Login", "User")';
+        }
+
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            return result;
+        }
+
+        function getTodayDate() {
+            let date = new Date();
+            let day = ("0" + date.getDate()).slice(-2);
+            let month = ("0" + (date.getMonth() + 1)).slice(-2);
+            let today = date.getFullYear() + "-" + (month) + "-" + (day);
+            return today;
+        }
+
     </script>
 
 </body>

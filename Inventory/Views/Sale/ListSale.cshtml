@@ -1,0 +1,263 @@
+﻿@using Inventory.ViewModels
+@model SaleViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+
+    <style type="text/css">
+        #subMenuSaleGp {
+            display: block;
+        }
+    </style>
+    <script type="text/javascript">
+
+        var saleListAction, selectedRowIndex;
+        document.getElementById('subMenuSaleList').className = 'active';
+
+        $(document).ready(function () {
+
+            initializeControl();
+            createMasterSaleData('',false);
+
+            function initializeControl() {
+                $('#inputFromDate').val(getTodayDate());
+                $('#inputToDate').val(getTodayDate());
+            }
+
+            function clearControl() {
+                $('#inputFromDate').val(getTodayDate());
+                $('#inputToDate').val(getTodayDate());
+                $('#inputUserVoucherNo').val('');
+                $("#ddlCustomer").val('0');
+            }
+
+            $("#btnSearch").click(function (e) {
+                let fromDate = $('#inputFromDate').val();
+                let toDate = $('#inputToDate').val();
+                let userVoucherNo = $('#inputUserVoucherNo').val();
+                let customerId = $('#ddlCustomer option:selected').val();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("SearchAction", "Sale")',
+                    data: { "userId": userId, "fromDate": fromDate, "toDate": toDate, "userVoucherNo": userVoucherNo, "customerId": customerId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        createMasterSaleData(response, true);
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+            $("#btnRefresh").click(function (e) {
+                clearControl();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("RefreshAction", "Sale")',
+                    data: { "userId": userId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        createMasterSaleData(response,true);
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+            $("#btnDelOk").click(function () {
+                let saleId = $("#btnDelOk").val();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("DeleteAction", "Sale")',
+                    data: { "saleId": saleId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (selectedRowIndex != null) {
+                            document.getElementById("tblSaleList").deleteRow(selectedRowIndex);
+                            showToast(1, 'Deleted Successfully!');
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+            $("#tblSaleList").on("click", "tbody tr", function (event) {             
+                $(this).find("td:last").each(function () {
+                    let saleId = $(this).text();
+                    if (saleListAction == 1) {   // view
+                        clearTableAction();
+                        viewDetail(saleId);
+                    } else if (saleListAction == 2) {  // edit
+                        clearTableAction();
+                        window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId + '&saleId=' + saleId;
+                    } else if (saleListAction == 3) {  // delete
+                        clearTableAction();
+                        $('#modalConfirm').modal('show');
+                        $("#btnDelOk").val(saleId);
+                    }
+                });
+            });
+
+            function viewDetail(saleId) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("ViewAction", "Sale")',
+                    data: { "saleId": saleId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        createMasterSaleDetail(response);
+                        createTranSaleDetail(response);
+                        $('#modalSaleDetail').modal('show');
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+
+            function createMasterSaleData(response,isFromJson) {
+                $("#tblSaleList").find("tbody").empty();
+                if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterSale"]))');              
+                $.each(response, function (index, item) {
+                    var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
+                            +'<td class="col-md-2 col-lg-2 text-overflow">' + item.SaleDateTime + '</td>'
+                            + '<td class="col-md-2 col-lg-2">' + item.UserVoucherNo + '</td>'
+                            + '<td class="col-md-3 col-lg-3 text-overflow">' + item.CustomerName + '</td>'
+                            + '<td class="col-md-1 col-lg-1">' + item.PaymentKeyword + '</td>'
+                            + '<td class="col-md-2 col-lg-2 value-right">' + separatedComma(item.Grandtotal) + '</td>'
+                            + '<td class="col-md-2 col-lg-2 btn-group">'
+                                + '<button id="btnView" class="btn btn-sm btn-dark btn-list-action" onclick="saleListTableAction(1)">View</button>'
+                                + '<button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="saleListTableAction(2)">Edit</button>'
+                                + '<button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="saleListTableAction(3)">Delete</button>'
+                            +'</td>'
+                            + '<td style="display:none">' + item.SaleID + '</td>'
+                        +'</tr>'
+                    $('#tblSaleList tbody').append(row);
+                });
+            }
+
+        });
+
+        function saleListTableAction(value) {
+            saleListAction = value;
+        }
+
+        function findRowIndex(x) {
+            selectedRowIndex = x.rowIndex;
+        }
+
+        function clearTableAction() {
+            saleListAction = 0;
+        }
+
+    </script>
+</head>
+
+<div>
+
+    <div class="row setup-title-layout">
+        <div class="col-md-12 col-lg-12">
+            <label class="page-title">Sale List</label>
+        </div>       
+    </div>
+
+    <div class="row setup-title-layout search-div">
+        <table class="width-100-percent">
+            <tr>
+                <td class="control-label" style="text-align:center;">From Date</td>
+                <td><input id="inputFromDate" type="date" class="form-control control-input" /></td>
+                <td class="control-label" style="text-align:center;">To Date</td>
+                <td><input id="inputToDate" type="date" class="form-control control-input" /></td>
+                <td><input id="inputUserVoucherNo" type="text" class="form-control control-input" placeholder="Voucher No." /></td>
+                <td>@Html.DropDownList("Customer", Model.Customers, new { @id = "ddlCustomer", @class = "form-control control-input" })</td>
+                <td>
+                    <div class="btn-group" style="float:right">
+                        <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                        <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>        
+    </div>
+
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblSaleList" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-2 col-lg-2">Date</th>
+                        <th class="col-md-2 col-lg-2">Voucher No.</th>
+                        <th class="col-md-3 col-lg-3">Customer</th>
+                        <th class="col-md-1 col-lg-1">Pay Type</th>
+                        <th class="col-md-2 col-lg-2 aligh-right">Grand Total</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    @*<div class="row mt-3" id="divPaging" style="float:right">
+        <div class="col-md-12 col-lg-12 aligh-right">
+            <label id="lblPageNumber" class="page-num">@Session["PageNumber"]</label>
+        </div>
+        <div id="divPagingItem" class="col-md-12 col-lg-12 paging-div">
+            @for (int i = 1; i <= Model.TotalPageNum; i++)
+            {
+                <button class="btnPage btn paging-item">@i</button>
+            }
+        </div>
+    </div>*@
+
+</div>
+
+<div>
+    @{
+        Html.RenderPartial("_SaleDetailDialog");
+    }
+</div>
+
+
+

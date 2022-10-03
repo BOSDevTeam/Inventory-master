@@ -5,6 +5,9 @@
       '</span></div>';
     $('body').append(loadingImage);
 }
+
 function hideLoadingIcon() {       //call this when you want to hide loading icon
     $('.loading-div').remove();
 }
+
+
