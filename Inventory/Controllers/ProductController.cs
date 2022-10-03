@@ -432,12 +432,12 @@ namespace Inventory.Controllers
                 productModel.Description = Convert.ToString(reader["Description"]);
                 productModel.SubMenuID = Convert.ToInt32(reader["SubMenuID"]);
                 productModel.SubMenuName = Convert.ToString(reader["SubMenuName"]);
-                productModel.PurchasePrice = Convert.ToDouble(reader["PurPrice"]);
-                productModel.SalePrice = Convert.ToDouble(reader["SalePrice"]);
-                productModel.WholeSalePrice = Convert.ToDouble(reader["WholeSalePrice"]);              
+                productModel.PurchasePrice = Convert.ToInt32(reader["PurPrice"]);
+                productModel.SalePrice = Convert.ToInt32(reader["SalePrice"]);
+                productModel.WholeSalePrice = Convert.ToInt32(reader["WholeSalePrice"]);              
                 productModel.IsStock = Convert.ToBoolean(reader["IsStock"]);
                 productModel.AlertQty = Convert.ToInt32(reader["AlertQty"]);
-                productModel.DisPercent = Convert.ToInt32(reader["DisPercent"]);             
+                productModel.DisPercent = Convert.ToInt16(reader["DisPercent"]);             
                 productModel.MainMenuID = Convert.ToInt32(reader["MainMenuID"]);
                 productModel.MainMenuName = Convert.ToString(reader["MainMenuName"]);               
                 if (reader["Photo"].ToString().Length != 0)

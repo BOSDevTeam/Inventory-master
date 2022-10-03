@@ -1,1643 +1,950 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Inventory.Models;
 using Inventory.Common;
 using System.Data;
 using System.Data.SqlClient;
+using Inventory.ViewModels;
+using System.Runtime.InteropServices;
 
 namespace Inventory.Controllers
 {
-    //public class SaleController : MyController
-    //{
-    //    InventoryDBEntities entity = new InventoryDBEntities();
-    //    SaleModels.SaleModel model = new SaleModels.SaleModel();
-    //    static List<SaleModels.CurrentSaleModel> lstCurrentSale = new List<SaleModels.CurrentSaleModel>();
-    //    static double totalAmount, taxAmount, chargesAmount, netAmount, voucherDis, paidAmount, curDisAmount;
-    //    static int editTranID;
-    //    static int curDisPercent;
-    //    static bool isDelivery;
-    //    List<SaleModels.LocationModel> lstLocation = new List<SaleModels.LocationModel>();
-    //    List<SaleModels.CurrencyModel> lstCurrency = new List<SaleModels.CurrencyModel>();
-    //    SaleModels.VoucherSettingModel vouSettingModel = new SaleModels.VoucherSettingModel();
-    //    DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
-    //    Procedure procedure = new Procedure();
+    public class SaleController : MyController
+    {
+        DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
+        SaleViewModel saleViewModel = new SaleViewModel();
+        AppData appData = new AppData();
+        TextQuery textQuery = new TextQuery();
+        Setting setting = new Setting();
 
-    //    public ActionResult Sale(int tranId, bool isMultiBranch, bool isMultiCurrency, bool isMultiUnit, bool isBankPayment, int branchId, int userId)
-    //    {
-    //        int sortId = 1;
-    //        SaleModels.SaleListModel saleListModel = new SaleModels.SaleListModel();
-    //        SaleModels.CurrentSaleModel tranModel = new SaleModels.CurrentSaleModel();
-    //        model.CurrentSaleList = new List<SaleModels.CurrentSaleModel>();
-    //        lstCurrentSale = new List<SaleModels.CurrentSaleModel>();
+        public ActionResult POS(int userId, int? saleId)
+        {
+            if (checkConnection())
+            {
+                getCustomer(false);
+                getLocation();
+                getMainMenu();
+                getSubMenu(getFirstMainMenuID());
+                getProduct(getFirstSubMenuID());
+                clearTranSale();
+                if (saleId == null) ViewBag.UserVoucherNo = getUserVoucherNo(userId);
+                else
+                {
+                    int totalQuantity = 0;
+                    ViewBag.IsEdit = true;
+                    MasterSaleVoucherViewModel masterSaleVoucherViewModel = selectMasterSale((int)saleId);
+                    List<TranSaleModels> lstTranSale = selectTranSaleBySaleID((int)saleId);
+                    for (int i = 0; i < lstTranSale.Count(); i++)
+                    {                      
+                        totalQuantity += lstTranSale[i].Quantity;
+                    }
+                    Session["TranSaleData"] = lstTranSale;
+                    ViewData["LstTranSale"] = lstTranSale;
+                    ViewBag.TotalItem = lstTranSale.Count();                                 
+                    ViewBag.UserVoucherNo = masterSaleVoucherViewModel.MasterSaleModel.UserVoucherNo;
+                    DateTime date =setting.convertStringToDate(masterSaleVoucherViewModel.MasterSaleModel.SaleDateTime);
+                    ViewBag.Date = setting.convertDateToString(date);
+                    ViewBag.VoucherID = masterSaleVoucherViewModel.MasterSaleModel.VoucherID;
+                    ViewBag.CustomerID = masterSaleVoucherViewModel.MasterSaleModel.CustomerID;
+                    ViewBag.LocationID = masterSaleVoucherViewModel.MasterSaleModel.LocationID;
+                    ViewBag.Subtotal = masterSaleVoucherViewModel.MasterSaleModel.Subtotal;
+                    ViewBag.TaxAmt = masterSaleVoucherViewModel.MasterSaleModel.TaxAmt;
+                    ViewBag.ChargesAmt = masterSaleVoucherViewModel.MasterSaleModel.ChargesAmt;
+                    ViewBag.Total = masterSaleVoucherViewModel.MasterSaleModel.Total;
+                    ViewBag.TotalQuantity = totalQuantity;
+                    ViewBag.SaleID = saleId;
+                }
 
-    //        getSaleInfo(isMultiBranch, isMultiCurrency, isMultiUnit, branchId, userId, isBankPayment);
+                return View(saleViewModel);
+            }
+            return RedirectToAction("Login", "User");
+        }
 
-    //        if (tranId == 0)
-    //        {
-    //            Session["IsEdit"] = 0;
-    //            netAmount = 0;
-    //            totalAmount = 0;
-    //            taxAmount = 0;
-    //            chargesAmount = 0;
-    //            paidAmount = 0;
-    //            voucherDis = 0;
-    //            curDisPercent = 0;
-    //            curDisAmount = 0;
-    //        }
-    //        else
-    //        {
-    //            Session["IsEdit"] = 1;
-    //            editTranID = tranId;
+        public ActionResult ListSale(int userId)
+        {
+            if (checkConnection())
+            {               
+                getCustomer(true);
+                List<SaleViewModel.MasterSaleViewModel> lstMasterSale = selectMasterSale(userId,false);
+                ViewData["LstMasterSale"] = lstMasterSale;
+                return View(saleViewModel);
+            }
+            return RedirectToAction("Login", "User");
+        }
 
-    //            if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
+        public ActionResult SaleVoucher(string systemVoucherNo,int locationId)
+        {
+            VoucherSettingModels voucherSettingModel = appData.selectVoucherSettingByLocation(getConnection(), locationId);
+            saleViewModel.VoucherSettings = voucherSettingModel;
+            ViewBag.Base64Photo = voucherSettingModel.Base64Photo;
+            MasterSaleVoucherViewModel masterSaleVoucherViewModel = selectMasterSale(systemVoucherNo);
+            setMasterSaleDataToViewBag(masterSaleVoucherViewModel);           
+            List<TranSaleModels> lstTranSale = selectTranSaleBySaleID(masterSaleVoucherViewModel.MasterSaleModel.SaleID);                    
+            ViewData["LstTranSale"]= lstTranSale;         
+            return View(saleViewModel);
+        }
 
-    //            SqlCommand cmd = new SqlCommand(procedure.PrcGetMasterSaleByTranID, (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.StoredProcedure;
-    //            cmd.Parameters.AddWithValue("@TranID", tranId);
-    //            SqlDataReader reader = cmd.ExecuteReader();
-    //            if (reader.Read())
-    //            {
-    //                saleListModel = new SaleModels.SaleListModel();
-    //                Session["EditDate"] = reader["Date"];
-    //                Session["EditVoucher"] = reader["Voucher"];
-    //                Session["EditCustomer"] = reader["CustomerID"];
-    //                Session["EditLocation"] = reader["LocationID"];
-    //                Session["EditPayment"] = reader["PaymentID"];
-    //                Session["EditCurrency"] = reader["CurrencyID"];
-    //                Session["EditCreditLimitDay"] = reader["CreditLimitDay"];
-    //                Session["EditNetAmt"] = Convert.ToDouble(reader["NetAmt"]);
-    //                Session["EditTotalAmt"] = Convert.ToDouble(reader["TotalAmt"]);
-    //                Session["EditTaxAmt"] = Convert.ToDouble(reader["TaxAmt"]);
-    //                Session["EditChargesAmt"] = Convert.ToDouble(reader["ChargesAmt"]);
-    //                Session["EditFOCAmt"] = Convert.ToDouble(reader["FOCAmt"]);
-    //                Session["EditAdvancedPayAmt"] = Convert.ToDouble(reader["AdvancedPayAmt"]);
-    //                Session["EditVoucherDis"] = Convert.ToDouble(reader["VoucherDis"]);
-    //                Session["IsDelivery"] = reader["IsDelivery"];
-    //                Session["EditVouDisPercent"] = reader["VouDisPercent"];
-    //                Session["EditVouDisAmount"] = reader["VouDisAmount"];
-    //                Session["EditPaymentPercent"] = reader["PaymentPercent"];
+        #region events
 
-    //                netAmount = Convert.ToDouble(reader["NetAmt"]);
-    //                totalAmount = Convert.ToDouble(reader["TotalAmt"]);
-    //                taxAmount = Convert.ToDouble(reader["TaxAmt"]);
-    //                chargesAmount = Convert.ToDouble(reader["ChargesAmt"]);
-    //                paidAmount = Convert.ToDouble(reader["AdvancedPayAmt"]);
-    //                voucherDis = Convert.ToDouble(reader["VoucherDis"]);
-    //                curDisPercent = (int)reader["VouDisPercent"];
-    //                curDisAmount = Convert.ToDouble(reader["VouDisAmount"]);
+        [HttpGet]
+        public JsonResult MainMenuClickAction(int mainMenuId)
+        {
+            getSubMenu(mainMenuId);
+            return Json(saleViewModel, JsonRequestBehavior.AllowGet);
+        }
 
-    //                reader.Close();
+        [HttpGet]
+        public JsonResult SubMenuClickAction(int subMenuId)
+        {
+            getProduct(subMenuId);
+            return Json(saleViewModel, JsonRequestBehavior.AllowGet);
+        }
 
-    //                if (saleListModel.IsDelivery == true)
-    //                {
-    //                    cmd = new SqlCommand("Select Date,Recipient,Phone,Address From T_Delivery Where TranID=" + tranId, (SqlConnection)Session["SQLConnection"]);
-    //                    cmd.CommandType = CommandType.Text;
-    //                    reader = cmd.ExecuteReader();
-    //                    if (reader.Read())
-    //                    {
-    //                        Session["DeliDate"] = reader["Date"];
-    //                        Session["DeliRecipient"] = reader["Recipient"];
-    //                        Session["DeliPhone"] = reader["Phone"];
-    //                        Session["DeliAddress"] = reader["Address"];
-    //                    }
-    //                    reader.Close();
-    //                }
-    //            }
+        [HttpGet]
+        public JsonResult ProductClickAction(int productId, bool isMultiUnit,bool isMultiCurrency)
+        {
+            string productName = "", code = "";
+            int salePrice = 0;
+            short? disPercent = 0;
+            List<UnitModels> lstUnit = new List<UnitModels>();
+            List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
+            bool isRequestSuccess = false;
 
-    //            cmd = new SqlCommand(procedure.PrcGetTranSaleByTranID, (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.StoredProcedure;
-    //            cmd.Parameters.AddWithValue("@TranID", tranId);
-    //            reader = cmd.ExecuteReader();
-    //            while (reader.Read())
-    //            {
-    //                tranModel = new SaleModels.CurrentSaleModel();
-    //                tranModel.ProductID = Convert.ToInt32(reader["ProductID"]);
-    //                tranModel.Code = Convert.ToString(reader["Code"]);
-    //                tranModel.ProductName = Convert.ToString(reader["ProductName"]);
-    //                if (reader["Keyword"] != null) tranModel.UnitVariant = Convert.ToString(reader["Keyword"]);
-    //                else if (reader["Variant"] != null) tranModel.UnitVariant = Convert.ToString(reader["Variant"]);
-    //                else tranModel.UnitVariant = "-";
-    //                tranModel.Quantity = Convert.ToInt32(reader["Quantity"]);
-    //                tranModel.SalePrice = Convert.ToDouble(reader["SalePrice"]);
-    //                tranModel.DiscountAmt = Convert.ToDouble(reader["DiscountAmt"]);
-    //                tranModel.Amount = Convert.ToDouble(reader["TotalAmount"]);
-    //                tranModel.SortID = sortId;
-    //                tranModel.UnitID = Convert.ToInt32(reader["UnitID"]);
-    //                tranModel.Variant = Convert.ToString(reader["Variant"]);
-    //                sortId++;
-    //                lstCurrentSale.Add(tranModel);
-    //            }
-    //            reader.Close();
-    //            dataConnectorSQL.Close();
+            if (Session["ProductData"] != null)
+            {
+                List<ProductModels.ProductModel> list = Session["ProductData"] as List<ProductModels.ProductModel>;
+                var result = list.Where(c => c.ProductID == productId).SingleOrDefault();
+                if (result != null)
+                {
+                    productName = result.ProductName;
+                    code = result.Code;
+                    salePrice = result.SalePrice;
+                    disPercent = result.DisPercent;
+                    if (isMultiUnit) lstUnit = getUnit();
+                    if (isMultiCurrency) lstCurrency = getCurrency();
+                    isRequestSuccess = true;
+                }
+            }
 
-    //            var trans = lstCurrentSale;
-    //            ViewData["EditLstTran"] = trans;
-    //        }
+            var jsonResult = new
+            {
+                ProductName = productName,
+                Code = code,
+                SalePrice = salePrice,
+                DisPercent = disPercent,
+                LstUnit = lstUnit,
+                LstCurrency = lstCurrency,
+                IsRequestSuccess = isRequestSuccess
+            };
 
-    //        return View(model);
-    //    }
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
 
-    //    [HttpGet]
-    //    public JsonResult MainMenuAction(int mainMenuId)
-    //    {
-    //        List<SaleModels.SubMenuModel> lstSubMenu = new List<SaleModels.SubMenuModel>();
-    //        SaleModels.SubMenuModel data = new SaleModels.SubMenuModel();
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand("Select SubMenuID,SubMenuName From S_SubMenu Where MainMenuID=" + mainMenuId, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
+        [HttpGet]
+        public JsonResult TranSaleAddEditAction(int productId, string productCode, string productName, int quantity, int price, int disPercent, int? unitId, string unitKeyword, int? currencyId, string currencyKeyword, bool isEdit,int? number)
+        {
+            List<TranSaleModels> lstTranSale = new List<TranSaleModels>();
+            TranSaleModels data = new TranSaleModels();
+            int subtotal = 0, totalQuantity = 0, discount;
+            bool isRequestSuccess = true;
 
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            data = new SaleModels.SubMenuModel();
-    //            data.SubMenuID = Convert.ToInt32(reader["SubMenuID"]);
-    //            data.SubMenuName = Convert.ToString(reader["SubMenuName"]);
+            data.Number = number;
+            data.ProductID = productId;
+            data.ProductCode = productCode;
+            data.Quantity = quantity;
+            data.SalePrice = price;
+            data.DiscountPercent = disPercent;
+            data.UnitID = unitId;
+            data.CurrencyID = currencyId;
+            data.ProductName = productName;
+            if (unitKeyword != null) data.UnitKeyword = unitKeyword;
+            else data.UnitKeyword = "";
+            if (currencyKeyword != null) data.CurrencyKeyword = currencyKeyword;
+            else data.CurrencyKeyword = "";
+            discount = ((price * quantity) * disPercent) / 100;
+            data.Discount = discount;
+            data.Amount = (quantity * price) - discount;
 
-    //            lstSubMenu.Add(data);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();         
+            if (!isEdit)
+            {
+                if (Session["TranSaleData"] != null)
+                {
+                    lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;                 
+                    lstTranSale.Add(data);
+                }
+                else lstTranSale.Add(data);                
+            }
+            else
+            {
+                if (Session["TranSaleData"] != null)
+                {
+                    lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;                  
+                    int index = (int) number - 1;
+                    lstTranSale[index] = data;
+                }
+                else isRequestSuccess = false;
+            }
 
-    //        return Json(lstSubMenu, JsonRequestBehavior.AllowGet);
-    //    }
+            for (int i = 0; i < lstTranSale.Count(); i++)
+            {
+                subtotal += lstTranSale[i].Amount;
+                totalQuantity += lstTranSale[i].Quantity;
+            }
 
-    //    [HttpGet]
-    //    public JsonResult SubMenuAction(int subMenuId, string subMenuName, bool isProductPhoto)
-    //    {
-    //        var result = new JsonResult();
+            Session["TranSaleData"] = lstTranSale;
 
-    //        List<SaleModels.ProductModel> lstProduct = new List<SaleModels.ProductModel>();
-    //        SaleModels.ProductModel data = new SaleModels.ProductModel();
-    //        Session["SubMenuName"] = subMenuName;
+            var jsonResult = new
+            {
+                LstTranSale = lstTranSale,
+                SubTotal = subtotal,
+                TotalQuantity = totalQuantity,
+                IsRequestSuccess = isRequestSuccess
+            };
 
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand("Select ProductID,ProductName From S_Product Where SubMenuID=" + subMenuId, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
 
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            data = new SaleModels.ProductModel();
-    //            data.ProductID = Convert.ToInt32(reader["ProductID"]);
-    //            data.ProductName = Convert.ToString(reader["ProductName"]);
-    //            data.IsPhoto = isProductPhoto;
+        [HttpGet]
+        public JsonResult TranSaleDeleteAction(int number)
+        {
+            List<TranSaleModels> lstTranSale = new List<TranSaleModels>();
+            int subtotal = 0, totalQuantity = 0;
+            bool isRequestSuccess = true;
 
-    //            lstProduct.Add(data);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
+            if (Session["TranSaleData"] != null)
+            {
+                lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;               
+                lstTranSale.RemoveAt(number - 1);
+            }
+            else isRequestSuccess = false;
 
-    //        result = Json(lstProduct, JsonRequestBehavior.AllowGet);
+            for (int i = 0; i < lstTranSale.Count(); i++)
+            {
+                subtotal += lstTranSale[i].Amount;
+                totalQuantity += lstTranSale[i].Quantity;
+            }
 
-    //        return result;
-    //    }
+            Session["TranSaleData"] = lstTranSale;
 
-    //    [HttpGet]
-    //    public JsonResult LoadProductPhotoAction(int subMenuId)
-    //    {
-    //        var result = new JsonResult();
+            var jsonResult = new
+            {
+                LstTranSale = lstTranSale,
+                SubTotal = subtotal,
+                TotalQuantity = totalQuantity,
+                IsRequestSuccess = isRequestSuccess
+            };
 
-    //        List<SaleModels.ProductModel> lstProduct = new List<SaleModels.ProductModel>();
-    //        SaleModels.ProductModel data = new SaleModels.ProductModel();
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
 
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand("Select ProductID,ProductName,isnull(Photo,'') AS Photo From S_Product Where SubMenuID=" + subMenuId, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
+        [HttpGet]
+        public JsonResult CancelAction()
+        {
+            Session["TranSaleData"] = null;
+            return Json("", JsonRequestBehavior.AllowGet);
+        }
 
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            data = new SaleModels.ProductModel();
-    //            data.ProductID = Convert.ToInt32(reader["ProductID"]);
-    //            data.ProductName = Convert.ToString(reader["ProductName"]);
-    //            if (reader["Photo"].ToString().Length != 0) data.Base64Photo = Convert.ToBase64String((byte[])reader["Photo"]);
+        [HttpGet]
+        public JsonResult PrepareToEditTranSaleAction(int number, bool isMultiUnit, bool isMultiCurrency)
+        {
+            List<TranSaleModels> lstTranSale = new List<TranSaleModels>();
+            TranSaleModels data = new TranSaleModels();
+            string productCode = "", productName = "";
+            int productId = 0, quantity = 0, price = 0, disPercent = 0;
+            int? unitId = 0, currencyId = 0;
+            List<UnitModels> lstUnit = new List<UnitModels>();
+            List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
+            bool isRequestSuccess = false;
 
-    //            lstProduct.Add(data);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
+            if (Session["TranSaleData"] != null)
+            {
+                lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;
 
-    //        result = Json(lstProduct, JsonRequestBehavior.AllowGet);
-    //        result.MaxJsonLength = int.MaxValue;
+                if (lstTranSale.Count() != 0)
+                {
+                    data = lstTranSale[number - 1];                   
+                    if (data != null)
+                    {
+                        productId = data.ProductID;
+                        productCode = data.ProductCode;
+                        productName = data.ProductName;
+                        quantity = data.Quantity;
+                        price = data.SalePrice;
+                        unitId = data.UnitID;
+                        currencyId = data.CurrencyID;
+                        disPercent = data.DiscountPercent;
+                        if (isMultiUnit) lstUnit = getUnit();
+                        if (isMultiCurrency) lstCurrency = getCurrency();
+                        isRequestSuccess = true;
+                    }
+                }
+            }
 
-    //        return result;
-    //    }
+            var jsonResult = new
+            {
+                ProductID = productId,
+                ProductCode = productCode,
+                ProductName = productName,
+                Quantity = quantity,
+                Price = price,
+                UnitID = unitId,
+                CurrencyID = currencyId,
+                DisPercent = disPercent,
+                LstUnit = lstUnit,
+                LstCurrency = lstCurrency,
+                IsRequestSuccess = isRequestSuccess
+            };
 
-    //    [HttpGet]
-    //    public JsonResult ProductAction(int productId)
-    //    {
-    //        List<SaleModels.ProductModel> lstProductByID = new List<SaleModels.ProductModel>();
-    //        SaleModels.ProductUnitModel pUnitModel = new SaleModels.ProductUnitModel();
-    //        SaleModels.ProductVariantModel pVariantModel = new SaleModels.ProductVariantModel();
-    //        SaleModels.ProductModel model = new SaleModels.ProductModel();          
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
 
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand("Select ProductID,Code,ProductName,SalePrice,isnull(DisPercent,0) AS DisPercent,IsUnit,IsVariant From S_Product Where ProductID=" + productId, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
+        [HttpGet]
+        public JsonResult GetProductByCodeAction(string productCode, bool isMultiUnit, bool isMultiCurrency)
+        {
+            ProductModels.ProductModel data = new ProductModels.ProductModel();
+            string productName = "";
+            int productId = 0, price = 0;
+            short? disPercent = 0;
+            List<UnitModels> lstUnit = new List<UnitModels>();
+            List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
+            bool isExistProduct = true;
 
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        if (reader.Read())
-    //        {
-    //            model = new SaleModels.ProductModel();
-    //            model.ProductID = Convert.ToInt32(reader["ProductID"]);
-    //            model.Code = Convert.ToString(reader["Code"]);
-    //            model.ProductName = Convert.ToString(reader["ProductName"]);
-    //            model.SalePrice = Convert.ToDouble(reader["SalePrice"]);
-    //            model.DisPercent = Convert.ToInt32(reader["DisPercent"]);
-    //            model.IsUnit = Convert.ToBoolean(reader["IsUnit"]);
-    //            model.IsVariant = Convert.ToBoolean(reader["IsVariant"]);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
+            data = appData.selectProductByCode(getConnection(), productCode);
+            if (data.ProductID != 0)
+            {
+                productId = data.ProductID;
+                productName = data.ProductName;
+                price = data.SalePrice;
+                disPercent = data.DisPercent;
+                if (isMultiUnit) lstUnit = getUnit();
+                if (isMultiCurrency) lstCurrency = getCurrency();
+            }
+            else isExistProduct = false;
 
-    //        if (model.IsUnit != null)
-    //        {
-    //            if (model.IsUnit == true) getUnitByProduct(productId, model, pUnitModel);                                  
-    //        }
+            var jsonResult = new
+            {
+                ProductID = productId,
+                ProductName = productName,
+                SalePrice = price,
+                DisPercent = disPercent,
+                LstUnit = lstUnit,
+                LstCurrency = lstCurrency,
+                IsExistProduct = isExistProduct
+            };
 
-    //        if (model.IsVariant != null)
-    //        {
-    //            if (model.IsVariant == true) getVariantByProduct(productId, model, pVariantModel);                                   
-    //        }
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
 
-    //        lstProductByID.Add(model);
+        [HttpGet]
+        public JsonResult GetProductByKeywordAction(string keyword)
+        {
+            List<ProductModels.ProductModel> list = appData.selectProductByKeyword(getConnection(), keyword);
+            Session["SearchProductData"] = list;
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
 
-    //        return Json(lstProductByID, JsonRequestBehavior.AllowGet);
-    //    }
+        [HttpGet]
+        public JsonResult SearchProductClickAction(int productId, bool isMultiUnit, bool isMultiCurrency)
+        {
+            string productName = "", code = "";
+            int salePrice = 0;
+            short? disPercent = 0;
+            List<UnitModels> lstUnit = new List<UnitModels>();
+            List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
+            bool isRequestSuccess = false;
 
-    //    [HttpGet]
-    //    public JsonResult ProductAddAction(int productId, string productName, double salePrice, int quantity, Int16 disPercent, string code, int unitId, string unitName, int variantId, string variantName,bool isMultiBranch,int branchId)
-    //    {
-    //        int? totalQuantity = 0;
-    //        totalAmount = 0;
-    //        netAmount = 0;
-            
-    //        SaleModels.CurrentSaleModel currentSaleModel = new SaleModels.CurrentSaleModel();
+            if (Session["SearchProductData"] != null)
+            {
+                List<ProductModels.ProductModel> list = Session["SearchProductData"] as List<ProductModels.ProductModel>;
+                var result = list.Where(c => c.ProductID == productId).SingleOrDefault();
+                if (result != null)
+                {
+                    productName = result.ProductName;
+                    code = result.Code;
+                    salePrice = result.SalePrice;
+                    disPercent = result.DisPercent;
+                    if (isMultiUnit) lstUnit = getUnit();
+                    if (isMultiCurrency) lstCurrency = getCurrency();
+                    isRequestSuccess = true;
+                }
+            }
 
-    //        currentSaleModel.SortID = lstCurrentSale.Count() + 1;
-    //        currentSaleModel.Code = code;
-    //        currentSaleModel.ProductID = productId;
-    //        currentSaleModel.ProductName = productName;
-    //        currentSaleModel.SalePrice = salePrice;
-    //        currentSaleModel.Quantity = quantity;
-    //        currentSaleModel.DisPercent = disPercent;
-    //        if (unitId != 0)
-    //        {
-    //            currentSaleModel.UnitVariant = unitName;
-    //            currentSaleModel.UnitID = unitId;
-    //        }
-    //        else if (variantId != 0)
-    //        {
-    //            currentSaleModel.UnitVariant = variantName;
-    //            currentSaleModel.VariantID = variantId;
-    //        }
-    //        if (currentSaleModel.UnitVariant == null) currentSaleModel.UnitVariant = "-";
-    //        currentSaleModel.DiscountAmt = Convert.ToDouble((salePrice * disPercent) / 100);
-    //        currentSaleModel.Amount = (salePrice - currentSaleModel.DiscountAmt) * quantity;
+            var jsonResult = new
+            {
+                ProductName = productName,
+                Code = code,
+                SalePrice = salePrice,
+                DisPercent = disPercent,
+                LstUnit = lstUnit,
+                LstCurrency = lstCurrency,
+                IsRequestSuccess = isRequestSuccess
+            };
 
-    //        lstCurrentSale.Add(currentSaleModel);
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
 
-    //        for (int i = 0; i < lstCurrentSale.Count(); i++)
-    //        {
-    //            totalAmount += lstCurrentSale[i].Amount;
-    //            totalQuantity += lstCurrentSale[i].Quantity;
-    //        }
+        [HttpGet]
+        public JsonResult PaymentAction(bool isBankPayment)
+        {
+            List<PaymentModels> lstPayment = new List<PaymentModels>();
+            List<PayMethodModels> lstPayMethod = new List<PayMethodModels>();
+            bool isRequestSuccess = true;
 
-    //        calcTaxAndChargesAmt(totalAmount,isMultiBranch,branchId);            
+            if (Session["TranSaleData"] != null)
+            {
+                lstPayment = getPayment();
+                if (isBankPayment) lstPayMethod = getPayMethod();
+            }
+            else isRequestSuccess = false;
 
-    //        voucherDis = 0;
-    //        double disVouPercent = (totalAmount * curDisPercent) / 100;
-    //        voucherDis = disVouPercent + curDisAmount;
+            var jsonResult = new
+            {
+                LstPayment = lstPayment,
+                LstPayMethod = lstPayMethod,
+                IsRequestSuccess = isRequestSuccess
+            };
 
-    //        netAmount = (totalAmount + taxAmount + chargesAmount - voucherDis) - paidAmount;
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
 
-    //        var myResult = new
-    //        {
-    //            CurrentSaleList = lstCurrentSale,
-    //            TotalAmount = totalAmount,
-    //            TaxAmount = taxAmount,
-    //            ChargesAmount = chargesAmount,
-    //            NetAmount = netAmount,
-    //            VoucherDis = voucherDis,
-    //            CurrentSaleCount = "Sale (" + totalQuantity + ")"
-    //        };
+        [HttpGet]
+        public JsonResult PaymentEditAction(int saleId, string date, string voucherId, int customerId, int locationId, int taxAmt, int chargesAmt, int subtotal, int total)
+        {
+            bool isRequestSuccess = true;
 
-    //        return Json(myResult, JsonRequestBehavior.AllowGet);
-    //    }
+            if (Session["TranSaleData"] != null)
+            {
+                List<TranSaleModels> list = Session["TranSaleData"] as List<TranSaleModels>;
+                DataTable dt = new DataTable();
+                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
+                dt.Columns.Add(new DataColumn("SalePrice", typeof(int)));
+                dt.Columns.Add(new DataColumn("CurrencyID", typeof(int)));
+                dt.Columns.Add(new DataColumn("DiscountPercent", typeof(int)));
+                dt.Columns.Add(new DataColumn("Discount", typeof(int)));
+                dt.Columns.Add(new DataColumn("Amount", typeof(int)));
+                dt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
+                for (int i = 0; i < list.Count; i++)
+                {
+                    dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
+                }
 
-    //    [HttpGet]
-    //    public JsonResult ProductEditAction(int productId, string productName, double salePrice, int quantity, Int16 disPercent, string code, int unitId, string unitName, int variantId, string variantName, int sortId,bool isMultiBranch,int branchId)
-    //    {
-    //        int? totalQuantity = 0;
-    //        totalAmount = 0;
-    //        netAmount = 0;
-           
-    //        SaleModels.CurrentSaleModel currentSaleModel = new SaleModels.CurrentSaleModel();
+                DateTime saleDateTime = DateTime.Parse(date);
+                SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateSale, dataConnectorSQL.Connect());
+                cmd.Parameters.AddWithValue("@SaleID", saleId);
+                cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
+                cmd.Parameters.AddWithValue("@CustomerID", customerId);
+                cmd.Parameters.AddWithValue("@LocationID", locationId);
+                cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
+                cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
+                cmd.Parameters.AddWithValue("@Subtotal", subtotal);
+                cmd.Parameters.AddWithValue("@Total", total);                            
+                cmd.Parameters.AddWithValue("@temptbl", dt);
+                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.ExecuteNonQuery();
+                dataConnectorSQL.Close();
+                clearTranSale();
+            }
+            else isRequestSuccess = false;
 
-    //        int index = lstCurrentSale.FindIndex(x => x.SortID == sortId);
-    //        lstCurrentSale[index].SortID = sortId;
-    //        lstCurrentSale[index].Code = code;
-    //        lstCurrentSale[index].ProductID = productId;
-    //        lstCurrentSale[index].ProductName = productName;
-    //        lstCurrentSale[index].SalePrice = salePrice;
-    //        lstCurrentSale[index].Quantity = quantity;
-    //        lstCurrentSale[index].DisPercent = disPercent;
-    //        if (unitId != 0)
-    //        {
-    //            lstCurrentSale[index].UnitVariant = unitName;
-    //            lstCurrentSale[index].UnitID = unitId;
-    //        }
-    //        else if (variantId != 0)
-    //        {
-    //            lstCurrentSale[index].UnitVariant = variantName;
-    //            lstCurrentSale[index].VariantID = variantId;
-    //        }
-    //        if (lstCurrentSale[index].UnitVariant == null) lstCurrentSale[index].UnitVariant = "-";
-    //        lstCurrentSale[index].DiscountAmt = Convert.ToDouble((salePrice * disPercent) / 100);
-    //        lstCurrentSale[index].Amount = (salePrice - lstCurrentSale[index].DiscountAmt) * quantity;
+            var jsonResult = new
+            {
+                IsRequestSuccess = isRequestSuccess
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
 
-    //        for (int i = 0; i < lstCurrentSale.Count(); i++)
-    //        {
-    //            totalAmount += lstCurrentSale[i].Amount;
-    //            totalQuantity += lstCurrentSale[i].Quantity;
-    //        }
+        [HttpGet]
+        public JsonResult GetLimitedDayAction()
+        {         
+            List<LimitedDayModels> lstLimitedDay = new List<LimitedDayModels>();        
+            lstLimitedDay = getLimitedDay();                      
+            return Json(lstLimitedDay, JsonRequestBehavior.AllowGet);
+        }
 
-    //        calcTaxAndChargesAmt(totalAmount,isMultiBranch,branchId);
+        [HttpGet]
+        public JsonResult GetBankPaymentAction()
+        {
+            List<BankPaymentModels> lstBankPayment = new List<BankPaymentModels>();
+            lstBankPayment = getBankPayment();
+            return Json(lstBankPayment, JsonRequestBehavior.AllowGet);
+        }
 
-    //        voucherDis = 0;
-    //        double disVouPercent = (totalAmount * curDisPercent) / 100;
-    //        voucherDis = disVouPercent + curDisAmount;
+        [HttpPost]
+        public JsonResult PaymentSubmitAction(string userVoucherNo, string date, string voucherId, int customerId, int locationId,
+                int paymentId, int? payMethodId, int? limitedDayId, int? bankPaymentId, string remark, int? advancedPay,
+                int? payPercent, int? payPercentAmt, int? vouDisPercent, int? vouDisAmount, int? voucherDiscount,
+                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId)
+        {
+            string systemVoucherNo = "";
+            bool isRequestSuccess = true;
 
-    //        netAmount = (totalAmount + taxAmount + chargesAmount - voucherDis) - paidAmount;
+            if (Session["TranSaleData"] != null)
+            {
+                List<TranSaleModels> list = Session["TranSaleData"] as List<TranSaleModels>;
+                DataTable dt = new DataTable();
+                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
+                dt.Columns.Add(new DataColumn("SalePrice", typeof(int)));
+                dt.Columns.Add(new DataColumn("CurrencyID", typeof(int)));
+                dt.Columns.Add(new DataColumn("DiscountPercent", typeof(int)));
+                dt.Columns.Add(new DataColumn("Discount", typeof(int)));
+                dt.Columns.Add(new DataColumn("Amount", typeof(int)));
+                dt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
+                for (int i = 0; i < list.Count; i++)
+                {
+                    dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
+                }
 
-    //        var myResult = new
-    //        {
-    //            CurrentSaleList = lstCurrentSale,
-    //            TotalAmount = totalAmount,
-    //            TaxAmount = taxAmount,
-    //            ChargesAmount = chargesAmount,
-    //            NetAmount = netAmount,
-    //            VoucherDis = voucherDis,
-    //            CurrentSaleCount = "Sale (" + totalQuantity + ")"
-    //        };
+                DateTime saleDateTime = DateTime.Parse(date);
+                if (payMethodId == null) payMethodId = 0;
+                if (limitedDayId == null) limitedDayId = 0;
+                if (bankPaymentId == null) bankPaymentId = 0;
+                if (advancedPay == null) advancedPay = 0;
+                if (payPercent == null) payPercent = 0;
+                if (payPercentAmt == null) payPercentAmt = 0;
+                if (vouDisPercent == null) vouDisPercent = 0;
+                if (vouDisAmount == null) vouDisAmount = 0;
+                if (voucherDiscount == null) voucherDiscount = 0;
 
-    //        return Json(myResult, JsonRequestBehavior.AllowGet);
-    //    }
+                SqlCommand cmd = new SqlCommand(Procedure.PrcInsertSale, dataConnectorSQL.Connect());
+                cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
+                cmd.Parameters.AddWithValue("@CustomerID", customerId);
+                cmd.Parameters.AddWithValue("@LocationID", locationId);
+                cmd.Parameters.AddWithValue("@PaymentID", paymentId);
+                cmd.Parameters.AddWithValue("@VoucherDiscount", voucherDiscount);
+                cmd.Parameters.AddWithValue("@AdvancedPay", advancedPay);
+                cmd.Parameters.AddWithValue("@Tax", tax);
+                cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
+                cmd.Parameters.AddWithValue("@Charges", charges);
+                cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
+                cmd.Parameters.AddWithValue("@Subtotal", subtotal);
+                cmd.Parameters.AddWithValue("@Total", total);
+                cmd.Parameters.AddWithValue("@Grandtotal", grandtotal);
+                cmd.Parameters.AddWithValue("@VouDisPercent", vouDisPercent);
+                cmd.Parameters.AddWithValue("@VouDisAmount", vouDisAmount);
+                cmd.Parameters.AddWithValue("@PayMethodID", payMethodId);
+                cmd.Parameters.AddWithValue("@BankPaymentID", bankPaymentId);
+                cmd.Parameters.AddWithValue("@PaymentPercent", payPercent);
+                cmd.Parameters.AddWithValue("@IsClientSale", 0);
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                cmd.Parameters.AddWithValue("@LimitedDayID", limitedDayId);
+                cmd.Parameters.AddWithValue("@PayPercentAmt", payPercentAmt);
+                cmd.Parameters.AddWithValue("@Remark", remark);
+                cmd.Parameters.AddWithValue("@ModuleCode", 1);
+                cmd.Parameters.AddWithValue("@temptbl", dt);
+                cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read()) systemVoucherNo = Convert.ToString(reader[0]);
+                reader.Close();
+                dataConnectorSQL.Close();
+                clearTranSale();
+            }
+            else isRequestSuccess = false;
 
-    //    [HttpGet]
-    //    public JsonResult SaleEditAction(int sortId)
-    //    {
-    //        SaleModels.ProductUnitModel pUnitModel = new SaleModels.ProductUnitModel();
-    //        SaleModels.ProductVariantModel pVariantModel = new SaleModels.ProductVariantModel();
-    //        SaleModels.ProductModel pModel = new SaleModels.ProductModel();
-    //        string code = "", name = "";
-    //        int? quantity = 0;
-    //        double salePrice = 0;
-    //        short disPercent = 0;
-    //        int? productId = 0, unitId = 0, variantId = 0;
+            var jsonResult = new
+            {
+                SystemVoucherNo = systemVoucherNo,
+                LocationID = locationId,
+                IsRequestSuccess = isRequestSuccess
+            };
 
-    //        var editSale = lstCurrentSale.Where(c => c.SortID == sortId);
-    //        foreach (var e in editSale)
-    //        {
-    //            productId = e.ProductID;
-    //            code = e.Code;
-    //            name = e.ProductName;
-    //            quantity = e.Quantity;
-    //            salePrice = e.SalePrice;
-    //            disPercent = e.DisPercent;
-    //            unitId = e.UnitID;
-    //            variantId = e.VariantID;
-    //            break;
-    //        }
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
 
-    //        if (isUnitByProduct(productId))getUnitByProduct(productId, pModel, pUnitModel);             
-            
-    //        if (isVariantByProduct(productId)) getVariantByProduct(productId, pModel, pVariantModel);
-              
-    //        var myResult = new
-    //        {
-    //            ProductID = productId,
-    //            Code = code,
-    //            Name = name,
-    //            Quantity = quantity,
-    //            SalePrice = salePrice,
-    //            DisPercent = disPercent,
-    //            ProductUnitList = pModel.ProductUnitList,
-    //            SelectedUnitID = unitId,
-    //            ProductVariantList = pModel.ProductVariantList,
-    //            SelectedVariantID = variantId
-    //        };
+        [HttpGet]
+        public JsonResult SearchAction(int userId,DateTime fromDate,DateTime toDate,string userVoucherNo,int customerId)
+        {
+            List<SaleViewModel.MasterSaleViewModel> lstMasterSale = selectMasterSale(userId, true, fromDate, toDate, userVoucherNo, customerId);
+            return Json(lstMasterSale, JsonRequestBehavior.AllowGet);
+        }
 
-    //        return Json(myResult, JsonRequestBehavior.AllowGet);
-    //    }
+        [HttpGet]
+        public JsonResult RefreshAction(int userId)
+        {
+            List<SaleViewModel.MasterSaleViewModel> lstMasterSale = selectMasterSale(userId, false);
+            return Json(lstMasterSale, JsonRequestBehavior.AllowGet);
+        }
 
-    //    [HttpGet]
-    //    public JsonResult ProductDeleteAction(int sortId,bool isMultiBranch,int branchId)
-    //    {
-    //        int? totalQuantity = 0;
-    //        totalAmount = 0;
-    //        netAmount = 0;
+        [HttpGet]
+        public JsonResult ViewAction(int saleId)
+        {
+            MasterSaleVoucherViewModel item = selectMasterSale(saleId);
+            List<TranSaleModels> lstTranSale = selectTranSaleBySaleID(saleId);
+            int grandTotalNotPayPercent = 0;
+                   
+            if (item.MasterSaleModel.PayPercentAmt != 0)
+                grandTotalNotPayPercent = item.MasterSaleModel.Total - (item.MasterSaleModel.VoucherDiscount + item.MasterSaleModel.AdvancedPay);
+
+            var jsonResult = new
+            {
+                LstTranSale = lstTranSale,
+                UserVoucherNo = item.MasterSaleModel.UserVoucherNo,
+                VoucherID = item.MasterSaleModel.VoucherID,
+                Remark = item.MasterSaleModel.Remark,
+                LocationName = item.LocationName,
+                Payment = item.Payment,
+                PayMethod = item.PayMethod,
+                BankPayment = item.BankPayment,
+                LimitedDay = item.LimitedDay,
+                SaleDateTime = item.MasterSaleModel.SaleDateTime,
+                UserName = item.UserName,
+                CustomerName = item.CustomerName,
+                SlipID = item.MasterSaleModel.SlipID,
+                Subtotal = item.MasterSaleModel.Subtotal,
+                TaxAmt = item.MasterSaleModel.TaxAmt,
+                ChargesAmt = item.MasterSaleModel.ChargesAmt,
+                Total = item.MasterSaleModel.Total,
+                VoucherDiscount = item.MasterSaleModel.VoucherDiscount,
+                AdvancedPay = item.MasterSaleModel.AdvancedPay,
+                PayPercentAmt = item.MasterSaleModel.PayPercentAmt,
+                Grandtotal = item.MasterSaleModel.Grandtotal,
+                VouDisPercent = item.MasterSaleModel.VouDisPercent,
+                PaymentPercent = item.MasterSaleModel.PaymentPercent,
+                GrandTotalNotPayPercent = grandTotalNotPayPercent
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult DeleteAction(int saleId)
+        {
+            SqlCommand cmd = new SqlCommand(textQuery.deleteSaleQuery(saleId), (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.Text;
+            cmd.ExecuteNonQuery();          
+            return Json("", JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
+        #region methods
+
+        public MasterSaleVoucherViewModel selectMasterSale(string systemVoucherNo)
+        {
+            MasterSaleVoucherViewModel item = new MasterSaleVoucherViewModel();
+
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterSaleBySystemVoucherNo, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@SystemVoucherNo", systemVoucherNo);
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                item.MasterSaleModel.SaleID = Convert.ToInt32(reader["SaleID"]);
+                item.MasterSaleModel.SaleDateTime = Convert.ToString(reader["Date"]);
+                item.UserName = Convert.ToString(reader["UserName"]);
+                item.CustomerName = Convert.ToString(reader["CustomerName"]);
+                item.MasterSaleModel.SlipID = Convert.ToInt32(reader["SlipID"]);
+                item.MasterSaleModel.Subtotal = Convert.ToInt32(reader["Subtotal"]);
+                item.MasterSaleModel.TaxAmt = Convert.ToInt32(reader["TaxAmt"]);
+                item.MasterSaleModel.ChargesAmt = Convert.ToInt32(reader["ChargesAmt"]);
+                item.MasterSaleModel.Total = Convert.ToInt32(reader["Total"]);
+                item.MasterSaleModel.VoucherDiscount = Convert.ToInt32(reader["VoucherDiscount"]);
+                item.MasterSaleModel.AdvancedPay = Convert.ToInt32(reader["AdvancedPay"]);
+                item.MasterSaleModel.PayPercentAmt = Convert.ToInt32(reader["PayPercentAmt"]);
+                item.MasterSaleModel.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);
+                item.MasterSaleModel.VouDisPercent = Convert.ToInt32(reader["VouDisPercent"]);
+                item.MasterSaleModel.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
+            }
+            reader.Close();         
+
+            return item;
+        }
+
+        public MasterSaleVoucherViewModel selectMasterSale(int saleId)
+        {
+            MasterSaleVoucherViewModel item = new MasterSaleVoucherViewModel();
+
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterSaleBySaleID, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@SaleID", saleId);
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                item.MasterSaleModel.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
+                item.MasterSaleModel.VoucherID = Convert.ToString(reader["VoucherID"]);
+                item.MasterSaleModel.Remark = Convert.ToString(reader["Remark"]);
+                item.LocationName = Convert.ToString(reader["LocationName"]);
+                item.Payment = Convert.ToString(reader["Payment"]);
+                item.PayMethod = Convert.ToString(reader["PayMethod"]);
+                item.BankPayment = Convert.ToString(reader["BankPayment"]);
+                item.LimitedDay = Convert.ToString(reader["LimitedDay"]);
+                item.MasterSaleModel.SaleDateTime = Convert.ToString(reader["Date"]);
+                item.UserName = Convert.ToString(reader["UserName"]);
+                item.CustomerName = Convert.ToString(reader["CustomerName"]);
+                item.MasterSaleModel.SlipID = Convert.ToInt32(reader["SlipID"]);
+                item.MasterSaleModel.Subtotal = Convert.ToInt32(reader["Subtotal"]);
+                item.MasterSaleModel.TaxAmt = Convert.ToInt32(reader["TaxAmt"]);
+                item.MasterSaleModel.ChargesAmt = Convert.ToInt32(reader["ChargesAmt"]);
+                item.MasterSaleModel.Total = Convert.ToInt32(reader["Total"]);
+                item.MasterSaleModel.VoucherDiscount = Convert.ToInt32(reader["VoucherDiscount"]);
+                item.MasterSaleModel.AdvancedPay = Convert.ToInt32(reader["AdvancedPay"]);
+                item.MasterSaleModel.PayPercentAmt = Convert.ToInt32(reader["PayPercentAmt"]);
+                item.MasterSaleModel.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);
+                item.MasterSaleModel.VouDisPercent = Convert.ToInt32(reader["VouDisPercent"]);
+                item.MasterSaleModel.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
+                item.MasterSaleModel.LocationID = Convert.ToInt32(reader["LocationID"]);
+                item.MasterSaleModel.CustomerID = Convert.ToInt32(reader["CustomerID"]);
+            }
+            reader.Close();
+
+            return item;
+        }
+
+        private void setMasterSaleDataToViewBag(MasterSaleVoucherViewModel item)
+        {
+            ViewBag.SaleDateTime = item.MasterSaleModel.SaleDateTime;
+            ViewBag.UserName = item.UserName;
+            ViewBag.CustomerName = item.CustomerName;
+            ViewBag.SlipID = item.MasterSaleModel.SlipID;
+            ViewBag.Subtotal = item.MasterSaleModel.Subtotal;
+            ViewBag.TaxAmt = item.MasterSaleModel.TaxAmt;
+            ViewBag.ChargesAmt = item.MasterSaleModel.ChargesAmt;
+            ViewBag.Total = item.MasterSaleModel.Total;
+            ViewBag.VoucherDiscount = item.MasterSaleModel.VoucherDiscount;
+            ViewBag.AdvancedPay = item.MasterSaleModel.AdvancedPay;
+            ViewBag.PayPercentAmt = item.MasterSaleModel.PayPercentAmt;
+            ViewBag.Grandtotal = item.MasterSaleModel.Grandtotal;
+            ViewBag.VouDisPercent = item.MasterSaleModel.VouDisPercent;
+            ViewBag.PaymentPercent = item.MasterSaleModel.PaymentPercent;
+            if (item.MasterSaleModel.PayPercentAmt != 0)
+                ViewBag.GrandTotalNotPayPercent = item.MasterSaleModel.Total - (item.MasterSaleModel.VoucherDiscount + item.MasterSaleModel.AdvancedPay);
+        }
+
+        public List<SaleViewModel.MasterSaleViewModel> selectMasterSale(int userId, bool isSearch,[Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo, [Optional]int customerId)
+        {
+            List<SaleViewModel.MasterSaleViewModel> list = new List<SaleViewModel.MasterSaleViewModel>();
+            SaleViewModel.MasterSaleViewModel item = new SaleViewModel.MasterSaleViewModel();
+
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterSaleList, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@UserID", userId);
+            cmd.Parameters.AddWithValue("@IsSearch", isSearch);
+            if (!isSearch)
+            {
+                cmd.Parameters.AddWithValue("@FromDate", DateTime.Now);
+                cmd.Parameters.AddWithValue("@ToDate", DateTime.Now);
+                cmd.Parameters.AddWithValue("@UserVoucherNo", "");
+                cmd.Parameters.AddWithValue("@CustomerID", 0);
+            }else
+            {
+                cmd.Parameters.AddWithValue("@FromDate", fromDate);
+                cmd.Parameters.AddWithValue("@ToDate", toDate);
+                cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+                cmd.Parameters.AddWithValue("@CustomerID", customerId);
+            }
           
-    //        SaleModels.CurrentSaleModel currentSaleModel = new SaleModels.CurrentSaleModel();
-
-    //        int index = lstCurrentSale.FindIndex(x => x.SortID == sortId);
-    //        lstCurrentSale.RemoveAt(index);
-
-    //        for (int i = 0; i < lstCurrentSale.Count(); i++)
-    //        {
-    //            totalAmount += lstCurrentSale[i].Amount;
-    //            totalQuantity += lstCurrentSale[i].Quantity;
-    //        }
-
-    //        calcTaxAndChargesAmt(totalAmount,isMultiBranch,branchId);          
-
-    //        voucherDis = 0;
-    //        double disVouPercent = (totalAmount * curDisPercent) / 100;
-    //        voucherDis = disVouPercent + curDisAmount;
-
-    //        netAmount = (totalAmount + taxAmount + chargesAmount - voucherDis) - paidAmount;
-
-    //        var myResult = new
-    //        {
-    //            CurrentSaleList = lstCurrentSale,
-    //            TotalAmount = totalAmount,
-    //            TaxAmount = taxAmount,
-    //            ChargesAmount = chargesAmount,
-    //            NetAmount = netAmount,
-    //            VoucherDis = voucherDis,
-    //            CurrentSaleCount = "Sale (" + totalQuantity + ")"
-    //        };
-
-    //        return Json(myResult, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult AllProductDeleteAction()
-    //    {
-    //        lstCurrentSale.Clear();
-    //        totalAmount = 0;
-    //        taxAmount = 0;
-    //        chargesAmount = 0;
-    //        netAmount = 0;
-    //        voucherDis = 0;
-    //        paidAmount = 0;
-    //        curDisAmount = 0;
-    //        curDisPercent = 0;
-
-    //        return Json("", JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult PayAction(int customerId, int locationId, int paymentId, int currencyId, DateTime dateTime, int creditLimitDay, int payMethodId, int bankPaymentId, int netAmount, int paymentPercent, int userId, int branchId, string voucherNumber)
-    //    {
-    //        int tranId = 0;
-
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-
-    //        DataTable dt = new DataTable();
-    //        //Add columns  
-    //        dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-    //        dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-    //        dt.Columns.Add(new DataColumn("SalePrice", typeof(double)));
-    //        dt.Columns.Add(new DataColumn("DiscountAmt", typeof(double)));
-    //        dt.Columns.Add(new DataColumn("TotalAmount", typeof(double)));
-    //        dt.Columns.Add(new DataColumn("Variant", typeof(string)));
-    //        dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
-
-    //        for (int i = 0; i < lstCurrentSale.Count(); i++)
-    //        {
-    //            if (lstCurrentSale[i].UnitID == null) lstCurrentSale[i].UnitID = 0;
-    //            if (lstCurrentSale[i].UnitVariant == "-") lstCurrentSale[i].UnitVariant = "";
-    //            //Add rows  
-    //            dt.Rows.Add(lstCurrentSale[i].ProductID, lstCurrentSale[i].Quantity, lstCurrentSale[i].SalePrice, lstCurrentSale[i].DiscountAmt, lstCurrentSale[i].Amount, lstCurrentSale[i].UnitVariant, lstCurrentSale[i].UnitID);               
-    //        }
-
-    //        lstCurrentSale.Clear();
-
-    //        SqlCommand cmd = new SqlCommand(procedure.PrcInsertSale, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.StoredProcedure;
-    //        cmd.Parameters.AddWithValue("@Date", dateTime);
-    //        cmd.Parameters.AddWithValue("@Voucher", voucherNumber);
-    //        cmd.Parameters.AddWithValue("@UserID", userId);
-    //        cmd.Parameters.AddWithValue("@CustomerID", customerId);
-    //        cmd.Parameters.AddWithValue("@LocationID", locationId);
-    //        cmd.Parameters.AddWithValue("@PaymentID", paymentId);
-    //        cmd.Parameters.AddWithValue("@CurrencyID", currencyId);
-    //        cmd.Parameters.AddWithValue("@IsDelivery", isDelivery);
-    //        cmd.Parameters.AddWithValue("@VoucherDis", Convert.ToDecimal(voucherDis));
-    //        cmd.Parameters.AddWithValue("@AdvancedPayAmt", Convert.ToDecimal(paidAmount));
-    //        cmd.Parameters.AddWithValue("@FOCAmt", 0);
-    //        cmd.Parameters.AddWithValue("@TaxAmt", Convert.ToDecimal(taxAmount));
-    //        cmd.Parameters.AddWithValue("@ChargesAmt", Convert.ToDecimal(chargesAmount));
-    //        cmd.Parameters.AddWithValue("@TotalAmt", Convert.ToDecimal(totalAmount));
-    //        cmd.Parameters.AddWithValue("@NetAmt", Convert.ToDecimal(netAmount));
-    //        cmd.Parameters.AddWithValue("@CreditLimitDay", creditLimitDay);
-    //        cmd.Parameters.AddWithValue("@BranchID", branchId);
-    //        cmd.Parameters.AddWithValue("@VouDisPercent", curDisPercent);
-    //        cmd.Parameters.AddWithValue("@VouDisAmount", Convert.ToDecimal(curDisAmount));
-    //        cmd.Parameters.AddWithValue("@PayMethodID", payMethodId);
-    //        cmd.Parameters.AddWithValue("@BankPaymentID", bankPaymentId);
-    //        cmd.Parameters.AddWithValue("@PaymentPercent", paymentPercent);
-    //        cmd.Parameters.AddWithValue("@temptbl", dt);
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        if (reader.Read()) tranId = Convert.ToInt32(reader["TranID"]);
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-
-    //        curDisPercent = 0;
-    //        curDisAmount = 0;
-
-    //        var myResult = new
-    //        {              
-    //            TranID = tranId
-    //        };
-    //        return Json(myResult, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult PreparePrintBillAction(int tranId, int locationId, DateTime dateTime, bool isMultiBranch, int branchId, string userName, string customerName)
-    //    {           
-    //        string vouNumAndSlipID = getVoucherData(locationId, isMultiBranch, branchId);
-    //        string[] arr = vouNumAndSlipID.Split(',');
-    //        string voucherNumber = arr[0];
-    //        string slipId = arr[1];
-
-    //        var myResult = new
-    //        {
-    //            SaleDetail = getSaleDetailByTranID(tranId),
-    //            VouSettingModel = vouSettingModel,               
-    //            VoucherNumber = voucherNumber,
-    //            CustomerName = customerName,
-    //            UserName = userName,
-    //            SaleDateTime = dateTime,               
-    //            SlipID = slipId
-    //        };
-    //        return Json(myResult, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult PayEditAction(int customerId, int locationId, int paymentId, int currencyId, DateTime dateTime, int creditLimitDay, int netAmount,int userId)
-    //    {
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();         
-
-    //        DataTable dt = new DataTable();
-    //        //Add columns  
-    //        dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-    //        dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-    //        dt.Columns.Add(new DataColumn("SalePrice", typeof(double)));
-    //        dt.Columns.Add(new DataColumn("DiscountAmt", typeof(double)));
-    //        dt.Columns.Add(new DataColumn("TotalAmount", typeof(double)));
-    //        dt.Columns.Add(new DataColumn("Variant", typeof(string)));
-    //        dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
-
-    //        for (int i = 0; i < lstCurrentSale.Count(); i++)
-    //        {
-    //            if (lstCurrentSale[i].UnitID == null) lstCurrentSale[i].UnitID = 0;
-    //            if (lstCurrentSale[i].UnitVariant == "-") lstCurrentSale[i].UnitVariant = "";
-    //            //Add rows  
-    //            dt.Rows.Add(lstCurrentSale[i].ProductID, lstCurrentSale[i].Quantity, lstCurrentSale[i].SalePrice, lstCurrentSale[i].DiscountAmt, lstCurrentSale[i].Amount, lstCurrentSale[i].UnitVariant, lstCurrentSale[i].UnitID);
-    //        }
-
-    //        lstCurrentSale.Clear();
-
-    //        SqlCommand cmd = new SqlCommand(procedure.PrcUpdateSaleByTranID, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.StoredProcedure;          
-    //        cmd.Parameters.AddWithValue("@UserID", userId);
-    //        cmd.Parameters.AddWithValue("@CustomerID", customerId);
-    //        cmd.Parameters.AddWithValue("@LocationID", locationId);
-    //        cmd.Parameters.AddWithValue("@PaymentID", paymentId);
-    //        cmd.Parameters.AddWithValue("@CurrencyID", currencyId);
-    //        cmd.Parameters.AddWithValue("@IsDelivery", isDelivery);
-    //        cmd.Parameters.AddWithValue("@VoucherDis", Convert.ToDecimal(voucherDis));
-    //        cmd.Parameters.AddWithValue("@AdvancedPayAmt", Convert.ToDecimal(paidAmount));
-    //        cmd.Parameters.AddWithValue("@FOCAmt", 0);
-    //        cmd.Parameters.AddWithValue("@TaxAmt", Convert.ToDecimal(taxAmount));
-    //        cmd.Parameters.AddWithValue("@ChargesAmt", Convert.ToDecimal(chargesAmount));
-    //        cmd.Parameters.AddWithValue("@TotalAmt", Convert.ToDecimal(totalAmount));
-    //        cmd.Parameters.AddWithValue("@NetAmt", Convert.ToDecimal(netAmount));
-    //        cmd.Parameters.AddWithValue("@CreditLimitDay", creditLimitDay);
-    //        cmd.Parameters.AddWithValue("@TranID", editTranID);
-    //        cmd.Parameters.AddWithValue("@VouDisPercent", curDisPercent);
-    //        cmd.Parameters.AddWithValue("@VouDisAmount", Convert.ToDecimal(curDisAmount));
-    //        cmd.Parameters.AddWithValue("@temptbl", dt);
-    //        cmd.ExecuteNonQuery();
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new SaleViewModel.MasterSaleViewModel();
+                item.SaleID = Convert.ToInt32(reader["SaleID"]);
+                item.SaleDateTime = Convert.ToString(reader["SaleDateTime"]);
+                item.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
+                item.CustomerName = Convert.ToString(reader["CustomerName"]);              
+                item.PaymentKeyword = Convert.ToString(reader["PaymentKeyword"]);              
+                item.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);
+                list.Add(item);     
+            }
+            reader.Close();
            
-    //        dataConnectorSQL.Close();
-
-    //        return Json("", JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult VoucherDisAction(int disPercent, double disAmount)
-    //    {
-    //        curDisAmount = disAmount;
-    //        curDisPercent = disPercent;
-    //        bool disRangeOk = true;
-    //        if (disPercent > 100)
-    //        {
-    //            disRangeOk = false;
-    //            var result = new
-    //            {
-    //                DisRangeOk = disRangeOk
-    //            };
-    //            return Json(result, JsonRequestBehavior.AllowGet);
-    //        }
-
-    //        voucherDis = 0;
-    //        double disVouPercent = (totalAmount * disPercent) / 100;
-    //        voucherDis = disVouPercent + disAmount;
-
-    //        netAmount = (totalAmount + taxAmount + chargesAmount - voucherDis) - paidAmount;
-
-    //        var myResult = new
-    //        {
-    //            VoucherDis = voucherDis,
-    //            NetAmount = netAmount,
-    //            DisRangeOk = disRangeOk
-    //        };
-
-    //        return Json(myResult, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult AdvancedPayAction(double paidAmt)
-    //    {
-    //        paidAmount = 0;
-    //        paidAmount = paidAmt;
-
-    //        netAmount = (totalAmount + taxAmount + chargesAmount - voucherDis) - paidAmount;
-
-    //        var myResult = new
-    //        {
-    //            NetAmount = netAmount
-    //        };
-
-    //        return Json(myResult, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult DeliveryAction(DateTime dateTime, string recipient, string phone, string address)
-    //    {
-    //        isDelivery = true;
-
-    //        entity.Database.ExecuteSqlCommand("TRUNCATE TABLE Temp_Delivery");
-
-    //        Temp_Delivery tempDelivery = new Temp_Delivery();
-    //        tempDelivery.Date = dateTime;
-    //        tempDelivery.Recipient = recipient;
-    //        tempDelivery.Phone = phone;
-    //        tempDelivery.Address = address;
-    //        entity.Temp_Delivery.Add(tempDelivery);
-    //        entity.SaveChanges();
-
-    //        return Json("", JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult SaleDetailAction(int tranId)
-    //    {
-    //        return Json(getSaleDetailByTranID(tranId), JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult SaleDeleteAction(int tranId)
-    //    {
-    //        using (var context = new InventoryDBEntities())
-    //        {
-    //            T_MasterSale ms = context.T_MasterSale.Where(x => x.TranID == tranId).Single<T_MasterSale>();
-    //            context.T_MasterSale.Remove(ms);
-    //            context.SaveChanges();
-
-    //            context.T_TranSale.RemoveRange(context.T_TranSale.Where(x => x.TranID == tranId));
-    //            context.SaveChanges();
-
-    //            var delivery = context.T_Delivery.Where(x => x.TranID == tranId).FirstOrDefault();
-    //            if (delivery != null)
-    //            {
-    //                T_Delivery deli = context.T_Delivery.Where(x => x.TranID == tranId).Single<T_Delivery>();
-    //                context.T_Delivery.Remove(deli);
-    //                context.SaveChanges();
-    //            }
-    //        }
-    //        return Json("", JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    public ActionResult SaleList()
-    //    {          
-    //        getAllSaleList();
-    //        return View(model);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult SearchAction(DateTime fromDate, DateTime toDate, string voucherNo)
-    //    {
-    //        model.SaleList = new List<SaleModels.SaleListModel>();
-    //        SaleModels.SaleListModel saleListModel;
-
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand(procedure.PrcSearchSaleByDateVoucher, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.StoredProcedure;
-    //        cmd.Parameters.AddWithValue("@fromDate", fromDate);
-    //        cmd.Parameters.AddWithValue("@toDate", toDate);
-    //        cmd.Parameters.AddWithValue("@voucherNo", voucherNo);
-
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            saleListModel = new SaleModels.SaleListModel();
-    //            saleListModel.TranID = Convert.ToInt32(reader["TranID"]);
-    //            saleListModel.Date = Convert.ToDateTime(reader["Date"]);
-    //            saleListModel.Voucher = Convert.ToString(reader["Voucher"]);
-    //            saleListModel.UserName = Convert.ToString(reader["UserName"]); 
-    //            saleListModel.CustomerName = Convert.ToString(reader["CustomerName"]);
-    //            saleListModel.LocShortName = Convert.ToString(reader["LocShortName"]);
-    //            saleListModel.PayKeyword = Convert.ToString(reader["PayKeyword"]);
-    //            saleListModel.CurrencyKeyword = Convert.ToString(reader["CurrencyKeyword"]);
-    //            saleListModel.NetAmt = Convert.ToDouble(reader["NetAmt"]); 
-    //            model.SaleList.Add(saleListModel);             
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();        
-
-    //        return Json(model.SaleList, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult AllSearchAction(DateTime fromDate, DateTime toDate, string voucherNo, int customerId, int locationId, int paymentId, int currencyId)
-    //    {
-    //        model.SaleList = new List<SaleModels.SaleListModel>();
-    //        SaleModels.SaleListModel saleListModel;
-
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand(procedure.PrcSearchSaleByAllFilter, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.StoredProcedure;
-    //        cmd.Parameters.AddWithValue("@fromDate", fromDate);
-    //        cmd.Parameters.AddWithValue("@toDate", toDate);
-    //        cmd.Parameters.AddWithValue("@voucherNo", voucherNo);
-    //        cmd.Parameters.AddWithValue("@customerId", customerId);
-    //        cmd.Parameters.AddWithValue("@locationId", locationId);
-    //        cmd.Parameters.AddWithValue("@paymentId", paymentId);
-    //        cmd.Parameters.AddWithValue("@currencyId", currencyId);
-
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            saleListModel = new SaleModels.SaleListModel();
-    //            saleListModel.TranID = Convert.ToInt32(reader["TranID"]);
-    //            saleListModel.Date = Convert.ToDateTime(reader["Date"]);
-    //            saleListModel.Voucher = Convert.ToString(reader["Voucher"]);
-    //            saleListModel.UserName = Convert.ToString(reader["UserName"]);
-    //            saleListModel.CustomerName = Convert.ToString(reader["CustomerName"]);
-    //            saleListModel.LocShortName = Convert.ToString(reader["LocShortName"]);
-    //            saleListModel.PayKeyword = Convert.ToString(reader["PayKeyword"]);
-    //            saleListModel.CurrencyKeyword = Convert.ToString(reader["CurrencyKeyword"]);
-    //            saleListModel.NetAmt = Convert.ToDouble(reader["NetAmt"]);
-    //            model.SaleList.Add(saleListModel);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();        
-
-    //        return Json(model.SaleList, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult FilterClickAction(bool isMultiBranch,int branchId,bool isMultiCurrency)
-    //    {
-    //        SaleModels.MainMenuModel mainMenuModel = new SaleModels.MainMenuModel();
-    //        SaleModels.SubMenuModel subMenuModel = new SaleModels.SubMenuModel();
-    //        SaleModels.CustomerModel customerModel = new SaleModels.CustomerModel();
-    //        SaleModels.PaymentModel paymentModel = new SaleModels.PaymentModel();
-    //        SaleModels.LocationModel locationModel = new SaleModels.LocationModel();
-    //        SaleModels.CurrencyModel curModel = new SaleModels.CurrencyModel();
-    //        List<SaleModels.MainMenuModel> lstMainMenu = new List<SaleModels.MainMenuModel>();
-    //        List<SaleModels.SubMenuModel> lstSubMenu = new List<SaleModels.SubMenuModel>();
-    //        List<SaleModels.CustomerModel> lstCustomer = new List<SaleModels.CustomerModel>();
-    //        List<SaleModels.PaymentModel> lstPayment = new List<SaleModels.PaymentModel>();
-
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-
-    //        customerModel.CustomerID = 0;
-    //        customerModel.CustomerName = "Choose Customer";
-    //        lstCustomer.Add(customerModel);            
-    //        SqlCommand cmd = new SqlCommand("Select CustomerID,CustomerName From S_Customer", (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            customerModel = new SaleModels.CustomerModel();
-    //            customerModel.CustomerID = Convert.ToInt32(reader["CustomerID"]);
-    //            customerModel.CustomerName = Convert.ToString(reader["CustomerName"]);
-    //            lstCustomer.Add(customerModel);
-    //        }
-    //        reader.Close();                      
-
-    //        paymentModel.PaymentID = 0;
-    //        paymentModel.PayKeyword = "Choose Payment";
-    //        lstPayment.Add(paymentModel);
-    //        cmd = new SqlCommand("Select PaymentID,Keyword From Sys_Payment", (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
-    //        reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            paymentModel = new SaleModels.PaymentModel();
-    //            paymentModel.PaymentID = Convert.ToInt32(reader["PaymentID"]);
-    //            paymentModel.PayKeyword = Convert.ToString(reader["Keyword"]);
-    //            lstPayment.Add(paymentModel);
-    //        }
-    //        reader.Close();           
-
-    //        dataConnectorSQL.Close();
-
-    //        getLocation(isMultiBranch,branchId);
-    //        locationModel.LocationID = 0;
-    //        locationModel.LocShortName = "Choose Location";
-    //        lstLocation.Insert(0, locationModel);
-
-    //        if (isMultiCurrency)
-    //        {
-    //            getCurrency(isMultiCurrency);
-    //            curModel.CurrencyID = 0;
-    //            curModel.CurKeyword = "Choose Currency";
-    //            lstCurrency.Insert(0, curModel);
-    //        }
-
-    //        var myResult = new
-    //        {
-    //            LstCustomer = lstCustomer,
-    //            LstPayment = lstPayment,
-    //            LstLocation = lstLocation,
-    //            LstCurrency = lstCurrency
-    //        };
-
-    //        return Json(myResult, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult MainMenuSelectAction(int mainMenuId)
-    //    {
-    //        SaleModels.SubMenuModel subMenuModel = new SaleModels.SubMenuModel();
-    //        List<SaleModels.SubMenuModel> lstSubMenu = new List<SaleModels.SubMenuModel>();
-
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand("Select SubMenuID,SubMenuName From S_SubMenu Where MainMenuID=" + mainMenuId, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
-
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            subMenuModel = new SaleModels.SubMenuModel();
-    //            subMenuModel.SubMenuID = Convert.ToInt32(reader["SubMenuID"]);
-    //            subMenuModel.SubMenuName = Convert.ToString(reader["SubMenuName"]);
-    //            lstSubMenu.Add(subMenuModel);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-
-    //        return Json(lstSubMenu, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult GetUnitByProductId(int productId)
-    //    {
-    //        SaleModels.ProductModel model = new SaleModels.ProductModel();
-    //        SaleModels.ProductUnitModel pUnitModel = new SaleModels.ProductUnitModel();
-
-    //        getUnitByProduct(productId, model, pUnitModel);       
-            
-    //        return Json(model.ProductUnitList, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult GetVariantByProductId(int productId)
-    //    {
-    //        SaleModels.ProductModel model = new SaleModels.ProductModel();
-    //        SaleModels.ProductVariantModel pVariantModel = new SaleModels.ProductVariantModel();
-
-    //        getVariantByProduct(productId, model, pVariantModel);
-         
-    //        return Json(model.ProductVariantList, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult ProductUnitSelectAction(int productId, int unitId)
-    //    {
-    //        double salePrice = 0; short? disPercent = 0;        
-
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand("Select SalePrice,isnull(DisPercent,0) AS DisPercent From S_ProductUnit Where ProductID=" + productId +" And UnitID="+unitId, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
-
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        if (reader.Read())
-    //        {
-    //            salePrice = Convert.ToDouble(reader["SalePrice"]);
-    //            disPercent = Convert.ToInt16(reader["DisPercent"]);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-
-    //        var myResult = new
-    //        {
-    //            SalePrice = salePrice,
-    //            DisPercent = disPercent
-    //        };
-
-    //        return Json(myResult, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult SearchByCodeAction(string searchCode)
-    //    {
-    //        List<ProductModels.ProductModel> lstProduct = new List<ProductModels.ProductModel>();
-    //        int productId = 0, searchOk;
-    //        string productName = "", code = "";
-    //        double salePrice = 0;
-    //        short? disPercent = 0;
-    //        bool isUnit = false, isVariant = false;
-    //        var pros = (from pro in entity.S_Product where pro.Code == searchCode || pro.ProductName == searchCode select pro).ToList();
-    //        if (pros.Count() == 1)
-    //        {
-    //            var product = entity.S_Product.Where(d => d.Code == searchCode || d.ProductName == searchCode).Single();
-    //            productId = product.ProductID;
-    //            productName = product.ProductName;
-    //            code = product.Code;
-    //            salePrice = Convert.ToDouble(product.SalePrice);
-    //            disPercent = product.DisPercent;
-    //            isUnit = product.IsUnit;
-    //            isVariant = product.IsVariant;
-    //            searchOk = 1;
-    //        }
-    //        else
-    //        {
-    //            searchOk = 0;
-    //            ProductModels.ProductModel productModel = new ProductModels.ProductModel();
-    //            if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //            SqlCommand cmd = new SqlCommand(procedure.PrcSearchProductByCodeName, (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.StoredProcedure;
-    //            cmd.Parameters.AddWithValue("@keyword", searchCode);
-
-    //            SqlDataReader reader = cmd.ExecuteReader();
-    //            while (reader.Read())
-    //            {
-    //                productModel = new ProductModels.ProductModel();
-    //                productModel.ProductID = Convert.ToInt32(reader["ProductID"]);
-    //                productModel.ProductName = Convert.ToString(reader["ProductName"]);
-    //                productModel.Code = Convert.ToString(reader["Code"]);
-    //                productModel.SubMenuID = Convert.ToInt32(reader["SubMenuID"]);
-    //                productModel.SalePrice = Convert.ToDouble(reader["SalePrice"]);
-    //                productModel.IsUnit = Convert.ToBoolean(reader["IsUnit"]);
-    //                productModel.DisPercent = Convert.ToInt16(reader["DisPercent"]);
-    //                productModel.IsVariant = Convert.ToBoolean(reader["IsVariant"]);
-    //                productModel.MainMenuID = Convert.ToInt32(reader["MainMenuID"]);
-    //                productModel.MainMenuName = Convert.ToString(reader["MainMenuName"]);
-    //                productModel.SubMenuName = Convert.ToString(reader["SubMenuName"]);
-
-    //                lstProduct.Add(productModel);
-    //            }
-    //            reader.Close();
-    //            dataConnectorSQL.Close();
-    //        }
-
-    //        var result = new
-    //        {
-    //            ProductID = productId,
-    //            ProductName = productName,
-    //            Code = code,
-    //            SalePrice = salePrice,
-    //            DisPercent = disPercent,
-    //            IsUnit = isUnit,
-    //            IsVariant = isVariant,
-    //            SearchOk = searchOk,
-    //            LstProduct = lstProduct
-    //        };
-
-    //        return Json(result, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult SearchByFirstKeywordAction(string searchCode)
-    //    {
-    //        List<ProductModels.ProductModel> lstProduct = new List<ProductModels.ProductModel>();
-    //        ProductModels.ProductModel productModel = new ProductModels.ProductModel();
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand(procedure.PrcSearchByFirstKeyword, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.StoredProcedure;
-    //        cmd.Parameters.AddWithValue("@keyword", searchCode);
-
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            productModel = new ProductModels.ProductModel();
-    //            productModel.ProductID = Convert.ToInt32(reader["ProductID"]);
-    //            productModel.ProductName = Convert.ToString(reader["ProductName"]);
-    //            productModel.Code = Convert.ToString(reader["Code"]);
-    //            productModel.SubMenuID = Convert.ToInt32(reader["SubMenuID"]);
-    //            productModel.SalePrice = Convert.ToDouble(reader["SalePrice"]);
-    //            productModel.IsUnit = Convert.ToBoolean(reader["IsUnit"]);
-    //            productModel.DisPercent = Convert.ToInt16(reader["DisPercent"]);
-    //            productModel.IsVariant = Convert.ToBoolean(reader["IsVariant"]);
-    //            productModel.MainMenuID = Convert.ToInt32(reader["MainMenuID"]);
-    //            productModel.MainMenuName = Convert.ToString(reader["MainMenuName"]);
-    //            productModel.SubMenuName = Convert.ToString(reader["SubMenuName"]);
-
-    //            lstProduct.Add(productModel);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-
-    //        var result = new
-    //        {
-    //            LstProduct = lstProduct
-    //        };
-
-    //        return Json(result, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult SearchByLastKeywordAction(string searchCode)
-    //    {
-    //        List<ProductModels.ProductModel> lstProduct = new List<ProductModels.ProductModel>();
-    //        ProductModels.ProductModel productModel = new ProductModels.ProductModel();
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand(procedure.PrcSearchByLastKeyword, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.StoredProcedure;
-    //        cmd.Parameters.AddWithValue("@keyword", searchCode);
-
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            productModel = new ProductModels.ProductModel();
-    //            productModel.ProductID = Convert.ToInt32(reader["ProductID"]);
-    //            productModel.ProductName = Convert.ToString(reader["ProductName"]);
-    //            productModel.Code = Convert.ToString(reader["Code"]);
-    //            productModel.SubMenuID = Convert.ToInt32(reader["SubMenuID"]);
-    //            productModel.SalePrice = Convert.ToDouble(reader["SalePrice"]);
-    //            productModel.IsUnit = Convert.ToBoolean(reader["IsUnit"]);
-    //            productModel.DisPercent = Convert.ToInt16(reader["DisPercent"]);
-    //            productModel.IsVariant = Convert.ToBoolean(reader["IsVariant"]);
-    //            productModel.MainMenuID = Convert.ToInt32(reader["MainMenuID"]);
-    //            productModel.MainMenuName = Convert.ToString(reader["MainMenuName"]);
-    //            productModel.SubMenuName = Convert.ToString(reader["SubMenuName"]);
-
-    //            lstProduct.Add(productModel);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-
-    //        var result = new
-    //        {
-    //            LstProduct = lstProduct
-    //        };
-
-    //        return Json(result, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult SearchProductClickAction(int productId)
-    //    {
-    //        string productName = "", code = "";
-    //        double salePrice = 0;
-    //        short? disPercent = 0;
-    //        bool isUnit = false, isVariant = false;
-
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand("Select ProductID,ProductName,Code,SalePrice,isnull(DisPercent,0) AS DisPercent,IsUnit,IsVariant From S_Product Where ProductID=" + productId, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        if (reader.Read())
-    //        {
-    //            productId = Convert.ToInt32(reader["ProductID"]);
-    //            productName = Convert.ToString(reader["ProductName"]);
-    //            code = Convert.ToString(reader["Code"]);
-    //            salePrice = Convert.ToDouble(reader["SalePrice"]);
-    //            disPercent = Convert.ToInt16(reader["DisPercent"]);
-    //            isUnit = Convert.ToBoolean(reader["IsUnit"]);
-    //            isVariant = Convert.ToBoolean(reader["IsVariant"]);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-
-    //        var result = new
-    //        {
-    //            ProductID = productId,
-    //            ProductName = productName,
-    //            Code = code,
-    //            SalePrice = salePrice,
-    //            DisPercent = disPercent,
-    //            IsUnit = isUnit,
-    //            IsVariant = isVariant
-    //        };
-
-    //        return Json(result, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    [HttpGet]
-    //    public JsonResult PaymentAction(bool isBankPayment)
-    //    {
-    //        bool isPayMethod = false;
-    //        if (isBankPayment) isPayMethod = true;
-
-    //        var result = new
-    //        {
-    //            IsPayMethod = isPayMethod
-    //        };
-
-    //        return Json(result, JsonRequestBehavior.AllowGet);
-    //    }
-
-    //    private void getSaleInfo(bool isMultiBranch, bool isMultiCurrency, bool isMultiUnit, int branchId, int userId, bool isBankPayment)
-    //    {
-    //        int? firstMainMenuId = 0;
-
-    //        ViewBag.IsMultiCurrency = isMultiCurrency;
-    //        ViewBag.IsMultiUnit = isMultiUnit;
-
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-
-    //        SqlCommand cmd = new SqlCommand("Select CustomerID,CustomerName From S_Customer", (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            model.Customers.Add(new SelectListItem { Text = Convert.ToString(reader["CustomerName"]), Value = Convert.ToString(reader["CustomerID"]) });
-    //        }
-    //        reader.Close();
-
-    //        ViewBag.DefaultLocationID = checkDefaultLocation(userId);
-    //        if (isMultiBranch)
-    //        {                
-    //            cmd = new SqlCommand("Select LocationID,ShortName From S_Location Where BranchID=" + branchId, (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.Text;
-    //            reader = cmd.ExecuteReader();
-    //            while (reader.Read())
-    //            {
-    //                model.Locations.Add(new SelectListItem { Text = Convert.ToString(reader["ShortName"]), Value = Convert.ToString(reader["LocationID"]) });
-    //            }
-    //            reader.Close();
-
-    //            cmd = new SqlCommand("Select PreFormat,MidFormat,PostFormat From S_VoucherFormat Where BranchID=" + branchId, (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.Text;
-    //            reader = cmd.ExecuteReader();
-    //            if (reader.Read()) ViewBag.VoucherNumber = Convert.ToString(reader["PreFormat"]) + Convert.ToString(reader["MidFormat"]) + Convert.ToString(reader["PostFormat"]);
-    //            reader.Close();
-    //        }
-    //        else
-    //        {             
-    //            cmd = new SqlCommand("Select LocationID,ShortName From S_Location", (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.Text;
-    //            reader = cmd.ExecuteReader();
-    //            while (reader.Read())
-    //            {
-    //                model.Locations.Add(new SelectListItem { Text = Convert.ToString(reader["ShortName"]), Value = Convert.ToString(reader["LocationID"]) });
-    //            }
-    //            reader.Close();
-
-    //            cmd = new SqlCommand("Select PreFormat,MidFormat,PostFormat From S_VoucherFormat", (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.Text;
-    //            reader = cmd.ExecuteReader();
-    //            if (reader.Read()) ViewBag.VoucherNumber = Convert.ToString(reader["PreFormat"]) + Convert.ToString(reader["MidFormat"]) + Convert.ToString(reader["PostFormat"]);
-    //            reader.Close();
-    //        }
-
-    //        cmd = new SqlCommand("Select PaymentID,Keyword From Sys_Payment", (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
-    //        reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            model.Payments.Add(new SelectListItem { Text = Convert.ToString(reader["Keyword"]), Value = Convert.ToString(reader["PaymentID"]) });
-    //        }
-    //        reader.Close();
-
-    //        if (isMultiCurrency)
-    //        {
-    //            cmd = new SqlCommand("Select CurrencyID,Keyword From Sys_Currency Order By IsDefault DESC", (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.Text;
-    //            reader = cmd.ExecuteReader();
-    //            while (reader.Read())
-    //            {
-    //                model.Currencies.Add(new SelectListItem { Text = Convert.ToString(reader["Keyword"]), Value = Convert.ToString(reader["CurrencyID"]) });
-    //            }
-    //            reader.Close();
-    //        }
-
-    //        cmd = new SqlCommand("Select MainMenuID,MainMenuName From S_MainMenu", (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
-    //        reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            model.MainMenus.Add(new SelectListItem { Text = Convert.ToString(reader["MainMenuName"]), Value = Convert.ToString(reader["MainMenuID"]) });
-    //        }
-    //        reader.Close();
-
-    //        if (model.MainMenus.Count() != 0) firstMainMenuId = Convert.ToInt32(model.MainMenus[0].Value);
-
-    //        if (firstMainMenuId.HasValue)
-    //        {
-    //            cmd = new SqlCommand("Select SubMenuID,SubMenuName From S_SubMenu Where MainMenuID=" + firstMainMenuId, (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.Text;
-    //            reader = cmd.ExecuteReader();
-    //            while (reader.Read())
-    //            {
-    //                model.SubMenus.Add(new SelectListItem { Text = Convert.ToString(reader["SubMenuName"]), Value = Convert.ToString(reader["SubMenuID"]) });
-    //            }
-    //            reader.Close();
-    //        }
-    //        dataConnectorSQL.Close();
-
-    //        if (isBankPayment)
-    //        {
-    //            getPayMethod();
-    //            getBankPayment();
-    //        }
-    //    }
-
-    //    private void getAllSaleList()
-    //    {
-    //        model.SaleList = new List<SaleModels.SaleListModel>();
-    //        SaleModels.SaleListModel saleListModel;
-
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand(procedure.PrcGetMasterSaleList, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.StoredProcedure;
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            saleListModel = new SaleModels.SaleListModel();
-    //            saleListModel.TranID = Convert.ToInt32(reader["TranID"]);
-    //            DateTime dateTime = Convert.ToDateTime(reader["Date"]);
-    //            saleListModel.StrDate = dateTime.ToString("dd'/'MM'/'yyyy");
-    //            saleListModel.Voucher = Convert.ToString(reader["Voucher"]);
-    //            saleListModel.UserName = Convert.ToString(reader["UserName"]);
-    //            saleListModel.CustomerName = Convert.ToString(reader["CustomerName"]);
-    //            saleListModel.LocShortName = Convert.ToString(reader["LocShortName"]);
-    //            saleListModel.PayKeyword = Convert.ToString(reader["PayKeyword"]);
-    //            saleListModel.CurrencyKeyword = Convert.ToString(reader["CurrencyKeyword"]);
-    //            saleListModel.NetAmt = Convert.ToDouble(reader["NetAmt"]);
-    //            model.SaleList.Add(saleListModel);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-    //    }
-
-    //    private Object getSaleDetailByTranID(int tranId)
-    //    {
-    //        SaleModels.SaleListModel saleListModel = new SaleModels.SaleListModel();
-    //        SaleModels.CurrentSaleModel tranModel = new SaleModels.CurrentSaleModel();
-    //        SaleModels.DeliveryModel deliModel = new SaleModels.DeliveryModel();
-    //        List<SaleModels.CurrentSaleModel> lstTran = new List<SaleModels.CurrentSaleModel>();
-
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-
-    //        SqlCommand cmd = new SqlCommand(procedure.PrcGetMasterSaleByTranID, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.StoredProcedure;
-    //        cmd.Parameters.AddWithValue("@TranID", tranId);
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        if (reader.Read())
-    //        {
-    //            saleListModel = new SaleModels.SaleListModel();
-    //            saleListModel.Date = Convert.ToDateTime(reader["Date"]);
-    //            saleListModel.Voucher = Convert.ToString(reader["Voucher"]);
-    //            saleListModel.UserName = Convert.ToString(reader["UserName"]);
-    //            saleListModel.CustomerName = Convert.ToString(reader["CustomerName"]);
-    //            saleListModel.LocShortName = Convert.ToString(reader["LocShortName"]);
-    //            saleListModel.PayKeyword = Convert.ToString(reader["PayKeyword"]);
-    //            saleListModel.CurrencyKeyword = Convert.ToString(reader["CurrencyKeyword"]);
-    //            saleListModel.CreditLimitDay = Convert.ToInt32(reader["CreditLimitDay"]);
-    //            saleListModel.NetAmt = Convert.ToDouble(reader["NetAmt"]);
-    //            saleListModel.TotalAmt = Convert.ToDouble(reader["TotalAmt"]);
-    //            saleListModel.TaxAmt = Convert.ToDouble(reader["TaxAmt"]);
-    //            saleListModel.ChargesAmt = Convert.ToDouble(reader["ChargesAmt"]);
-    //            saleListModel.FOCAmt = Convert.ToDouble(reader["FOCAmt"]);
-    //            saleListModel.AdvancedPayAmt = Convert.ToDouble(reader["AdvancedPayAmt"]);
-    //            saleListModel.VoucherDis = Convert.ToDouble(reader["VoucherDis"]);
-    //            saleListModel.IsDelivery = Convert.ToBoolean(reader["IsDelivery"]);
-    //            saleListModel.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);            
-
-    //            reader.Close();
-
-    //            if (saleListModel.IsDelivery == true)
-    //            {
-    //                cmd = new SqlCommand("Select Date,Recipient,Phone,Address From T_Delivery Where TranID=" + tranId, (SqlConnection)Session["SQLConnection"]);
-    //                cmd.CommandType = CommandType.Text;
-    //                reader = cmd.ExecuteReader();
-    //                if (reader.Read())
-    //                {
-    //                    deliModel = new SaleModels.DeliveryModel();
-    //                    deliModel.Date = Convert.ToDateTime(reader["Date"]);
-    //                    deliModel.Recipient = Convert.ToString(reader["Recipient"]);
-    //                    deliModel.Phone = Convert.ToString(reader["Phone"]);
-    //                    deliModel.Address = Convert.ToString(reader["Address"]);
-    //                }
-    //                reader.Close();
-    //            }
-    //        }
-
-    //        cmd = new SqlCommand(procedure.PrcGetTranSaleByTranID, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.StoredProcedure;
-    //        cmd.Parameters.AddWithValue("@TranID", tranId);
-    //        reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            tranModel = new SaleModels.CurrentSaleModel();             
-    //            tranModel.ProductName = Convert.ToString(reader["ProductName"]);
-    //            if (reader["Keyword"] != null) tranModel.UnitVariant = Convert.ToString(reader["Keyword"]);
-    //            else if (reader["Variant"] != null) tranModel.UnitVariant = Convert.ToString(reader["Variant"]);
-    //            else tranModel.UnitVariant = "-";
-    //            tranModel.Quantity = Convert.ToInt32(reader["Quantity"]);
-    //            tranModel.SalePrice = Convert.ToDouble(reader["SalePrice"]);
-    //            tranModel.DiscountAmt = Convert.ToDouble(reader["DiscountAmt"]);
-    //            tranModel.Amount = Convert.ToDouble(reader["TotalAmount"]);
-    //            lstTran.Add(tranModel);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-
-    //        var myResult = new
-    //        {
-    //            SaleListModel = saleListModel,
-    //            DeliveryModel = deliModel,
-    //            LstTran = lstTran
-    //        };
-
-    //        return myResult;
-    //    }
-
-    //    private void calcTaxAndChargesAmt(double totalAmount, bool isMultiBranch,int branchId)
-    //    {
-    //        int tax, charges;
-    //        taxAmount = 0;
-    //        chargesAmount = 0;
-
-    //        if (isMultiBranch)
-    //        {
-    //            if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //            SqlCommand cmd = new SqlCommand("Select Tax,ServiceCharges From S_Branch Where BranchID=" + branchId, (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.Text;
-
-    //            SqlDataReader reader = cmd.ExecuteReader();
-    //            if (reader.Read())
-    //            {
-    //                tax = Convert.ToInt32(reader["Tax"]);
-    //                charges = Convert.ToInt32(reader["ServiceCharges"]);
-    //                taxAmount = (totalAmount * tax) / 100;
-    //                chargesAmount = (totalAmount * charges) / 100;
-    //            }
-    //            reader.Close();
-    //            dataConnectorSQL.Close();
-    //        }
-    //        else
-    //        {
-    //            if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //            SqlCommand cmd = new SqlCommand("Select Tax,ServiceCharges From S_CompanySetting", (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.Text;
-
-    //            SqlDataReader reader = cmd.ExecuteReader();
-    //            if (reader.Read())
-    //            {
-    //                tax = Convert.ToInt32(reader["Tax"]);
-    //                charges = Convert.ToInt32(reader["ServiceCharges"]);
-    //                taxAmount = (totalAmount * tax) / 100;
-    //                chargesAmount = (totalAmount * charges) / 100;
-    //            }
-    //            reader.Close();
-    //            dataConnectorSQL.Close();
-    //        }
-    //    }
-
-    //    private bool isUnitByProduct(int? productId)
-    //    {
-    //        bool result = false;
-
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand("Select IsUnit From S_Product Where ProductID=" + productId, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
-
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        if (reader.Read())
-    //        {
-    //            SaleModels.ProductModel model = new SaleModels.ProductModel();
-    //            model.IsUnit = Convert.ToBoolean(reader["IsUnit"]);
-    //            if (model.IsUnit == true) result = true;
-    //            else result = false;
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-
-    //        return result;
-    //    }
-
-    //    private bool isVariantByProduct(int? productId)
-    //    {
-    //        bool result = false;
-
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand("Select IsVariant From S_Product Where ProductID=" + productId, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
-
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        if (reader.Read())
-    //        {
-    //            SaleModels.ProductModel model = new SaleModels.ProductModel();
-    //            model.IsVariant = Convert.ToBoolean(reader["IsVariant"]);
-    //            if (model.IsVariant != null)
-    //            {
-    //                if (model.IsVariant == true) result = true;
-    //                else result = false;
-    //            }
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-
-    //        return result;
-    //    }
-
-    //    private void getLocation(bool isMultiBranch,int branchId)
-    //    {         
-    //        SaleModels.LocationModel locationModel = new SaleModels.LocationModel();
-    //        lstLocation = new List<SaleModels.LocationModel>();
-
-    //        if (isMultiBranch)
-    //        {
-    //            if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //            SqlCommand cmd = new SqlCommand("Select LocationID,ShortName From S_Location Where BranchID=" + branchId, (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.Text;
-    //            SqlDataReader reader = cmd.ExecuteReader();
-    //            while (reader.Read())
-    //            {
-    //                locationModel = new SaleModels.LocationModel();
-    //                locationModel.LocationID = Convert.ToInt32(reader["LocationID"]);
-    //                locationModel.LocShortName = Convert.ToString(reader["ShortName"]);
-    //                lstLocation.Add(locationModel);                   
-    //            }
-    //            reader.Close();
-    //            dataConnectorSQL.Close();
-    //        }
-    //        else
-    //        {
-    //            if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //            SqlCommand cmd = new SqlCommand("Select LocationID,ShortName From S_Location", (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.Text;
-    //            SqlDataReader reader = cmd.ExecuteReader();
-    //            while (reader.Read())
-    //            {
-    //                locationModel = new SaleModels.LocationModel();
-    //                locationModel.LocationID = Convert.ToInt32(reader["LocationID"]);
-    //                locationModel.LocShortName = Convert.ToString(reader["ShortName"]);
-    //                lstLocation.Add(locationModel);
-    //            }
-    //            reader.Close();
-    //            dataConnectorSQL.Close();
-    //        }
-    //    }
-
-    //    private void getCurrency(bool isMultiCurrency)
-    //    {
-    //        SaleModels.CurrencyModel curModel = new SaleModels.CurrencyModel();
-    //        lstCurrency = new List<SaleModels.CurrencyModel>();
-
-    //        if (isMultiCurrency)
-    //        {
-    //            SqlCommand cmd = new SqlCommand("Select CurrencyID,Keyword From Sys_Currency Order By IsDefault DESC", (SqlConnection)Session["SQLConnection"]);
-    //            cmd.CommandType = CommandType.Text;
-    //            SqlDataReader reader = cmd.ExecuteReader();
-    //            while (reader.Read())
-    //            {
-    //                curModel = new SaleModels.CurrencyModel();
-    //                curModel.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
-    //                curModel.CurKeyword = Convert.ToString(reader["Keyword"]);
-    //                lstCurrency.Add(curModel);
-    //            }
-    //            reader.Close();
-    //            dataConnectorSQL.Close();
-    //        }
-    //    }
-
-    //    private int checkDefaultLocation(int userId)
-    //    {
-    //        int defaultLocationId = 0;
-    //        UserModels.UserModel userModel = new UserModels.UserModel();
-
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand("Select isnull(LocationID,0) AS LocationID From S_User WHERE UserID="+userId, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        if (reader.Read()) defaultLocationId = Convert.ToInt32(reader["LocationID"]);
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-         
-    //        return defaultLocationId;
-    //    }
-
-    //    private string getVoucherData(int locationId, bool isMultiBranch, int branchId)
-    //    {
-    //        string voucherNumber = "";
-    //        int slipId = 0;
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand(procedure.PrcGetVoucherData, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.StoredProcedure;
-    //        cmd.Parameters.AddWithValue("@IsMultiBranch", isMultiBranch);
-    //        cmd.Parameters.AddWithValue("@BranchID", branchId);
-    //        cmd.Parameters.AddWithValue("@LocationID", locationId);
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        if (reader.Read())
-    //        {
-    //            vouSettingModel = new SaleModels.VoucherSettingModel();
-    //            if (reader["VoucherLogo"] != null)
-    //            {
-    //                vouSettingModel.VoucherLogo = (byte[])(reader["VoucherLogo"]);
-    //                vouSettingModel.Base64Photo = Convert.ToBase64String((byte[])(reader["VoucherLogo"]));
-    //            }
-    //            vouSettingModel.HeaderName = Convert.ToString(reader["HeaderName"]);
-    //            vouSettingModel.HeaderDesp = Convert.ToString(reader["HeaderDesp"]);
-    //            vouSettingModel.HeaderPhone = Convert.ToString(reader["HeaderPhone"]);
-    //            vouSettingModel.HeaderAddress = Convert.ToString(reader["HeaderAddress"]);
-    //            vouSettingModel.OtherHeader1 = Convert.ToString(reader["OtherHeader1"]);
-    //            vouSettingModel.OtherHeader2 = Convert.ToString(reader["OtherHeader2"]);
-    //            vouSettingModel.FooterMessage1 = Convert.ToString(reader["FooterMessage1"]);
-    //            vouSettingModel.FooterMessage2 = Convert.ToString(reader["FooterMessage2"]);
-    //            vouSettingModel.FooterMessage3 = Convert.ToString(reader["FooterMessage3"]);
-    //            voucherNumber = Convert.ToString(reader["VoucherNumber"]);
-    //            slipId = Convert.ToInt32(reader["SlipID"]);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-    //        return voucherNumber + "," + slipId;                
-    //    }
-
-    //    private void getPayMethod()
-    //    {
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand("Select PayMethodID,PayMethodName From Sys_PayMethod", (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
-
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            model.PayMethods.Add(new SelectListItem { Text = Convert.ToString(reader["PayMethodName"]), Value = Convert.ToString(reader["PayMethodID"]) });
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-    //    }
-
-    //    private void getBankPayment()
-    //    {
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand("Select BankPaymentID,BankPaymentName From S_BankPayment", (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.Text;
-
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            model.BankPayments.Add(new SelectListItem { Text = Convert.ToString(reader["BankPaymentName"]), Value = Convert.ToString(reader["BankPaymentID"]) });
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-    //    }
-
-    //    private void getUnitByProduct(int? productId,SaleModels.ProductModel model,SaleModels.ProductUnitModel pUnitModel)
-    //    {
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand(procedure.PrcGetUnitByProductID, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.StoredProcedure;
-    //        cmd.Parameters.AddWithValue("@ProductID", productId);
-
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            pUnitModel = new SaleModels.ProductUnitModel();
-    //            pUnitModel.UnitID = Convert.ToInt32(reader["UnitID"]);
-    //            pUnitModel.Keyword = Convert.ToString(reader["Keyword"]);
-    //            pUnitModel.SalePrice = Convert.ToDouble(reader["SalePrice"]);
-    //            if (reader["DisPercent"] != null) pUnitModel.DisPercent = Convert.ToInt16(reader["DisPercent"]);
-    //            else pUnitModel.DisPercent = 0;
-
-    //            model.ProductUnitList.Add(pUnitModel);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-    //    }
-
-    //    private void getVariantByProduct(int? productId, SaleModels.ProductModel model, SaleModels.ProductVariantModel pVariantModel)
-    //    {
-    //        if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-    //        SqlCommand cmd = new SqlCommand(procedure.PrcGetVariantByProductID, (SqlConnection)Session["SQLConnection"]);
-    //        cmd.CommandType = CommandType.StoredProcedure;
-    //        cmd.Parameters.AddWithValue("@ProductID", productId);
-
-    //        SqlDataReader reader = cmd.ExecuteReader();
-    //        while (reader.Read())
-    //        {
-    //            pVariantModel = new SaleModels.ProductVariantModel();
-    //            pVariantModel.ID = Convert.ToInt32(reader["ID"]);
-    //            pVariantModel.Variant = Convert.ToString(reader["Variant"]);
-
-    //            model.ProductVariantList.Add(pVariantModel);
-    //        }
-    //        reader.Close();
-    //        dataConnectorSQL.Close();
-    //    }
-    //}
+            return list;
+        }
+
+        public List<TranSaleModels> selectTranSaleBySaleID(int saleId)
+        {
+            List<TranSaleModels> list = new List<TranSaleModels>();
+            TranSaleModels item = new TranSaleModels();
+
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetTranSaleBySaleID, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@SaleID", saleId);
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new TranSaleModels();              
+                item.ProductName = Convert.ToString(reader["ProductName"]);
+                item.Quantity = Convert.ToInt32(reader["Quantity"]);
+                item.SalePrice = Convert.ToInt32(reader["SalePrice"]);              
+                item.Discount = Convert.ToInt32(reader["Discount"]);
+                item.Amount = Convert.ToInt32(reader["Amount"]);             
+                item.UnitKeyword = Convert.ToString(reader["UnitKeyword"]);
+                item.CurrencyKeyword = Convert.ToString(reader["CurrencyKeyword"]);
+                item.ProductID= Convert.ToInt32(reader["ProductID"]);
+                item.UnitID = Convert.ToInt32(reader["UnitID"]);
+                item.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
+                item.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
+                item.ProductCode= Convert.ToString(reader["Code"]);
+                list.Add(item);
+            }
+            reader.Close();
+
+            return list;
+        }
+
+        private void clearTranSale()
+        {
+            Session["TranSaleData"] = null;
+        }
+
+        private void getMainMenu()
+        {
+            saleViewModel.ProductMenus.MainMenus = appData.selectMainMenu(getConnection());
+        }
+
+        private int getFirstMainMenuID()
+        {
+            int mainMenuId = 0;
+            if (saleViewModel.ProductMenus.MainMenus.Count() != 0) {
+                MainMenuModels.MainMenuModel firstMainMenu = saleViewModel.ProductMenus.MainMenus.First();
+                mainMenuId = firstMainMenu.MainMenuID;
+            }
+            return mainMenuId;
+        }
+
+        private void getSubMenu(int mainMenuId)
+        {
+            saleViewModel.ProductMenus.SubMenus = appData.selectSubMenu(getConnection(),mainMenuId);
+        }
+
+        private int getFirstSubMenuID()
+        {
+            int subMenuId = 0;
+            if (saleViewModel.ProductMenus.SubMenus.Count() != 0)
+            {
+                SubMenuModels.SubMenuModel firstSubMenu = saleViewModel.ProductMenus.SubMenus.First();
+                subMenuId = firstSubMenu.SubMenuID;
+            }
+            return subMenuId;
+        }
+
+        private void getProduct(int subMenuId)
+        {
+            saleViewModel.ProductMenus.Products = appData.selectProduct(getConnection(), subMenuId);
+            Session["ProductData"] = saleViewModel.ProductMenus.Products;
+        }
+
+        private string getUserVoucherNo(int userId)
+        {
+            string userVoucherNo = appData.selectUserVoucherNo(AppConstants.SaleModule, userId, getConnection());
+            return userVoucherNo;
+        }
+
+        private void getCustomer(bool isIncludeDefault)
+        {
+            if (isIncludeDefault) saleViewModel.Customers.Add(new SelectListItem { Text = "All Customer", Value = "0" });
+
+            List<CustomerModels.CustomerModel> list = appData.selectCustomer(getConnection());
+            for (int i = 0; i < list.Count; i++)
+            {
+                saleViewModel.Customers.Add(new SelectListItem { Text = list[i].CustomerName, Value = Convert.ToString(list[i].CustomerID) });
+            }
+        }
+
+        private void getLocation()
+        {
+            List<LocationModels.LocationModel> list = appData.selectLocation(getConnection());
+            for (int i = 0; i < list.Count; i++)
+            {
+                saleViewModel.Locations.Add(new SelectListItem { Text = list[i].ShortName, Value = Convert.ToString(list[i].LocationID) });
+            }
+        }
+
+        private List<UnitModels> getUnit()
+        {
+            List<UnitModels> list = new List<UnitModels>();
+            if (Session["UnitData"] == null)
+            {
+                list = appData.selectUnit(getConnection());
+                Session["UnitData"] = list;
+            }
+            else list = Session["UnitData"] as List<UnitModels>;
+            return list;
+        }
+
+        private List<CurrencyModels> getCurrency()
+        {
+            List<CurrencyModels> list = new List<CurrencyModels>();
+            if (Session["CurrencyData"] == null)
+            {
+                list = appData.selectCurrency(getConnection());
+                Session["CurrencyData"] = list;
+            }
+            else list = Session["CurrencyData"] as List<CurrencyModels>;
+            return list;
+        }
+
+        private List<PaymentModels> getPayment()
+        {
+            List<PaymentModels> list = new List<PaymentModels>();
+            if (Session["PaymentData"] == null)
+            {
+                list = appData.selectPayment(getConnection());
+                Session["PaymentData"] = list;
+            }
+            else list = Session["PaymentData"] as List<PaymentModels>;
+            return list;
+        }
+
+        private List<PayMethodModels> getPayMethod()
+        {
+            List<PayMethodModels> list = new List<PayMethodModels>();
+            if (Session["PayMethodData"] == null)
+            {
+                list = appData.selectPayMethod(getConnection());
+                Session["PayMethodData"] = list;
+            }
+            else list = Session["PayMethodData"] as List<PayMethodModels>;
+            return list;
+        }
+
+        private List<LimitedDayModels> getLimitedDay()
+        {
+            List<LimitedDayModels> list = new List<LimitedDayModels>();
+            if (Session["LimitedDayData"] == null)
+            {
+                list = appData.selectLimitedDay(getConnection());
+                Session["LimitedDayData"] = list;
+            }
+            else list = Session["LimitedDayData"] as List<LimitedDayModels>;
+            return list;
+        }
+
+        private List<BankPaymentModels> getBankPayment()
+        {
+            List<BankPaymentModels> list = new List<BankPaymentModels>();
+            if (Session["BankPaymentData"] == null)
+            {
+                list = appData.selectBankPayment(getConnection());
+                Session["BankPaymentData"] = list;
+            }
+            else list = Session["BankPaymentData"] as List<BankPaymentModels>;
+            return list;
+        }
+
+        public bool checkConnection()
+        {
+            if (Session[AppConstants.SQLConnection] != null) return true;
+            else return false;
+        }
+
+        public object getConnection()
+        {
+            object connection;
+            if (Session[AppConstants.SQLConnection] == null)
+                Session[AppConstants.SQLConnection] = dataConnectorSQL.Connect();
+
+            connection = Session[AppConstants.SQLConnection];
+            return connection;
+        }
+
+        #endregion
+
+    }
 }

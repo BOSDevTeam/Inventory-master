@@ -52,7 +52,9 @@ namespace Inventory.Controllers
                             Session["LoginUserName"] = userName;                        
                             Session["IsMultiCurrency"] = Convert.ToBoolean(reader["IsMultiCurrency"]);
                             Session["IsMultiUnit"] = Convert.ToBoolean(reader["IsMultiUnit"]);                          
-                            Session["IsBankPayment"] = Convert.ToBoolean(reader["IsBankPayment"]);                        
+                            Session["IsBankPayment"] = Convert.ToBoolean(reader["IsBankPayment"]);
+                            Session["Tax"] = Convert.ToInt32(reader["Tax"]);
+                            Session["ServiceCharges"] = Convert.ToInt32(reader["ServiceCharges"]);
                             reader.Close();
                             dataConnectorSQL.Close();
                             return RedirectToAction("Dashboard", "Home");

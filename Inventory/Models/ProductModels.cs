@@ -34,18 +34,18 @@ namespace Inventory.Models
             public int SubMenuID { get; set; }
             public int MainMenuID { get; set; }
             [DisplayName("Purchase Price")]
-            public double PurchasePrice { get; set; }
+            public int PurchasePrice { get; set; }
             [DisplayName("Sale Price")]
-            public double SalePrice { get; set; }
+            public int SalePrice { get; set; }
             [DisplayName("Whole Sale Price")]
-            public double WholeSalePrice { get; set; }
+            public int WholeSalePrice { get; set; }
             public bool IsStock { get; set; }
             public byte[] Photo { get; set; }
             public string Base64Photo { get; set; }
             [DisplayName("Alert Quantity")]
             public int? AlertQty { get; set; }
             [DisplayName("Discount(%)")]
-            public int? DisPercent { get; set; }
+            public short? DisPercent { get; set; }
             public string SubMenuName { get; set; }
             public string MainMenuName { get; set; }
             public int TotalPageNum { get; set; }

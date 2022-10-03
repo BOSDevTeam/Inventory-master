@@ -18,9 +18,7 @@ namespace Inventory.Common
         public const string PrcInsertBankPayment = "PrcInsertBankPayment";
         public const string PrcUpdateBankPayment = "PrcUpdateBankPayment";
         public const string PrcDeleteBankPayment = "PrcDeleteBankPayment";
-        public const string PrcSearchProductByCodeName = "PrcSearchProductByCodeName";
-        public const string PrcSearchByFirstKeyword = "PrcSearchByFirstKeyword";
-        public const string PrcSearchByLastKeyword = "PrcSearchByLastKeyword";      
+        public const string PrcSearchProductByCodeName = "PrcSearchProductByCodeName";     
         public const string PrcValidateUser = "PrcValidateUser";
         public const string PrcGetUser = "PrcGetUser";
         public const string PrcSearchUser = "PrcSearchUser";
@@ -39,7 +37,12 @@ namespace Inventory.Common
         public const string PrcGetTownship = "PrcGetTownship";
         public const string PrcUpdateCLMasterSaleOrder = "PrcUpdateCLMasterSaleOrder";
         public const string PrcUpdateCLTranSaleOrder = "PrcUpdateCLTranSaleOrder";
-        public const string PrcGetClient = "PrcGetClient";
-        public const string PrcSearchClient = "PrcSearchClient";
+        public const string PrcGetUserVoucherNo = "PrcGetUserVoucherNo";
+        public const string PrcInsertSale = "PrcInsertSale";
+        public const string PrcUpdateSale = "PrcUpdateSale";
+        public const string PrcGetMasterSaleBySystemVoucherNo = "PrcGetMasterSaleBySystemVoucherNo";
+        public const string PrcGetTranSaleBySaleID = "PrcGetTranSaleBySaleID";
+        public const string PrcGetMasterSaleList = "PrcGetMasterSaleList";
+        public const string PrcGetMasterSaleBySaleID = "PrcGetMasterSaleBySaleID";
     }
 }

@@ -1,0 +1,195 @@
+﻿@using Inventory.ViewModels
+@model SaleViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" type="image/x-icon" href="~/assets/img/favicon.ico">
+    <title>QuickInventory - POS & Inventory Management</title>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/select2.min.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+</head>
+<body>
+    <div style="display:flex;justify-content:center;">
+        <div class="m-t-10" style="width:500px;background-color:#DEE2E6;">
+
+            <div class="padding-10" style="text-align:center;">
+                <button id="btnPrint" class="btn btn-first">Print</button>
+                <button id="btnBack" class="btn btn-second ml-10">Back to POS</button>
+            </div>
+
+            <div class="padding-10" style="border:1px dashed #e53f34;margin:10px;background-color:#fff;">
+
+                <table class="width-100-percent" style="text-align:center;">
+                    <tr>
+                        <td><img id="imgLogo" src="~/assets/img/logo.png" style="width:50px;height:50px;" /></td>
+                    </tr>
+                    @if (Model.VoucherSettings.HeaderName != null && Model.VoucherSettings.HeaderName.Length != 0)
+                {
+                        <tr>
+                            <td><label class="voucher-header-name">@Model.VoucherSettings.HeaderName</label></td>
+                        </tr>
+                }
+                    @if (Model.VoucherSettings.HeaderDesp != null && Model.VoucherSettings.HeaderDesp.Length != 0)
+                {
+                        <tr>
+                            <td><label class="voucher-header">@Model.VoucherSettings.HeaderDesp</label></td>
+                        </tr>
+                }
+                    @if (Model.VoucherSettings.HeaderPhone != null && Model.VoucherSettings.HeaderPhone.Length != 0)
+                {
+                        <tr>
+                            <td><label class="voucher-header">@Model.VoucherSettings.HeaderPhone</label></td>
+                        </tr>
+                }
+                    @if (Model.VoucherSettings.HeaderAddress != null && Model.VoucherSettings.HeaderAddress.Length != 0)
+                {
+                        <tr>
+                            <td><label class="voucher-header">@Model.VoucherSettings.HeaderAddress</label></td>
+                        </tr>
+                }
+                    @if (Model.VoucherSettings.OtherHeader1 != null && Model.VoucherSettings.OtherHeader1.Length != 0)
+                {
+                        <tr>
+                            <td><label class="voucher-header">@Model.VoucherSettings.OtherHeader1</label></td>
+                        </tr>
+                }
+                    @if (Model.VoucherSettings.OtherHeader2 != null && Model.VoucherSettings.OtherHeader2.Length != 0)
+                {
+                        <tr>
+                            <td><label class="voucher-header">@Model.VoucherSettings.OtherHeader2</label></td>
+                        </tr>
+                }
+                </table>
+
+                @{
+                    Html.RenderPartial("_SaleVoucherChild");
+                }
+
+                <table class="width-100-percent" style="text-align:center;">
+                    @if (Model.VoucherSettings.FooterMessage1 != null && Model.VoucherSettings.FooterMessage1.Length != 0)
+                {
+                        <tr>
+                            <td><label class="voucher-sub-footer">@Model.VoucherSettings.FooterMessage1</label></td>
+                        </tr>
+                }
+                    @if (Model.VoucherSettings.FooterMessage2 != null && Model.VoucherSettings.FooterMessage2.Length != 0)
+                {
+                        <tr>
+                            <td><label class="voucher-sub-footer">@Model.VoucherSettings.FooterMessage2</label></td>
+                        </tr>
+                }
+                    @if (Model.VoucherSettings.FooterMessage3 != null && Model.VoucherSettings.FooterMessage3.Length != 0)
+                {
+                        <tr>
+                            <td><label class="voucher-sub-footer">@Model.VoucherSettings.FooterMessage3</label></td>
+                        </tr>
+                }
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/assets/js/popper.min.js"></script>
+    <script src="~/assets/js/select2.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/Site.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            createMasterSaleData();
+            createTranSaleData();
+
+            $("#btnBack").click(function () {
+                let userId = localStorage.getItem("UserID");
+                window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId;
+            });
+
+            function createTranSaleData() {
+                $("#tblTranSale").find("tbody").empty();
+                var tranSaleList = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstTranSale"]))');
+                $.each(tranSaleList, function (index, item) {
+                    var row = '<tr class="row voucher-table-item">'
+                           + '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '</td>'
+                           + '<td class="col-md-2 col-lg-2">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
+                           + '<td class="col-md-2 col-lg-2">' + separatedComma(item.SalePrice) + '<span class="control-span-sm">' + item.CurrencyKeyword + '</span></td>'
+                           + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Discount) + '</td>'
+                           + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Amount) + '</td>'
+                           + "</tr>";
+                    $('#tblTranSale tbody').append(row);
+                });
+            }
+
+            function createMasterSaleData() {
+                if ('@ViewBag.Base64Photo'.length == 0) $('#imgLogo').css('display', 'none');
+                else {
+                    $('#imgLogo').show();
+                    $('#imgLogo').attr('src', 'data:image/png;base64,' + '@ViewBag.Base64Photo');
+                }
+
+                $('#lblSlipID').text('Slip No.@ViewBag.SlipID');
+                $('#lblSaleDateTime').text('@ViewBag.SaleDateTime');
+                $('#lblCustomerName').text('@ViewBag.CustomerName');
+                $('#lblUserName').text('@ViewBag.UserName');
+
+                $('#lblSubtotal').text(separatedComma('@ViewBag.Subtotal'));
+                $('#lblTaxValue').text(separatedComma('@ViewBag.TaxAmt'));
+                $('#lblChargesValue').text(separatedComma('@ViewBag.ChargesAmt'));
+                $('#lblTotal').text(separatedComma('@ViewBag.Total'));
+                $('#lblVoucherDiscountValue').text(separatedComma('@ViewBag.VoucherDiscount'));
+
+                let vouDisPercent = '@ViewBag.VouDisPercent';
+                if (vouDisPercent != 0) $('#lblVoucherDiscount').text('Voucher Discount(' + vouDisPercent + '%):');
+
+                let advancedPay = '@ViewBag.AdvancedPay'
+                if (advancedPay == 0) $('#trAdvancedPay').css('display', 'none');
+                else {
+                    $('#trAdvancedPay').show();
+                    $('#lblAdvancedPay').text(separatedComma(advancedPay));
+                }
+
+                let grandtotal = '@ViewBag.Grandtotal';
+
+                let paymentPercent = '@ViewBag.PaymentPercent';
+                if (paymentPercent != 0) $('#lblPercent').text('Percent(' + paymentPercent + '%):');
+
+                let payPercentAmt = '@ViewBag.PayPercentAmt';
+                if (payPercentAmt == 0) {
+                    $('#lblGrandtotal').text(separatedComma(grandtotal));
+                    $('#trPercent').css('display', 'none');
+                    $('#trPcntGrandtotal').css('display', 'none');
+                } else {
+                    $('#lblGrandtotal').text(separatedComma('@ViewBag.GrandTotalNotPayPercent'));
+                    $('#trPercent').show();
+                    $('#trPcntGrandtotal').show();
+                    $('#lblPercentValue').text(separatedComma(payPercentAmt));
+                    $('#lblPcntGrandtotal').text(separatedComma(grandtotal));
+                }
+            }
+
+        });
+
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            return result;
+        }
+
+    </script>
+</body>
+</html>
