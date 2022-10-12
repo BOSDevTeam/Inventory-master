@@ -31,6 +31,26 @@ namespace Inventory.Common
             return list;
         }
 
+        public List<SupplierModels.SupplierModel> selectSupplier(object connection)
+        {
+            List<SupplierModels.SupplierModel> list = new List<SupplierModels.SupplierModel>();
+            SupplierModels.SupplierModel item;
+
+            SqlCommand cmd = new SqlCommand(TextQuery.supplierQuery, (SqlConnection)connection);
+            cmd.CommandType = CommandType.Text;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new SupplierModels.SupplierModel();
+                item.SupplierID = Convert.ToInt32(reader["SupplierID"]);
+                item.SupplierName = Convert.ToString(reader["SupplierName"]);
+                list.Add(item);
+            }
+            reader.Close();
+
+            return list;
+        }
+
         public List<LocationModels.LocationModel> selectLocation(object connection)
         {
             List<LocationModels.LocationModel> list = new List<LocationModels.LocationModel>();

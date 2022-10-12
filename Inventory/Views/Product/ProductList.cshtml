@@ -71,16 +71,17 @@
             </table>
         </div>
     </div>
-    <div class="row mt-3" id="divPaging" style="float:right">
-        <div class="col-md-12 col-lg-12 aligh-right">
+
+    <div class="row paging">
+        <div class="col-md-1 col-lg-1">
             <label id="lblPageNumber" class="page-num">@Session["PageNumber"]</label>
         </div>
-        <div id="divPagingItem" class="col-md-12 col-lg-12 paging-div">
+        <div id="divPagingItem" class="col-md-11 col-lg-11 paging-item">
             @for (int i = 1; i <= Model.TotalPageNum; i++)
             {
-                <button class="btnPage btn paging-item">@i</button>
+                <button class="btnPage btn btn-paging">@i</button>
             }
-        </div>
+        </div>             
     </div>
 
 </div>
@@ -557,10 +558,10 @@
             var pageItem;
 
             if (totalPage == 0) $("#lblPageNumber").text("");
-            else $("#lblPageNumber").text("Page : " + currentPage);
+            else $("#lblPageNumber").text("Page: " + currentPage);
 
             for (var i = 1; i <= totalPage; i++) {
-                pageItem += '<button class="btnPage btn paging-item">' + i + '</button>'
+                pageItem += '<button class="btnPage btn btn-paging">' + i + '</button>'
             }
 
             $('#divPagingItem').append(pageItem);

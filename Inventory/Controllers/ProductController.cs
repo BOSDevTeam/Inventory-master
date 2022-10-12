@@ -21,7 +21,7 @@ namespace Inventory.Controllers
         static List<ProductModels.ProductModel> lstProductList = new List<ProductModels.ProductModel>();
         static int editProductID;
         DataTable dtUnit = new DataTable();
-        Setting setting = new Setting();
+        AppSetting.Paging paging = new AppSetting.Paging();
 
         public ActionResult ProductEntry(int productId)
         {                     
@@ -450,30 +450,30 @@ namespace Inventory.Controllers
             reader.Close();
             dataConnectorSQL.Close();
 
-            if (tempList.Count > setting.pageSize)
+            if (tempList.Count > paging.eachItemCount)
             {
-                model.TotalPageNum = tempList.Count / setting.pageSize;
-                setting.left = tempList.Count % setting.pageSize;
-                if (setting.left != 0) model.TotalPageNum += 1;
+                model.TotalPageNum = tempList.Count / paging.eachItemCount;
+                paging.lastItemCount = tempList.Count % paging.eachItemCount;
+                if (paging.lastItemCount != 0) model.TotalPageNum += 1;
 
-                int i = p * setting.pageSize;
-                int j = (i - setting.pageSize) + 1;
+                int i = p * paging.eachItemCount;
+                int j = (i - paging.eachItemCount) + 1;
                 int start = j;
                 int end = i;
-                setting.startRowIndex = start - 1;
-                setting.endRowIndex = end - 1;
+                paging.startItemIndex = start - 1;
+                paging.endItemIndex = end - 1;
                 Session["PageNumber"] = "Page : " + p;
             }
             else
             {
-                setting.startRowIndex = 0;
-                setting.endRowIndex = tempList.Count - 1;
+                paging.startItemIndex = 0;
+                paging.endItemIndex = tempList.Count - 1;
                 Session["PageNumber"] = "";
             }
 
-            for (int page = setting.startRowIndex; page < tempList.Count; page++)
+            for (int page = paging.startItemIndex; page < tempList.Count; page++)
             {
-                if (page > setting.endRowIndex) break;
+                if (page > paging.endItemIndex) break;
 
                 productModel = new ProductModels.ProductModel();
                 productModel.ProductID = tempList[page].ProductID;

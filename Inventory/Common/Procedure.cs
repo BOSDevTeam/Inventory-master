@@ -44,7 +44,8 @@ namespace Inventory.Common
         public const string PrcGetTranSaleBySaleID = "PrcGetTranSaleBySaleID";
         public const string PrcGetMasterSaleList = "PrcGetMasterSaleList";
         public const string PrcGetMasterSaleBySaleID = "PrcGetMasterSaleBySaleID";
-        public const string PrcDeleteUser = "PrcDeleteUser";
-        public const string PrcDeleteTownship = "PrcDeleteTownship";
+        public const string PrcInsertOpenBill = "PrcInsertOpenBill";
+        public const string PrcGetMasterOpenBill = "PrcGetMasterOpenBill";
+        public const string PrcGetTranOpenBillByID = "PrcGetTranOpenBillByID";
     }
 }
