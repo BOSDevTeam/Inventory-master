@@ -56,6 +56,7 @@ namespace Inventory
         public virtual DbSet<S_User> S_User { get; set; }
         public virtual DbSet<T_MasterSale> T_MasterSale { get; set; }
         public virtual DbSet<Sys_Module> Sys_Module { get; set; }
+        public virtual DbSet<T_TranSale> T_TranSale { get; set; }
     
         public virtual int PrcDeleteBank(Nullable<int> bankID)
         {

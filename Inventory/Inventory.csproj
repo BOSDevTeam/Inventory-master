@@ -161,9 +161,11 @@
     <Compile Include="Common\AppConstants.cs" />
     <Compile Include="Common\AppData.cs" />
     <Compile Include="Common\Procedure.cs" />
-    <Compile Include="Common\Setting.cs" />
+    <Compile Include="Common\AppSetting.cs" />
     <Compile Include="Common\TextQuery.cs" />
     <Compile Include="Controllers\AdjustTypeController.cs" />
+    <Compile Include="Controllers\PaymentDialogController.cs" />
+    <Compile Include="Controllers\ProductMenuController.cs" />
     <Compile Include="Controllers\BankController.cs" />
     <Compile Include="Controllers\BankPaymentController.cs" />
     <Compile Include="Controllers\CustomerController.cs" />
@@ -174,7 +176,6 @@
     <Compile Include="Controllers\MainMenuController.cs" />
     <Compile Include="Controllers\CLSaleOrderController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
-    <Compile Include="Controllers\PurchaseController.cs" />
     <Compile Include="Controllers\SaleController.cs" />
     <Compile Include="Controllers\SubMenuController.cs" />
     <Compile Include="Controllers\SupplierController.cs" />
@@ -218,11 +219,8 @@
     <Compile Include="Models\MasterSaleModels.cs" />
     <Compile Include="Models\LimitedDayModels.cs" />
     <Compile Include="Models\PaymentModels.cs" />
-    <Compile Include="Models\TranPurchaseModels.cs" />
-    <Compile Include="Models\MasterPurchaseModels.cs" />
     <Compile Include="Models\PayMethodModels.cs" />
     <Compile Include="Models\ProductModels.cs" />
-    <Compile Include="Models\SaleModels.cs" />
     <Compile Include="Models\ShopTypeModels.cs" />
     <Compile Include="Models\SubMenuModels.cs" />
     <Compile Include="Models\SupplierModels.cs" />
@@ -342,6 +340,9 @@
     <Compile Include="Sys_Currency.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
+    <Compile Include="Sys_Module.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
     <Compile Include="Sys_Payment.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
@@ -421,6 +422,7 @@
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\MasterSaleVoucherViewModel.cs" />
+    <Compile Include="ViewModels\PagingViewModel.cs" />
     <Compile Include="ViewModels\PaymentViewModel.cs" />
     <Compile Include="ViewModels\ProductMenuViewModel.cs" />
     <Compile Include="ViewModels\SaleViewModel.cs" />
@@ -513,6 +515,7 @@
     </Content>
     <None Include="Properties\PublishProfiles\ClinicAdmin.pubxml" />
     <None Include="Properties\PublishProfiles\Inventory.pubxml" />
+    <None Include="Properties\PublishProfiles\InventoryApp.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -572,8 +575,6 @@
     <Content Include="Views\SubMenu\SubMenuList.cshtml" />
     <Content Include="Views\Product\ProductEntry.cshtml" />
     <Content Include="Views\Product\ProductList.cshtml" />
-    <Content Include="Views\Purchase\Purchase.cshtml" />
-    <Content Include="Views\Purchase\PurchaseList.cshtml" />
     <Content Include="Views\Division\DivisionList.cshtml" />
     <Content Include="Views\Division\DivisionEntry.cshtml" />
     <Content Include="Views\CLSaleOrder\CLMasterSaleOrderList.cshtml" />
@@ -585,6 +586,9 @@
     <Content Include="Views\Sale\ListSale.cshtml" />
     <Content Include="Views\Sale\_SaleDetailDialog.cshtml" />
     <Content Include="Views\Sale\_SaleVoucherChild.cshtml" />
+    <Content Include="Views\Sale\ListOpenBill.cshtml" />
+    <Content Include="Views\Shared\_ConfirmDialog.cshtml" />
+    <Content Include="Views\Shared\_RemarkDialog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

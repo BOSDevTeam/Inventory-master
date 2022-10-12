@@ -355,6 +355,22 @@
           <Property Name="PayPercentAmt" Type="int" />
           <Property Name="Grandtotal" Type="int" />
         </EntityType>
+        <EntityType Name="T_TranSale">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SaleID" Type="int" />
+          <Property Name="ProductID" Type="int" />
+          <Property Name="Quantity" Type="int" />
+          <Property Name="UnitID" Type="int" />
+          <Property Name="SalePrice" Type="int" />
+          <Property Name="CurrencyID" Type="int" />
+          <Property Name="DiscountPercent" Type="int" />
+          <Property Name="Discount" Type="int" />
+          <Property Name="Amount" Type="int" />
+          <Property Name="IsFOC" Type="bit" />
+        </EntityType>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
         <Function Name="PrcDeleteBank" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="BankID" Type="int" Mode="In" />
@@ -679,6 +695,7 @@
           <EntitySet Name="T_CLMasterSaleOrder" EntityType="Self.T_CLMasterSaleOrder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="T_CLTranSaleOrder" EntityType="Self.T_CLTranSaleOrder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="T_MasterSale" EntityType="Self.T_MasterSale" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="T_TranSale" EntityType="Self.T_TranSale" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
@@ -1127,6 +1144,7 @@
             <Parameter Name="PostFormat" Mode="In" Type="Int32" />
             <Parameter Name="Module" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="T_TranSale" EntityType="InventoryDBModel.T_TranSale" />
         </EntityContainer>
         <ComplexType Name="PrcGetCompanySetting_Result">
           <Property Type="Boolean" Name="IsMultiCurrency" Nullable="false" />
@@ -1698,6 +1716,22 @@
           <Property Type="String" Name="ModuleCode" Nullable="false" MaxLength="50" />
           <Property Type="String" Name="ModuleName" Nullable="true" MaxLength="200" />
         </ComplexType>
+        <EntityType Name="T_TranSale">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SaleID" Type="Int32" />
+          <Property Name="ProductID" Type="Int32" />
+          <Property Name="Quantity" Type="Int32" />
+          <Property Name="UnitID" Type="Int32" />
+          <Property Name="SalePrice" Type="Int32" />
+          <Property Name="CurrencyID" Type="Int32" />
+          <Property Name="DiscountPercent" Type="Int32" />
+          <Property Name="Discount" Type="Int32" />
+          <Property Name="Amount" Type="Int32" />
+          <Property Name="IsFOC" Type="Boolean" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2581,6 +2615,23 @@
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="PrcInsertVoucherFormat" FunctionName="InventoryDBModel.Store.PrcInsertVoucherFormat" />
           <FunctionImportMapping FunctionImportName="PrcUpdateVoucherFormat" FunctionName="InventoryDBModel.Store.PrcUpdateVoucherFormat" />
+          <EntitySetMapping Name="T_TranSale">
+            <EntityTypeMapping TypeName="InventoryDBModel.T_TranSale">
+              <MappingFragment StoreEntitySet="T_TranSale">
+                <ScalarProperty Name="IsFOC" ColumnName="IsFOC" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="DiscountPercent" ColumnName="DiscountPercent" />
+                <ScalarProperty Name="CurrencyID" ColumnName="CurrencyID" />
+                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
+                <ScalarProperty Name="UnitID" ColumnName="UnitID" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
+                <ScalarProperty Name="SaleID" ColumnName="SaleID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

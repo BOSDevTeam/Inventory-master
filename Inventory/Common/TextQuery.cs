@@ -8,6 +8,7 @@ namespace Inventory.Common
     public class TextQuery
     {
         public const string customerQuery = "Select CustomerID,CustomerName From S_Customer Order By IsDefault DESC";
+        public const string supplierQuery = "Select SupplierID,SupplierName From S_Supplier Order By IsDefault DESC";
         public const string locationQuery = "Select LocationID,ShortName From S_Location";
         public const string mainMenuQuery = "Select MainMenuID,MainMenuName From S_MainMenu Order By SortCode";
         public const string unitQuery = "Select UnitID,Keyword From S_Unit Order By ULID";
@@ -44,6 +45,17 @@ namespace Inventory.Common
         public string deleteSaleQuery(int saleId)
         {
             return "Delete From T_TranSale Where SaleID=" + saleId + " Delete From T_MasterSale Where SaleID=" + saleId;           
+        }
+
+        public string deleteOpenBillQuery(int openBillId)
+        {
+            return "Delete From T_TranOpenBill Where OpenBillID=" + openBillId + " Delete From T_MasterOpenBill Where OpenBillID=" + openBillId;
+        }
+
+        public string getMasterOpenBillQuery(int openBillId)
+        {
+            return "Select UserVoucherNo,VoucherID,Subtotal,TaxAmt,ChargesAmt,Total,LocationID,CustomerID"
+            + " From T_MasterOpenBill Where OpenBillID=" + openBillId;
         }
     }
 }

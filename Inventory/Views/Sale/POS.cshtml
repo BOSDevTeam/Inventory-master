@@ -119,6 +119,7 @@
                     <div class="col-md-3 col-lg-3">
                         <button id="btnCancel" class="btn btn-block btn-white-outline-third">Cancel</button>
                         <button id="btnEditCancel" class="btn btn-block btn-white-outline-third m-t-0">Cancel</button>
+                        <button id="btnOpenBillCancel" class="btn btn-block btn-white-outline-third m-t-0">Cancel</button>
                     </div>
                     <div class="col-md-3 col-lg-3">
                         <button id="btnHold" class="btn btn-block btn-second">Hold</button>
@@ -134,7 +135,7 @@
     </div>
     <div class="col-md-6 col-lg-6">
         @{
-            Html.RenderPartial("_ProductMenu");
+            Html.RenderPartial("_ProductMenu", Model);
         }
     </div>
 </div>
@@ -147,13 +148,19 @@
 
 <div>
     @{
-        Html.RenderPartial("_PaymentDialog");
+        Html.RenderPartial("_PaymentDialog", Model.Payments);
+    }
+</div>
+
+<div>
+    @{
+        Html.RenderPartial("_RemarkDialog");
     }
 </div>
 
 <script type="text/javascript">
 
-    var tranSaleAction;
+    let tranSaleAction, defaultCustomerId, defaultLocationId;
     document.getElementById('subMenuSale').className = 'active';
 
     calcSaleHeight();
@@ -164,7 +171,7 @@
         let extraHeight = 20;
         let saleAreaHeight = windowHeight - (thingsHeight + extraHeight);
         let saleChildHeight = saleAreaHeight - 100;  // 100 is top component
-        let saleTranHeight = saleChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra    
+        let saleTranHeight = saleChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra
         document.getElementById('divSale').setAttribute("style", "height:" + saleAreaHeight + "px");
         document.getElementById('divSaleChild').setAttribute("style", "height:" + saleChildHeight + "px");
         document.getElementById('divSaleTran').setAttribute("style", "height:" + saleTranHeight + "px");
@@ -173,13 +180,14 @@
     $(document).ready(function () {
 
         if ('@ViewBag.IsEdit' == 'True') fillEditData();
+        else if ('@ViewBag.IsFromOpenBill' == 'True') fillOpenBillData();
         else initializeControl();
 
         function fillEditData() {
             $('#btnEditPayment').val('@ViewBag.SaleID');
             $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
             $('#inputDate').val('@ViewBag.Date');
-            $('#inputVoucherID').text('@ViewBag.VoucherID');
+            $('#inputVoucherID').val('@ViewBag.VoucherID');
             $("#ddlCustomer").val('@ViewBag.CustomerID');
             $("#ddlLocation").val('@ViewBag.LocationID');
             $('#lblSubtotal').text(separatedComma('@ViewBag.Subtotal'));
@@ -194,8 +202,32 @@
             showHideUnit();
             showHideCurrency();
             showHideTranSaleAddEdit(false);
-            showEditButton();
-            let tranSaleList = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstTranSale"]))');
+            showHideMainButton(true, false);
+            let tranSaleList = JSON.parse('@Html.Raw(Json.Encode(Session["TranSaleData"]))');
+            createTranSaleData(tranSaleList);
+        }
+
+        function fillOpenBillData() {
+            $('#btnPayment').val('@ViewBag.OpenBillID');
+            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputDate').val(getTodayDate());
+            $('#inputVoucherID').val('@ViewBag.VoucherID');
+            $("#ddlCustomer").val('@ViewBag.CustomerID');
+            $("#ddlLocation").val('@ViewBag.LocationID');
+            $('#lblSubtotal').text(separatedComma('@ViewBag.Subtotal'));
+            $('#lblTax').text(separatedComma('@ViewBag.TaxAmt'));
+            $('#lblCharges').text(separatedComma('@ViewBag.ChargesAmt'));
+            $('#lblTotal').text(separatedComma('@ViewBag.Total'));
+            $('#lblTotalItem').text('@ViewBag.TotalItem' + '(' + '@ViewBag.TotalQuantity' + ')');
+            $("#inputHdnSubtotal").val('@ViewBag.Subtotal');
+            $("#inputHdnTax").val('@ViewBag.TaxAmt');
+            $("#inputHdnCharges").val('@ViewBag.ChargesAmt');
+            $("#inputHdnTotal").val('@ViewBag.Total');
+            showHideUnit();
+            showHideCurrency();
+            showHideTranSaleAddEdit(false);
+            showHideMainButton(false, true);
+            let tranSaleList = JSON.parse('@Html.Raw(Json.Encode(Session["TranSaleData"]))');
             createTranSaleData(tranSaleList);
         }
 
@@ -205,7 +237,9 @@
             showHideUnit();
             showHideCurrency();
             showHideTranSaleAddEdit(false);
-            hideEditButton();
+            showHideMainButton(false, false);
+            defaultCustomerId = $('#ddlCustomer option:selected').val();
+            defaultLocationId = $('#ddlLocation option:selected').val();
         }
 
         function showHideUnit() {
@@ -337,7 +371,63 @@
         });
 
         $("#btnHold").click(function (e) {
-            alert('Hold');
+            let row = $("#tblTranSale tbody tr").length;
+            if (row < 1) return;
+            $("#modalRemarkTitle").text("Suspend Sale");
+            $("#lblRemark").text("Enter a Note");
+            $('#modalRemark').modal('show');
+        });
+
+        $("#btnRemarkOk").click(function () {
+            let remark = $('#txtRemarkNote').val();
+            if (remark.length == 0) return;
+            let userVoucherNo = $('#lblUserVoucherNo').text();
+            let date = $('#inputDate').val();
+            let voucherId = $('#inputVoucherID').val();
+            let customerId = $('#ddlCustomer option:selected').val();
+            let locationId = $('#ddlLocation option:selected').val();
+            let subtotal = $("#inputHdnSubtotal").val();
+            let taxAmt = $("#inputHdnTax").val();
+            let chargesAmt = $("#inputHdnCharges").val();
+            let total = $("#inputHdnTotal").val();
+            let userId = localStorage.getItem("UserID");
+            showLoadingIcon();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("HoldAction", "Sale")',
+                data: JSON.stringify({
+                    "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "customerId": customerId, "locationId": locationId,
+                    "remark": remark, "taxAmt": taxAmt, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total, "userId": userId
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    $('#modalRemark').modal('hide');
+                    if (!response.IsRequestSuccess)
+                        redirectToLogin();
+                    else {
+                        showToast(1, 'Saved Successfully to Opened Bills!');
+                        $('#txtRemarkNote').val("");
+                        $("#lblUserVoucherNo").text(response.UserVoucherNo);
+                        $('#inputDate').val(getTodayDate());
+                        $('#inputVoucherID').val("");
+                        $("#ddlCustomer").val(defaultCustomerId);
+                        $("#ddlLocation").val(defaultLocationId);
+                        clearProductControl();
+                        $("#tblTranSale").find("tbody").empty();
+                        clearAmount();
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
         });
 
         $("#btnEdit").click(function (e) {
@@ -345,7 +435,11 @@
         });
 
         $("#btnEditCancel").click(function (e) {
-            window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId + '&saleId=' + null;
+            window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId;
+        });
+
+        $("#btnOpenBillCancel").click(function (e) {
+            window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId;
         });
 
         $("#btnCancel").click(function (e) {
@@ -382,8 +476,8 @@
             showLoadingIcon();
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("PaymentAction", "Sale")',
-                data: { "isBankPayment": isBankPayment },
+                url: '@Url.Action("PaymentAction", "PaymentDialog")',
+                data: { "isBankPayment": isBankPayment, "moduleCode": SaleModule },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -614,6 +708,94 @@
             }
         });
 
+        $(document).on('click', '.btnProduct', function (e) {
+            let productId = $(this).val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("ProductClickAction", "ProductMenu")',
+                data: { "productId": productId, "isMultiUnit": isMultiUnit, "isMultiCurrency": isMultiCurrency },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess)
+                        redirectToLogin();
+                    else fillSelectedProductData(response, productId);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnSubmit").click(function (e) {
+            let userVoucherNo = $('#lblUserVoucherNo').text();
+            let date = $('#inputDate').val();
+            let voucherId = $('#inputVoucherID').val();
+            let customerId = $('#ddlCustomer option:selected').val();
+            let locationId = $('#ddlLocation option:selected').val();
+            let paymentId = $('#ddlPayment option:selected').val();
+            let payMethodId = $('#ddlPayMethod option:selected').val();
+            let limitedDayId = $('#ddlLimitedDay option:selected').val();
+            let bankPaymentId = $('#ddlBankPayment option:selected').val();
+            let advancedPay = $('#inputHdnAdvancedPay').val();
+            let payPercentAmt = $('#inputHdnPercent').val();
+            let payPercent = $('#inputPercent').val();
+            let voucherDiscount = $('#inputHdnVoucherDiscount').val();
+            let vouDisPercent = $('#inputVouDisPercent').val();
+            let vouDisAmount = $('#inputVouDisAmount').val();
+            let remark = $('#txtRemark').val();
+            let tax = localStorage.getItem("Tax");
+            let charges = localStorage.getItem("Charges");
+            let subtotal = $("#inputHdnSubtotal").val();
+            let taxAmt = $("#inputHdnTax").val();
+            let chargesAmt = $("#inputHdnCharges").val();
+            let total = $("#inputHdnPayTotal").val();
+            let grandtotal;
+            if (isBankPayment == "True" && payMethodId == 2)
+                grandtotal = $("#inputHdnPcntGrandtotal").val();
+            else grandtotal = $("#inputHdnPayGrandtotal").val();
+            let userId = localStorage.getItem("UserID");
+            let openBillId = $('#btnPayment').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("PaymentSubmitAction", "Sale")',
+                data: JSON.stringify({
+                    "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "customerId": customerId, "locationId": locationId,
+                    "paymentId": paymentId, "payMethodId": payMethodId, "limitedDayId": limitedDayId, "bankPaymentId": bankPaymentId, "remark": remark, "advancedPay": advancedPay,
+                    "payPercent": payPercent, "payPercentAmt": payPercentAmt, "vouDisPercent": vouDisPercent, "vouDisAmount": vouDisAmount, "voucherDiscount": voucherDiscount,
+                    "tax": tax, "taxAmt": taxAmt, "charges": charges, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total, "grandtotal": grandtotal, "userId": userId, "openBillId": openBillId
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess) {
+                        alert("Session Expired!");
+                        redirectToLogin();
+                    }
+                    else {
+                        window.location.href = '@Url.Action("SaleVoucher", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
         function createSearchProductData(response) {
             $("#tblSearchProduct").find("tbody").empty();
             $.each(response, function (i, item) {
@@ -756,17 +938,22 @@
         }
     }
 
-    function showEditButton() {
-        $('#btnCancel').css("display", "none");
-        $("#btnEditCancel").show();
-        $('#btnPayment').css("display", "none");
-        $("#btnEditPayment").show();
-        document.getElementById("btnHold").disabled = true;
-    }
-
-    function hideEditButton() {
-        $('#btnEditCancel').css("display", "none");
-        $('#btnEditPayment').css("display", "none");
+    function showHideMainButton(isEdit, isFromOpenBill) {
+        if (!isEdit && !isFromOpenBill) {
+            $("#btnEditCancel").css("display", "none");
+            $("#btnOpenBillCancel").css("display", "none");
+            $('#btnEditPayment').css("display", "none");
+        } else if (isEdit) {
+            $('#btnCancel').css("display", "none");
+            $("#btnOpenBillCancel").css("display", "none");
+            $('#btnPayment').css("display", "none");
+            document.getElementById("btnHold").disabled = true;
+        } else if (isFromOpenBill) {
+            $('#btnCancel').css("display", "none");
+            $("#btnEditCancel").css("display", "none");
+            $('#btnEditPayment').css("display", "none");
+            document.getElementById("btnHold").disabled = true;
+        }
     }
 
     function showHidePayMethod() {

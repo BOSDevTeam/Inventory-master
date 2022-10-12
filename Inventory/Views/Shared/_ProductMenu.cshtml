@@ -1,7 +1,4 @@
-﻿@using Inventory.ViewModels
-@model SaleViewModel
-
-<div id="divProductMenu">
+﻿<div id="divProductMenu">
     <div class="row">
         <div class="col-md-12 col-lg-12 mainmenu">
             <table>
@@ -41,7 +38,7 @@
         let windowHeight = window.innerHeight;
         let thingsHeight = 167; // average other component height
         let extraHeight = 20;
-        let menuHeight = windowHeight - (thingsHeight + extraHeight);      
+        let menuHeight = windowHeight - (thingsHeight + extraHeight);
         document.getElementById('divSubMenu').setAttribute("style", "height:" + menuHeight + "px");
         document.getElementById('divProduct').setAttribute("style", "height:" + menuHeight + "px");
     }
@@ -53,7 +50,7 @@
             showLoadingIcon();
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("MainMenuClickAction", "Sale")',
+                url: '@Url.Action("MainMenuClickAction", "ProductMenu")',
                 data: { "mainMenuId": mainMenuId },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -79,7 +76,7 @@
             showLoadingIcon();
             $.ajax({
                 type: "GET",
-                url: '@Url.Action("SubMenuClickAction", "Sale")',
+                url: '@Url.Action("SubMenuClickAction", "ProductMenu")',
                 data: { "subMenuId": subMenuId },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -97,43 +94,17 @@
                     alert(response.responseText);
                 }
             });
-        });
-
-        $(document).on('click', '.btnProduct', function (e) {
-            let productId = $(this).val();
-            showLoadingIcon();
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("ProductClickAction", "Sale")',
-                data: { "productId": productId, "isMultiUnit": isMultiUnit, "isMultiCurrency": isMultiCurrency },
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    hideLoadingIcon();
-                    if(!response.IsRequestSuccess)
-                        redirectToLogin();
-                    else fillSelectedProductData(response,productId);                    
-                },
-                failure: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                }
-            });
-        });
+        });        
 
         function createSubMenuData(response) {
-            $.each(response.ProductMenus.SubMenus, function (i, item) {
+            $.each(response.SubMenus, function (i, item) {
                 let btn = '<button class="btnSubMenu menu-sub" value=' + item.SubMenuID + '>' + item.SubMenuName + '</button>'
                 $('#divSubMenu').append(btn);
             })
         }
 
         function createProductData(response) {
-            $.each(response.ProductMenus.Products, function (i, item) {
+            $.each(response.Products, function (i, item) {
                 let btn = '<button class="btnProduct menu-product" value=' + item.ProductID + '>' + item.ProductName + '</button>'
                 $('#divProduct').append(btn);
             })
@@ -146,7 +117,7 @@
         function clearProductData() {
             $(".btnProduct").remove();
         }
-      
+
     });
 
 </script>

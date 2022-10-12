@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Inventory.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -6,12 +7,15 @@ using System.Web;
 
 namespace Inventory.Common
 {
-    public class Setting
-    {
-        // paging
-        public int pageSize = 30;
-        public int left, startRowIndex, endRowIndex;
-
+    public class AppSetting
+    {       
+        public class Paging
+        {
+            public int eachItemCount = 15; // item count in each paging
+            public int lastItemCount; // item count in last paging
+            public int startItemIndex, endItemIndex;
+        }
+        
         public DateTime convertStringToDate(string date)  // input dd/MM/yyyy
         {
             // change input to MM/dd/yyyy        

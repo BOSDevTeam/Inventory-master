@@ -81,11 +81,9 @@
                             <a href=""><i class="fa fa-dollar"></i> <span> Sale </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuSaleGp">
                                 <li id="subMenuSale"><a href="#">POS</a></li>
-                                <li id="subMenuOpenedBill"><a href="#">Opened Bills</a></li>
+                                <li id="subMenuOpenBill"><a href="#">Opened Bills</a></li>
                                 <li id="subMenuSaleList"><a href="#">Sale List</a></li>
-                                <li id="subMenuClientSaleOrder"><a href="~/CLSaleOrder/CLMasterSaleOrderList">Client Sale Order</a></li>
-                                <li id="subMenuSaleOrder"><a href="#">Sale Order</a></li>
-                                <li id="subMenuSaleReturn"><a href="#">Sale Return</a></li>
+                                <li id="subMenuClientSaleOrder"><a href="~/CLSaleOrder/CLMasterSaleOrderList">Client Sale Order</a></li>                               
                             </ul>
                         </li>           
                         <li>
@@ -103,30 +101,6 @@
     </div>
     <div class="sidebar-overlay" data-reff=""></div>
 
-    <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="adminModalLongTitle">Confirm</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12 col-lg12">
-                            <label class="control-label">Are you sure you want to delete?</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button id="btnDelCancel" class="btn btn-sm btn-dialog-cancel" data-dismiss="modal" aria-label="Close">Cancel</button>
-                    <button id="btnDelOk" class="btn btn-sm btn-dialog-ok" data-dismiss="modal" aria-label="Close">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="~/assets/js/jquery-3.2.1.min.js"></script>
     <script src="~/assets/js/popper.min.js"></script>
     <script src="~/assets/js/bootstrap.min.js"></script>
@@ -139,6 +113,7 @@
 
     <script>
         var userId = 0, userName, isMultiUnit = false, isMultiCurrency = false, isBankPayment = false;
+        const SaleModule = 1, PurchaseModule = 2;
 
         userId = localStorage.getItem("UserID");
         userName = localStorage.getItem("UserName");
@@ -156,10 +131,13 @@
                 format: 'LT'
 			});
 			$('#subMenuSale').click(function () {
-			    window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId + '&saleId=' + null;
+			    window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId;
 			});
             $('#subMenuSaleList').click(function () {
                 window.location.href = '@Url.Action("ListSale", "Sale")?userId=' + userId;
+            });
+            $('#subMenuOpenBill').click(function () {
+                window.location.href = '@Url.Action("ListOpenBill", "Sale")?userId=' + userId;
             });
             $('.toast').toast({
                 delay: 3000
@@ -180,6 +158,12 @@
             $('#lblToastMessage').text(message);
         }
 
+        function showAlertInDialog(type, message) {
+            if (type == 1) $("#divAlertSuccess").delay(3000).addClass("in").toggle(true).fadeOut(500);
+            else if (type == 0) $("#divAlertError").delay(3000).addClass("in").toggle(true).fadeOut(500);
+            $("#spnAlertMessage").text(message);
+        }
+
         function redirectToLogin() {
             window.location.href = '@Url.Action("Login", "User")';
         }
@@ -196,6 +180,21 @@
             let month = ("0" + (date.getMonth() + 1)).slice(-2);
             let today = date.getFullYear() + "-" + (month) + "-" + (day);
             return today;
+        }
+
+        function createPaging(totalPage, currentPage) {
+            if (totalPage == 0)
+                $("#divPaging").css("display", "none");
+            else {
+                let pageItem;
+                $("#divPaging").show();
+                $("#divPagingItem").empty();
+                if (currentPage.length != 0) $("#lblPageNumber").text("Page: " + currentPage);
+                for (let i = 1; i <= totalPage; i++) {
+                    pageItem += '<button class="btnPage btn btn-paging">' + i + '</button>'
+                }
+                $('#divPagingItem').append(pageItem);
+            }
         }
 
     </script>
