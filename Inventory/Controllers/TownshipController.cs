@@ -5,11 +5,15 @@ using System.Web;
 using System.Web.Mvc;
 using Inventory.Models;
 using Inventory.Common;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace Inventory.Controllers
 {
     public class TownshipController : MyController
-    {
+    {    
+        DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
+        Procedure procdure = new Procedure();
         InventoryDBEntities Entities = new InventoryDBEntities();
         TownshipModels.TownshipModel model = new TownshipModels.TownshipModel();
         static List<TownshipModels.TownshipModel> lstTownshipList = new List<TownshipModels.TownshipModel>();
@@ -154,11 +158,28 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult DeleteAction(int townshipId)
         {
-            S_Township town = Entities.S_Township.Where(x => x.TownshipID == townshipId).Single<S_Township>();
-            Entities.S_Township.Remove(town);
-            Entities.SaveChanges();
+            string message = "";
+            bool IsSuccess = false;
+            List<TownshipModels> townList = new List<TownshipModels>();
+            if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcDeleteTownship, (SqlConnection) Session["SQLConnection"]);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@TownshipID", townshipId);
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                message = Convert.ToString(reader["Message"]);
+                IsSuccess = Convert.ToBoolean(reader["IsSuccess"]);
+            }
+            reader.Close();
+            dataConnectorSQL.Close();
+            var result = new
+            {
+                Message = message,
+                IsSuccess = IsSuccess
 
-            return Json("", JsonRequestBehavior.AllowGet);
+            };
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
 }

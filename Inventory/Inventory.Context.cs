@@ -42,7 +42,6 @@ namespace Inventory
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<S_Division> S_Division { get; set; }
         public virtual DbSet<T_CLTranSaleOrder> T_CLTranSaleOrder { get; set; }
-        public virtual DbSet<S_TranID> S_TranID { get; set; }
         public virtual DbSet<Sys_UnitLevel> Sys_UnitLevel { get; set; }
         public virtual DbSet<T_CLMasterSaleOrder> T_CLMasterSaleOrder { get; set; }
         public virtual DbSet<S_Customer> S_Customer { get; set; }
@@ -56,6 +55,7 @@ namespace Inventory
         public virtual DbSet<S_User> S_User { get; set; }
         public virtual DbSet<T_MasterSale> T_MasterSale { get; set; }
         public virtual DbSet<Sys_Module> Sys_Module { get; set; }
+        public virtual DbSet<T_TranSale> T_TranSale { get; set; }
     
         public virtual int PrcDeleteBank(Nullable<int> bankID)
         {
@@ -617,15 +617,6 @@ namespace Inventory
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_upgraddiagrams");
         }
     
-        public virtual ObjectResult<PrcGetDivisionSelectTownship_Result> PrcGetDivisionSelectTownship(Nullable<int> divisionID)
-        {
-            var divisionIDParameter = divisionID.HasValue ?
-                new ObjectParameter("DivisionID", divisionID) :
-                new ObjectParameter("DivisionID", typeof(int));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetDivisionSelectTownship_Result>("PrcGetDivisionSelectTownship", divisionIDParameter);
-        }
-    
         public virtual int PrcDeleteCLTranSaleOrder(Nullable<int> iD)
         {
             var iDParameter = iD.HasValue ?
@@ -1084,6 +1075,15 @@ namespace Inventory
                 new ObjectParameter("Module", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcUpdateVoucherFormat", iDParameter, preFormatParameter, midFormatParameter, postFormatParameter, moduleParameter);
+        }
+    
+        public virtual ObjectResult<PrcGetTownshipByDivision_Result> PrcGetTownshipByDivision(Nullable<int> divisionID)
+        {
+            var divisionIDParameter = divisionID.HasValue ?
+                new ObjectParameter("DivisionID", divisionID) :
+                new ObjectParameter("DivisionID", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetTownshipByDivision_Result>("PrcGetTownshipByDivision", divisionIDParameter);
         }
     }
 }

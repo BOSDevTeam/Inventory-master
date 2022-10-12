@@ -170,11 +170,18 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (selectedRow != null) {
-                        selectedRow.remove();
-                        location.reload();
-                        showToast(1, "Deleted Successfully!");
+                    if (response.IsSuccess == true)
+                    {
+                        if (selectedRow != null) {
+                            selectedRow.remove();
+                            location.reload();
+                            showToast(1, response.Message);
+                        }
                     }
+                    else {
+                        showToast(0, response.Message);
+                    }
+                   
                 },
                 failure: function (response) {
                     hideLoadingIcon();

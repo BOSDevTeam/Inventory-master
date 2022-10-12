@@ -20,7 +20,6 @@
         <EntityTypeShape EntityType="InventoryDBModel.sysdiagram" Width="1.5" PointX="6.75" PointY="16.75" IsExpanded="true" />
         <EntityTypeShape EntityType="InventoryDBModel.S_Division" Width="1.5" PointX="13.375" PointY="18.75" />
         <EntityTypeShape EntityType="InventoryDBModel.T_CLTranSaleOrder" Width="1.5" PointX="17.75" PointY="14.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_TranID" Width="1.5" PointX="0.75" PointY="18.75" />
         <EntityTypeShape EntityType="InventoryDBModel.Sys_UnitLevel" Width="1.5" PointX="11.375" PointY="4" />
         <EntityTypeShape EntityType="InventoryDBModel.T_CLMasterSaleOrder" Width="1.5" PointX="7.75" PointY="19.75" />
         <EntityTypeShape EntityType="InventoryDBModel.S_Customer" Width="1.5" PointX="0.75" PointY="0.75" />
@@ -34,6 +33,7 @@
         <EntityTypeShape EntityType="InventoryDBModel.S_User" Width="1.5" PointX="10.375" PointY="10.75" />
         <EntityTypeShape EntityType="InventoryDBModel.T_MasterSale" Width="1.5" PointX="14.375" PointY="0.75" />
         <EntityTypeShape EntityType="InventoryDBModel.Sys_Module" Width="1.5" PointX="7.375" PointY="13.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.T_TranSale" Width="1.5" PointX="9.375" PointY="13.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

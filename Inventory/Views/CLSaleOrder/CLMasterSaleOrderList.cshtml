@@ -26,7 +26,7 @@
         </div>
         <div class="col-md-8 col-lg-8">
             <div class="btn-group" style="float:right">
-                <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox mr-10" />
+                <input id="tvSearch" type="text" placeholder="Search..." class="width-200 custom-textbox mr-10" />
                 <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
                 <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
                 <button class="btn btn-light noHover" style="margin-left:10px; border:none;width: 80px;" id="lsitcount"><span style="color: #4CAF50;">@ViewBag.Count</span></button>
@@ -212,7 +212,23 @@
                     success: function (response) {
                         hideLoadingIcon();
                         alert("Success");
-                        //reload();
+                        $("#tblSaleOrder").find("tbody").empty();
+                        $.each(response, function (i, item) {
+                                var rows = "<tr class='row table-item'>"
+                                + "<td class='col-md-2 col-lg-2'>" + "<span>#</span>" + item.OrderNumber + "</td>"
+                                + "<td class='col-md-2 col-lg-2'>" + item.ClientName + "</td>"
+                                + "<td class='col-md-2 col-lg-2'>" + item.CustomerName + "</td>"
+                                + "<td class='col-md-2 col-lg-2'>" + item.OrderDateTime + "</td>"
+                                + "<td class='col-md-2 col-lg-2'>" + "<span>" + item.DefaultCurrency + "&nbsp;" + "</span>" + item.Total + "</td>"
+                                + "<td class='col-md-2 col-lg-2'><button id='btnView'class='btn btn-sm btn-primary btn-list-action' onclick='action(1)'>Order Detail</button> <button id='btnDelete' class='btn btn-sm border border-success btn-list-action' onclick='action(3)'>Add</button></td>"
+                                + "<td style='display:none'>" + item.SaleOrderID + "</td>"
+                                + "</tr>";
+                                $('#count').text(item.Counts);
+                                $("#fcount").removeAttr("hidden");
+                                $('#lsitcount').hide();
+                                $('#tblSaleOrder tbody').append(rows);
+                        });
+                        
                         $('#modalView').modal('show');
                     },
                     failure: function (response) {
@@ -337,6 +353,7 @@
                 saleorderId = $(this).text();
                 console.log(saleorderId);
                 if (actionValue == 1) {   // view
+                    actionValue = 0;
                     showLoadingIcon();
                     $.ajax({
                         type: "GET",
@@ -386,7 +403,6 @@
                     hideLoadingIcon();
                     $("#tblSaleOrder").find("tbody").empty();
                     $.each(response, function (i, item) {
-                        if (item.SaleOrderID != null) {
                             var rows = "<tr class='row table-item'>"
                             + "<td class='col-md-2 col-lg-2'>" + "<span>#</span>" + item.OrderNumber + "</td>"
                             + "<td class='col-md-2 col-lg-2'>" + item.ClientName + "</td>"
@@ -399,20 +415,7 @@
                             $('#count').text(item.Counts);
                             $("#fcount").removeAttr("hidden");
                             $('#lsitcount').hide();
-                            $('#tblSaleOrder tbody').append(rows);
-                        } else {
-                            var rows = "<tr class='row table-item'>"
-                           + "<td class='col-md-2 col-lg-2'>" + item.OrderNumber + "</td>"
-                           + "<td class='col-md-2 col-lg-2'>" + item.ClientName + "</td>"
-                           + "<td class='col-md-2 col-lg-2'>" + item.CustomerName + "</td>"
-                           + "<td class='col-md-2 col-lg-2'>" + item.Date + "</td>"
-                           + "<td class='col-md-2 col-lg-2'>" + "<span>" + item.DefaultCurrency + "&nbsp;" + "</span>" + item.Total + "</td>"
-                           + "<td class='col-md-2 col-lg-2'><button id='btnView'class='btn btn-sm btn-primary btn-list-action' onclick='action(1)'>Order Detail</button> <button id='btnDelete' class='btn btn-sm border border-success btn-list-action' onclick='action(3)'>Add</button></td>"
-                           + "<td style='display:none'>" + item.SaleOrderID + "</td>"
-                           + "</tr>";
-                            $('#count').text("");
-                            $('#tblSaleOrder tbody').append(rows);
-                        }
+                            $('#tblSaleOrder tbody').append(rows); 
                     });
                 },
                 failure: function (response) {

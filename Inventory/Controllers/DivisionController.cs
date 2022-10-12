@@ -108,14 +108,28 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult DeleteDivision(int divisionId)
         {
+            string message = "";
+            bool IsSuccess = false;
             List<DivisionModels> DivList = new List<DivisionModels>();
             DivisionModels divisionmodel = new DivisionModels();
             if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
             SqlCommand cmd = new SqlCommand(Procedure.PrcDeleteDivision, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@DivisionID", divisionId);
-            cmd.ExecuteNonQuery();
-            return Json("", JsonRequestBehavior.AllowGet);
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                message = Convert.ToString(reader["Message"]);
+                IsSuccess = Convert.ToBoolean(reader["IsSuccess"]);
+            }
+            reader.Close();
+            dataConnectorSQL.Close();
+            var result = new
+            {
+                Message = message,
+                IsSuccess = IsSuccess
+            };
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

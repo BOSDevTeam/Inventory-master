@@ -19,7 +19,7 @@ namespace Inventory.Controllers
         public ActionResult CustomerEntry(int customerId)
         {           
             GetDivision();
-            GetTownship();
+            if (model.Divisions.Count() != 0) GetTownship(Convert.ToInt32(model.Divisions[0].Value));
 
             if (customerId != 0)
             {
@@ -218,8 +218,6 @@ namespace Inventory.Controllers
                 customerModel.TownshipName = customer.TownshipName;
                 customerModel.DivisionID = customer.DivisionID;
                 customerModel.DivisionName = customer.DivisionName;
-
-
                 model.LstCustomer.Add(customerModel);
                 lstCustomerList.Add(customerModel);
             }
@@ -274,7 +272,7 @@ namespace Inventory.Controllers
         {
             TownshipModels.TownshipModel town = new TownshipModels.TownshipModel();
             List<TownshipModels.TownshipModel> lstwon = new List<TownshipModels.TownshipModel>();
-            foreach (var township in Entities.PrcGetDivisionSelectTownship(divisionId))
+            foreach (var township in Entities.PrcGetTownshipByDivision(divisionId))
             {
                 town = new TownshipModels.TownshipModel();
                 town.TownshipID = township.TownshipID;
@@ -297,9 +295,9 @@ namespace Inventory.Controllers
                 model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
             }
         }
-        private void GetTownship()
+        private void GetTownship(int divisionId)
         {
-            foreach (var town in Entities.S_Township.OrderBy(m => m.Code))
+            foreach (var town in Entities.S_Township.Where(m => m.DivisionID == divisionId).OrderBy(m => m.Code))
             {
                 model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
             }

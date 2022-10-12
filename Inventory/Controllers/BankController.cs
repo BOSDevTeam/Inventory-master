@@ -155,14 +155,27 @@ namespace Inventory.Controllers
         [HttpPost]
         public JsonResult DeleteAction(int bankId)
         {
+            string message = "";
+            bool IsSuccess = false;
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
             SqlCommand cmd = new SqlCommand(Procedure.PrcDeleteBank, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@BankID", bankId);
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                message = Convert.ToString(reader["Message"]);
+                IsSuccess = Convert.ToBoolean(reader["IsSuccess"]);
 
-            cmd.ExecuteNonQuery();
+            }
+            reader.Close();
             dataConnectorSQL.Close();
-            return Json("", JsonRequestBehavior.AllowGet);
+            var result = new
+            {
+                Message = message,
+                IsSuccess = IsSuccess
+            };
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
     }
 }

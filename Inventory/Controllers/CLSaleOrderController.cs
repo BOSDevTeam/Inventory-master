@@ -47,12 +47,27 @@ namespace Inventory.Controllers
                 dataConnectorSQL.Close();
             }
 
-            return Json("", JsonRequestBehavior.AllowGet);
+            List<CLMasterSaleOrderModels> List = Session["LstMSale"] as List<CLMasterSaleOrderModels>;
+            if (List.Count != 0)
+            {
+                int index = List.FindIndex(item => item.SaleOrderID == saleOrderID);             
+                var result = List.Where(c => c.SaleOrderID == saleOrderID).SingleOrDefault();
+                CLMasterSaleOrderModels newItem = new CLMasterSaleOrderModels();
+                newItem.SaleOrderID = saleOrderID;
+                newItem.OrderDateTime = result.OrderDateTime;
+                newItem.OrderNumber = result.OrderNumber;
+                newItem.ClientName = result.ClientName;
+                newItem.CustomerName = result.CustomerName;
+                newItem.DefaultCurrency = result.DefaultCurrency;
+                newItem.Subtotal = Convert.ToInt32(Session["TotalAmt"]);
+                newItem.TaxAmt = Convert.ToInt32(Session["TaxAmt"]);
+                newItem.ChargesAmt = Convert.ToInt32(Session["ChargeAmt"]);
+                newItem.Total = Convert.ToInt32(Session["Total"]);
+                List[index] = newItem;
+                Session["LstMSale"] = List;
+            }
+            return Json(List, JsonRequestBehavior.AllowGet);
         }
-
-
-
-
         public ActionResult CLMasterSaleOrderList()
         {
             CLMasterSaleOrderModels mastersalemodel = new CLMasterSaleOrderModels();
@@ -116,7 +131,6 @@ namespace Inventory.Controllers
                 tax = (totalAmt * result.Tax) / 100;
                 charge = (totalAmt * result.Charges) / 100;
                 total = totalAmt + tax + charge;
-
                 Session["TotalAmt"] = totalAmt;
                 Session["TaxAmt"] = tax;
                 Session["ChargeAmt"] = charge;

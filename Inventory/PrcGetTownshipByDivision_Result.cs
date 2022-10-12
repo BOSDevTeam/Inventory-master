@@ -11,7 +11,7 @@ namespace Inventory
 {
     using System;
     
-    public partial class PrcGetDivisionSelectTownship_Result
+    public partial class PrcGetTownshipByDivision_Result
     {
         public int TownshipID { get; set; }
         public string TownshipName { get; set; }

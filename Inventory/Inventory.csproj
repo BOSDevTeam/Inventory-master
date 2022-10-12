@@ -246,9 +246,6 @@
     <Compile Include="PrcGetCustomer_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="PrcGetDivisionSelectTownship_Result.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
     <Compile Include="PrcGetLocation_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
@@ -259,6 +256,9 @@
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="PrcGetSupplier_Result.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PrcGetTownshipByDivision_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="PrcGetTownship_Result.cs">
@@ -342,6 +342,9 @@
     <Compile Include="Sys_Currency.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
+    <Compile Include="Sys_Module.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
     <Compile Include="Sys_Payment.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
@@ -391,9 +394,6 @@
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="S_Township.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_TranID.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="S_Unit.cs">

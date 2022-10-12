@@ -209,8 +209,9 @@ namespace Inventory.Controllers
         public JsonResult DeleteAction(int userId)
         {         
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand("Delete From S_User Where UserID="+userId, (SqlConnection)Session["SQLConnection"]);
-            cmd.CommandType = CommandType.Text;
+            SqlCommand cmd = new SqlCommand(Procedure.PrcDeleteUser, (SqlConnection)Session["SQLConnection"]);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@ID", userId);
             cmd.ExecuteNonQuery();
             dataConnectorSQL.Close();
 
