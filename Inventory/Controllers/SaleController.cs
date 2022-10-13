@@ -22,7 +22,7 @@ namespace Inventory.Controllers
 
         #region Page
 
-        public ActionResult POS(int userId, int? saleId, int? openBillId)
+        public ActionResult POS(int userId, int? saleId, int? openBillId, int? clSaleOrderId)
         {
             if (checkConnection())
             {
@@ -79,6 +79,26 @@ namespace Inventory.Controllers
                     ViewBag.Total = data.Total;
                     ViewBag.TotalQuantity = totalQuantity;
                     ViewBag.OpenBillID = openBillId;
+                }
+                else if (clSaleOrderId != null)  // add sale from client sale order
+                {
+                    ViewBag.IsFromCLSaleOrder = true;
+                    SaleViewModel.CLMasterSaleOrderViewModel data = selectCLMasterSaleOrder((int)clSaleOrderId);
+                    List<TranSaleModels> lstTranSale = selectCLTranSaleOrderByID((int)clSaleOrderId);
+                    for (int i = 0; i < lstTranSale.Count(); i++)
+                    {
+                        totalQuantity += lstTranSale[i].Quantity;
+                    }
+                    Session["TranSaleData"] = lstTranSale;
+                    ViewBag.TotalItem = lstTranSale.Count();                 
+                    ViewBag.CustomerID = data.CustomerID;                  
+                    ViewBag.Subtotal = data.Subtotal;
+                    ViewBag.TaxAmt = data.TaxAmt;
+                    ViewBag.ChargesAmt = data.ChargesAmt;
+                    ViewBag.Total = data.Total;
+                    ViewBag.TotalQuantity = totalQuantity;
+                    ViewBag.CLSaleOrderID = clSaleOrderId;
+                    ViewBag.UserVoucherNo = getUserVoucherNo(userId);
                 }
                 else ViewBag.UserVoucherNo = getUserVoucherNo(userId); // new sale
 
@@ -431,7 +451,7 @@ namespace Inventory.Controllers
         public JsonResult PaymentSubmitAction(string userVoucherNo, string date, string voucherId, int customerId, int locationId,
                 int paymentId, int? payMethodId, int? limitedDayId, int? bankPaymentId, string remark, int? advancedPay,
                 int? payPercent, int? payPercentAmt, int? vouDisPercent, int? vouDisAmount, int? voucherDiscount,
-                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId,int? openBillId)
+                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId,int? openBillId,int? clSaleOrderId)
         {
             string systemVoucherNo = "";
             bool isRequestSuccess = true;
@@ -465,6 +485,7 @@ namespace Inventory.Controllers
                 if (vouDisAmount == null) vouDisAmount = 0;
                 if (voucherDiscount == null) voucherDiscount = 0;
                 if (openBillId == null) openBillId = 0;
+                if (clSaleOrderId == null) clSaleOrderId = 0;
 
                 SqlCommand cmd = new SqlCommand(Procedure.PrcInsertSale, dataConnectorSQL.Connect());
                 cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
@@ -495,6 +516,7 @@ namespace Inventory.Controllers
                 cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
                 cmd.Parameters.AddWithValue("@VoucherID", voucherId);
                 cmd.Parameters.AddWithValue("@OpenBillID", openBillId);
+                cmd.Parameters.AddWithValue("@CLSaleOrderID", clSaleOrderId);
                 cmd.CommandType = CommandType.StoredProcedure;
                 SqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read()) systemVoucherNo = Convert.ToString(reader[0]);
@@ -1019,8 +1041,7 @@ namespace Inventory.Controllers
             SaleViewModel.MasterOpenBillViewModel item = new SaleViewModel.MasterOpenBillViewModel();
 
             SqlCommand cmd = new SqlCommand(textQuery.getMasterOpenBillQuery(openBillId), (SqlConnection)getConnection());
-            cmd.CommandType = CommandType.Text;
-            cmd.Parameters.AddWithValue("@OpenBillID", openBillId);                   
+            cmd.CommandType = CommandType.Text;                          
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.Read())
             {
@@ -1155,6 +1176,50 @@ namespace Inventory.Controllers
                 item.UnitID = Convert.ToInt32(reader["UnitID"]);
                 item.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
                 item.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
+                item.ProductCode = Convert.ToString(reader["Code"]);
+                list.Add(item);
+            }
+            reader.Close();
+
+            return list;
+        }
+
+        private SaleViewModel.CLMasterSaleOrderViewModel selectCLMasterSaleOrder(int clSaleOrderId)
+        {
+            SaleViewModel.CLMasterSaleOrderViewModel item = new SaleViewModel.CLMasterSaleOrderViewModel();
+
+            SqlCommand cmd = new SqlCommand(textQuery.getCLMasterSaleOrderQuery(clSaleOrderId), (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.Text;          
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {             
+                item.CustomerID = Convert.ToInt32(reader["CustomerID"]);              
+                item.Subtotal = Convert.ToInt32(reader["Subtotal"]);
+                item.TaxAmt = Convert.ToInt32(reader["TaxAmt"]);
+                item.ChargesAmt = Convert.ToInt32(reader["ChargesAmt"]);
+                item.Total = Convert.ToInt32(reader["Total"]);
+            }
+            reader.Close();
+
+            return item;
+        }
+
+        private List<TranSaleModels> selectCLTranSaleOrderByID(int clSaleOrderId)
+        {
+            List<TranSaleModels> list = new List<TranSaleModels>();
+            TranSaleModels item = new TranSaleModels();
+
+            SqlCommand cmd = new SqlCommand(textQuery.getCLTranSaleOrderQuery(clSaleOrderId), (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.Text;         
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new TranSaleModels();
+                item.ProductName = Convert.ToString(reader["ProductName"]);
+                item.Quantity = Convert.ToInt32(reader["Quantity"]);
+                item.SalePrice = Convert.ToInt32(reader["SalePrice"]);              
+                item.Amount = Convert.ToInt32(reader["Amount"]);             
+                item.ProductID = Convert.ToInt32(reader["ProductID"]);                             
                 item.ProductCode = Convert.ToString(reader["Code"]);
                 list.Add(item);
             }

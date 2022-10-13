@@ -52,5 +52,15 @@ namespace Inventory.ViewModels
             public int TaxAmt { get; set; }
             public int ChargesAmt { get; set; }
         }
+
+        public class CLMasterSaleOrderViewModel
+        {
+            public int SaleOrderID { get; set; }
+            public int CustomerID { get; set; }
+            public int Total { get; set; }                             
+            public int Subtotal { get; set; }
+            public int TaxAmt { get; set; }
+            public int ChargesAmt { get; set; }
+        }
     }
 }
