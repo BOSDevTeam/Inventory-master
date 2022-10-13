@@ -27,10 +27,12 @@
         <div class="col-md-8 col-lg-8">
             <div class="btn-group" style="float:right">
                 <input id="tvSearch" type="text" placeholder="Search..." class="width-200 custom-textbox mr-10" />
-                <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
-                <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
-                <button class="btn btn-light noHover" style="margin-left:10px; border:none;width: 80px;" id="lsitcount"><span style="color: #4CAF50;">@ViewBag.Count</span></button>
-                <button class="btn btn-light noHover" style="margin-left:10px; border:none;width: 80px;" id="fcount" hidden><span style="color: #4CAF50;" id="count"></span></button>
+                <div class="btn-group">
+                    <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                    <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                </div>
+                <div class="note align-justify-center" style="margin-left:10px; font-size: 15px;font-weight: bold;padding: 5px 10px;" id="lsitcount"><span>@ViewBag.Count</span></div>
+                <div class="note align-justify-center" style="margin-left:10px; font-size: 15px;font-weight: bold;padding: 5px 10px;" id="fcount" hidden><span id="count"></span></div>
             </div>
         </div>
     </div>
@@ -57,8 +59,8 @@
                             <td class="col-md-2 col-lg-2">@Model.Lstmso[i].OrderDateTime</td>
                             <td class="col-md-2 col-lg-2"><span>@Model.Lstmso[i].DefaultCurrency</span>  @Model.Lstmso[i].Total.ToString("#,##0")</td>
                             <td class="col-md-2 col-lg-2">
-                                <button id="btnView" class="btn btn-sm btn-primary btn-list-action" onclick="action('1')">Order Detail</button>
-                                <button id="" class="btn btn-sm border border-success btn-list-action" onclick="action('3')">Add</button>
+                                <button id="btnView" class="btn btn-sm btn-dark" title="Order Detail" onclick="action('1')"><i class="fa fa-list"></i></button>
+                                <button id="" class="btn btn-sm btn-primary" title="Add to POS" onclick="action('3')"><i class="fa fa-dollar"></i></button>
                             </td>
                             <td style='display:none'>@Model.Lstmso[i].SaleOrderID</td>
                         </tr>
@@ -80,20 +82,20 @@
                 </button>
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body">          
                 <div class="row">
                     <div class="col-md-8">
                         <div class="col-md-12 col-lg12">
                             <div class="form-group">
                                 <div hidden><label id="lbSaleOrderID" class="control-input"></label></div>
-                                <h5 class="control-label"><b>Sale Order</b></h5>
-                                <div>#<label id="lblOrderNumber" class="control-input"></label> </div>
+                                <h5 class="control-label">Sale Order</h5>
+                                <div><b>#<label id="lblOrderNumber" class="control-input"></label></b> </div>
 
                             </div>
                         </div>
                         <div class="col-md-12 col-lg12">
-                            <h5 class="control-label"><b>Order Date</b></h5>
-                            <label id="OrderDate" class="control-input"></label>
+                            <h5 class="control-label">Order Date</h5>
+                            <b><label id="OrderDate" class="control-input"></label></b>
                         </div>
                     </div>
 
@@ -102,8 +104,8 @@
                             <div class="col-md-6" style="padding-left:10px;">
                                 <div class="card mb-1" style="max-width: 150px;background-color:#F3F3F3">
                                     <div class="card-body">
-                                        <h5 class="control-label"><b>Client</b></h5>
-                                        <p class="card-text" id="ClientName"></p>
+                                        <h5 class="control-label">Client</h5>
+                                        <b><p class="card-text" id="ClientName"></p></b>
                                         <p class="card-text" id="ClientPhone"></p>
                                     </div>
                                 </div>
@@ -111,8 +113,8 @@
                             <div class="col-md-6" style="padding-left:10px;">
                                 <div class="card mb-1" style="max-width: 150px;background-color:#F3F3F3">
                                     <div class="card-body">
-                                        <h5 class="control-label"><b>Customer</b></h5>
-                                        <p id="CustomerName" class="card-text"></p>
+                                        <h5 class="control-label">Customer</h5>
+                                        <b><p id="CustomerName" class="card-text"></p></b>
                                         <p class="card-text" id="CustomerPhone"></p>
                                     </div>
                                 </div>
@@ -121,13 +123,16 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="padding:5px;">
                 <div class="col-md-12">
                     <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
                 </div>
             </div>
-            <div class="modal-body">
-                <div class="row padding-10">
+            <div id="divAlertSuccess" class="alert alert-success alert-dismissible fade show" style="display:none;">
+                <h4 class="alert-heading">Success!</h4><span id="spnAlertMessage"></span>
+            </div> 
+            <div class="modal-body" style="padding:0">
+                <div class="row" style="margin:0">
                     <div class="col-md-12 col-lg-12">
                         <table class="col-md-12 col-lg-12" rold="grid">
                             <thead>
@@ -143,7 +148,7 @@
                             <tbody id="tbTranSaleOrder"></tbody>
                         </table>
                     </div>
-                    <div class="col-md-12 col-lg-12">
+                    <div class="col-md-12 col-lg-12" style="margin-top:5px">
                         <div class="row">
                             <div class="col-md-8"></div>
                             <div class="col-md-4">
@@ -152,9 +157,9 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div style="padding-left:10px">
-                                                <div><h5 class="control-label"><b>Subtotal</b></h5></div>
-                                                <div><h5 class="control-label"><b>Tax (5%)</b></h5></div>
-                                                <div><h5 class="control-label"><b>Charges (5%)</b></h5></div>
+                                                <div><h5 class="control-label"><b>Subtotal :</b></h5></div>
+                                                <div><h5 class="control-label"><b>Tax (5%) :</b></h5></div>
+                                                <div><h5 class="control-label"><b>Charges (5%) :</b></h5></div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -167,7 +172,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div style="padding-left:10px">
-                                                <div><h5 class="control-label"><b>Total</b></h5></div>
+                                                <div><h5 class="control-label"><b>Total :</b></h5></div>
                                             </div>
                                         </div>
                                         <div class="col-md-8">
@@ -181,8 +186,9 @@
                     </div>
                     <br />
                     <div class="col-md-12 col-lg-12">
-                        <textarea class="txarea" id="Remark" rows="4"></textarea>
-                        </>
+                        <div id="remark" class="light-background padding-5" style="text-align:center; display:none">
+                            <label id="lblRemark" class="control-label mb-0"></label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -202,7 +208,7 @@
             taxAmt = $('#Tax').text();
             chargesAmt = $('#Charges').text();
             total = $('#Total').text();
-            console.log(total);
+            showLoadingIcon();
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("SaveAction", "CLSaleOrder")',
@@ -211,7 +217,7 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        alert("Success");
+                        showAlertInDialog(1, "Save successfully!");
                         $("#tblSaleOrder").find("tbody").empty();
                         $.each(response, function (i, item) {
                                 var rows = "<tr class='row table-item'>"
@@ -219,16 +225,14 @@
                                 + "<td class='col-md-2 col-lg-2'>" + item.ClientName + "</td>"
                                 + "<td class='col-md-2 col-lg-2'>" + item.CustomerName + "</td>"
                                 + "<td class='col-md-2 col-lg-2'>" + item.OrderDateTime + "</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + "<span>" + item.DefaultCurrency + "&nbsp;" + "</span>" + item.Total + "</td>"
-                                + "<td class='col-md-2 col-lg-2'><button id='btnView'class='btn btn-sm btn-primary btn-list-action' onclick='action(1)'>Order Detail</button> <button id='btnDelete' class='btn btn-sm border border-success btn-list-action' onclick='action(3)'>Add</button></td>"
+                                + "<td class='col-md-2 col-lg-2'>" + "<span>" + item.DefaultCurrency + "&nbsp;" + "</span>" + item.Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</td>"
+                                + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark' title='Order Detail' onclick='action(1)'><i class='fa fa-list'></i></button> <button id='' class='btn btn-sm btn-primary' title='Add to POS' onclick='action('3')'><i class='fa fa-dollar'></i></button></td>"
                                 + "<td style='display:none'>" + item.SaleOrderID + "</td>"
                                 + "</tr>";
-                                $('#count').text(item.Counts);
-                                $("#fcount").removeAttr("hidden");
-                                $('#lsitcount').hide();
+
                                 $('#tblSaleOrder tbody').append(rows);
+
                         });
-                        
                         $('#modalView').modal('show');
                     },
                     failure: function (response) {
@@ -248,7 +252,7 @@
             $(this).find("td:last").each(function () {
                 transaleId = $(this).text();
                 quantity = $('#qty' + transaleId).val();
-                console.log(quantity);
+                showLoadingIcon();
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("QuantityAction", "CLSaleOrder")',
@@ -261,14 +265,14 @@
                         for (var i = 0; i < response.TranSaleOrderList.length; i++) {
                             rows += "<tr class='row table-item'>"
                            + "<td class='col-md-1 col-lg-1'>"
-                           + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-window-close white-color' aria-hidden='true'></i></button>"
+                           + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-remove' aria-hidden='true'></i></button>"
                            + "</td>"
                            + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
                            + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
                            + "<td class='col-md-2 col-lg-2'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
                            + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
                            + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
-                           + "<td>" + response.TranSaleOrderList[i].ID + "</td>"
+                           + "<td style='display:none'>" + response.TranSaleOrderList[i].ID + "</td>"
                            + "</tr>";
                             $('#Subtotal').text(response.Subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                             $('#Tax').text(response.TaxAmt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
@@ -295,6 +299,7 @@
             $(this).find("td:last").each(function () {
                 transaleId = $(this).text();
                 if (actionValue == 4) {  // delete
+                    actionValue = 0;
                     Swal.fire({
                         title: 'Are you sure?',
                         text: "",
@@ -370,7 +375,11 @@
                             $('#ClientPhone').text(response.ClientPhone);
                             $('#CustomerName').text(response.CustomerName);
                             $('#CustomerPhone').text(response.CustomerPhone);
-                            $('#Remark').text(response.Remark);
+                            if (response.Remark.length == 0) $('#remark').hide();                           
+                            else {
+                                $('#remark').show();
+                                $('#lblRemark').text(response.Remark);
+                            }
                             $('#Subtotal').text(response.Subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                             $('#Tax').text(response.TaxAmt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                             $('#Charges').text(response.ChargesAmt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
@@ -387,6 +396,10 @@
                             alert(response.responseText);
                         }
                     });
+                }
+                else if (actionValue == 3)
+                {
+                    window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId + '&clSaleOrderId=' + saleorderId;
                 }
             });
         });
@@ -408,14 +421,14 @@
                             + "<td class='col-md-2 col-lg-2'>" + item.ClientName + "</td>"
                             + "<td class='col-md-2 col-lg-2'>" + item.CustomerName + "</td>"
                             + "<td class='col-md-2 col-lg-2'>" + item.OrderDateTime + "</td>"
-                            + "<td class='col-md-2 col-lg-2'>" + "<span>" + item.DefaultCurrency + "&nbsp;" + "</span>" + item.Total + "</td>"
-                            + "<td class='col-md-2 col-lg-2'><button id='btnView'class='btn btn-sm btn-primary btn-list-action' onclick='action(1)'>Order Detail</button> <button id='btnDelete' class='btn btn-sm border border-success btn-list-action' onclick='action(3)'>Add</button></td>"
+                            + "<td class='col-md-2 col-lg-2'>" + "<span>" + item.DefaultCurrency + "&nbsp;" + "</span>" + item.Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</td>"
+                            + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark' title='Order Detail' onclick='action(1)'><i class='fa fa-list'></i></button> <button id='' class='btn btn-sm btn-primary' title='Add to POS' onclick='action('3')'><i class='fa fa-dollar'></i></button></td>"
                             + "<td style='display:none'>" + item.SaleOrderID + "</td>"
                             + "</tr>";
                             $('#count').text(item.Counts);
                             $("#fcount").removeAttr("hidden");
                             $('#lsitcount').hide();
-                            $('#tblSaleOrder tbody').append(rows); 
+                            $('#tblSaleOrder tbody').append(rows);
                     });
                 },
                 failure: function (response) {
@@ -468,14 +481,14 @@
         for (var i = 0; i < response.TranSaleOrderList.length; i++) {
             rows += "<tr class='row table-item'>"
            + "<td class='col-md-1 col-lg-1'>"
-           + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-window-close white-color' aria-hidden='true'></i></button>"
+           + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-remove' aria-hidden='true'></i></button>"
            + "</td>"
            + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
            + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
            + "<td class='col-md-2 col-lg-2'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
            + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
            + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
-           + "<td>" + response.TranSaleOrderList[i].ID + "</td>"
+           + "<td style='display:none'>" + response.TranSaleOrderList[i].ID + "</td>"
            + "</tr>";
             $('#tbTranSaleOrder').html(rows);
             $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);
@@ -488,14 +501,14 @@
         for (var i = 0; i < response.TranSaleOrderList.length; i++) {
             rows += "<tr class='row table-item'>"
            + "<td class='col-md-1 col-lg-1'>"
-           + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-window-close white-color' aria-hidden='true'></i></button>"
+           + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-remove' aria-hidden='true'></i></button>"
            + "</td>"
            + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
            + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
            + "<td class='col-md-2 col-lg-2'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
            + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
            + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
-           + "<td>" + response.TranSaleOrderList[i].ID + "</td>"
+           + "<td style='display:none'>" + response.TranSaleOrderList[i].ID + "</td>"
            + "</tr>";
             $('#tbTranSaleOrder').html(rows);
             $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);

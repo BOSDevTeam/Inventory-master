@@ -63,6 +63,8 @@ namespace Inventory.Controllers
                 newItem.TaxAmt = Convert.ToInt32(Session["TaxAmt"]);
                 newItem.ChargesAmt = Convert.ToInt32(Session["ChargeAmt"]);
                 newItem.Total = Convert.ToInt32(Session["Total"]);
+                newItem.Remark = result.Remark;
+                newItem.Counts = List.Count();
                 List[index] = newItem;
                 Session["LstMSale"] = List;
             }
@@ -92,6 +94,7 @@ namespace Inventory.Controllers
                 mastersalemodel.ChargesAmt = Convert.ToInt32(mastersale.ChargesAmt);
                 mastersalemodel.Total = Convert.ToInt32(mastersale.Total);
                 mastersalemodel.DefaultCurrency = mastersale.Currency;
+                mastersalemodel.Remark = mastersale.Remark;
                 model.Lstmso.Add(mastersalemodel);
                 Lstmso.Add(mastersalemodel);
 

@@ -231,7 +231,7 @@ div.product{background-color:#2595c1;overflow-y:auto;padding:5px;}
 .noHover{pointer-events: none;}
 .white-color {color:white;}
 label1 {display:block; text-align:right;margin-right:20px}
-.button4 {background-color: #e7e7e7; color: black;}
+.button4 {background-color: #e7e7e7; color: #e26f6f;}
 .txarea {width: 100%;padding: 12px;border: 1px solid #ccc;border-radius: 4px;
   box-sizing: border-box;margin-top: 6px;margin-bottom: 16px;resize: vertical;}
 /** end client sale order **/
