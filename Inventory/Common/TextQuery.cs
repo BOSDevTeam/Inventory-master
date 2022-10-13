@@ -57,5 +57,18 @@ namespace Inventory.Common
             return "Select UserVoucherNo,VoucherID,Subtotal,TaxAmt,ChargesAmt,Total,LocationID,CustomerID"
             + " From T_MasterOpenBill Where OpenBillID=" + openBillId;
         }
+
+        public string getCLMasterSaleOrderQuery(int clSaleOrderId)
+        {
+            return "Select Subtotal,TaxAmt,ChargesAmt,Total,isnull(CustomerID,0) AS CustomerID"
+            + " From T_CLMasterSaleOrder Where SaleOrderID=" + clSaleOrderId;
+        }
+
+        public string getCLTranSaleOrderQuery(int clSaleOrderId)
+        {
+            return "Select p.ProductName,ts.Quantity,ts.SalePrice,ts.Amount,ts.ProductID,p.Code"
+            + " From T_CLTranSaleOrder ts INNER JOIN S_Product p ON ts.ProductID=p.ProductID"
+            + " Where ts.SaleOrderID=" + clSaleOrderId;
+        }
     }
 }
