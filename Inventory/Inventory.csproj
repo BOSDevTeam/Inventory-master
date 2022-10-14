@@ -164,6 +164,7 @@
     <Compile Include="Common\AppSetting.cs" />
     <Compile Include="Common\TextQuery.cs" />
     <Compile Include="Controllers\AdjustTypeController.cs" />
+    <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\PaymentDialogController.cs" />
     <Compile Include="Controllers\ProductMenuController.cs" />
     <Compile Include="Controllers\BankController.cs" />
@@ -208,6 +209,7 @@
     <Compile Include="Models\AdjustTypeModels.cs" />
     <Compile Include="Models\BankModels.cs" />
     <Compile Include="Models\BankPaymentModels.cs" />
+    <Compile Include="Models\ClientModels.cs" />
     <Compile Include="Models\CLTranSaleOrderModels.cs" />
     <Compile Include="Models\CompanySettingModels.cs" />
     <Compile Include="Models\CurrencyModels.cs" />
@@ -586,6 +588,7 @@
     <Content Include="Views\Sale\ListOpenBill.cshtml" />
     <Content Include="Views\Shared\_ConfirmDialog.cshtml" />
     <Content Include="Views\Shared\_RemarkDialog.cshtml" />
+    <Content Include="Views\Client\ClientList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

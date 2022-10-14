@@ -83,6 +83,26 @@ namespace Inventory.Controllers
             return Json(model.LstClient, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult GetDivsionSelectTownship(int? divisionId)
+        {
+            TownshipModels.TownshipModel town = new TownshipModels.TownshipModel();
+            List<TownshipModels.TownshipModel> lstwon = new List<TownshipModels.TownshipModel>();
+            foreach (var township in Entities.PrcGetTownshipByDivision(divisionId))
+            {
+                town = new TownshipModels.TownshipModel();
+                town.TownshipID = township.TownshipID;
+                town.TownshipName = township.TownshipName;
+                lstwon.Add(town);
+            }
+
+            if (lstwon.Count == 0)
+            {
+                Session["TownshipID"] = 0;
+            }
+
+            return Json(lstwon, JsonRequestBehavior.AllowGet);
+        }
+
         private void GetDivisionDefaultInclude()
         {
             model.Divisions.Add(new SelectListItem { Text = "Division", Value = "0" });

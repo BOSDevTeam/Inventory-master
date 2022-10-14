@@ -44,9 +44,9 @@
                         <th class="col-md-2 col-lg-2">Order Number</th>
                         <th class="col-md-2 col-lg-2">Client</th>
                         <th class="col-md-2 col-lg-2">Customer</th>
-                        <th class="col-md-2 col-lg-2">Date</th>
+                        <th class="col-md-3 col-lg-3">Date</th>
                         <th class="col-md-2 col-lg-2">Total</th>
-                        <th class="col-md-2 col-lg-2">Action</th>
+                        <th class="col-md-1 col-lg-1">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,11 +56,11 @@
                             <td class="col-md-2 col-lg-2"><span>#</span>@Model.Lstmso[i].OrderNumber</td>
                             <td class="col-md-2 col-lg-2">@Model.Lstmso[i].ClientName</td>
                             <td class="col-md-2 col-lg-2">@Model.Lstmso[i].CustomerName</td>
-                            <td class="col-md-2 col-lg-2">@Model.Lstmso[i].OrderDateTime</td>
+                            <td class="col-md-3 col-lg-3">@Model.Lstmso[i].OrderDateTime</td>
                             <td class="col-md-2 col-lg-2"><span>@Model.Lstmso[i].DefaultCurrency</span>  @Model.Lstmso[i].Total.ToString("#,##0")</td>
-                            <td class="col-md-2 col-lg-2">
+                            <td class="col-md-1 col-lg-1 btn-group">
                                 <button id="btnView" class="btn btn-sm btn-dark" title="Order Detail" onclick="action('1')"><i class="fa fa-list"></i></button>
-                                <button id="" class="btn btn-sm btn-primary" title="Add to POS" onclick="action('3')"><i class="fa fa-dollar"></i></button>
+                                <button class="btn btn-sm btn-primary" title="Add to POS" onclick="action('3')"><i class="fa fa-dollar"></i></button>
                             </td>
                             <td style='display:none'>@Model.Lstmso[i].SaleOrderID</td>
                         </tr>
@@ -406,6 +406,7 @@
 
         $('#btnSearch').click(function () {
             var keyword = $('#tvSearch').val();
+            showLoadingIcon();
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("SearchCLMasterSaleOrder", "CLSaleOrder")',
@@ -420,15 +421,16 @@
                             + "<td class='col-md-2 col-lg-2'>" + "<span>#</span>" + item.OrderNumber + "</td>"
                             + "<td class='col-md-2 col-lg-2'>" + item.ClientName + "</td>"
                             + "<td class='col-md-2 col-lg-2'>" + item.CustomerName + "</td>"
-                            + "<td class='col-md-2 col-lg-2'>" + item.OrderDateTime + "</td>"
+                            + "<td class='col-md-3 col-lg-3'>" + item.OrderDateTime + "</td>"
                             + "<td class='col-md-2 col-lg-2'>" + "<span>" + item.DefaultCurrency + "&nbsp;" + "</span>" + item.Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</td>"
-                            + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark' title='Order Detail' onclick='action(1)'><i class='fa fa-list'></i></button> <button id='' class='btn btn-sm btn-primary' title='Add to POS' onclick='action('3')'><i class='fa fa-dollar'></i></button></td>"
+                            + "<td class='col-md-1 col-lg-1 btn-group'><button id='btnView' class='btn btn-sm btn-dark' title='Order Detail' onclick='action(1)'><i class='fa fa-list'></i></button> <button id='' class='btn btn-sm btn-primary' title='Add to POS' onclick='action('3')'><i class='fa fa-dollar'></i></button></td>"
                             + "<td style='display:none'>" + item.SaleOrderID + "</td>"
                             + "</tr>";
+                            $('#tblSaleOrder tbody').append(rows);
                             $('#count').text(item.Counts);
                             $("#fcount").removeAttr("hidden");
                             $('#lsitcount').hide();
-                            $('#tblSaleOrder tbody').append(rows);
+                            
                     });
                 },
                 failure: function (response) {

@@ -167,7 +167,7 @@
                         dataType: "json",
                         success: function (response) {
                             hideLoadingIcon();
-                            if (response.LocationName != 0) {
+                            if (response.LocationName != '') {
                                 $('#location').hide();
                                 $('#lblLocation').text(response.LocationName).show();
                             }
@@ -175,7 +175,7 @@
                                 $('#location').show();
                                 $('#lblLocation').text(response.LocationName).hide();
                             }                          
-                            if (response.HeaderName != 0) {
+                            if (response.HeaderName != '') {
                                 $('#name').hide();
                                 $('#lblHeaderName').text(response.HeaderName).show();
                             }
@@ -184,7 +184,7 @@
                                 $('#lblHeaderName').text(response.HeaderName).hide();
                             }
                             
-                            if (response.HeaderDesp != 0) {
+                            if (response.HeaderDesp != '') {
                                 $('#desp').hide();
                                 $('#lblHeaderDesp').text(response.HeaderDesp).show();
                             }
@@ -200,7 +200,7 @@
                                 $('#phone').show();
                                 $('#lblHeaderPhone').text(response.HeaderPhone).hide();
                             }                          
-                            if (response.HeaderAddress != 0) {
+                            if (response.HeaderAddress != '') {
                                 $('#address').hide();
                                 $('#lblHeaderAddress').text(response.HeaderAddress).show();
                             }
@@ -208,7 +208,7 @@
                                 $('#address').show();
                                 $('#lblHeaderAddress').text(response.HeaderAddress).hide();
                             }
-                            if (response.OtherHeader1 != 0) {
+                            if (response.OtherHeader1 != '') {
                                 $('#header1').hide();
                                 $('#lblOtherHeader1').text(response.OtherHeader1).show();
                             }
@@ -216,7 +216,7 @@
                                 $('#header1').show();
                                 $('#lblOtherHeader1').text(response.OtherHeader1).hide();
                             }
-                            if (response.OtherHeader2 != 0) {
+                            if (response.OtherHeader2 != '') {
                                 $('#header2').hide();                        
                                 $('#lblOtherHeader2').text(response.OtherHeader2).show();                               
                             }
@@ -224,7 +224,7 @@
                                 $('#header2').show();                              
                                 $('#lblOtherHeader2').text(response.OtherHeader2).hide();                                
                             }
-                            if (response.FooterMessage1 != 0) {
+                            if (response.FooterMessage1 != '') {
                                 $('#message1').hide();
                                 $('#lblFooterMessage1').text(response.FooterMessage1).show();
                             }
@@ -233,7 +233,7 @@
                                 $('#lblFooterMessage1').text(response.FooterMessage1).hide();
 
                             }
-                            if (response.FooterMessage2 != 0) {
+                            if (response.FooterMessage2 != '') {
                                 $('#message2').hide();
                                 $('#lblFooterMessage2').text(response.FooterMessage2).show();                              
                             }
@@ -241,7 +241,7 @@
                                 $('#message2').show();
                                 $('#lblFooterMessage2').text(response.FooterMessage2).hide();                               
                             }
-                            if (response.FooterMessage3 != 0) {
+                            if (response.FooterMessage3 != '') {
                                 $('#message3').hide();
                                 $('#lblFooterMessage3').text(response.FooterMessage3).show();
                             }

@@ -316,7 +316,7 @@
                         dataType: "json",
                         success: function (response) {
                             hideLoadingIcon();
-                            if (response.ProductName != 0) {
+                            if (response.ProductName != '') {
                                 $('#productname').hide();
                                 $('#lblProductName').text(response.ProductName).show();
                             }
@@ -324,7 +324,7 @@
                                 $('#productname').show();
                                 $('#lblProductName').text(response.ProductName).hide();
                             }
-                            if (response.Code != null) {
+                            if (response.Code != 0) {
                                 $('#code').hide();
                                 $('#lblCode').text(response.Code).show();
                             }
@@ -332,7 +332,7 @@
                                 $('#code').show();
                                 $('#lblCode').text(response.Code).hide();
                             }
-                            if (response.MainMenu != 0) {
+                            if (response.MainMenu != '') {
                                 $('#mainmenu').hide();
                                 $('#lblMainMenu').text(response.MainMenu).show();
                             }
@@ -340,7 +340,7 @@
                                 $('#mainmenu').show();
                                 $('#lblMainMenu').text(response.MainMenu).hide();
                             }
-                            if (response.SubMenu != 0) {
+                            if (response.SubMenu != '') {
                                 $('#submenu').hide();
                                 $('#lblSubMenu').text(response.SubMenu).show();
                             }
@@ -348,7 +348,7 @@
                                 $('#submenu').show();
                                 $('#lblSubMenu').text(response.SubMenu).hide();
                             }
-                            if (response.Description != 0) {
+                            if (response.Description != '') {
                                 $('#desp').hide();
                                 $('#lblDescription').text(response.Description).show();
                             }

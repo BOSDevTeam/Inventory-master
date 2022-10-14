@@ -163,20 +163,6 @@
           <Property Name="IsDefault" Type="bit" />
           <Property Name="DivisionID" Type="int" />
         </EntityType>
-        <EntityType Name="S_TranID">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="SaleTranID" Type="int" Nullable="false" />
-          <Property Name="SaleOrderTranID" Type="int" Nullable="false" />
-          <Property Name="SaleReturnTranID" Type="int" Nullable="false" />
-          <Property Name="SaleConsignTranID" Type="int" Nullable="false" />
-          <Property Name="PurTranID" Type="int" Nullable="false" />
-          <Property Name="PurOrderTranID" Type="int" Nullable="false" />
-          <Property Name="PurReturnTranID" Type="int" Nullable="false" />
-          <Property Name="PurConsignTranID" Type="int" Nullable="false" />
-        </EntityType>
         <EntityType Name="S_Unit">
           <Key>
             <PropertyRef Name="UnitID" />
@@ -387,14 +373,14 @@
         </Function>
         <Function Name="PrcGetCompanySetting" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="PrcGetCustomer" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
-        <Function Name="PrcGetDivisionSelectTownship" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="DivisionID" Type="int" Mode="In" />
-        </Function>
         <Function Name="PrcGetLocation" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="PrcGetProduct" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="PrcGetSubMenu" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="PrcGetSupplier" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="PrcGetTownship" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="PrcGetTownshipByDivision" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="DivisionID" Type="int" Mode="In" />
+        </Function>
         <Function Name="PrcGetUnit" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="PrcGetUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="PrcGetVoucherFormat" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
@@ -479,12 +465,6 @@
         <Function Name="PrcSearchBankPayment" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="keyword" Type="nvarchar" Mode="In" />
           <Parameter Name="BankID" Type="int" Mode="In" />
-        </Function>
-        <Function Name="PrcSearchByFirstKeyword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="keyword" Type="nvarchar" Mode="In" />
-        </Function>
-        <Function Name="PrcSearchByLastKeyword" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="keyword" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="PrcSearchCLMasterSaleOrder" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="keywords" Type="nvarchar" Mode="In" />
@@ -679,7 +659,6 @@
           <EntitySet Name="S_SubMenu" EntityType="Self.S_SubMenu" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="S_Supplier" EntityType="Self.S_Supplier" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="S_Township" EntityType="Self.S_Township" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_TranID" EntityType="Self.S_TranID" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="S_Unit" EntityType="Self.S_Unit" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="S_User" EntityType="Self.S_User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="S_VoucherFormat" EntityType="Self.S_VoucherFormat" Schema="dbo" store:Type="Tables" />
@@ -1000,14 +979,10 @@
           </FunctionImport>
           <FunctionImport Name="sp_upgraddiagrams" />
           <EntitySet Name="S_Division" EntityType="InventoryDBModel.S_Division" />
-          <FunctionImport Name="PrcGetDivisionSelectTownship" ReturnType="Collection(InventoryDBModel.PrcGetDivisionSelectTownship_Result)">
-          <Parameter Name="DivisionID" Mode="In" Type="Int32" />
-          </FunctionImport>
           <EntitySet Name="T_CLTranSaleOrder" EntityType="InventoryDBModel.T_CLTranSaleOrder" />
           <FunctionImport Name="PrcDeleteCLTranSaleOrder">
           <Parameter Name="ID" Mode="In" Type="Int32" />
           </FunctionImport>
-          <EntitySet Name="S_TranID" EntityType="InventoryDBModel.S_TranID" />
           <EntitySet Name="Sys_UnitLevel" EntityType="InventoryDBModel.Sys_UnitLevel" />
           <EntitySet Name="T_CLMasterSaleOrder" EntityType="InventoryDBModel.T_CLMasterSaleOrder" />
           <FunctionImport Name="PrcSearchCLMasterSaleOrder" ReturnType="Collection(InventoryDBModel.PrcSearchCLMasterSaleOrder_Result)">
@@ -1145,6 +1120,9 @@
             <Parameter Name="Module" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="T_TranSale" EntityType="InventoryDBModel.T_TranSale" />
+          <FunctionImport Name="PrcGetTownshipByDivision" ReturnType="Collection(InventoryDBModel.PrcGetTownshipByDivision_Result)">
+            <Parameter Name="DivisionID" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <ComplexType Name="PrcGetCompanySetting_Result">
           <Property Type="Boolean" Name="IsMultiCurrency" Nullable="false" />
@@ -1328,10 +1306,6 @@
           <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DivisionName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
-        <ComplexType Name="PrcGetDivisionSelectTownship_Result">
-          <Property Type="Int32" Name="TownshipID" Nullable="false" />
-          <Property Type="String" Name="TownshipName" Nullable="true" MaxLength="200" />
-        </ComplexType>
         <EntityType Name="T_CLTranSaleOrder">
           <Key>
             <PropertyRef Name="ID" />
@@ -1342,20 +1316,6 @@
           <Property Name="Quantity" Type="Int32" />
           <Property Name="SalePrice" Type="Int32" />
           <Property Name="Amount" Type="Int32" />
-        </EntityType>
-        <EntityType Name="S_TranID">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SaleTranID" Type="Int32" Nullable="false" />
-          <Property Name="SaleOrderTranID" Type="Int32" Nullable="false" />
-          <Property Name="SaleReturnTranID" Type="Int32" Nullable="false" />
-          <Property Name="SaleConsignTranID" Type="Int32" Nullable="false" />
-          <Property Name="PurTranID" Type="Int32" Nullable="false" />
-          <Property Name="PurOrderTranID" Type="Int32" Nullable="false" />
-          <Property Name="PurReturnTranID" Type="Int32" Nullable="false" />
-          <Property Name="PurConsignTranID" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="Sys_UnitLevel">
           <Key>
@@ -1732,6 +1692,10 @@
           <Property Name="Amount" Type="Int32" />
           <Property Name="IsFOC" Type="Boolean" />
         </EntityType>
+        <ComplexType Name="PrcGetTownshipByDivision_Result">
+          <Property Type="Int32" Name="TownshipID" Nullable="false" />
+          <Property Type="String" Name="TownshipName" Nullable="true" MaxLength="200" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1988,40 +1952,6 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="PrcSearchByFirstKeyword" FunctionName="InventoryDBModel.Store.PrcSearchByFirstKeyword">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="InventoryDBModel.PrcSearchByFirstKeyword_Result">
-                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
-                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="SubMenuID" ColumnName="SubMenuID" />
-                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
-                <ScalarProperty Name="IsUnit" ColumnName="IsUnit" />
-                <ScalarProperty Name="DisPercent" ColumnName="DisPercent" />
-                <ScalarProperty Name="IsVariant" ColumnName="IsVariant" />
-                <ScalarProperty Name="MainMenuID" ColumnName="MainMenuID" />
-                <ScalarProperty Name="MainMenuName" ColumnName="MainMenuName" />
-                <ScalarProperty Name="SubMenuName" ColumnName="SubMenuName" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="PrcSearchByLastKeyword" FunctionName="InventoryDBModel.Store.PrcSearchByLastKeyword">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="InventoryDBModel.PrcSearchByLastKeyword_Result">
-                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
-                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="SubMenuID" ColumnName="SubMenuID" />
-                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
-                <ScalarProperty Name="IsUnit" ColumnName="IsUnit" />
-                <ScalarProperty Name="DisPercent" ColumnName="DisPercent" />
-                <ScalarProperty Name="IsVariant" ColumnName="IsVariant" />
-                <ScalarProperty Name="MainMenuID" ColumnName="MainMenuID" />
-                <ScalarProperty Name="MainMenuName" ColumnName="MainMenuName" />
-                <ScalarProperty Name="SubMenuName" ColumnName="SubMenuName" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="PrcSearchMainMenu" FunctionName="InventoryDBModel.Store.PrcSearchMainMenu">
             <ResultMapping>
               <ComplexTypeMapping TypeName="InventoryDBModel.PrcSearchMainMenu_Result">
@@ -2145,14 +2075,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="PrcGetDivisionSelectTownship" FunctionName="InventoryDBModel.Store.PrcGetDivisionSelectTownship">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="InventoryDBModel.PrcGetDivisionSelectTownship_Result">
-                <ScalarProperty Name="TownshipID" ColumnName="TownshipID" />
-                <ScalarProperty Name="TownshipName" ColumnName="TownshipName" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <EntitySetMapping Name="T_CLTranSaleOrder">
             <EntityTypeMapping TypeName="InventoryDBModel.T_CLTranSaleOrder">
               <MappingFragment StoreEntitySet="T_CLTranSaleOrder">
@@ -2166,21 +2088,6 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="PrcDeleteCLTranSaleOrder" FunctionName="InventoryDBModel.Store.PrcDeleteCLTranSaleOrder" />
-          <EntitySetMapping Name="S_TranID">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_TranID">
-              <MappingFragment StoreEntitySet="S_TranID">
-                <ScalarProperty Name="PurConsignTranID" ColumnName="PurConsignTranID" />
-                <ScalarProperty Name="PurReturnTranID" ColumnName="PurReturnTranID" />
-                <ScalarProperty Name="PurOrderTranID" ColumnName="PurOrderTranID" />
-                <ScalarProperty Name="PurTranID" ColumnName="PurTranID" />
-                <ScalarProperty Name="SaleConsignTranID" ColumnName="SaleConsignTranID" />
-                <ScalarProperty Name="SaleReturnTranID" ColumnName="SaleReturnTranID" />
-                <ScalarProperty Name="SaleOrderTranID" ColumnName="SaleOrderTranID" />
-                <ScalarProperty Name="SaleTranID" ColumnName="SaleTranID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Sys_UnitLevel">
             <EntityTypeMapping TypeName="InventoryDBModel.Sys_UnitLevel">
               <MappingFragment StoreEntitySet="Sys_UnitLevel">
@@ -2632,6 +2539,14 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="PrcGetTownshipByDivision" FunctionName="InventoryDBModel.Store.PrcGetTownshipByDivision">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="InventoryDBModel.PrcGetTownshipByDivision_Result">
+                <ScalarProperty Name="TownshipID" ColumnName="TownshipID" />
+                <ScalarProperty Name="TownshipName" ColumnName="TownshipName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

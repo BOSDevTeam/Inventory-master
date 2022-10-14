@@ -113,6 +113,38 @@
 
     $(function () {
 
+        $('#DivisionID').change(function () {
+            var val = $('#DivisionID option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetDivsionSelectTownship", "Client")',
+                data: { "divisionId": val },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    var town;
+                    $('#TownshipID').html("");
+                    for (var i = 0 ; i < response.length; i++) {
+                        town += '<option value= "' + response[i].TownshipID + '">' + response[i].TownshipName + '</option>';
+                    }
+                    $('#TownshipID').append(town);
+
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+
+
+            });
+        });
+
         $("#btnSearch").click(function () {
             var keyword = $('#tvSearch').val();
             var divisionId = $('#DivisionID').val();

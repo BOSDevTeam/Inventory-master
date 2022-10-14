@@ -48,6 +48,8 @@ namespace Inventory.Common
         public const string PrcGetMasterOpenBill = "PrcGetMasterOpenBill";
         public const string PrcGetTranOpenBillByID = "PrcGetTranOpenBillByID";
         public const string PrcDeleteTownship = "PrcDeleteTownship";
-        public const string PrcDeleteUser = "PrcDeleteUser";       
+        public const string PrcDeleteUser = "PrcDeleteUser";
+        public const string PrcGetClient = "PrcGetClient";
+        public const string PrcSearchClient = "PrcSearchClient";
     }
 }

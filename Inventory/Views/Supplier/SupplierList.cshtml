@@ -177,7 +177,7 @@
                         dataType: "json",
                         success: function (response) {
                             hideLoadingIcon();
-                            if (response.SupplierName != 0) {
+                            if (response.SupplierName != '') {
                                 $('#supname').hide();
                                 $('#lblSupplierName').text(response.SupplierName).show();
                             }
@@ -185,7 +185,7 @@
                                 $('#supname').show();
                                 $('#lblSupplierName').text(response.SupplierName).hide();
                             }
-                            if (response.Code != null) {
+                            if (response.Code != 0) {
                                 $('#code').hide();
                                 $('#lblCode').text(response.Code).show();
                             }
@@ -201,7 +201,7 @@
                                 $('#phone').show();
                                 $('#lblPhone').text(response.Phone).hide();
                             }
-                            if (response.Email != 0) {
+                            if (response.Email != '') {
                                 $('#email').hide();
                                 $('#lblEmail').text(response.Email).show();
                             }
@@ -209,7 +209,7 @@
                                 $('#email').show();
                                 $('#lblEmail').text(response.Email).hide();
                             }
-                            if (response.Contact != 0) {
+                            if (response.Contact != '') {
                                 $('#contact').hide();
                                 $('#lblContact').text(response.Contact).show();
                             }
@@ -217,7 +217,7 @@
                                 $('#contact').show();
                                 $('#lblContact').text(response.Contact).hide();
                             }
-                            if (response.Address != 0) {
+                            if (response.Address != '') {
                                 $('#address').hide();
                                 $('#lblAddress').text(response.Address).show();
                             }
@@ -225,7 +225,7 @@
                                 $('#address').show();
                                 $('#lblAddress').text(response.Address).hide();
                             }
-                            if (response.TownshipName != 0) {
+                            if (response.TownshipName != '') {
                                 $('#township').hide();
                                 $('#lblTownship').text(response.TownshipName).show();
                             }
@@ -233,7 +233,7 @@
                                 $('#township').show();
                                 $('#lblTownship').text(response.TownshipName).hide();
                             }
-                            if (response.DivisionName != 0) {
+                            if (response.DivisionName != null) {
                                 $('#division').hide();
                                 $('#lblDivision').text(response.DivisionName).show();
                             }
