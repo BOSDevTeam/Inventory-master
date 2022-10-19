@@ -291,6 +291,9 @@
     <Compile Include="PrcSearchByLastKeyword_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
+    <Compile Include="PrcSearchClient_Result.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
     <Compile Include="PrcSearchCLMasterSaleOrder_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>

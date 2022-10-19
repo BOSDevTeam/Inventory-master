@@ -324,7 +324,7 @@
                                 $('#productname').show();
                                 $('#lblProductName').text(response.ProductName).hide();
                             }
-                            if (response.Code != 0) {
+                            if (response.Code != null) {
                                 $('#code').hide();
                                 $('#lblCode').text(response.Code).show();
                             }

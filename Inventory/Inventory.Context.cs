@@ -626,15 +626,6 @@ namespace Inventory
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcDeleteCLTranSaleOrder", iDParameter);
         }
     
-        public virtual ObjectResult<PrcSearchCLMasterSaleOrder_Result> PrcSearchCLMasterSaleOrder(string keywords)
-        {
-            var keywordsParameter = keywords != null ?
-                new ObjectParameter("keywords", keywords) :
-                new ObjectParameter("keywords", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcSearchCLMasterSaleOrder_Result>("PrcSearchCLMasterSaleOrder", keywordsParameter);
-        }
-    
         public virtual int PrcInsertCustomer(string customerName, string code, string phone, string email, string address, string contact, Nullable<int> townshipID, Nullable<bool> isCredit, Nullable<int> divisionID)
         {
             var customerNameParameter = customerName != null ?
@@ -1084,6 +1075,36 @@ namespace Inventory
                 new ObjectParameter("DivisionID", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetTownshipByDivision_Result>("PrcGetTownshipByDivision", divisionIDParameter);
+        }
+    
+        public virtual ObjectResult<PrcSearchClient_Result> PrcSearchClient(string keyword, Nullable<int> divisionID, Nullable<int> townshipID, Nullable<int> clientType)
+        {
+            var keywordParameter = keyword != null ?
+                new ObjectParameter("Keyword", keyword) :
+                new ObjectParameter("Keyword", typeof(string));
+    
+            var divisionIDParameter = divisionID.HasValue ?
+                new ObjectParameter("DivisionID", divisionID) :
+                new ObjectParameter("DivisionID", typeof(int));
+    
+            var townshipIDParameter = townshipID.HasValue ?
+                new ObjectParameter("TownshipID", townshipID) :
+                new ObjectParameter("TownshipID", typeof(int));
+    
+            var clientTypeParameter = clientType.HasValue ?
+                new ObjectParameter("ClientType", clientType) :
+                new ObjectParameter("ClientType", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcSearchClient_Result>("PrcSearchClient", keywordParameter, divisionIDParameter, townshipIDParameter, clientTypeParameter);
+        }
+    
+        public virtual ObjectResult<PrcSearchCLMasterSaleOrder_Result> PrcSearchCLMasterSaleOrder(string searchKeywords)
+        {
+            var searchKeywordsParameter = searchKeywords != null ?
+                new ObjectParameter("SearchKeywords", searchKeywords) :
+                new ObjectParameter("SearchKeywords", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcSearchCLMasterSaleOrder_Result>("PrcSearchCLMasterSaleOrder", searchKeywordsParameter);
         }
     }
 }

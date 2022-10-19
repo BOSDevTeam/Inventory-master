@@ -220,7 +220,7 @@
                                 $('#cusname').show();
                                 $('#lblCustomerName').text(response.CustomerName).hide();
                             }
-                            if (response.Code != 0) {                           
+                            if (response.Code != null) {                           
                                 $('#code').hide();
                                 $('#lblCode').text(response.Code).show();
                             }
@@ -260,7 +260,7 @@
                                 $('#address').show();
                                 $('#lblAddress').text(response.Address).hide();
                             }
-                            if (response.TownshipName != '') {
+                            if (response.TownshipName != null) {
                                 $('#township').hide();
                                 $('#lblTownship').text(response.TownshipName).show();
                             }
@@ -363,14 +363,14 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (response.DELOK == 1) {
+                        if (response.IsSuccess == true) {
                             if (selectedRow != null) {
                                 selectedRow.remove();
                                 location.reload();
-                                showToast(1, "Deleted Successfully!");
+                                showToast(1, response.Message);
                             }
-                        } else if (response.DELOK == 0) {
-                            showToast(0, "This customer is using! Cannot Delete!");
+                        } else if (response.IsSuccess == false) {
+                            showToast(0, response.Message);
                         }
                     },
                     failure: function (response) {

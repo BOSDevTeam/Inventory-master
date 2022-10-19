@@ -466,8 +466,14 @@
           <Parameter Name="keyword" Type="nvarchar" Mode="In" />
           <Parameter Name="BankID" Type="int" Mode="In" />
         </Function>
+        <Function Name="PrcSearchClient" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Keyword" Type="nvarchar" Mode="In" />
+          <Parameter Name="DivisionID" Type="int" Mode="In" />
+          <Parameter Name="TownshipID" Type="int" Mode="In" />
+          <Parameter Name="ClientType" Type="int" Mode="In" />
+        </Function>
         <Function Name="PrcSearchCLMasterSaleOrder" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="keywords" Type="nvarchar" Mode="In" />
+          <Parameter Name="SearchKeywords" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="PrcSearchCustomer" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="keyword" Type="nvarchar" Mode="In" />
@@ -985,9 +991,6 @@
           </FunctionImport>
           <EntitySet Name="Sys_UnitLevel" EntityType="InventoryDBModel.Sys_UnitLevel" />
           <EntitySet Name="T_CLMasterSaleOrder" EntityType="InventoryDBModel.T_CLMasterSaleOrder" />
-          <FunctionImport Name="PrcSearchCLMasterSaleOrder" ReturnType="Collection(InventoryDBModel.PrcSearchCLMasterSaleOrder_Result)">
-          <Parameter Name="keywords" Mode="In" Type="String" />
-          </FunctionImport>
           <FunctionImport Name="PrcInsertCustomer">
             <Parameter Name="CustomerName" Mode="In" Type="String" />
             <Parameter Name="Code" Mode="In" Type="String" />
@@ -1121,7 +1124,16 @@
           </FunctionImport>
           <EntitySet Name="T_TranSale" EntityType="InventoryDBModel.T_TranSale" />
           <FunctionImport Name="PrcGetTownshipByDivision" ReturnType="Collection(InventoryDBModel.PrcGetTownshipByDivision_Result)">
+          <Parameter Name="DivisionID" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="PrcSearchClient" ReturnType="Collection(InventoryDBModel.PrcSearchClient_Result)">
+            <Parameter Name="Keyword" Mode="In" Type="String" />
             <Parameter Name="DivisionID" Mode="In" Type="Int32" />
+            <Parameter Name="TownshipID" Mode="In" Type="Int32" />
+            <Parameter Name="ClientType" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="PrcSearchCLMasterSaleOrder" ReturnType="Collection(InventoryDBModel.PrcSearchCLMasterSaleOrder_Result)">
+            <Parameter Name="SearchKeywords" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <ComplexType Name="PrcGetCompanySetting_Result">
@@ -1343,19 +1355,6 @@
           <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="IsOrderFinished" Type="Boolean" />
         </EntityType>
-        <ComplexType Name="PrcSearchCLMasterSaleOrder_Result">
-          <Property Type="String" Name="OrderNumber" Nullable="true" MaxLength="50" />
-          <Property Type="Int32" Name="SaleOrderID" Nullable="false" />
-          <Property Type="String" Name="Date" Nullable="true" MaxLength="30" />
-          <Property Type="Int32" Name="ClientID" Nullable="false" />
-          <Property Type="String" Name="ClientName" Nullable="true" MaxLength="200" />
-          <Property Type="String" Name="ClientPhone" Nullable="true" MaxLength="50" />
-          <Property Type="Int32" Name="CustomerID" Nullable="false" />
-          <Property Type="String" Name="CustomerName" Nullable="true" MaxLength="200" />
-          <Property Type="String" Name="CustomerPhne" Nullable="true" MaxLength="50" />
-          <Property Type="Int32" Name="Total" Nullable="true" />
-          <Property Type="String" Name="Currency" Nullable="true" MaxLength="10" />
-        </ComplexType>
         <ComplexType Name="PrcSearchLocation_Result">
           <Property Type="Int32" Name="LocationID" Nullable="false" />
           <Property Type="String" Name="LocationName" Nullable="true" MaxLength="200" />
@@ -1695,6 +1694,37 @@
         <ComplexType Name="PrcGetTownshipByDivision_Result">
           <Property Type="Int32" Name="TownshipID" Nullable="false" />
           <Property Type="String" Name="TownshipName" Nullable="true" MaxLength="200" />
+        </ComplexType>
+        <ComplexType Name="PrcSearchClient_Result">
+          <Property Type="Int32" Name="ClientID" Nullable="false" />
+          <Property Type="String" Name="ClientName" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="ShopName" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="Phone" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="DivisionID" Nullable="false" />
+          <Property Type="String" Name="DivisionName" Nullable="true" MaxLength="200" />
+          <Property Type="Int32" Name="TownshipID" Nullable="false" />
+          <Property Type="String" Name="TownshipName" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="Address" Nullable="true" MaxLength="1000" />
+          <Property Type="Boolean" Name="IsSalePerson" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="PrcSearchCLMasterSaleOrder_Result">
+          <Property Type="String" Name="OrderNumber" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="SaleOrderID" Nullable="false" />
+          <Property Type="String" Name="Date" Nullable="true" MaxLength="4000" />
+          <Property Type="Int32" Name="ClientID" Nullable="false" />
+          <Property Type="String" Name="ClientName" Nullable="false" MaxLength="200" />
+          <Property Type="String" Name="ClientPhone" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="CustomerID" Nullable="false" />
+          <Property Type="String" Name="CustomerName" Nullable="false" MaxLength="200" />
+          <Property Type="String" Name="CustomerPhne" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="Total" Nullable="true" />
+          <Property Type="String" Name="Currency" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="Remark" Nullable="true" MaxLength="500" />
+          <Property Type="Int32" Name="Subtotal" Nullable="true" />
+          <Property Type="Int32" Name="Tax" Nullable="true" />
+          <Property Type="Int32" Name="TaxAmt" Nullable="true" />
+          <Property Type="Int32" Name="Charges" Nullable="true" />
+          <Property Type="Int32" Name="ChargesAmt" Nullable="true" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -2116,23 +2146,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="PrcSearchCLMasterSaleOrder" FunctionName="InventoryDBModel.Store.PrcSearchCLMasterSaleOrder">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="InventoryDBModel.PrcSearchCLMasterSaleOrder_Result">
-                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
-                <ScalarProperty Name="SaleOrderID" ColumnName="SaleOrderID" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
-                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
-                <ScalarProperty Name="ClientPhone" ColumnName="ClientPhone" />
-                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
-                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
-                <ScalarProperty Name="CustomerPhne" ColumnName="CustomerPhne" />
-                <ScalarProperty Name="Total" ColumnName="Total" />
-                <ScalarProperty Name="Currency" ColumnName="Currency" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="PrcInsertCustomer" FunctionName="InventoryDBModel.Store.PrcInsertCustomer" />
           <FunctionImportMapping FunctionImportName="PrcInsertLocation" FunctionName="InventoryDBModel.Store.PrcInsertLocation" />
           <FunctionImportMapping FunctionImportName="PrcInsertSupplier" FunctionName="InventoryDBModel.Store.PrcInsertSupplier" />
@@ -2544,6 +2557,45 @@
               <ComplexTypeMapping TypeName="InventoryDBModel.PrcGetTownshipByDivision_Result">
                 <ScalarProperty Name="TownshipID" ColumnName="TownshipID" />
                 <ScalarProperty Name="TownshipName" ColumnName="TownshipName" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="PrcSearchClient" FunctionName="InventoryDBModel.Store.PrcSearchClient">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="InventoryDBModel.PrcSearchClient_Result">
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="ShopName" ColumnName="ShopName" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="DivisionID" ColumnName="DivisionID" />
+                <ScalarProperty Name="DivisionName" ColumnName="DivisionName" />
+                <ScalarProperty Name="TownshipID" ColumnName="TownshipID" />
+                <ScalarProperty Name="TownshipName" ColumnName="TownshipName" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="IsSalePerson" ColumnName="IsSalePerson" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="PrcSearchCLMasterSaleOrder" FunctionName="InventoryDBModel.Store.PrcSearchCLMasterSaleOrder">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="InventoryDBModel.PrcSearchCLMasterSaleOrder_Result">
+                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
+                <ScalarProperty Name="SaleOrderID" ColumnName="SaleOrderID" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="ClientPhone" ColumnName="ClientPhone" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="CustomerPhne" ColumnName="CustomerPhne" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
+                <ScalarProperty Name="Tax" ColumnName="Tax" />
+                <ScalarProperty Name="TaxAmt" ColumnName="TaxAmt" />
+                <ScalarProperty Name="Charges" ColumnName="Charges" />
+                <ScalarProperty Name="ChargesAmt" ColumnName="ChargesAmt" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

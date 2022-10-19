@@ -185,7 +185,7 @@
                                 $('#supname').show();
                                 $('#lblSupplierName').text(response.SupplierName).hide();
                             }
-                            if (response.Code != 0) {
+                            if (response.Code != null) {
                                 $('#code').hide();
                                 $('#lblCode').text(response.Code).show();
                             }
@@ -225,7 +225,7 @@
                                 $('#address').show();
                                 $('#lblAddress').text(response.Address).hide();
                             }
-                            if (response.TownshipName != '') {
+                            if (response.TownshipName != null) {
                                 $('#township').hide();
                                 $('#lblTownship').text(response.TownshipName).show();
                             }

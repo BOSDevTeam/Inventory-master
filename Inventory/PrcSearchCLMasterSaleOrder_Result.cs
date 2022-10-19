@@ -24,5 +24,11 @@ namespace Inventory
         public string CustomerPhne { get; set; }
         public Nullable<int> Total { get; set; }
         public string Currency { get; set; }
+        public string Remark { get; set; }
+        public Nullable<int> Subtotal { get; set; }
+        public Nullable<int> Tax { get; set; }
+        public Nullable<int> TaxAmt { get; set; }
+        public Nullable<int> Charges { get; set; }
+        public Nullable<int> ChargesAmt { get; set; }
     }
 }

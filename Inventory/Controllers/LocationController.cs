@@ -6,6 +6,8 @@ using System.Web.Mvc;
 using Inventory.Models;
 using System.Data.Entity.Core.Objects;
 using Inventory.Common;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace Inventory.Controllers
 {
@@ -15,6 +17,8 @@ namespace Inventory.Controllers
         LocationModels.LocationModel model = new LocationModels.LocationModel();
         static List<LocationModels.LocationModel> lstLocationList = new List<LocationModels.LocationModel>();
         static int editLocationID;
+        Procedure procedure = new Procedure();
+        DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
 
         public ActionResult LocationEntry(int locationId)
         {
@@ -180,26 +184,27 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult DeleteAction(int locationId)
         {
-            int delOk;
-            var users = (from user in Entities.S_User where user.LocationID == locationId select user).ToList();
-            if (users.Count == 0)
+            string message = "";
+            bool IsSuccess = false;
+            if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcDeleteLocation, (SqlConnection) Session["SQLConnection"]);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@LocationID", locationId);
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
             {
-                S_Location location = Entities.S_Location.Where(x => x.LocationID == locationId).Single<S_Location>();
-                Entities.S_Location.Remove(location);
-                Entities.SaveChanges();
-                delOk = 1;
+                IsSuccess = Convert.ToBoolean(reader["IsSuccess"]);
+                message = Convert.ToString(reader["Message"]);
             }
-            else
+            reader.Close();
+            var result = new
             {
-                delOk = 0;
-            }
-
-            var myResult = new
-            {
-                DELOK = delOk
+                IsSuccess = IsSuccess,
+                Message = message
             };
 
-            return Json(myResult, JsonRequestBehavior.AllowGet);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
+
     }
 }

@@ -224,9 +224,9 @@
                                 + "<td class='col-md-2 col-lg-2'>" + "<span>#</span>" + item.OrderNumber + "</td>"
                                 + "<td class='col-md-2 col-lg-2'>" + item.ClientName + "</td>"
                                 + "<td class='col-md-2 col-lg-2'>" + item.CustomerName + "</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.OrderDateTime + "</td>"
+                                + "<td class='col-md-3 col-lg-3'>" + item.OrderDateTime + "</td>"
                                 + "<td class='col-md-2 col-lg-2'>" + "<span>" + item.DefaultCurrency + "&nbsp;" + "</span>" + item.Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</td>"
-                                + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark' title='Order Detail' onclick='action(1)'><i class='fa fa-list'></i></button> <button id='' class='btn btn-sm btn-primary' title='Add to POS' onclick='action('3')'><i class='fa fa-dollar'></i></button></td>"
+                                + "<td class='col-md-1 col-lg-1 btn-group'><button id='btnView' class='btn btn-sm btn-dark' title='Order Detail' onclick='action(1)'><i class='fa fa-list'></i></button> <button id='' class='btn btn-sm btn-primary' title='Add to POS' onclick='action(3)'><i class='fa fa-dollar'></i></button></td>"
                                 + "<td style='display:none'>" + item.SaleOrderID + "</td>"
                                 + "</tr>";
 
@@ -423,7 +423,7 @@
                             + "<td class='col-md-2 col-lg-2'>" + item.CustomerName + "</td>"
                             + "<td class='col-md-3 col-lg-3'>" + item.OrderDateTime + "</td>"
                             + "<td class='col-md-2 col-lg-2'>" + "<span>" + item.DefaultCurrency + "&nbsp;" + "</span>" + item.Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</td>"
-                            + "<td class='col-md-1 col-lg-1 btn-group'><button id='btnView' class='btn btn-sm btn-dark' title='Order Detail' onclick='action(1)'><i class='fa fa-list'></i></button> <button id='' class='btn btn-sm btn-primary' title='Add to POS' onclick='action('3')'><i class='fa fa-dollar'></i></button></td>"
+                            + "<td class='col-md-1 col-lg-1 btn-group'><button id='btnView' class='btn btn-sm btn-dark' title='Order Detail' onclick='action(1)'><i class='fa fa-list'></i></button> <button id='' class='btn btn-sm btn-primary' title='Add to POS' onclick='action(3)'><i class='fa fa-dollar'></i></button></td>"
                             + "<td style='display:none'>" + item.SaleOrderID + "</td>"
                             + "</tr>";
                             $('#tblSaleOrder tbody').append(rows);

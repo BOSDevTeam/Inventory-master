@@ -48,6 +48,7 @@ namespace Inventory.Controllers
             }
 
             List<CLMasterSaleOrderModels> List = Session["LstMSale"] as List<CLMasterSaleOrderModels>;
+
             if (List.Count != 0)
             {
                 int index = List.FindIndex(item => item.SaleOrderID == saleOrderID);             
@@ -66,7 +67,7 @@ namespace Inventory.Controllers
                 newItem.Remark = result.Remark;
                 newItem.Counts = List.Count();
                 List[index] = newItem;
-                Session["LstMSale"] = List;
+                
             }
             return Json(List, JsonRequestBehavior.AllowGet);
         }
@@ -244,28 +245,28 @@ namespace Inventory.Controllers
             CLMasterSaleOrderModels mastersalemodel = new CLMasterSaleOrderModels();
             model.Lstmso = new List<CLMasterSaleOrderModels>();
             Lstmso = new List<CLMasterSaleOrderModels>();
-            if (keyword != null)
+            foreach (var s in Entities.PrcSearchCLMasterSaleOrder(keyword))
             {
-                foreach (var s in Entities.PrcSearchCLMasterSaleOrder(keyword))
-                {
-                    mastersalemodel.SaleOrderID = Convert.ToInt32(s.SaleOrderID);
-                    mastersalemodel.OrderNumber = s.OrderNumber;
-                    mastersalemodel.ClientName = s.ClientName;
-                    mastersalemodel.CustomerName = s.CustomerName;
-                    mastersalemodel.OrderDateTime = s.Date;
-                    mastersalemodel.Total = Convert.ToInt32(s.Total);
-                    mastersalemodel.DefaultCurrency = s.Currency;
-                    int Countmastersale = Entities.PrcSearchCLMasterSaleOrder(keyword).Count();
-                    mastersalemodel.Counts = Countmastersale;
-                    model.Lstmso.Add(mastersalemodel);
-                    Lstmso.Add(mastersalemodel);
-                }
-            }
-            else
-            {
+                mastersalemodel = new CLMasterSaleOrderModels();
+                mastersalemodel.SaleOrderID = Convert.ToInt32(s.SaleOrderID);
+                mastersalemodel.OrderNumber = s.OrderNumber;
+                mastersalemodel.ClientName = s.ClientName;
+                mastersalemodel.CustomerName = s.CustomerName;
+                mastersalemodel.OrderDateTime = s.Date;
+                mastersalemodel.Subtotal = Convert.ToInt32(s.Subtotal);
+                mastersalemodel.ChargesAmt = Convert.ToInt32(s.ChargesAmt);
+                mastersalemodel.TaxAmt = Convert.ToInt32(s.TaxAmt);
+                mastersalemodel.Total = Convert.ToInt32(s.Total);
+                mastersalemodel.DefaultCurrency = s.Currency;
+                mastersalemodel.Remark = s.Remark;
+                int Countmastersale = Entities.PrcSearchCLMasterSaleOrder(keyword).Count();
+                mastersalemodel.Counts = Countmastersale;
+                model.Lstmso.Add(mastersalemodel);
+                Lstmso.Add(mastersalemodel);
+                Session["LstMSale"] = Lstmso;
             }
 
-            return Json(Lstmso, JsonRequestBehavior.AllowGet);
+            return Json(model.Lstmso, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]

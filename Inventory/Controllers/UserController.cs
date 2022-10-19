@@ -207,15 +207,30 @@ namespace Inventory.Controllers
 
         [HttpGet]
         public JsonResult DeleteAction(int userId)
-        {         
+        {
+            string message = "";
+            bool IsSuccess = false;
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
             SqlCommand cmd = new SqlCommand(Procedure.PrcDeleteUser, (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@ID", userId);
-            cmd.ExecuteNonQuery();
+            SqlDataReader reder = cmd.ExecuteReader();
+            if (reder.Read())
+            {
+                IsSuccess = Convert.ToBoolean(reder["IsSuccess"]);
+                message = Convert.ToString(reder["Message"]);
+            }
+
+            reder.Close();
             dataConnectorSQL.Close();
 
-            return Json("", JsonRequestBehavior.AllowGet);
+            var result = new
+            {
+                IsSuccess = IsSuccess,
+                Message = message
+            };
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }       
 
         private void getAllLocation()

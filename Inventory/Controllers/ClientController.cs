@@ -49,6 +49,32 @@ namespace Inventory.Controllers
             return View(model);
         }
 
+        //[HttpGet]
+        //public JsonResult SearchClient(string Keyword, int? divisionId, int? townshipId, int? clienttype)
+        //{
+        //    List<ClientModels> CList = new List<ClientModels>();
+        //    ClientModels clientModel = new ClientModels();
+
+        //    foreach (var client in Entities.PrcSearchClient(Keyword, divisionId, townshipId, clienttype))
+        //    {
+        //        clientModel = new ClientModels();
+        //        clientModel.ClientID = client.ClientID;
+        //        clientModel.ClientName = client.ClientName;
+        //        clientModel.ShopName = client.ShopName;
+        //        clientModel.Phone = client.Phone;
+        //        clientModel.TownshipID = client.TownshipID;
+        //        clientModel.TownshipName = client.TownshipName;
+        //        clientModel.DivisionID = client.DivisionID;
+        //        clientModel.DivisionName = client.DivisionName;
+        //        clientModel.Address = client.Address;
+        //        clientModel.IsSalePerson = client.IsSalePerson;
+        //        model.LstClient.Add(clientModel);
+        //        CList.Add(clientModel);
+        //    }
+
+        //    return Json(model.LstClient, JsonRequestBehavior.AllowGet);
+        //}
+
         [HttpGet]
         public JsonResult SearchClient(string Keyword, int? divisionId, int? townshipId, int? clienttype)
         {

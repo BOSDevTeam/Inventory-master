@@ -6,6 +6,8 @@ using System.Web.Mvc;
 using Inventory.Models;
 using System.Data.Entity.Core.Objects;
 using Inventory.Common;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace Inventory.Controllers
 {
@@ -14,6 +16,8 @@ namespace Inventory.Controllers
         InventoryDBEntities Entities = new InventoryDBEntities();
         CustomerModels.CustomerModel model = new CustomerModels.CustomerModel();
         static List<CustomerModels.CustomerModel> lstCustomerList = new List<CustomerModels.CustomerModel>();
+        Procedure procedure = new Procedure();
+        DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
         static int editCustomerID;
 
         public ActionResult CustomerEntry(int customerId)
@@ -228,26 +232,29 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult DeleteAction(int customerId)
         {
-            int delOk;
-            var mssale = (from ms in Entities.T_MasterSale where ms.CustomerID == customerId select ms).ToList();
-            if (mssale.Count == 0)
+            string message = "";
+            bool IsSuccess = false;
+            List<CustomerModels> CusList = new List<CustomerModels>();
+            CustomerModels customerModels = new CustomerModels();
+            if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcDeleteCustomer, (SqlConnection) Session["SQLConnection"]);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@CustomerID", customerId);
+            SqlDataReader reder = cmd.ExecuteReader();
+            if (reder.Read())
             {
-                S_Customer customer = Entities.S_Customer.Where(x => x.CustomerID == customerId).Single<S_Customer>();
-                Entities.S_Customer.Remove(customer);
-                Entities.SaveChanges();
-                delOk = 1;
-            }
-            else
-            {
-                delOk = 0;
-            }
-
-            var myResult = new
-            {
-                DELOK = delOk
+                message = Convert.ToString(reder["Message"]);
+                IsSuccess = Convert.ToBoolean(reder["IsSuccess"]);
+            }   
+            reder.Close();
+            dataConnectorSQL.Close();
+            var result = new {
+                Message = message,
+                IsSuccess = IsSuccess
             };
 
-            return Json(myResult, JsonRequestBehavior.AllowGet);
+            return Json(result, JsonRequestBehavior.AllowGet);
+            
         }
 
         private void GetDivision()

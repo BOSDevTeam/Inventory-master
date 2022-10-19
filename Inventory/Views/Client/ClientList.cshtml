@@ -85,11 +85,11 @@
                     @for (int i = 0; i < Model.LstClient.Count(); i++)
                     {
                         <tr class="row table-item">
-                            <td class="col-md-2 col-lg-2"><divC>@Model.LstClient[i].ClientName</divC></td>
-                            <td class="col-md-2 col-lg-2"><divC>@Model.LstClient[i].ShopName</divC></td>
+                            <td class="col-md-2 col-lg-2">@Model.LstClient[i].ClientName</td>
+                            <td class="col-md-2 col-lg-2">@Model.LstClient[i].ShopName</td>
                             <td class="col-md-2 col-lg-2"><divC>@Model.LstClient[i].Phone</divC></td>
-                            <td class="col-md-2 col-lg-2"><divC>@Model.LstClient[i].DivisionName</divC></td>
-                            <td class="col-md-2 col-lg-2"><divC>@Model.LstClient[i].TownshipName</divC></td>
+                            <td class="col-md-2 col-lg-2">@Model.LstClient[i].DivisionName</td>
+                            <td class="col-md-2 col-lg-2">@Model.LstClient[i].TownshipName</td>
                             <td class="col-md-1 col-lg-1"><divC>@Model.LstClient[i].Address</divC></td>
                            @if (Model.LstClient[i].IsSalePerson != true)
                            {
@@ -164,11 +164,11 @@
                         if (item.IsSalePerson != true)
                         {
                             var rows = "<tr class='row table-item'>"
-                       + "<td class='col-md-2 col-lg-2'>" +"<divC>" + item.ClientName + "</div>"+ "</td>"
-                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.ShopName + "</div>" + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>"  + item.ClientName + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>"  + item.ShopName + "</td>"
                        + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.Phone + "</div>" + "</td>"
-                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.DivisionName + "</div>" + "</td>"
-                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.TownshipName + "</div>" + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" + item.DivisionName + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" + item.TownshipName +  "</td>"
                        + "<td class='col-md-1 col-lg-1'>" + "<divC>" + item.Address + "</div>" + "</td>"
                        + "<td class='col-md-1 col-lg-1'>" +  + "</td>"
                        + "<td style='display:none'>" + item.ClientID + "</td>"
@@ -177,11 +177,11 @@
                         }
                         else {
                             var rows = "<tr class='row table-item'>"
-                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.ClientName + "</div>" + "</td>"
-                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.ShopName + "</div>" + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" + item.ClientName  + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" + item.ShopName +"</td>"
                        + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.Phone + "</div>" + "</td>"
-                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.DivisionName + "</div>" + "</td>"
-                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.TownshipName + "</div>" + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" +  item.DivisionName + "</td>"
+                       + "<td class='col-md-2 col-lg-2'>" + item.TownshipName +  "</td>"
                        + "<td class='col-md-1 col-lg-1'>" + "<divC>" + item.Address + "</div>" + "</td>"
                        + "<td class='col-md-1 col-lg-1'>" + "<divC>"+ "Sale Person" + "</div>" + "</td>"
                        + "<td style='display:none'>" + item.ClientID + "</td>"

@@ -51,5 +51,7 @@ namespace Inventory.Common
         public const string PrcDeleteUser = "PrcDeleteUser";
         public const string PrcGetClient = "PrcGetClient";
         public const string PrcSearchClient = "PrcSearchClient";
+        public const string PrcDeleteCustomer = "PrcDeleteCustomer";
+        public const string PrcDeleteLocation = "PrcDeleteLocation";
     }
 }
