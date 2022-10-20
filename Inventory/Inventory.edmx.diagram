@@ -5,35 +5,26 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="fcd2849f90bd416bb9ab7ba60416c8fc" Name="Diagram1" ZoomLevel="64">
-        <EntityTypeShape EntityType="InventoryDBModel.S_AdjustType" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_Bank" Width="1.5" PointX="5.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_BankPayment" Width="1.5" PointX="5.75" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_MainMenu" Width="1.5" PointX="2.75" PointY="9.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_SubMenu" Width="1.5" PointX="11.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_Township" Width="1.5" PointX="11.75" PointY="7.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_Unit" Width="1.5" PointX="2.75" PointY="12.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="InventoryDBModel.Sys_Admin" Width="1.5" PointX="12.75" PointY="13.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="InventoryDBModel.Sys_Currency" Width="1.5" PointX="4.75" PointY="14.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="InventoryDBModel.Sys_Payment" Width="1.5" PointX="14.75" PointY="9.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="InventoryDBModel.Sys_PayMethod" Width="1.5" PointX="14.75" PointY="12.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="InventoryDBModel.Sys_ShopType" Width="1.5" PointX="0.75" PointY="15.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="InventoryDBModel.sysdiagram" Width="1.5" PointX="6.75" PointY="16.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_Division" Width="1.5" PointX="13.375" PointY="18.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.T_CLTranSaleOrder" Width="1.5" PointX="17.75" PointY="14.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.Sys_UnitLevel" Width="1.5" PointX="11.375" PointY="4" />
-        <EntityTypeShape EntityType="InventoryDBModel.T_CLMasterSaleOrder" Width="1.5" PointX="7.75" PointY="19.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_Customer" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_Location" Width="1.5" PointX="2.75" PointY="0.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_SlipID" Width="1.5" PointX="0.75" PointY="4.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_Supplier" Width="1.5" PointX="2.75" PointY="4.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_VoucherFormat" Width="1.5" PointX="8.75" PointY="0.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_VoucherSetting" Width="1.5" PointX="8.75" PointY="3.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_CompanySetting" Width="1.5" PointX="8.375" PointY="8.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_Product" Width="1.5" PointX="5.375" PointY="9.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.S_User" Width="1.5" PointX="10.375" PointY="10.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.T_MasterSale" Width="1.5" PointX="14.375" PointY="0.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.Sys_Module" Width="1.5" PointX="7.375" PointY="13.75" />
-        <EntityTypeShape EntityType="InventoryDBModel.T_TranSale" Width="1.5" PointX="9.375" PointY="13.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SAdjustType" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SBank" Width="1.5" PointX="2.75" PointY="0.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SBankPayment" Width="1.5" PointX="0.75" PointY="3.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SClient" Width="1.5" PointX="2.75" PointY="3.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SCompanySetting" Width="1.5" PointX="4.75" PointY="0.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SCustomer" Width="1.5" PointX="4.75" PointY="5.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SDivision" Width="1.5" PointX="6.75" PointY="0.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SLocation" Width="1.5" PointX="6.75" PointY="3.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SMainMenu" Width="1.5" PointX="0.75" PointY="7.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SProduct" Width="1.5" PointX="6.75" PointY="7.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SSubMenu" Width="1.5" PointX="8.75" PointY="0.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SSupplier" Width="1.5" PointX="8.75" PointY="4.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.STownship" Width="1.5" PointX="8.75" PointY="8.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SUnit" Width="1.5" PointX="2.75" PointY="9.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SUser" Width="1.5" PointX="10.75" PointY="0.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SVoucherFormat" Width="1.5" PointX="10.75" PointY="3.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SVoucherSetting" Width="1.5" PointX="10.75" PointY="6.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SysModule" Width="1.5" PointX="9.375" PointY="11.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.TCLMasterSaleOrder" Width="1.5" PointX="11.75" PointY="11.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.TCLTranSaleOrder" Width="1.5" PointX="0.75" PointY="12.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

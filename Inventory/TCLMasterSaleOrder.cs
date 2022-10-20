@@ -12,7 +12,7 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class T_CLMasterSaleOrder
+    public partial class TCLMasterSaleOrder
     {
         public int SaleOrderID { get; set; }
         public Nullable<System.DateTime> OrderDateTime { get; set; }

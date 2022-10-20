@@ -16,12 +16,12 @@ namespace Inventory.Controllers
 
         public ActionResult CompanySettingEntry()
         {
-            var cst = (from cs in Entities.S_CompanySetting select cs).ToList();
+            var cst = (from cs in Entities.SCompanySettings select cs).ToList();
             clearSessionPhoto();
             if (cst.Count != 0)
             {
                 Session["IsEdit"] = 1;
-                foreach (var e in Entities.S_CompanySetting)
+                foreach (var e in Entities.SCompanySettings)
                 {
                     editID = e.CompanyID;
                     Session["EditCompanyName"] = e.CompanyName;
@@ -59,7 +59,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult SaveAction(string companyName, string description, string phone, string email, string website, string address, string tax, string serviceCharges)
         {
-            S_CompanySetting table = new S_CompanySetting();
+            SCompanySetting table = new SCompanySetting();
             table.CompanyName = companyName;
             table.Description = description;
             table.Phone = phone;
@@ -85,7 +85,7 @@ namespace Inventory.Controllers
                 clearSessionPhoto();
             }
 
-            Entities.S_CompanySetting.Add(table);
+            Entities.SCompanySettings.Add(table);
             Entities.SaveChanges();
 
             var Result = new
@@ -98,7 +98,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult EditAction(string companyName, string description, string phone, string email, string website, string address, string tax, string serviceCharges)
         {
-            var result = Entities.S_CompanySetting.SingleOrDefault(c => c.CompanyID == editID);
+            var result = Entities.SCompanySettings.SingleOrDefault(c => c.CompanyID == editID);
             if (result != null)
             {
                 result.CompanyName = companyName;

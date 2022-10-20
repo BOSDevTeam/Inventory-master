@@ -79,6 +79,7 @@ namespace Inventory.Common
             cmd.Parameters.AddWithValue("@ModuleCode", moduleCode);  //sale,purchase...
             cmd.Parameters.AddWithValue("@ID", userId);
             cmd.Parameters.AddWithValue("@IsClient", false);  //client is mobile user
+            cmd.Parameters.AddWithValue("@IsUpdateNo", false);  //client is mobile user
             cmd.Parameters.AddWithValue("@UserVoucherNo", "");  //output parameter
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.Read()) result = Convert.ToString(reader[0]);

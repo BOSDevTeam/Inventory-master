@@ -86,13 +86,13 @@ namespace Inventory.Controllers
         {
             string message;
             int saveOk;
-            var subs = (from sub in Entities.S_SubMenu where sub.Code == code where sub.MainMenuID == mainMenuID select sub).ToList();
+            var subs = (from sub in Entities.SSubMenus where sub.Code == code where sub.MainMenuID == mainMenuID select sub).ToList();
             if (subs.Count() == 0)
             {
-                var subss = (from sub in Entities.S_SubMenu where sub.SortCode == sortCode select sub).ToList();
+                var subss = (from sub in Entities.SSubMenus where sub.SortCode == sortCode select sub).ToList();
                 if (subss.Count() == 0)
                 {
-                    S_SubMenu table = new S_SubMenu();
+                    SSubMenu table = new SSubMenu();
                     table.SubMenuName = subMenuName;
                     table.Code = code;
                     table.SortCode = sortCode;
@@ -112,7 +112,7 @@ namespace Inventory.Controllers
                         clearSessionPhoto();
                     }                                       
 
-                    Entities.S_SubMenu.Add(table);
+                    Entities.SSubMenus.Add(table);
                     Entities.SaveChanges();
 
                     message = "Saved Successfully!";
@@ -143,13 +143,13 @@ namespace Inventory.Controllers
         {
             string message = "";
             int editOk = 0;
-            var subs = (from sub in Entities.S_SubMenu where sub.Code == code where sub.MainMenuID == mainMenuID where sub.SubMenuID != editSubMenuID select sub).ToList();
+            var subs = (from sub in Entities.SSubMenus where sub.Code == code where sub.MainMenuID == mainMenuID where sub.SubMenuID != editSubMenuID select sub).ToList();
             if (subs.Count() == 0)
             {
-                var subss = (from sub in Entities.S_SubMenu where sub.SortCode == sortCode where sub.SubMenuID != editSubMenuID select sub).ToList();
+                var subss = (from sub in Entities.SSubMenus where sub.SortCode == sortCode where sub.SubMenuID != editSubMenuID select sub).ToList();
                 if (subss.Count() == 0)
                 {
-                    var result = Entities.S_SubMenu.SingleOrDefault(c => c.SubMenuID == editSubMenuID);
+                    var result = Entities.SSubMenus.SingleOrDefault(c => c.SubMenuID == editSubMenuID);
                     if (result != null)
                     {
                         result.SubMenuName = subMenuName;
@@ -231,11 +231,11 @@ namespace Inventory.Controllers
         public JsonResult DeleteAction(int subMenuId)
         {
             int delOk;
-            var pros = (from pro in Entities.S_Product where pro.SubMenuID == subMenuId select pro).ToList();
+            var pros = (from pro in Entities.SProducts where pro.SubMenuID == subMenuId select pro).ToList();
             if (pros.Count == 0)
             {
-                S_SubMenu sub = Entities.S_SubMenu.Where(x => x.SubMenuID == subMenuId).Single<S_SubMenu>();
-                Entities.S_SubMenu.Remove(sub);
+                SSubMenu sub = Entities.SSubMenus.Where(x => x.SubMenuID == subMenuId).Single<SSubMenu>();
+                Entities.SSubMenus.Remove(sub);
                 Entities.SaveChanges();
                 delOk = 1;
             }
@@ -278,7 +278,7 @@ namespace Inventory.Controllers
 
         private void GetMainMenu()
         {
-            foreach (var main in Entities.S_MainMenu.OrderBy(m => m.SortCode))
+            foreach (var main in Entities.SMainMenus.OrderBy(m => m.SortCode))
             {
                 model.MainMenus.Add(new SelectListItem { Text = main.MainMenuName, Value = main.MainMenuID.ToString() });
             }
@@ -287,7 +287,7 @@ namespace Inventory.Controllers
         private void GetMainMenuDefaultInclude()
         {
             model.MainMenus.Add(new SelectListItem { Text = "Main Menu", Value = "0" });
-            foreach (var main in Entities.S_MainMenu.OrderBy(m => m.SortCode))
+            foreach (var main in Entities.SMainMenus.OrderBy(m => m.SortCode))
             {
                 model.MainMenus.Add(new SelectListItem { Text = main.MainMenuName, Value = main.MainMenuID.ToString() });
             }

@@ -12,7 +12,7 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class S_VoucherSetting
+    public partial class SVoucherSetting
     {
         public int ID { get; set; }
         public int LocationID { get; set; }

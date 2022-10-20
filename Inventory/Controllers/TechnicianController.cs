@@ -55,7 +55,7 @@ namespace Inventory.Controllers
         private void getShopType()
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand("Select ID,ShopType From Sys_ShopType", (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand("Select ID,ShopType From SysShopType", (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.Text;
 
             SqlDataReader reader = cmd.ExecuteReader();

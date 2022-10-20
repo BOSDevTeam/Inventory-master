@@ -27,35 +27,26 @@ namespace Inventory
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<S_AdjustType> S_AdjustType { get; set; }
-        public virtual DbSet<S_Bank> S_Bank { get; set; }
-        public virtual DbSet<S_BankPayment> S_BankPayment { get; set; }
-        public virtual DbSet<S_MainMenu> S_MainMenu { get; set; }
-        public virtual DbSet<S_SubMenu> S_SubMenu { get; set; }
-        public virtual DbSet<S_Township> S_Township { get; set; }
-        public virtual DbSet<S_Unit> S_Unit { get; set; }
-        public virtual DbSet<Sys_Admin> Sys_Admin { get; set; }
-        public virtual DbSet<Sys_Currency> Sys_Currency { get; set; }
-        public virtual DbSet<Sys_Payment> Sys_Payment { get; set; }
-        public virtual DbSet<Sys_PayMethod> Sys_PayMethod { get; set; }
-        public virtual DbSet<Sys_ShopType> Sys_ShopType { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
-        public virtual DbSet<S_Division> S_Division { get; set; }
-        public virtual DbSet<T_CLTranSaleOrder> T_CLTranSaleOrder { get; set; }
-        public virtual DbSet<Sys_UnitLevel> Sys_UnitLevel { get; set; }
-        public virtual DbSet<T_CLMasterSaleOrder> T_CLMasterSaleOrder { get; set; }
-        public virtual DbSet<S_Customer> S_Customer { get; set; }
-        public virtual DbSet<S_Location> S_Location { get; set; }
-        public virtual DbSet<S_SlipID> S_SlipID { get; set; }
-        public virtual DbSet<S_Supplier> S_Supplier { get; set; }
-        public virtual DbSet<S_VoucherFormat> S_VoucherFormat { get; set; }
-        public virtual DbSet<S_VoucherSetting> S_VoucherSetting { get; set; }
-        public virtual DbSet<S_CompanySetting> S_CompanySetting { get; set; }
-        public virtual DbSet<S_Product> S_Product { get; set; }
-        public virtual DbSet<S_User> S_User { get; set; }
-        public virtual DbSet<T_MasterSale> T_MasterSale { get; set; }
-        public virtual DbSet<Sys_Module> Sys_Module { get; set; }
-        public virtual DbSet<T_TranSale> T_TranSale { get; set; }
+        public virtual DbSet<SAdjustType> SAdjustTypes { get; set; }
+        public virtual DbSet<SBank> SBanks { get; set; }
+        public virtual DbSet<SBankPayment> SBankPayments { get; set; }
+        public virtual DbSet<SClient> SClients { get; set; }
+        public virtual DbSet<SCompanySetting> SCompanySettings { get; set; }
+        public virtual DbSet<SCustomer> SCustomers { get; set; }
+        public virtual DbSet<SDivision> SDivisions { get; set; }
+        public virtual DbSet<SLocation> SLocations { get; set; }
+        public virtual DbSet<SMainMenu> SMainMenus { get; set; }
+        public virtual DbSet<SProduct> SProducts { get; set; }
+        public virtual DbSet<SSubMenu> SSubMenus { get; set; }
+        public virtual DbSet<SSupplier> SSuppliers { get; set; }
+        public virtual DbSet<STownship> STownships { get; set; }
+        public virtual DbSet<SUnit> SUnits { get; set; }
+        public virtual DbSet<SUser> SUsers { get; set; }
+        public virtual DbSet<SVoucherFormat> SVoucherFormats { get; set; }
+        public virtual DbSet<SVoucherSetting> SVoucherSettings { get; set; }
+        public virtual DbSet<SysModule> SysModules { get; set; }
+        public virtual DbSet<TCLMasterSaleOrder> TCLMasterSaleOrders { get; set; }
+        public virtual DbSet<TCLTranSaleOrder> TCLTranSaleOrders { get; set; }
     
         public virtual int PrcDeleteBank(Nullable<int> bankID)
         {

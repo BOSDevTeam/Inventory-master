@@ -12,12 +12,13 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class sysdiagram
+    public partial class SMainMenu
     {
-        public string name { get; set; }
-        public int principal_id { get; set; }
-        public int diagram_id { get; set; }
-        public Nullable<int> version { get; set; }
-        public byte[] definition { get; set; }
+        public int MainMenuID { get; set; }
+        public string Code { get; set; }
+        public int SortCode { get; set; }
+        public string MainMenuName { get; set; }
+        public byte[] Photo { get; set; }
+        public string PhotoUrl { get; set; }
     }
 }

@@ -12,15 +12,22 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class S_Location
+    public partial class SCompanySetting
     {
-        public int LocationID { get; set; }
-        public string LocationName { get; set; }
-        public string ShortName { get; set; }
+        public int CompanyID { get; set; }
+        public string CompanyName { get; set; }
         public string Description { get; set; }
-        public string Code { get; set; }
+        public byte[] Logo { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }
+        public string Website { get; set; }
+        public string Tax { get; set; }
+        public string ServiceCharges { get; set; }
+        public Nullable<bool> IsMultiCurrency { get; set; }
+        public Nullable<bool> IsMultiUnit { get; set; }
+        public Nullable<bool> IsBankPayment { get; set; }
+        public Nullable<int> ShopTypeID { get; set; }
+        public Nullable<bool> IsClientPhoneVerify { get; set; }
     }
 }

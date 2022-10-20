@@ -118,6 +118,7 @@ button.discount-active{padding:5px 10px;background-color:#39c164;font-size:14px;
 .light-background{background-color:#ecedef;}
 table tr td.text-overflow{text-overflow:ellipsis;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;}
 div.tran-table{overflow-y:auto;overflow-x:hidden;}
+table tr.selected{background-color:#e5e53e;}
 /** end general */
 
 

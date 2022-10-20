@@ -12,10 +12,10 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class Sys_Module
+    public partial class SDivision
     {
-        public int ModuleID { get; set; }
-        public string ModuleName { get; set; }
-        public string ModuleCode { get; set; }
+        public int DivisionID { get; set; }
+        public string Code { get; set; }
+        public string DivisionName { get; set; }
     }
 }

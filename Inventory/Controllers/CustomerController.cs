@@ -94,10 +94,10 @@ namespace Inventory.Controllers
         {
             string message;
             int saveOk;
-            var cust = (from cus in Entities.S_Customer where cus.Code == code select cus).ToList();
+            var cust = (from cus in Entities.SCustomers where cus.Code == code select cus).ToList();
             if (cust.Count() == 0)
             {
-                var custphone = (from cus in Entities.S_Customer where cus.Phone == phone where cus.Phone != "" select cus).ToList();
+                var custphone = (from cus in Entities.SCustomers where cus.Phone == phone where cus.Phone != "" select cus).ToList();
                 if (custphone.Count == 0)
                 {
                     Entities.PrcInsertCustomer(customerName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
@@ -165,10 +165,10 @@ namespace Inventory.Controllers
         {
             string message;
             int editOk;
-            var cust = (from cus in Entities.S_Customer where cus.Code == code where cus.CustomerID != editCustomerID select cus).ToList();
+            var cust = (from cus in Entities.SCustomers where cus.Code == code where cus.CustomerID != editCustomerID select cus).ToList();
             if (cust.Count() == 0)
             {
-                var editcustphone = (from cus in Entities.S_Customer where cus.Phone == phone where cus.Phone != "" where cus.CustomerID != editCustomerID select cus).ToList();
+                var editcustphone = (from cus in Entities.SCustomers where cus.Phone == phone where cus.Phone != "" where cus.CustomerID != editCustomerID select cus).ToList();
                 if (editcustphone.Count == 0)
                 {
                     Entities.PrcUpdateCustomer(editCustomerID, customerName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
@@ -259,7 +259,7 @@ namespace Inventory.Controllers
 
         private void GetDivision()
         {
-            foreach (var div in Entities.S_Division.OrderBy(m => m.Code))
+            foreach (var div in Entities.SDivisions.OrderBy(m => m.Code))
             {
                 model.Divisions.Add(new SelectListItem { Text = div.DivisionName, Value = div.DivisionID.ToString() });
             }
@@ -297,14 +297,14 @@ namespace Inventory.Controllers
 
         private void GetTownshipByDivision(int? editdivisionId)
         {
-            foreach (var town in Entities.S_Township.Where(m=>m.DivisionID == editdivisionId).OrderBy(m => m.Code))
+            foreach (var town in Entities.STownships.Where(m=>m.DivisionID == editdivisionId).OrderBy(m => m.Code))
             {
                 model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
             }
         }
         private void GetTownship(int divisionId)
         {
-            foreach (var town in Entities.S_Township.Where(m => m.DivisionID == divisionId).OrderBy(m => m.Code))
+            foreach (var town in Entities.STownships.Where(m => m.DivisionID == divisionId).OrderBy(m => m.Code))
             {
                 model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
             }
@@ -315,7 +315,7 @@ namespace Inventory.Controllers
         private void GetDivisionDefaultInclude()
         {
             model.Divisions.Add(new SelectListItem { Text = "Division", Value = "0" });
-            foreach (var div in Entities.S_Division.OrderBy(m => m.Code))
+            foreach (var div in Entities.SDivisions.OrderBy(m => m.Code))
             {
                 model.Divisions.Add(new SelectListItem { Text = div.DivisionName, Value = div.DivisionID.ToString() });
             }
@@ -324,7 +324,7 @@ namespace Inventory.Controllers
         private void GetTownshipDefaultInclude()
         {
             model.Townships.Add(new SelectListItem { Text = "Township", Value = "0" });
-            foreach (var town in Entities.S_Township.OrderBy(m => m.Code))
+            foreach (var town in Entities.STownships.OrderBy(m => m.Code))
             {
                 model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
             }

@@ -12,18 +12,14 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class T_TranSale
+    public partial class TCLTranSaleOrder
     {
         public int ID { get; set; }
-        public Nullable<int> SaleID { get; set; }
+        public Nullable<int> SaleOrderID { get; set; }
         public Nullable<int> ProductID { get; set; }
         public Nullable<int> Quantity { get; set; }
-        public Nullable<int> UnitID { get; set; }
         public Nullable<int> SalePrice { get; set; }
-        public Nullable<int> CurrencyID { get; set; }
-        public Nullable<int> DiscountPercent { get; set; }
-        public Nullable<int> Discount { get; set; }
         public Nullable<int> Amount { get; set; }
-        public Nullable<bool> IsFOC { get; set; }
+        public Nullable<int> SysProductID { get; set; }
     }
 }

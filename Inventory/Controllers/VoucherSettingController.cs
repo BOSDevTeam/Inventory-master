@@ -138,10 +138,10 @@ namespace Inventory.Controllers
             string message;
             int saveOk;
 
-            var settings = (from setting in Entities.S_VoucherSetting where setting.LocationID == locationId select setting).ToList();
+            var settings = (from setting in Entities.SVoucherSettings where setting.LocationID == locationId select setting).ToList();
             if (settings.Count() == 0)
             {
-                S_VoucherSetting table = new S_VoucherSetting();
+                SVoucherSetting table = new SVoucherSetting();
                 table.HeaderName = headerName;
                 table.HeaderDesp = headerDesp;
                 table.HeaderPhone = headerPhone;
@@ -167,7 +167,7 @@ namespace Inventory.Controllers
                     clearSessionPhoto();
                 }
 
-                Entities.S_VoucherSetting.Add(table);
+                Entities.SVoucherSettings.Add(table);
                 Entities.SaveChanges();
 
                 message = "Saved Successfully!";
@@ -193,10 +193,10 @@ namespace Inventory.Controllers
             string message = "";
             int editOk = 0;
 
-            var settings = (from setting in Entities.S_VoucherSetting where setting.ID != editVouSettingID where setting.LocationID == locationId select setting).ToList();
+            var settings = (from setting in Entities.SVoucherSettings where setting.ID != editVouSettingID where setting.LocationID == locationId select setting).ToList();
             if (settings.Count() == 0)
             {
-                var result = Entities.S_VoucherSetting.SingleOrDefault(c => c.ID == editVouSettingID);
+                var result = Entities.SVoucherSettings.SingleOrDefault(c => c.ID == editVouSettingID);
                 if (result != null)
                 {
                     result.HeaderName = headerName;
@@ -287,8 +287,8 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult DeleteAction(int Id)
         {
-            S_VoucherSetting setting = Entities.S_VoucherSetting.Where(x => x.ID == Id).Single<S_VoucherSetting>();
-            Entities.S_VoucherSetting.Remove(setting);
+            SVoucherSetting setting = Entities.SVoucherSettings.Where(x => x.ID == Id).Single<SVoucherSetting>();
+            Entities.SVoucherSettings.Remove(setting);
             Entities.SaveChanges();
             return Json("", JsonRequestBehavior.AllowGet);
         }
@@ -296,7 +296,7 @@ namespace Inventory.Controllers
         private void GetLocationDefaultInclude()
         {
             model.Locations.Add(new SelectListItem { Text = "Location", Value = "0" });
-            foreach (var location in Entities.S_Location.OrderBy(m => m.Code))
+            foreach (var location in Entities.SLocations.OrderBy(m => m.Code))
             {
                 model.Locations.Add(new SelectListItem { Text = location.LocationName, Value = location.LocationID.ToString() });
             }
@@ -304,7 +304,7 @@ namespace Inventory.Controllers
 
         private void GetLocation()
         {
-            foreach (var location in Entities.S_Location.OrderBy(m => m.Code))
+            foreach (var location in Entities.SLocations.OrderBy(m => m.Code))
             {
                 model.Locations.Add(new SelectListItem { Text = location.LocationName, Value = location.LocationID.ToString() });
             }
@@ -312,7 +312,7 @@ namespace Inventory.Controllers
 
         private void GetAllLocation()
         {
-            var locations = (from location in Entities.S_Location orderby location.Code select location).ToList();
+            var locations = (from location in Entities.SLocations orderby location.Code select location).ToList();
             foreach (var location in locations)
             {
                 model.Locations.Add(new SelectListItem { Text = location.LocationName, Value = location.LocationID.ToString() });

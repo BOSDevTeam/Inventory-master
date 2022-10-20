@@ -44,7 +44,7 @@ namespace Inventory.Controllers
             model.LstAdjustType = new List<AdjustTypeModels.AdjustTypeModel>();
             lstAdjustTypeList = new List<AdjustTypeModels.AdjustTypeModel>();
 
-            foreach (var adjust in Entities.S_AdjustType)
+            foreach (var adjust in Entities.SAdjustTypes)
             {
                 adjustTypeModel = new AdjustTypeModels.AdjustTypeModel();
                 adjustTypeModel.AdjustTypeID = adjust.AdjustTypeID;
@@ -102,8 +102,8 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult DeleteAction(int adjustTypeId)
         {
-            S_AdjustType adjust = Entities.S_AdjustType.Where(x => x.AdjustTypeID == adjustTypeId).Single<S_AdjustType>();
-            Entities.S_AdjustType.Remove(adjust);
+            SAdjustType adjust = Entities.SAdjustTypes.Where(x => x.AdjustTypeID == adjustTypeId).Single<SAdjustType>();
+            Entities.SAdjustTypes.Remove(adjust);
             Entities.SaveChanges();
 
             return Json("", JsonRequestBehavior.AllowGet);

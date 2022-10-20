@@ -163,10 +163,16 @@
 
 <script type="text/javascript">
 
+    noBack();
+
     let tranSaleAction, defaultCustomerId, defaultLocationId;
     document.getElementById('subMenuSale').className = 'active';
 
     calcSaleHeight();
+
+    function noBack() {
+        window.history.forward();
+    }
 
     function calcSaleHeight() {
         let windowHeight = window.innerHeight;
@@ -585,6 +591,8 @@
         });
 
         $("#tblTranSale").on("click", "tbody tr", function (event) {
+            $('#tblTranSale tr').removeClass("selected");
+            $(this).addClass("selected");
             $(this).find("td:last").each(function () {
                 let number = $(this).text();
                 if (tranSaleAction == 3) {

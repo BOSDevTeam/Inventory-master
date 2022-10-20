@@ -10,14 +10,18 @@
 namespace Inventory
 {
     using System;
-    using System.Collections.Generic;
     
-    public partial class S_Township
+    public partial class PrcSearchClient_Result
     {
+        public int ClientID { get; set; }
+        public string ClientName { get; set; }
+        public string ShopName { get; set; }
+        public string Phone { get; set; }
+        public int DivisionID { get; set; }
+        public string DivisionName { get; set; }
         public int TownshipID { get; set; }
-        public string Code { get; set; }
         public string TownshipName { get; set; }
-        public Nullable<bool> IsDefault { get; set; }
-        public Nullable<int> DivisionID { get; set; }
+        public string Address { get; set; }
+        public Nullable<bool> IsSalePerson { get; set; }
     }
 }

@@ -12,11 +12,11 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class S_Supplier
+    public partial class SCustomer
     {
-        public int SupplierID { get; set; }
+        public int CustomerID { get; set; }
         public string Code { get; set; }
-        public string SupplierName { get; set; }
+        public string CustomerName { get; set; }
         public Nullable<int> TownshipID { get; set; }
         public string Contact { get; set; }
         public string Address { get; set; }

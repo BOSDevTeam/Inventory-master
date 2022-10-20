@@ -185,7 +185,7 @@ namespace Inventory.Controllers
         private void getBank()
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand("Select BankID,BankName From S_Bank", (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand("Select BankID,BankName From SBank", (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.Text;
 
             SqlDataReader reader = cmd.ExecuteReader();
@@ -202,7 +202,7 @@ namespace Inventory.Controllers
         {
             model.Banks.Add(new SelectListItem { Text = "All Bank", Value = "0" });
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand("Select BankID,BankName From S_Bank", (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand("Select BankID,BankName From SBank", (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.Text;
 
             SqlDataReader reader = cmd.ExecuteReader();

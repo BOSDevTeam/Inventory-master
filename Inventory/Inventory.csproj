@@ -182,7 +182,6 @@
     <Compile Include="Controllers\SupplierController.cs" />
     <Compile Include="Controllers\TechnicianController.cs" />
     <Compile Include="Controllers\TownshipController.cs" />
-    <Compile Include="Controllers\UnitController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\VoucherFormatController.cs" />
     <Compile Include="Controllers\VoucherSettingController.cs" />
@@ -330,97 +329,70 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
+    <Compile Include="SAdjustType.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SBank.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SBankPayment.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SClient.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SCompanySetting.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SCustomer.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SDivision.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SLocation.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SMainMenu.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SProduct.cs">
+      <DependentUpon>Inventory.tt</DependentUpon>
+    </Compile>
     <Compile Include="sp_helpdiagramdefinition_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="sp_helpdiagrams_Result.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="sysdiagram.cs">
+    <Compile Include="SSubMenu.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="Sys_Admin.cs">
+    <Compile Include="SSupplier.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="Sys_Currency.cs">
+    <Compile Include="STownship.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="Sys_Module.cs">
+    <Compile Include="SUnit.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="Sys_Payment.cs">
+    <Compile Include="SUser.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="Sys_PayMethod.cs">
+    <Compile Include="SVoucherFormat.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="Sys_ShopType.cs">
+    <Compile Include="SVoucherSetting.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="Sys_UnitLevel.cs">
+    <Compile Include="SysModule.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="S_AdjustType.cs">
+    <Compile Include="TCLMasterSaleOrder.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="S_Bank.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_BankPayment.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_CompanySetting.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_Customer.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_Division.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_Location.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_MainMenu.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_Product.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_SlipID.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_SubMenu.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_Supplier.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_Township.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_Unit.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_User.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_VoucherFormat.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="S_VoucherSetting.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="T_CLMasterSaleOrder.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="T_CLTranSaleOrder.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="T_MasterSale.cs">
-      <DependentUpon>Inventory.tt</DependentUpon>
-    </Compile>
-    <Compile Include="T_TranSale.cs">
+    <Compile Include="TCLTranSaleOrder.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\MasterSaleVoucherViewModel.cs" />
@@ -561,8 +533,6 @@
     <Content Include="Views\Township\TownshipEntry.cshtml" />
     <Content Include="Views\AdjustType\AdjustTypeEntry.cshtml" />
     <Content Include="Views\AdjustType\AdjustTypeList.cshtml" />
-    <Content Include="Views\Unit\UnitEntry.cshtml" />
-    <Content Include="Views\Unit\UnitList.cshtml" />
     <Content Include="Views\VoucherFormat\VoucherFormatEntry.cshtml" />
     <Content Include="Views\VoucherFormat\VoucherFormatList.cshtml" />
     <Content Include="Views\VoucherSetting\VoucherSettingList.cshtml" />

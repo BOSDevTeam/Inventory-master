@@ -55,7 +55,7 @@ namespace Inventory.Controllers
             model.LstMainMenu = new List<MainMenuModels.MainMenuModel>();
             lstMainMenuList = new List<MainMenuModels.MainMenuModel>();
 
-            foreach (var main in Entities.S_MainMenu.OrderBy(m => m.SortCode))
+            foreach (var main in Entities.SMainMenus.OrderBy(m => m.SortCode))
             {
                 mainMenuModel = new MainMenuModels.MainMenuModel();
                 mainMenuModel.MainMenuID = main.MainMenuID;
@@ -80,13 +80,13 @@ namespace Inventory.Controllers
         {
             string message;
             int saveOk;
-            var mains = (from main in Entities.S_MainMenu where main.Code == code select main).ToList();
+            var mains = (from main in Entities.SMainMenus where main.Code == code select main).ToList();
             if (mains.Count() == 0)
             {
-                var mainss = (from main in Entities.S_MainMenu where main.SortCode == sortCode select main).ToList();
+                var mainss = (from main in Entities.SMainMenus where main.SortCode == sortCode select main).ToList();
                 if (mainss.Count() == 0)
                 {
-                    S_MainMenu table = new S_MainMenu();
+                    SMainMenu table = new SMainMenu();
                     table.MainMenuName = mainMenuName;
                     table.Code = code;
                     table.SortCode = sortCode;
@@ -105,7 +105,7 @@ namespace Inventory.Controllers
                         clearSessionPhoto();
                     }                                      
 
-                    Entities.S_MainMenu.Add(table);
+                    Entities.SMainMenus.Add(table);
                     Entities.SaveChanges();
 
                     message = "Saved Successfully!";
@@ -136,13 +136,13 @@ namespace Inventory.Controllers
         {
             string message = "";
             int editOk = 0;
-            var mains = (from main in Entities.S_MainMenu where main.Code == code where main.MainMenuID != editMainMenuID select main).ToList();
+            var mains = (from main in Entities.SMainMenus where main.Code == code where main.MainMenuID != editMainMenuID select main).ToList();
             if (mains.Count() == 0)
             {
-                var mainss = (from main in Entities.S_MainMenu where main.SortCode == sortCode where main.MainMenuID != editMainMenuID select main).ToList();
+                var mainss = (from main in Entities.SMainMenus where main.SortCode == sortCode where main.MainMenuID != editMainMenuID select main).ToList();
                 if (mainss.Count() == 0)
                 {
-                    var result = Entities.S_MainMenu.SingleOrDefault(c => c.MainMenuID == editMainMenuID);
+                    var result = Entities.SMainMenus.SingleOrDefault(c => c.MainMenuID == editMainMenuID);
                     if (result != null)
                     {
                         result.MainMenuName = mainMenuName;
@@ -221,11 +221,11 @@ namespace Inventory.Controllers
         public JsonResult DeleteAction(int mainMenuId)
         {
             int delOk;
-            var subs = (from sub in Entities.S_SubMenu where sub.MainMenuID == mainMenuId select sub).ToList();
+            var subs = (from sub in Entities.SSubMenus where sub.MainMenuID == mainMenuId select sub).ToList();
             if (subs.Count == 0)
             {
-                S_MainMenu main = Entities.S_MainMenu.Where(x => x.MainMenuID == mainMenuId).Single<S_MainMenu>();
-                Entities.S_MainMenu.Remove(main);
+                SMainMenu main = Entities.SMainMenus.Where(x => x.MainMenuID == mainMenuId).Single<SMainMenu>();
+                Entities.SMainMenus.Remove(main);
                 Entities.SaveChanges();
                 delOk = 1;
             }

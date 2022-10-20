@@ -87,10 +87,10 @@ namespace Inventory.Controllers
         {
             string message;
             int saveOk;
-            var supt = (from sup in Entities.S_Supplier where sup.Code == code select sup).ToList();
+            var supt = (from sup in Entities.SSuppliers where sup.Code == code select sup).ToList();
             if (supt.Count() == 0)
             {
-                var supPhone = (from sup in Entities.S_Supplier where sup.Phone == phone where sup.Phone != null select sup).ToList();
+                var supPhone = (from sup in Entities.SSuppliers where sup.Phone == phone where sup.Phone != null select sup).ToList();
                 if (supPhone.Count == 0 )
                 {
                     Entities.PrcInsertSupplier(supplierName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
@@ -157,10 +157,10 @@ namespace Inventory.Controllers
         {
             string message;
             int editOk;
-            var supt = (from sup in Entities.S_Supplier where sup.Code == code where sup.SupplierID != editSupplierID select sup).ToList();
+            var supt = (from sup in Entities.SSuppliers where sup.Code == code where sup.SupplierID != editSupplierID select sup).ToList();
             if (supt.Count() == 0)
             {
-                var suptPhone = (from sup in Entities.S_Supplier where sup.Phone == phone where sup.Phone != null where sup.SupplierID != editSupplierID select sup).ToList();
+                var suptPhone = (from sup in Entities.SSuppliers where sup.Phone == phone where sup.Phone != null where sup.SupplierID != editSupplierID select sup).ToList();
                 if (suptPhone.Count == 0)
                 {
                     Entities.PrcUpdateSupplier(editSupplierID, supplierName, code, phone, email, address, contact, townshipId, isCredit, divisionId);
@@ -247,8 +247,8 @@ namespace Inventory.Controllers
             //var mssale = (from ms in Entities.T_MasterSale where ms.CustomerID == customerId select ms).ToList();
             //if (mssale.Count == 0)
             //{
-            S_Supplier supplier = Entities.S_Supplier.Where(x => x.SupplierID == supplierId).Single<S_Supplier>();
-            Entities.S_Supplier.Remove(supplier);
+            SSupplier supplier = Entities.SSuppliers.Where(x => x.SupplierID == supplierId).Single<SSupplier>();
+            Entities.SSuppliers.Remove(supplier);
             Entities.SaveChanges();
             delOk = 1;
             //}
@@ -267,7 +267,7 @@ namespace Inventory.Controllers
 
         private void GetDivision()
         {
-            foreach (var div in Entities.S_Division.OrderBy(m=>m.Code))
+            foreach (var div in Entities.SDivisions.OrderBy(m=>m.Code))
             {
                 model.Divisions.Add(new SelectListItem {Text = div.DivisionName, Value = div.DivisionID.ToString() });
             }
@@ -275,7 +275,7 @@ namespace Inventory.Controllers
 
         private void GetTownshipByDivision(int editdivisionId)
         {
-            foreach (var town in Entities.S_Township.Where(m=>m.DivisionID == editdivisionId).OrderBy(m => m.Code))
+            foreach (var town in Entities.STownships.Where(m=>m.DivisionID == editdivisionId).OrderBy(m => m.Code))
             {
                 model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
             }
@@ -283,7 +283,7 @@ namespace Inventory.Controllers
 
         private void GetTownship(int divisionId)
         {
-            foreach (var town in Entities.S_Township.Where(m => m.DivisionID == divisionId).OrderBy(m => m.Code))
+            foreach (var town in Entities.STownships.Where(m => m.DivisionID == divisionId).OrderBy(m => m.Code))
             {
                 model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
             }
@@ -293,7 +293,7 @@ namespace Inventory.Controllers
         private void GetDivisionDefaultInclude()
         {
             model.Divisions.Add(new SelectListItem { Text = "Division", Value = "0" });
-            foreach (var div in Entities.S_Division.OrderBy(m => m.Code))
+            foreach (var div in Entities.SDivisions.OrderBy(m => m.Code))
             {
                 model.Divisions.Add(new SelectListItem { Text = div.DivisionName, Value = div.DivisionID.ToString() });
             }
@@ -302,7 +302,7 @@ namespace Inventory.Controllers
         private void GetTownshipDefaultInclude()
         {
             model.Townships.Add(new SelectListItem { Text = "Township", Value = "0" });
-            foreach (var town in Entities.S_Township.OrderBy(m => m.Code))
+            foreach (var town in Entities.STownships.OrderBy(m => m.Code))
             {
                 model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
             }

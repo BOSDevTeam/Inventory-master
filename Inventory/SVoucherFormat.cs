@@ -12,11 +12,12 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class S_Unit
+    public partial class SVoucherFormat
     {
-        public int UnitID { get; set; }
-        public string UnitName { get; set; }
-        public string Keyword { get; set; }
-        public short ULID { get; set; }
+        public int ID { get; set; }
+        public string PreFormat { get; set; }
+        public string MidFormat { get; set; }
+        public int PostFormat { get; set; }
+        public string ModuleCode { get; set; }
     }
 }

@@ -12,9 +12,10 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class Sys_PayMethod
+    public partial class SysModule
     {
-        public int PayMethodID { get; set; }
-        public string PayMethodName { get; set; }
+        public int ModuleID { get; set; }
+        public string ModuleName { get; set; }
+        public string ModuleCode { get; set; }
     }
 }

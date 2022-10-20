@@ -5,7 +5,7 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="InventoryDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="S_AdjustType">
+        <EntityType Name="SAdjustType">
           <Key>
             <PropertyRef Name="AdjustTypeID" />
           </Key>
@@ -15,7 +15,7 @@
           <Property Name="IsIncrease" Type="bit" Nullable="false" />
           <Property Name="Sign" Type="varchar" MaxLength="10" />
         </EntityType>
-        <EntityType Name="S_Bank">
+        <EntityType Name="SBank">
           <Key>
             <PropertyRef Name="BankID" />
           </Key>
@@ -23,7 +23,7 @@
           <Property Name="BankName" Type="nvarchar" MaxLength="200" />
           <Property Name="ShortName" Type="nvarchar" MaxLength="100" />
         </EntityType>
-        <EntityType Name="S_BankPayment">
+        <EntityType Name="SBankPayment">
           <Key>
             <PropertyRef Name="BankPaymentID" />
           </Key>
@@ -31,7 +31,21 @@
           <Property Name="BankID" Type="int" />
           <Property Name="BankPaymentName" Type="nvarchar" MaxLength="200" />
         </EntityType>
-        <EntityType Name="S_CompanySetting">
+        <EntityType Name="SClient">
+          <Key>
+            <PropertyRef Name="ClientID" />
+          </Key>
+          <Property Name="ClientID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClientName" Type="nvarchar" MaxLength="200" />
+          <Property Name="ClientPassword" Type="varchar" MaxLength="50" />
+          <Property Name="ShopName" Type="nvarchar" MaxLength="200" />
+          <Property Name="Phone" Type="varchar" MaxLength="50" />
+          <Property Name="DivisionID" Type="int" />
+          <Property Name="TownshipID" Type="int" />
+          <Property Name="Address" Type="nvarchar" MaxLength="1000" />
+          <Property Name="IsSalePerson" Type="bit" />
+        </EntityType>
+        <EntityType Name="SCompanySetting">
           <Key>
             <PropertyRef Name="CompanyID" />
           </Key>
@@ -51,7 +65,7 @@
           <Property Name="ShopTypeID" Type="int" />
           <Property Name="IsClientPhoneVerify" Type="bit" />
         </EntityType>
-        <EntityType Name="S_Customer">
+        <EntityType Name="SCustomer">
           <Key>
             <PropertyRef Name="CustomerID" />
           </Key>
@@ -67,7 +81,7 @@
           <Property Name="IsDefault" Type="bit" />
           <Property Name="DivisionID" Type="int" />
         </EntityType>
-        <EntityType Name="S_Division">
+        <EntityType Name="SDivision">
           <Key>
             <PropertyRef Name="DivisionID" />
           </Key>
@@ -75,7 +89,7 @@
           <Property Name="Code" Type="varchar" MaxLength="50" />
           <Property Name="DivisionName" Type="nvarchar" MaxLength="200" />
         </EntityType>
-        <EntityType Name="S_Location">
+        <EntityType Name="SLocation">
           <Key>
             <PropertyRef Name="LocationID" />
           </Key>
@@ -88,7 +102,7 @@
           <Property Name="Address" Type="nvarchar" MaxLength="1000" />
           <Property Name="Email" Type="varchar" MaxLength="200" />
         </EntityType>
-        <EntityType Name="S_MainMenu">
+        <EntityType Name="SMainMenu">
           <Key>
             <PropertyRef Name="MainMenuID" />
           </Key>
@@ -99,7 +113,7 @@
           <Property Name="Photo" Type="image" />
           <Property Name="PhotoUrl" Type="varchar" MaxLength="200" />
         </EntityType>
-        <EntityType Name="S_Product">
+        <EntityType Name="SProduct">
           <Key>
             <PropertyRef Name="ProductID" />
           </Key>
@@ -118,14 +132,7 @@
           <Property Name="DisPercent" Type="smallint" />
           <Property Name="PhotoUrl" Type="varchar" MaxLength="200" />
         </EntityType>
-        <EntityType Name="S_SlipID">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="SlipID" Type="int" Nullable="false" />
-        </EntityType>
-        <EntityType Name="S_SubMenu">
+        <EntityType Name="SSubMenu">
           <Key>
             <PropertyRef Name="SubMenuID" />
           </Key>
@@ -137,7 +144,7 @@
           <Property Name="MainMenuID" Type="int" Nullable="false" />
           <Property Name="PhotoUrl" Type="varchar" MaxLength="200" />
         </EntityType>
-        <EntityType Name="S_Supplier">
+        <EntityType Name="SSupplier">
           <Key>
             <PropertyRef Name="SupplierID" />
           </Key>
@@ -153,7 +160,7 @@
           <Property Name="IsDefault" Type="bit" />
           <Property Name="DivisionID" Type="int" />
         </EntityType>
-        <EntityType Name="S_Township">
+        <EntityType Name="STownship">
           <Key>
             <PropertyRef Name="TownshipID" />
           </Key>
@@ -163,7 +170,7 @@
           <Property Name="IsDefault" Type="bit" />
           <Property Name="DivisionID" Type="int" />
         </EntityType>
-        <EntityType Name="S_Unit">
+        <EntityType Name="SUnit">
           <Key>
             <PropertyRef Name="UnitID" />
           </Key>
@@ -172,7 +179,7 @@
           <Property Name="Keyword" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="ULID" Type="smallint" Nullable="false" />
         </EntityType>
-        <EntityType Name="S_User">
+        <EntityType Name="SUser">
           <Key>
             <PropertyRef Name="UserID" />
           </Key>
@@ -182,7 +189,7 @@
           <Property Name="IsDefaultLocation" Type="bit" Nullable="false" />
           <Property Name="LocationID" Type="int" />
         </EntityType>
-        <EntityType Name="S_VoucherFormat">
+        <EntityType Name="SVoucherFormat">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -192,7 +199,7 @@
           <Property Name="PostFormat" Type="int" Nullable="false" />
           <Property Name="ModuleCode" Type="varchar" MaxLength="50" />
         </EntityType>
-        <EntityType Name="S_VoucherSetting">
+        <EntityType Name="SVoucherSetting">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -210,26 +217,7 @@
           <Property Name="FooterMessage3" Type="nvarchar" MaxLength="200" />
           <Property Name="VoucherLogoUrl" Type="varchar" MaxLength="200" />
         </EntityType>
-        <EntityType Name="Sys_Admin">
-          <Key>
-            <PropertyRef Name="AdminID" />
-          </Key>
-          <Property Name="AdminID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="AdminName" Type="nvarchar" MaxLength="200" />
-          <Property Name="AdminPassword" Type="varchar" MaxLength="50" />
-        </EntityType>
-        <EntityType Name="Sys_Currency">
-          <Key>
-            <PropertyRef Name="CurrencyID" />
-          </Key>
-          <Property Name="CurrencyID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="CurrencyName" Type="nvarchar" MaxLength="100" />
-          <Property Name="Keyword" Type="nvarchar" MaxLength="50" />
-          <Property Name="Rate" Type="numeric" Precision="18" Scale="4" />
-          <Property Name="IsDefault" Type="bit" />
-          <Property Name="IsMultiCurrency" Type="bit" />
-        </EntityType>
-        <EntityType Name="Sys_Module">
+        <EntityType Name="SysModule">
           <Key>
             <PropertyRef Name="ModuleID" />
           </Key>
@@ -237,48 +225,7 @@
           <Property Name="ModuleName" Type="nvarchar" MaxLength="200" />
           <Property Name="ModuleCode" Type="varchar" MaxLength="50" />
         </EntityType>
-        <EntityType Name="Sys_Payment">
-          <Key>
-            <PropertyRef Name="PaymentID" />
-          </Key>
-          <Property Name="PaymentID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="PaymentName" Type="nvarchar" MaxLength="200" />
-          <Property Name="Keyword" Type="nvarchar" MaxLength="100" />
-          <Property Name="IsDefault" Type="bit" />
-        </EntityType>
-        <EntityType Name="Sys_PayMethod">
-          <Key>
-            <PropertyRef Name="PayMethodID" />
-          </Key>
-          <Property Name="PayMethodID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="PayMethodName" Type="nvarchar" MaxLength="50" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Sys_ShopType">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ShopType" Type="nvarchar" MaxLength="100" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Sys_UnitLevel">
-          <Key>
-            <PropertyRef Name="ULID" />
-          </Key>
-          <Property Name="ULID" Type="smallint" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="ULName" Type="varchar" MaxLength="50" Nullable="false" />
-          <Property Name="ULOrder" Type="smallint" Nullable="false" />
-        </EntityType>
-        <EntityType Name="sysdiagrams">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="principal_id" Type="int" Nullable="false" />
-          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="version" Type="int" />
-          <Property Name="definition" Type="varbinary(max)" />
-        </EntityType>
-        <EntityType Name="T_CLMasterSaleOrder">
+        <EntityType Name="TCLMasterSaleOrder">
           <Key>
             <PropertyRef Name="SaleOrderID" />
           </Key>
@@ -296,7 +243,7 @@
           <Property Name="Remark" Type="nvarchar" MaxLength="500" />
           <Property Name="IsOrderFinished" Type="bit" />
         </EntityType>
-        <EntityType Name="T_CLTranSaleOrder">
+        <EntityType Name="TCLTranSaleOrder">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
@@ -306,56 +253,7 @@
           <Property Name="Quantity" Type="int" />
           <Property Name="SalePrice" Type="int" />
           <Property Name="Amount" Type="int" />
-        </EntityType>
-        <EntityType Name="T_MasterSale">
-          <Key>
-            <PropertyRef Name="SaleID" />
-          </Key>
-          <Property Name="SaleID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="SaleDateTime" Type="datetime" />
-          <Property Name="SystemVoucherNo" Type="nvarchar" MaxLength="50" />
-          <Property Name="UserVoucherNo" Type="nvarchar" MaxLength="50" />
-          <Property Name="VoucherID" Type="nvarchar" MaxLength="50" />
-          <Property Name="IsClientSale" Type="bit" />
-          <Property Name="UserID" Type="int" />
-          <Property Name="ClientID" Type="int" />
-          <Property Name="CustomerID" Type="int" />
-          <Property Name="LocationID" Type="int" />
-          <Property Name="PaymentID" Type="int" />
-          <Property Name="PayMethodID" Type="int" />
-          <Property Name="BankPaymentID" Type="int" />
-          <Property Name="SlipID" Type="int" />
-          <Property Name="LimitedDayID" Type="int" />
-          <Property Name="Remark" Type="nvarchar" MaxLength="200" />
-          <Property Name="Subtotal" Type="int" />
-          <Property Name="Tax" Type="int" />
-          <Property Name="TaxAmt" Type="int" />
-          <Property Name="Charges" Type="int" />
-          <Property Name="ChargesAmt" Type="int" />
-          <Property Name="Total" Type="int" />
-          <Property Name="VouDisPercent" Type="int" />
-          <Property Name="VouDisAmount" Type="int" />
-          <Property Name="VoucherDiscount" Type="int" />
-          <Property Name="AdvancedPay" Type="int" />
-          <Property Name="PaymentPercent" Type="int" />
-          <Property Name="PayPercentAmt" Type="int" />
-          <Property Name="Grandtotal" Type="int" />
-        </EntityType>
-        <EntityType Name="T_TranSale">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="SaleID" Type="int" />
-          <Property Name="ProductID" Type="int" />
-          <Property Name="Quantity" Type="int" />
-          <Property Name="UnitID" Type="int" />
-          <Property Name="SalePrice" Type="int" />
-          <Property Name="CurrencyID" Type="int" />
-          <Property Name="DiscountPercent" Type="int" />
-          <Property Name="Discount" Type="int" />
-          <Property Name="Amount" Type="int" />
-          <Property Name="IsFOC" Type="bit" />
+          <Property Name="SysProductID" Type="int" />
         </EntityType>
         <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
         <Function Name="PrcDeleteBank" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -652,174 +550,32 @@
         </Function>
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="InventoryDBModelStoreContainer">
-          <EntitySet Name="S_AdjustType" EntityType="Self.S_AdjustType" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_Bank" EntityType="Self.S_Bank" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_BankPayment" EntityType="Self.S_BankPayment" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_CompanySetting" EntityType="Self.S_CompanySetting" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_Customer" EntityType="Self.S_Customer" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_Division" EntityType="Self.S_Division" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_Location" EntityType="Self.S_Location" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_MainMenu" EntityType="Self.S_MainMenu" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_Product" EntityType="Self.S_Product" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_SlipID" EntityType="Self.S_SlipID" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_SubMenu" EntityType="Self.S_SubMenu" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_Supplier" EntityType="Self.S_Supplier" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_Township" EntityType="Self.S_Township" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_Unit" EntityType="Self.S_Unit" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_User" EntityType="Self.S_User" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_VoucherFormat" EntityType="Self.S_VoucherFormat" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="S_VoucherSetting" EntityType="Self.S_VoucherSetting" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Sys_Admin" EntityType="Self.Sys_Admin" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Sys_Currency" EntityType="Self.Sys_Currency" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Sys_Module" EntityType="Self.Sys_Module" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Sys_Payment" EntityType="Self.Sys_Payment" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Sys_PayMethod" EntityType="Self.Sys_PayMethod" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Sys_ShopType" EntityType="Self.Sys_ShopType" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Sys_UnitLevel" EntityType="Self.Sys_UnitLevel" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="T_CLMasterSaleOrder" EntityType="Self.T_CLMasterSaleOrder" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="T_CLTranSaleOrder" EntityType="Self.T_CLTranSaleOrder" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="T_MasterSale" EntityType="Self.T_MasterSale" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="T_TranSale" EntityType="Self.T_TranSale" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SAdjustType" EntityType="Self.SAdjustType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SBank" EntityType="Self.SBank" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SBankPayment" EntityType="Self.SBankPayment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SClient" EntityType="Self.SClient" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SCompanySetting" EntityType="Self.SCompanySetting" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SCustomer" EntityType="Self.SCustomer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SDivision" EntityType="Self.SDivision" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SLocation" EntityType="Self.SLocation" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SMainMenu" EntityType="Self.SMainMenu" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SProduct" EntityType="Self.SProduct" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SSubMenu" EntityType="Self.SSubMenu" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SSupplier" EntityType="Self.SSupplier" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="STownship" EntityType="Self.STownship" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SUnit" EntityType="Self.SUnit" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SUser" EntityType="Self.SUser" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SVoucherFormat" EntityType="Self.SVoucherFormat" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SVoucherSetting" EntityType="Self.SVoucherSetting" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SysModule" EntityType="Self.SysModule" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TCLMasterSaleOrder" EntityType="Self.TCLMasterSaleOrder" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TCLTranSaleOrder" EntityType="Self.TCLTranSaleOrder" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="InventoryDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="S_AdjustType">
-          <Key>
-            <PropertyRef Name="AdjustTypeID" />
-          </Key>
-          <Property Name="AdjustTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="AdjustTypeName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ShortName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="IsIncrease" Type="Boolean" Nullable="false" />
-          <Property Name="Sign" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="S_Bank">
-          <Key>
-            <PropertyRef Name="BankID" />
-          </Key>
-          <Property Name="BankID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="BankName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="ShortName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="S_BankPayment">
-          <Key>
-            <PropertyRef Name="BankPaymentID" />
-          </Key>
-          <Property Name="BankPaymentID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="BankID" Type="Int32" />
-          <Property Name="BankPaymentName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="S_MainMenu">
-          <Key>
-            <PropertyRef Name="MainMenuID" />
-          </Key>
-          <Property Name="MainMenuID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="SortCode" Type="Int32" Nullable="false" />
-          <Property Name="MainMenuName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Photo" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <Property Name="PhotoUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="S_SubMenu">
-          <Key>
-            <PropertyRef Name="SubMenuID" />
-          </Key>
-          <Property Name="SubMenuID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
-          <Property Name="SortCode" Type="Int32" Nullable="false" />
-          <Property Name="SubMenuName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Photo" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <Property Name="MainMenuID" Type="Int32" Nullable="false" />
-          <Property Name="PhotoUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="S_Township">
-          <Key>
-            <PropertyRef Name="TownshipID" />
-          </Key>
-          <Property Name="TownshipID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="TownshipName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="IsDefault" Type="Boolean" />
-          <Property Name="DivisionID" Type="Int32" />
-        </EntityType>
-        <EntityType Name="S_Unit">
-          <Key>
-            <PropertyRef Name="UnitID" />
-          </Key>
-          <Property Name="UnitID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UnitName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Keyword" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="ULID" Type="Int16" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Sys_Admin">
-          <Key>
-            <PropertyRef Name="AdminID" />
-          </Key>
-          <Property Name="AdminID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="AdminName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="AdminPassword" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="Sys_Currency">
-          <Key>
-            <PropertyRef Name="CurrencyID" />
-          </Key>
-          <Property Name="CurrencyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CurrencyName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Keyword" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Rate" Type="Decimal" Precision="18" Scale="4" />
-          <Property Name="IsDefault" Type="Boolean" />
-          <Property Name="IsMultiCurrency" Type="Boolean" />
-        </EntityType>
-        <EntityType Name="Sys_Payment">
-          <Key>
-            <PropertyRef Name="PaymentID" />
-          </Key>
-          <Property Name="PaymentID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PaymentName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="Keyword" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="IsDefault" Type="Boolean" />
-        </EntityType>
-        <EntityType Name="Sys_PayMethod">
-          <Key>
-            <PropertyRef Name="PayMethodID" />
-          </Key>
-          <Property Name="PayMethodID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PayMethodName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Sys_ShopType">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ShopType" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="sysdiagram">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
-        </EntityType>
         <EntityContainer Name="InventoryDBEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="S_AdjustType" EntityType="Self.S_AdjustType" />
-          <EntitySet Name="S_Bank" EntityType="Self.S_Bank" />
-          <EntitySet Name="S_BankPayment" EntityType="Self.S_BankPayment" />
-          <EntitySet Name="S_MainMenu" EntityType="Self.S_MainMenu" />
-          <EntitySet Name="S_SubMenu" EntityType="Self.S_SubMenu" />
-          <EntitySet Name="S_Township" EntityType="Self.S_Township" />
-          <EntitySet Name="S_Unit" EntityType="Self.S_Unit" />
-          <EntitySet Name="Sys_Admin" EntityType="Self.Sys_Admin" />
-          <EntitySet Name="Sys_Currency" EntityType="Self.Sys_Currency" />
-          <EntitySet Name="Sys_Payment" EntityType="Self.Sys_Payment" />
-          <EntitySet Name="Sys_PayMethod" EntityType="Self.Sys_PayMethod" />
-          <EntitySet Name="Sys_ShopType" EntityType="Self.Sys_ShopType" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
           <FunctionImport Name="PrcDeleteBank">
           <Parameter Name="BankID" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -984,13 +740,9 @@
             <Parameter Name="new_diagramname" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sp_upgraddiagrams" />
-          <EntitySet Name="S_Division" EntityType="InventoryDBModel.S_Division" />
-          <EntitySet Name="T_CLTranSaleOrder" EntityType="InventoryDBModel.T_CLTranSaleOrder" />
           <FunctionImport Name="PrcDeleteCLTranSaleOrder">
           <Parameter Name="ID" Mode="In" Type="Int32" />
           </FunctionImport>
-          <EntitySet Name="Sys_UnitLevel" EntityType="InventoryDBModel.Sys_UnitLevel" />
-          <EntitySet Name="T_CLMasterSaleOrder" EntityType="InventoryDBModel.T_CLMasterSaleOrder" />
           <FunctionImport Name="PrcInsertCustomer">
             <Parameter Name="CustomerName" Mode="In" Type="String" />
             <Parameter Name="Code" Mode="In" Type="String" />
@@ -1059,16 +811,7 @@
             <Parameter Name="IsCredit" Mode="In" Type="Boolean" />
             <Parameter Name="DivisionID" Mode="In" Type="Int32" />
           </FunctionImport>
-          <EntitySet Name="S_Customer" EntityType="InventoryDBModel.S_Customer" />
-          <EntitySet Name="S_Location" EntityType="InventoryDBModel.S_Location" />
-          <EntitySet Name="S_SlipID" EntityType="InventoryDBModel.S_SlipID" />
-          <EntitySet Name="S_Supplier" EntityType="InventoryDBModel.S_Supplier" />
-          <EntitySet Name="S_VoucherFormat" EntityType="InventoryDBModel.S_VoucherFormat" />
-          <EntitySet Name="S_VoucherSetting" EntityType="InventoryDBModel.S_VoucherSetting" />
           <FunctionImport Name="PrcGetLocation" ReturnType="Collection(InventoryDBModel.PrcGetLocation_Result)" />
-          <EntitySet Name="S_CompanySetting" EntityType="InventoryDBModel.S_CompanySetting" />
-          <EntitySet Name="S_Product" EntityType="InventoryDBModel.S_Product" />
-          <EntitySet Name="S_User" EntityType="InventoryDBModel.S_User" />
           <FunctionImport Name="PrcGetVoucherSetting" ReturnType="Collection(InventoryDBModel.PrcGetVoucherSetting_Result)" />
           <FunctionImport Name="PrcUpdateCLMasterSaleOrder">
             <Parameter Name="SaleOrderID" Mode="In" Type="Int32" />
@@ -1089,7 +832,6 @@
           <FunctionImport Name="PrcGetCLTranSaleOrderBySaleOrderID" ReturnType="Collection(InventoryDBModel.PrcGetCLTranSaleOrderBySaleOrderID_Result)">
           <Parameter Name="SaleOrderID" Mode="In" Type="Int32" />
           </FunctionImport>
-          <EntitySet Name="T_MasterSale" EntityType="InventoryDBModel.T_MasterSale" />
           <FunctionImport Name="PrcGetCustomer" ReturnType="Collection(InventoryDBModel.PrcGetCustomer_Result)" />
           <FunctionImport Name="PrcGetSupplier" ReturnType="Collection(InventoryDBModel.PrcGetSupplier_Result)" />
           <FunctionImport Name="PrcGetTownship" ReturnType="Collection(InventoryDBModel.PrcGetTownship_Result)" />
@@ -1107,7 +849,6 @@
             <Parameter Name="DivisionID" Mode="In" Type="Int32" />
             <Parameter Name="TownshipID" Mode="In" Type="Int32" />
           </FunctionImport>
-          <EntitySet Name="Sys_Module" EntityType="InventoryDBModel.Sys_Module" />
           <FunctionImport Name="PrcGetVoucherFormat" ReturnType="Collection(InventoryDBModel.PrcGetVoucherFormat_Result)" />
           <FunctionImport Name="PrcInsertVoucherFormat">
             <Parameter Name="PreFormat" Mode="In" Type="String" />
@@ -1122,7 +863,6 @@
             <Parameter Name="PostFormat" Mode="In" Type="Int32" />
             <Parameter Name="Module" Mode="In" Type="String" />
           </FunctionImport>
-          <EntitySet Name="T_TranSale" EntityType="InventoryDBModel.T_TranSale" />
           <FunctionImport Name="PrcGetTownshipByDivision" ReturnType="Collection(InventoryDBModel.PrcGetTownshipByDivision_Result)">
           <Parameter Name="DivisionID" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -1133,8 +873,28 @@
             <Parameter Name="ClientType" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="PrcSearchCLMasterSaleOrder" ReturnType="Collection(InventoryDBModel.PrcSearchCLMasterSaleOrder_Result)">
-            <Parameter Name="SearchKeywords" Mode="In" Type="String" />
+          <Parameter Name="SearchKeywords" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="SAdjustTypes" EntityType="InventoryDBModel.SAdjustType" />
+          <EntitySet Name="SBanks" EntityType="InventoryDBModel.SBank" />
+          <EntitySet Name="SBankPayments" EntityType="InventoryDBModel.SBankPayment" />
+          <EntitySet Name="SClients" EntityType="InventoryDBModel.SClient" />
+          <EntitySet Name="SCompanySettings" EntityType="InventoryDBModel.SCompanySetting" />
+          <EntitySet Name="SCustomers" EntityType="InventoryDBModel.SCustomer" />
+          <EntitySet Name="SDivisions" EntityType="InventoryDBModel.SDivision" />
+          <EntitySet Name="SLocations" EntityType="InventoryDBModel.SLocation" />
+          <EntitySet Name="SMainMenus" EntityType="InventoryDBModel.SMainMenu" />
+          <EntitySet Name="SProducts" EntityType="InventoryDBModel.SProduct" />
+          <EntitySet Name="SSubMenus" EntityType="InventoryDBModel.SSubMenu" />
+          <EntitySet Name="SSuppliers" EntityType="InventoryDBModel.SSupplier" />
+          <EntitySet Name="STownships" EntityType="InventoryDBModel.STownship" />
+          <EntitySet Name="SUnits" EntityType="InventoryDBModel.SUnit" />
+          <EntitySet Name="SUsers" EntityType="InventoryDBModel.SUser" />
+          <EntitySet Name="SVoucherFormats" EntityType="InventoryDBModel.SVoucherFormat" />
+          <EntitySet Name="SVoucherSettings" EntityType="InventoryDBModel.SVoucherSetting" />
+          <EntitySet Name="SysModules" EntityType="InventoryDBModel.SysModule" />
+          <EntitySet Name="TCLMasterSaleOrders" EntityType="InventoryDBModel.TCLMasterSaleOrder" />
+          <EntitySet Name="TCLTranSaleOrders" EntityType="InventoryDBModel.TCLTranSaleOrder" />
         </EntityContainer>
         <ComplexType Name="PrcGetCompanySetting_Result">
           <Property Type="Boolean" Name="IsMultiCurrency" Nullable="false" />
@@ -1310,51 +1070,6 @@
           <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
           <Property Type="Int32" Name="OwnerID" Nullable="false" />
         </ComplexType>
-        <EntityType Name="S_Division">
-          <Key>
-            <PropertyRef Name="DivisionID" />
-          </Key>
-          <Property Name="DivisionID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DivisionName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="T_CLTranSaleOrder">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SaleOrderID" Type="Int32" />
-          <Property Name="ProductID" Type="Int32" />
-          <Property Name="Quantity" Type="Int32" />
-          <Property Name="SalePrice" Type="Int32" />
-          <Property Name="Amount" Type="Int32" />
-        </EntityType>
-        <EntityType Name="Sys_UnitLevel">
-          <Key>
-            <PropertyRef Name="ULID" />
-          </Key>
-          <Property Name="ULID" Type="Int16" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ULName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ULOrder" Type="Int16" Nullable="false" />
-        </EntityType>
-        <EntityType Name="T_CLMasterSaleOrder">
-          <Key>
-            <PropertyRef Name="SaleOrderID" />
-          </Key>
-          <Property Name="SaleOrderID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OrderDateTime" Type="DateTime" Precision="3" />
-          <Property Name="OrderNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="ClientID" Type="Int32" />
-          <Property Name="CustomerID" Type="Int32" />
-          <Property Name="Subtotal" Type="Int32" />
-          <Property Name="Tax" Type="Int32" />
-          <Property Name="TaxAmt" Type="Int32" />
-          <Property Name="Charges" Type="Int32" />
-          <Property Name="ChargesAmt" Type="Int32" />
-          <Property Name="Total" Type="Int32" />
-          <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="IsOrderFinished" Type="Boolean" />
-        </EntityType>
         <ComplexType Name="PrcSearchLocation_Result">
           <Property Type="Int32" Name="LocationID" Nullable="false" />
           <Property Type="String" Name="LocationName" Nullable="true" MaxLength="200" />
@@ -1365,86 +1080,6 @@
           <Property Type="String" Name="Address" Nullable="true" MaxLength="1000" />
           <Property Type="String" Name="Email" Nullable="true" MaxLength="200" />
         </ComplexType>
-        <EntityType Name="S_Customer">
-          <Key>
-            <PropertyRef Name="CustomerID" />
-          </Key>
-          <Property Name="CustomerID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="CustomerName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="TownshipID" Type="Int32" />
-          <Property Name="Contact" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="Address" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="IsCredit" Type="Boolean" />
-          <Property Name="IsDefault" Type="Boolean" />
-          <Property Name="DivisionID" Type="Int32" />
-        </EntityType>
-        <EntityType Name="S_Location">
-          <Key>
-            <PropertyRef Name="LocationID" />
-          </Key>
-          <Property Name="LocationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="LocationName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="ShortName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
-          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Address" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="S_SlipID">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SlipID" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="S_Supplier">
-          <Key>
-            <PropertyRef Name="SupplierID" />
-          </Key>
-          <Property Name="SupplierID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="SupplierName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="TownshipID" Type="Int32" />
-          <Property Name="Contact" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="Address" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="IsCredit" Type="Boolean" />
-          <Property Name="IsDefault" Type="Boolean" />
-          <Property Name="DivisionID" Type="Int32" />
-        </EntityType>
-        <EntityType Name="S_VoucherFormat">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PreFormat" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="MidFormat" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="PostFormat" Type="Int32" Nullable="false" />
-          <Property Name="ModuleCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="S_VoucherSetting">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="LocationID" Type="Int32" Nullable="false" />
-          <Property Name="VoucherLogo" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <Property Name="HeaderName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="HeaderDesp" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="HeaderPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="HeaderAddress" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="OtherHeader1" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="OtherHeader2" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="FooterMessage1" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="FooterMessage2" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="FooterMessage3" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="VoucherLogoUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-        </EntityType>
         <ComplexType Name="PrcGetLocation_Result">
           <Property Type="Int32" Name="LocationID" Nullable="false" />
           <Property Type="String" Name="LocationName" Nullable="true" MaxLength="200" />
@@ -1455,55 +1090,6 @@
           <Property Type="String" Name="Address" Nullable="true" MaxLength="1000" />
           <Property Type="String" Name="Email" Nullable="true" MaxLength="200" />
         </ComplexType>
-        <EntityType Name="S_CompanySetting">
-          <Key>
-            <PropertyRef Name="CompanyID" />
-          </Key>
-          <Property Name="CompanyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CompanyName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
-          <Property Name="Logo" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Address" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="Website" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="Tax" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ServiceCharges" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="IsMultiCurrency" Type="Boolean" />
-          <Property Name="IsMultiUnit" Type="Boolean" />
-          <Property Name="IsBankPayment" Type="Boolean" />
-          <Property Name="ShopTypeID" Type="Int32" />
-          <Property Name="IsClientPhoneVerify" Type="Boolean" />
-        </EntityType>
-        <EntityType Name="S_Product">
-          <Key>
-            <PropertyRef Name="ProductID" />
-          </Key>
-          <Property Name="ProductID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="SortCode" Type="Int32" Nullable="false" />
-          <Property Name="ProductName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="SubMenuID" Type="Int32" Nullable="false" />
-          <Property Name="PurPrice" Type="Int32" />
-          <Property Name="SalePrice" Type="Int32" />
-          <Property Name="WholeSalePrice" Type="Int32" />
-          <Property Name="IsStock" Type="Boolean" Nullable="false" />
-          <Property Name="Photo" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <Property Name="AlertQty" Type="Int32" />
-          <Property Name="DisPercent" Type="Int16" />
-          <Property Name="PhotoUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-        </EntityType>
-        <EntityType Name="S_User">
-          <Key>
-            <PropertyRef Name="UserID" />
-          </Key>
-          <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="UserPassword" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="IsDefaultLocation" Type="Boolean" Nullable="false" />
-          <Property Name="LocationID" Type="Int32" />
-        </EntityType>
         <ComplexType Name="PrcGetVoucherSetting_Result">
           <Property Type="Int32" Name="LocationID" Nullable="false" />
           <Property Type="String" Name="LocationName" Nullable="true" MaxLength="200" />
@@ -1549,40 +1135,6 @@
           <Property Type="Int32" Name="Tax" Nullable="true" />
           <Property Type="Int32" Name="Charges" Nullable="true" />
         </ComplexType>
-        <EntityType Name="T_MasterSale">
-          <Key>
-            <PropertyRef Name="SaleID" />
-          </Key>
-          <Property Name="SaleID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SaleDateTime" Type="DateTime" Precision="3" />
-          <Property Name="SystemVoucherNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="UserVoucherNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="VoucherID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsClientSale" Type="Boolean" />
-          <Property Name="UserID" Type="Int32" />
-          <Property Name="ClientID" Type="Int32" />
-          <Property Name="CustomerID" Type="Int32" />
-          <Property Name="LocationID" Type="Int32" />
-          <Property Name="PaymentID" Type="Int32" />
-          <Property Name="PayMethodID" Type="Int32" />
-          <Property Name="BankPaymentID" Type="Int32" />
-          <Property Name="SlipID" Type="Int32" />
-          <Property Name="LimitedDayID" Type="Int32" />
-          <Property Name="Remark" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="Subtotal" Type="Int32" />
-          <Property Name="Tax" Type="Int32" />
-          <Property Name="TaxAmt" Type="Int32" />
-          <Property Name="Charges" Type="Int32" />
-          <Property Name="ChargesAmt" Type="Int32" />
-          <Property Name="Total" Type="Int32" />
-          <Property Name="VouDisPercent" Type="Int32" />
-          <Property Name="VouDisAmount" Type="Int32" />
-          <Property Name="VoucherDiscount" Type="Int32" />
-          <Property Name="AdvancedPay" Type="Int32" />
-          <Property Name="PaymentPercent" Type="Int32" />
-          <Property Name="PayPercentAmt" Type="Int32" />
-          <Property Name="Grandtotal" Type="Int32" />
-        </EntityType>
         <ComplexType Name="PrcGetCustomer_Result">
           <Property Type="Int32" Name="CustomerID" Nullable="false" />
           <Property Type="String" Name="CustomerName" Nullable="true" MaxLength="200" />
@@ -1659,14 +1211,6 @@
           <Property Type="Int32" Name="DivisionID" Nullable="false" />
           <Property Type="String" Name="DivisionName" Nullable="true" MaxLength="200" />
         </ComplexType>
-        <EntityType Name="Sys_Module">
-          <Key>
-            <PropertyRef Name="ModuleID" />
-          </Key>
-          <Property Name="ModuleID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ModuleName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="ModuleCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-        </EntityType>
         <ComplexType Name="PrcGetVoucherFormat_Result">
           <Property Type="Int32" Name="ID" Nullable="false" />
           <Property Type="String" Name="PreFormat" Nullable="false" MaxLength="10" />
@@ -1675,22 +1219,6 @@
           <Property Type="String" Name="ModuleCode" Nullable="false" MaxLength="50" />
           <Property Type="String" Name="ModuleName" Nullable="true" MaxLength="200" />
         </ComplexType>
-        <EntityType Name="T_TranSale">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SaleID" Type="Int32" />
-          <Property Name="ProductID" Type="Int32" />
-          <Property Name="Quantity" Type="Int32" />
-          <Property Name="UnitID" Type="Int32" />
-          <Property Name="SalePrice" Type="Int32" />
-          <Property Name="CurrencyID" Type="Int32" />
-          <Property Name="DiscountPercent" Type="Int32" />
-          <Property Name="Discount" Type="Int32" />
-          <Property Name="Amount" Type="Int32" />
-          <Property Name="IsFOC" Type="Boolean" />
-        </EntityType>
         <ComplexType Name="PrcGetTownshipByDivision_Result">
           <Property Type="Int32" Name="TownshipID" Nullable="false" />
           <Property Type="String" Name="TownshipName" Nullable="true" MaxLength="200" />
@@ -1726,145 +1254,262 @@
           <Property Type="Int32" Name="Charges" Nullable="true" />
           <Property Type="Int32" Name="ChargesAmt" Nullable="true" />
         </ComplexType>
+        <EntityType Name="SAdjustType">
+          <Key>
+            <PropertyRef Name="AdjustTypeID" />
+          </Key>
+          <Property Name="AdjustTypeID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AdjustTypeName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ShortName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IsIncrease" Type="Boolean" Nullable="false" />
+          <Property Name="Sign" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SBank">
+          <Key>
+            <PropertyRef Name="BankID" />
+          </Key>
+          <Property Name="BankID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BankName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ShortName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SBankPayment">
+          <Key>
+            <PropertyRef Name="BankPaymentID" />
+          </Key>
+          <Property Name="BankPaymentID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BankID" Type="Int32" />
+          <Property Name="BankPaymentName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SClient">
+          <Key>
+            <PropertyRef Name="ClientID" />
+          </Key>
+          <Property Name="ClientID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClientName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ClientPassword" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ShopName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DivisionID" Type="Int32" />
+          <Property Name="TownshipID" Type="Int32" />
+          <Property Name="Address" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="IsSalePerson" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="SCompanySetting">
+          <Key>
+            <PropertyRef Name="CompanyID" />
+          </Key>
+          <Property Name="CompanyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CompanyName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="Logo" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Website" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Tax" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ServiceCharges" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsMultiCurrency" Type="Boolean" />
+          <Property Name="IsMultiUnit" Type="Boolean" />
+          <Property Name="IsBankPayment" Type="Boolean" />
+          <Property Name="ShopTypeID" Type="Int32" />
+          <Property Name="IsClientPhoneVerify" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="SCustomer">
+          <Key>
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="CustomerID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CustomerName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="TownshipID" Type="Int32" />
+          <Property Name="Contact" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="IsCredit" Type="Boolean" />
+          <Property Name="IsDefault" Type="Boolean" />
+          <Property Name="DivisionID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="SDivision">
+          <Key>
+            <PropertyRef Name="DivisionID" />
+          </Key>
+          <Property Name="DivisionID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DivisionName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SLocation">
+          <Key>
+            <PropertyRef Name="LocationID" />
+          </Key>
+          <Property Name="LocationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LocationName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ShortName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SMainMenu">
+          <Key>
+            <PropertyRef Name="MainMenuID" />
+          </Key>
+          <Property Name="MainMenuID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SortCode" Type="Int32" Nullable="false" />
+          <Property Name="MainMenuName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Photo" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="PhotoUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SProduct">
+          <Key>
+            <PropertyRef Name="ProductID" />
+          </Key>
+          <Property Name="ProductID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SortCode" Type="Int32" Nullable="false" />
+          <Property Name="ProductName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="SubMenuID" Type="Int32" Nullable="false" />
+          <Property Name="PurPrice" Type="Int32" />
+          <Property Name="SalePrice" Type="Int32" />
+          <Property Name="WholeSalePrice" Type="Int32" />
+          <Property Name="IsStock" Type="Boolean" Nullable="false" />
+          <Property Name="Photo" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="AlertQty" Type="Int32" />
+          <Property Name="DisPercent" Type="Int16" />
+          <Property Name="PhotoUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SSubMenu">
+          <Key>
+            <PropertyRef Name="SubMenuID" />
+          </Key>
+          <Property Name="SubMenuID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SortCode" Type="Int32" Nullable="false" />
+          <Property Name="SubMenuName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Photo" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="MainMenuID" Type="Int32" Nullable="false" />
+          <Property Name="PhotoUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SSupplier">
+          <Key>
+            <PropertyRef Name="SupplierID" />
+          </Key>
+          <Property Name="SupplierID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SupplierName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="TownshipID" Type="Int32" />
+          <Property Name="Contact" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Address" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="IsCredit" Type="Boolean" />
+          <Property Name="IsDefault" Type="Boolean" />
+          <Property Name="DivisionID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="STownship">
+          <Key>
+            <PropertyRef Name="TownshipID" />
+          </Key>
+          <Property Name="TownshipID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TownshipName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="IsDefault" Type="Boolean" />
+          <Property Name="DivisionID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="SUnit">
+          <Key>
+            <PropertyRef Name="UnitID" />
+          </Key>
+          <Property Name="UnitID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UnitName" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Keyword" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ULID" Type="Int16" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SUser">
+          <Key>
+            <PropertyRef Name="UserID" />
+          </Key>
+          <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="UserPassword" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsDefaultLocation" Type="Boolean" Nullable="false" />
+          <Property Name="LocationID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="SVoucherFormat">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PreFormat" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="MidFormat" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="PostFormat" Type="Int32" Nullable="false" />
+          <Property Name="ModuleCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SVoucherSetting">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LocationID" Type="Int32" Nullable="false" />
+          <Property Name="VoucherLogo" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="HeaderName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="HeaderDesp" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="HeaderPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="HeaderAddress" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="OtherHeader1" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="OtherHeader2" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="FooterMessage1" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="FooterMessage2" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="FooterMessage3" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="VoucherLogoUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SysModule">
+          <Key>
+            <PropertyRef Name="ModuleID" />
+          </Key>
+          <Property Name="ModuleID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ModuleName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ModuleCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="TCLMasterSaleOrder">
+          <Key>
+            <PropertyRef Name="SaleOrderID" />
+          </Key>
+          <Property Name="SaleOrderID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderDateTime" Type="DateTime" Precision="3" />
+          <Property Name="OrderNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ClientID" Type="Int32" />
+          <Property Name="CustomerID" Type="Int32" />
+          <Property Name="Subtotal" Type="Int32" />
+          <Property Name="Tax" Type="Int32" />
+          <Property Name="TaxAmt" Type="Int32" />
+          <Property Name="Charges" Type="Int32" />
+          <Property Name="ChargesAmt" Type="Int32" />
+          <Property Name="Total" Type="Int32" />
+          <Property Name="Remark" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IsOrderFinished" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="TCLTranSaleOrder">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SaleOrderID" Type="Int32" />
+          <Property Name="ProductID" Type="Int32" />
+          <Property Name="Quantity" Type="Int32" />
+          <Property Name="SalePrice" Type="Int32" />
+          <Property Name="Amount" Type="Int32" />
+          <Property Name="SysProductID" Type="Int32" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="InventoryDBModelStoreContainer" CdmEntityContainer="InventoryDBEntities">
-          <EntitySetMapping Name="S_AdjustType">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_AdjustType">
-              <MappingFragment StoreEntitySet="S_AdjustType">
-                <ScalarProperty Name="Sign" ColumnName="Sign" />
-                <ScalarProperty Name="AdjustTypeID" ColumnName="AdjustTypeID" />
-                <ScalarProperty Name="AdjustTypeName" ColumnName="AdjustTypeName" />
-                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
-                <ScalarProperty Name="IsIncrease" ColumnName="IsIncrease" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="S_Bank">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_Bank">
-              <MappingFragment StoreEntitySet="S_Bank">
-                <ScalarProperty Name="BankID" ColumnName="BankID" />
-                <ScalarProperty Name="BankName" ColumnName="BankName" />
-                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="S_BankPayment">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_BankPayment">
-              <MappingFragment StoreEntitySet="S_BankPayment">
-                <ScalarProperty Name="BankPaymentID" ColumnName="BankPaymentID" />
-                <ScalarProperty Name="BankID" ColumnName="BankID" />
-                <ScalarProperty Name="BankPaymentName" ColumnName="BankPaymentName" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="S_MainMenu">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_MainMenu">
-              <MappingFragment StoreEntitySet="S_MainMenu">
-                <ScalarProperty Name="PhotoUrl" ColumnName="PhotoUrl" />
-                <ScalarProperty Name="MainMenuID" ColumnName="MainMenuID" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="SortCode" ColumnName="SortCode" />
-                <ScalarProperty Name="MainMenuName" ColumnName="MainMenuName" />
-                <ScalarProperty Name="Photo" ColumnName="Photo" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="S_SubMenu">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_SubMenu">
-              <MappingFragment StoreEntitySet="S_SubMenu">
-                <ScalarProperty Name="PhotoUrl" ColumnName="PhotoUrl" />
-                <ScalarProperty Name="SubMenuID" ColumnName="SubMenuID" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="SortCode" ColumnName="SortCode" />
-                <ScalarProperty Name="SubMenuName" ColumnName="SubMenuName" />
-                <ScalarProperty Name="Photo" ColumnName="Photo" />
-                <ScalarProperty Name="MainMenuID" ColumnName="MainMenuID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="S_Township">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_Township">
-              <MappingFragment StoreEntitySet="S_Township">
-                <ScalarProperty Name="DivisionID" ColumnName="DivisionID" />
-                <ScalarProperty Name="TownshipID" ColumnName="TownshipID" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="TownshipName" ColumnName="TownshipName" />
-                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="S_Unit">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_Unit">
-              <MappingFragment StoreEntitySet="S_Unit">
-                <ScalarProperty Name="UnitID" ColumnName="UnitID" />
-                <ScalarProperty Name="UnitName" ColumnName="UnitName" />
-                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
-                <ScalarProperty Name="ULID" ColumnName="ULID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Sys_Admin">
-            <EntityTypeMapping TypeName="InventoryDBModel.Sys_Admin">
-              <MappingFragment StoreEntitySet="Sys_Admin">
-                <ScalarProperty Name="AdminID" ColumnName="AdminID" />
-                <ScalarProperty Name="AdminName" ColumnName="AdminName" />
-                <ScalarProperty Name="AdminPassword" ColumnName="AdminPassword" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Sys_Currency">
-            <EntityTypeMapping TypeName="InventoryDBModel.Sys_Currency">
-              <MappingFragment StoreEntitySet="Sys_Currency">
-                <ScalarProperty Name="CurrencyID" ColumnName="CurrencyID" />
-                <ScalarProperty Name="CurrencyName" ColumnName="CurrencyName" />
-                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
-                <ScalarProperty Name="Rate" ColumnName="Rate" />
-                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
-                <ScalarProperty Name="IsMultiCurrency" ColumnName="IsMultiCurrency" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Sys_Payment">
-            <EntityTypeMapping TypeName="InventoryDBModel.Sys_Payment">
-              <MappingFragment StoreEntitySet="Sys_Payment">
-                <ScalarProperty Name="PaymentID" ColumnName="PaymentID" />
-                <ScalarProperty Name="PaymentName" ColumnName="PaymentName" />
-                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
-                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Sys_PayMethod">
-            <EntityTypeMapping TypeName="InventoryDBModel.Sys_PayMethod">
-              <MappingFragment StoreEntitySet="Sys_PayMethod">
-                <ScalarProperty Name="PayMethodID" ColumnName="PayMethodID" />
-                <ScalarProperty Name="PayMethodName" ColumnName="PayMethodName" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Sys_ShopType">
-            <EntityTypeMapping TypeName="InventoryDBModel.Sys_ShopType">
-              <MappingFragment StoreEntitySet="Sys_ShopType">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="ShopType" ColumnName="ShopType" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="InventoryDBModel.sysdiagram">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="definition" ColumnName="definition" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="PrcDeleteBank" FunctionName="InventoryDBModel.Store.PrcDeleteBank" />
           <FunctionImportMapping FunctionImportName="PrcDeleteBankPayment" FunctionName="InventoryDBModel.Store.PrcDeleteBankPayment" />
           <FunctionImportMapping FunctionImportName="PrcGetCompanySetting" FunctionName="InventoryDBModel.Store.PrcGetCompanySetting">
@@ -2096,56 +1741,7 @@
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="InventoryDBModel.Store.sp_renamediagram" />
           <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="InventoryDBModel.Store.sp_upgraddiagrams" />
-          <EntitySetMapping Name="S_Division">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_Division">
-              <MappingFragment StoreEntitySet="S_Division">
-                <ScalarProperty Name="DivisionName" ColumnName="DivisionName" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="DivisionID" ColumnName="DivisionID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="T_CLTranSaleOrder">
-            <EntityTypeMapping TypeName="InventoryDBModel.T_CLTranSaleOrder">
-              <MappingFragment StoreEntitySet="T_CLTranSaleOrder">
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
-                <ScalarProperty Name="SaleOrderID" ColumnName="SaleOrderID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="PrcDeleteCLTranSaleOrder" FunctionName="InventoryDBModel.Store.PrcDeleteCLTranSaleOrder" />
-          <EntitySetMapping Name="Sys_UnitLevel">
-            <EntityTypeMapping TypeName="InventoryDBModel.Sys_UnitLevel">
-              <MappingFragment StoreEntitySet="Sys_UnitLevel">
-                <ScalarProperty Name="ULOrder" ColumnName="ULOrder" />
-                <ScalarProperty Name="ULName" ColumnName="ULName" />
-                <ScalarProperty Name="ULID" ColumnName="ULID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="T_CLMasterSaleOrder">
-            <EntityTypeMapping TypeName="InventoryDBModel.T_CLMasterSaleOrder">
-              <MappingFragment StoreEntitySet="T_CLMasterSaleOrder">
-                <ScalarProperty Name="IsOrderFinished" ColumnName="IsOrderFinished" />
-                <ScalarProperty Name="Remark" ColumnName="Remark" />
-                <ScalarProperty Name="Total" ColumnName="Total" />
-                <ScalarProperty Name="ChargesAmt" ColumnName="ChargesAmt" />
-                <ScalarProperty Name="Charges" ColumnName="Charges" />
-                <ScalarProperty Name="TaxAmt" ColumnName="TaxAmt" />
-                <ScalarProperty Name="Tax" ColumnName="Tax" />
-                <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
-                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
-                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
-                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
-                <ScalarProperty Name="OrderDateTime" ColumnName="OrderDateTime" />
-                <ScalarProperty Name="SaleOrderID" ColumnName="SaleOrderID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="PrcInsertCustomer" FunctionName="InventoryDBModel.Store.PrcInsertCustomer" />
           <FunctionImportMapping FunctionImportName="PrcInsertLocation" FunctionName="InventoryDBModel.Store.PrcInsertLocation" />
           <FunctionImportMapping FunctionImportName="PrcInsertSupplier" FunctionName="InventoryDBModel.Store.PrcInsertSupplier" />
@@ -2166,92 +1762,6 @@
           <FunctionImportMapping FunctionImportName="PrcUpdateCustomer" FunctionName="InventoryDBModel.Store.PrcUpdateCustomer" />
           <FunctionImportMapping FunctionImportName="PrcUpdateLocation" FunctionName="InventoryDBModel.Store.PrcUpdateLocation" />
           <FunctionImportMapping FunctionImportName="PrcUpdateSupplier" FunctionName="InventoryDBModel.Store.PrcUpdateSupplier" />
-          <EntitySetMapping Name="S_Customer">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_Customer">
-              <MappingFragment StoreEntitySet="S_Customer">
-                <ScalarProperty Name="DivisionID" ColumnName="DivisionID" />
-                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
-                <ScalarProperty Name="IsCredit" ColumnName="IsCredit" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Phone" ColumnName="Phone" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="Contact" ColumnName="Contact" />
-                <ScalarProperty Name="TownshipID" ColumnName="TownshipID" />
-                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="S_Location">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_Location">
-              <MappingFragment StoreEntitySet="S_Location">
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="Phone" ColumnName="Phone" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
-                <ScalarProperty Name="LocationName" ColumnName="LocationName" />
-                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="S_SlipID">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_SlipID">
-              <MappingFragment StoreEntitySet="S_SlipID">
-                <ScalarProperty Name="SlipID" ColumnName="SlipID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="S_Supplier">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_Supplier">
-              <MappingFragment StoreEntitySet="S_Supplier">
-                <ScalarProperty Name="DivisionID" ColumnName="DivisionID" />
-                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
-                <ScalarProperty Name="IsCredit" ColumnName="IsCredit" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Phone" ColumnName="Phone" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="Contact" ColumnName="Contact" />
-                <ScalarProperty Name="TownshipID" ColumnName="TownshipID" />
-                <ScalarProperty Name="SupplierName" ColumnName="SupplierName" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="SupplierID" ColumnName="SupplierID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="S_VoucherFormat">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_VoucherFormat">
-              <MappingFragment StoreEntitySet="S_VoucherFormat">
-                <ScalarProperty Name="ModuleCode" ColumnName="ModuleCode" />
-                <ScalarProperty Name="PostFormat" ColumnName="PostFormat" />
-                <ScalarProperty Name="MidFormat" ColumnName="MidFormat" />
-                <ScalarProperty Name="PreFormat" ColumnName="PreFormat" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="S_VoucherSetting">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_VoucherSetting">
-              <MappingFragment StoreEntitySet="S_VoucherSetting">
-                <ScalarProperty Name="VoucherLogoUrl" ColumnName="VoucherLogoUrl" />
-                <ScalarProperty Name="FooterMessage3" ColumnName="FooterMessage3" />
-                <ScalarProperty Name="FooterMessage2" ColumnName="FooterMessage2" />
-                <ScalarProperty Name="FooterMessage1" ColumnName="FooterMessage1" />
-                <ScalarProperty Name="OtherHeader2" ColumnName="OtherHeader2" />
-                <ScalarProperty Name="OtherHeader1" ColumnName="OtherHeader1" />
-                <ScalarProperty Name="HeaderAddress" ColumnName="HeaderAddress" />
-                <ScalarProperty Name="HeaderPhone" ColumnName="HeaderPhone" />
-                <ScalarProperty Name="HeaderDesp" ColumnName="HeaderDesp" />
-                <ScalarProperty Name="HeaderName" ColumnName="HeaderName" />
-                <ScalarProperty Name="VoucherLogo" ColumnName="VoucherLogo" />
-                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="PrcGetLocation" FunctionName="InventoryDBModel.Store.PrcGetLocation">
             <ResultMapping>
               <ComplexTypeMapping TypeName="InventoryDBModel.PrcGetLocation_Result">
@@ -2266,58 +1776,6 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <EntitySetMapping Name="S_CompanySetting">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_CompanySetting">
-              <MappingFragment StoreEntitySet="S_CompanySetting">
-                <ScalarProperty Name="IsClientPhoneVerify" ColumnName="IsClientPhoneVerify" />
-                <ScalarProperty Name="ShopTypeID" ColumnName="ShopTypeID" />
-                <ScalarProperty Name="IsBankPayment" ColumnName="IsBankPayment" />
-                <ScalarProperty Name="IsMultiUnit" ColumnName="IsMultiUnit" />
-                <ScalarProperty Name="IsMultiCurrency" ColumnName="IsMultiCurrency" />
-                <ScalarProperty Name="ServiceCharges" ColumnName="ServiceCharges" />
-                <ScalarProperty Name="Tax" ColumnName="Tax" />
-                <ScalarProperty Name="Website" ColumnName="Website" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="Phone" ColumnName="Phone" />
-                <ScalarProperty Name="Logo" ColumnName="Logo" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
-                <ScalarProperty Name="CompanyID" ColumnName="CompanyID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="S_Product">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_Product">
-              <MappingFragment StoreEntitySet="S_Product">
-                <ScalarProperty Name="PhotoUrl" ColumnName="PhotoUrl" />
-                <ScalarProperty Name="DisPercent" ColumnName="DisPercent" />
-                <ScalarProperty Name="AlertQty" ColumnName="AlertQty" />
-                <ScalarProperty Name="Photo" ColumnName="Photo" />
-                <ScalarProperty Name="IsStock" ColumnName="IsStock" />
-                <ScalarProperty Name="WholeSalePrice" ColumnName="WholeSalePrice" />
-                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
-                <ScalarProperty Name="PurPrice" ColumnName="PurPrice" />
-                <ScalarProperty Name="SubMenuID" ColumnName="SubMenuID" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
-                <ScalarProperty Name="SortCode" ColumnName="SortCode" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="S_User">
-            <EntityTypeMapping TypeName="InventoryDBModel.S_User">
-              <MappingFragment StoreEntitySet="S_User">
-                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
-                <ScalarProperty Name="IsDefaultLocation" ColumnName="IsDefaultLocation" />
-                <ScalarProperty Name="UserPassword" ColumnName="UserPassword" />
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="PrcGetVoucherSetting" FunctionName="InventoryDBModel.Store.PrcGetVoucherSetting">
             <ResultMapping>
               <ComplexTypeMapping TypeName="InventoryDBModel.PrcGetVoucherSetting_Result">
@@ -2377,41 +1835,6 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <EntitySetMapping Name="T_MasterSale">
-            <EntityTypeMapping TypeName="InventoryDBModel.T_MasterSale">
-              <MappingFragment StoreEntitySet="T_MasterSale">
-                <ScalarProperty Name="Grandtotal" ColumnName="Grandtotal" />
-                <ScalarProperty Name="PayPercentAmt" ColumnName="PayPercentAmt" />
-                <ScalarProperty Name="PaymentPercent" ColumnName="PaymentPercent" />
-                <ScalarProperty Name="AdvancedPay" ColumnName="AdvancedPay" />
-                <ScalarProperty Name="VoucherDiscount" ColumnName="VoucherDiscount" />
-                <ScalarProperty Name="VouDisAmount" ColumnName="VouDisAmount" />
-                <ScalarProperty Name="VouDisPercent" ColumnName="VouDisPercent" />
-                <ScalarProperty Name="Total" ColumnName="Total" />
-                <ScalarProperty Name="ChargesAmt" ColumnName="ChargesAmt" />
-                <ScalarProperty Name="Charges" ColumnName="Charges" />
-                <ScalarProperty Name="TaxAmt" ColumnName="TaxAmt" />
-                <ScalarProperty Name="Tax" ColumnName="Tax" />
-                <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
-                <ScalarProperty Name="Remark" ColumnName="Remark" />
-                <ScalarProperty Name="LimitedDayID" ColumnName="LimitedDayID" />
-                <ScalarProperty Name="SlipID" ColumnName="SlipID" />
-                <ScalarProperty Name="BankPaymentID" ColumnName="BankPaymentID" />
-                <ScalarProperty Name="PayMethodID" ColumnName="PayMethodID" />
-                <ScalarProperty Name="PaymentID" ColumnName="PaymentID" />
-                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
-                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
-                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="IsClientSale" ColumnName="IsClientSale" />
-                <ScalarProperty Name="VoucherID" ColumnName="VoucherID" />
-                <ScalarProperty Name="UserVoucherNo" ColumnName="UserVoucherNo" />
-                <ScalarProperty Name="SystemVoucherNo" ColumnName="SystemVoucherNo" />
-                <ScalarProperty Name="SaleDateTime" ColumnName="SaleDateTime" />
-                <ScalarProperty Name="SaleID" ColumnName="SaleID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="PrcGetCustomer" FunctionName="InventoryDBModel.Store.PrcGetCustomer">
             <ResultMapping>
               <ComplexTypeMapping TypeName="InventoryDBModel.PrcGetCustomer_Result">
@@ -2512,15 +1935,6 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <EntitySetMapping Name="Sys_Module">
-            <EntityTypeMapping TypeName="InventoryDBModel.Sys_Module">
-              <MappingFragment StoreEntitySet="Sys_Module">
-                <ScalarProperty Name="ModuleCode" ColumnName="ModuleCode" />
-                <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
-                <ScalarProperty Name="ModuleID" ColumnName="ModuleID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="PrcGetVoucherFormat" FunctionName="InventoryDBModel.Store.PrcGetVoucherFormat">
             <ResultMapping>
               <ComplexTypeMapping TypeName="InventoryDBModel.PrcGetVoucherFormat_Result">
@@ -2535,23 +1949,6 @@
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="PrcInsertVoucherFormat" FunctionName="InventoryDBModel.Store.PrcInsertVoucherFormat" />
           <FunctionImportMapping FunctionImportName="PrcUpdateVoucherFormat" FunctionName="InventoryDBModel.Store.PrcUpdateVoucherFormat" />
-          <EntitySetMapping Name="T_TranSale">
-            <EntityTypeMapping TypeName="InventoryDBModel.T_TranSale">
-              <MappingFragment StoreEntitySet="T_TranSale">
-                <ScalarProperty Name="IsFOC" ColumnName="IsFOC" />
-                <ScalarProperty Name="Amount" ColumnName="Amount" />
-                <ScalarProperty Name="Discount" ColumnName="Discount" />
-                <ScalarProperty Name="DiscountPercent" ColumnName="DiscountPercent" />
-                <ScalarProperty Name="CurrencyID" ColumnName="CurrencyID" />
-                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
-                <ScalarProperty Name="UnitID" ColumnName="UnitID" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
-                <ScalarProperty Name="SaleID" ColumnName="SaleID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="PrcGetTownshipByDivision" FunctionName="InventoryDBModel.Store.PrcGetTownshipByDivision">
             <ResultMapping>
               <ComplexTypeMapping TypeName="InventoryDBModel.PrcGetTownshipByDivision_Result">
@@ -2599,6 +1996,276 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="SAdjustTypes">
+            <EntityTypeMapping TypeName="InventoryDBModel.SAdjustType">
+              <MappingFragment StoreEntitySet="SAdjustType">
+                <ScalarProperty Name="Sign" ColumnName="Sign" />
+                <ScalarProperty Name="IsIncrease" ColumnName="IsIncrease" />
+                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
+                <ScalarProperty Name="AdjustTypeName" ColumnName="AdjustTypeName" />
+                <ScalarProperty Name="AdjustTypeID" ColumnName="AdjustTypeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SBanks">
+            <EntityTypeMapping TypeName="InventoryDBModel.SBank">
+              <MappingFragment StoreEntitySet="SBank">
+                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
+                <ScalarProperty Name="BankName" ColumnName="BankName" />
+                <ScalarProperty Name="BankID" ColumnName="BankID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SBankPayments">
+            <EntityTypeMapping TypeName="InventoryDBModel.SBankPayment">
+              <MappingFragment StoreEntitySet="SBankPayment">
+                <ScalarProperty Name="BankPaymentName" ColumnName="BankPaymentName" />
+                <ScalarProperty Name="BankID" ColumnName="BankID" />
+                <ScalarProperty Name="BankPaymentID" ColumnName="BankPaymentID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SClients">
+            <EntityTypeMapping TypeName="InventoryDBModel.SClient">
+              <MappingFragment StoreEntitySet="SClient">
+                <ScalarProperty Name="IsSalePerson" ColumnName="IsSalePerson" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="TownshipID" ColumnName="TownshipID" />
+                <ScalarProperty Name="DivisionID" ColumnName="DivisionID" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="ShopName" ColumnName="ShopName" />
+                <ScalarProperty Name="ClientPassword" ColumnName="ClientPassword" />
+                <ScalarProperty Name="ClientName" ColumnName="ClientName" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SCompanySettings">
+            <EntityTypeMapping TypeName="InventoryDBModel.SCompanySetting">
+              <MappingFragment StoreEntitySet="SCompanySetting">
+                <ScalarProperty Name="IsClientPhoneVerify" ColumnName="IsClientPhoneVerify" />
+                <ScalarProperty Name="ShopTypeID" ColumnName="ShopTypeID" />
+                <ScalarProperty Name="IsBankPayment" ColumnName="IsBankPayment" />
+                <ScalarProperty Name="IsMultiUnit" ColumnName="IsMultiUnit" />
+                <ScalarProperty Name="IsMultiCurrency" ColumnName="IsMultiCurrency" />
+                <ScalarProperty Name="ServiceCharges" ColumnName="ServiceCharges" />
+                <ScalarProperty Name="Tax" ColumnName="Tax" />
+                <ScalarProperty Name="Website" ColumnName="Website" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Logo" ColumnName="Logo" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="CompanyID" ColumnName="CompanyID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SCustomers">
+            <EntityTypeMapping TypeName="InventoryDBModel.SCustomer">
+              <MappingFragment StoreEntitySet="SCustomer">
+                <ScalarProperty Name="DivisionID" ColumnName="DivisionID" />
+                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
+                <ScalarProperty Name="IsCredit" ColumnName="IsCredit" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Contact" ColumnName="Contact" />
+                <ScalarProperty Name="TownshipID" ColumnName="TownshipID" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SDivisions">
+            <EntityTypeMapping TypeName="InventoryDBModel.SDivision">
+              <MappingFragment StoreEntitySet="SDivision">
+                <ScalarProperty Name="DivisionName" ColumnName="DivisionName" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="DivisionID" ColumnName="DivisionID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SLocations">
+            <EntityTypeMapping TypeName="InventoryDBModel.SLocation">
+              <MappingFragment StoreEntitySet="SLocation">
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
+                <ScalarProperty Name="LocationName" ColumnName="LocationName" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SMainMenus">
+            <EntityTypeMapping TypeName="InventoryDBModel.SMainMenu">
+              <MappingFragment StoreEntitySet="SMainMenu">
+                <ScalarProperty Name="PhotoUrl" ColumnName="PhotoUrl" />
+                <ScalarProperty Name="Photo" ColumnName="Photo" />
+                <ScalarProperty Name="MainMenuName" ColumnName="MainMenuName" />
+                <ScalarProperty Name="SortCode" ColumnName="SortCode" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="MainMenuID" ColumnName="MainMenuID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SProducts">
+            <EntityTypeMapping TypeName="InventoryDBModel.SProduct">
+              <MappingFragment StoreEntitySet="SProduct">
+                <ScalarProperty Name="PhotoUrl" ColumnName="PhotoUrl" />
+                <ScalarProperty Name="DisPercent" ColumnName="DisPercent" />
+                <ScalarProperty Name="AlertQty" ColumnName="AlertQty" />
+                <ScalarProperty Name="Photo" ColumnName="Photo" />
+                <ScalarProperty Name="IsStock" ColumnName="IsStock" />
+                <ScalarProperty Name="WholeSalePrice" ColumnName="WholeSalePrice" />
+                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
+                <ScalarProperty Name="PurPrice" ColumnName="PurPrice" />
+                <ScalarProperty Name="SubMenuID" ColumnName="SubMenuID" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="SortCode" ColumnName="SortCode" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SSubMenus">
+            <EntityTypeMapping TypeName="InventoryDBModel.SSubMenu">
+              <MappingFragment StoreEntitySet="SSubMenu">
+                <ScalarProperty Name="PhotoUrl" ColumnName="PhotoUrl" />
+                <ScalarProperty Name="MainMenuID" ColumnName="MainMenuID" />
+                <ScalarProperty Name="Photo" ColumnName="Photo" />
+                <ScalarProperty Name="SubMenuName" ColumnName="SubMenuName" />
+                <ScalarProperty Name="SortCode" ColumnName="SortCode" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="SubMenuID" ColumnName="SubMenuID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SSuppliers">
+            <EntityTypeMapping TypeName="InventoryDBModel.SSupplier">
+              <MappingFragment StoreEntitySet="SSupplier">
+                <ScalarProperty Name="DivisionID" ColumnName="DivisionID" />
+                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
+                <ScalarProperty Name="IsCredit" ColumnName="IsCredit" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Contact" ColumnName="Contact" />
+                <ScalarProperty Name="TownshipID" ColumnName="TownshipID" />
+                <ScalarProperty Name="SupplierName" ColumnName="SupplierName" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="SupplierID" ColumnName="SupplierID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="STownships">
+            <EntityTypeMapping TypeName="InventoryDBModel.STownship">
+              <MappingFragment StoreEntitySet="STownship">
+                <ScalarProperty Name="DivisionID" ColumnName="DivisionID" />
+                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
+                <ScalarProperty Name="TownshipName" ColumnName="TownshipName" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="TownshipID" ColumnName="TownshipID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SUnits">
+            <EntityTypeMapping TypeName="InventoryDBModel.SUnit">
+              <MappingFragment StoreEntitySet="SUnit">
+                <ScalarProperty Name="ULID" ColumnName="ULID" />
+                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
+                <ScalarProperty Name="UnitName" ColumnName="UnitName" />
+                <ScalarProperty Name="UnitID" ColumnName="UnitID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SUsers">
+            <EntityTypeMapping TypeName="InventoryDBModel.SUser">
+              <MappingFragment StoreEntitySet="SUser">
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="IsDefaultLocation" ColumnName="IsDefaultLocation" />
+                <ScalarProperty Name="UserPassword" ColumnName="UserPassword" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SVoucherFormats">
+            <EntityTypeMapping TypeName="InventoryDBModel.SVoucherFormat">
+              <MappingFragment StoreEntitySet="SVoucherFormat">
+                <ScalarProperty Name="ModuleCode" ColumnName="ModuleCode" />
+                <ScalarProperty Name="PostFormat" ColumnName="PostFormat" />
+                <ScalarProperty Name="MidFormat" ColumnName="MidFormat" />
+                <ScalarProperty Name="PreFormat" ColumnName="PreFormat" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SVoucherSettings">
+            <EntityTypeMapping TypeName="InventoryDBModel.SVoucherSetting">
+              <MappingFragment StoreEntitySet="SVoucherSetting">
+                <ScalarProperty Name="VoucherLogoUrl" ColumnName="VoucherLogoUrl" />
+                <ScalarProperty Name="FooterMessage3" ColumnName="FooterMessage3" />
+                <ScalarProperty Name="FooterMessage2" ColumnName="FooterMessage2" />
+                <ScalarProperty Name="FooterMessage1" ColumnName="FooterMessage1" />
+                <ScalarProperty Name="OtherHeader2" ColumnName="OtherHeader2" />
+                <ScalarProperty Name="OtherHeader1" ColumnName="OtherHeader1" />
+                <ScalarProperty Name="HeaderAddress" ColumnName="HeaderAddress" />
+                <ScalarProperty Name="HeaderPhone" ColumnName="HeaderPhone" />
+                <ScalarProperty Name="HeaderDesp" ColumnName="HeaderDesp" />
+                <ScalarProperty Name="HeaderName" ColumnName="HeaderName" />
+                <ScalarProperty Name="VoucherLogo" ColumnName="VoucherLogo" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SysModules">
+            <EntityTypeMapping TypeName="InventoryDBModel.SysModule">
+              <MappingFragment StoreEntitySet="SysModule">
+                <ScalarProperty Name="ModuleCode" ColumnName="ModuleCode" />
+                <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
+                <ScalarProperty Name="ModuleID" ColumnName="ModuleID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TCLMasterSaleOrders">
+            <EntityTypeMapping TypeName="InventoryDBModel.TCLMasterSaleOrder">
+              <MappingFragment StoreEntitySet="TCLMasterSaleOrder">
+                <ScalarProperty Name="IsOrderFinished" ColumnName="IsOrderFinished" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="ChargesAmt" ColumnName="ChargesAmt" />
+                <ScalarProperty Name="Charges" ColumnName="Charges" />
+                <ScalarProperty Name="TaxAmt" ColumnName="TaxAmt" />
+                <ScalarProperty Name="Tax" ColumnName="Tax" />
+                <ScalarProperty Name="Subtotal" ColumnName="Subtotal" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="ClientID" ColumnName="ClientID" />
+                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
+                <ScalarProperty Name="OrderDateTime" ColumnName="OrderDateTime" />
+                <ScalarProperty Name="SaleOrderID" ColumnName="SaleOrderID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TCLTranSaleOrders">
+            <EntityTypeMapping TypeName="InventoryDBModel.TCLTranSaleOrder">
+              <MappingFragment StoreEntitySet="TCLTranSaleOrder">
+                <ScalarProperty Name="SysProductID" ColumnName="SysProductID" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="SalePrice" ColumnName="SalePrice" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
+                <ScalarProperty Name="SaleOrderID" ColumnName="SaleOrderID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

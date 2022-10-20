@@ -12,9 +12,12 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class S_SlipID
+    public partial class STownship
     {
-        public int ID { get; set; }
-        public int SlipID { get; set; }
+        public int TownshipID { get; set; }
+        public string Code { get; set; }
+        public string TownshipName { get; set; }
+        public Nullable<bool> IsDefault { get; set; }
+        public Nullable<int> DivisionID { get; set; }
     }
 }

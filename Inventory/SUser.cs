@@ -12,10 +12,12 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class Sys_UnitLevel
+    public partial class SUser
     {
-        public short ULID { get; set; }
-        public string ULName { get; set; }
-        public short ULOrder { get; set; }
+        public int UserID { get; set; }
+        public string UserName { get; set; }
+        public string UserPassword { get; set; }
+        public bool IsDefaultLocation { get; set; }
+        public Nullable<int> LocationID { get; set; }
     }
 }
