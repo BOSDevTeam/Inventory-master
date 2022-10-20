@@ -252,7 +252,7 @@ namespace Inventory.Controllers
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read()) model.Users.Add(new SelectListItem { Text = Convert.ToString(reader["UserName"]), Value = Convert.ToString(reader["UserID"]) });
             reader.Close();
-            dataConnectorSQL.Close();         
+            dataConnectorSQL.Close();              
         }                 
     }
 }
