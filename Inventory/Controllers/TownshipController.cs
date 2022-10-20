@@ -45,7 +45,7 @@ namespace Inventory.Controllers
 
         private void GetDivision()
         {
-            foreach (var division in Entities.S_Division.OrderBy(m=>m.Code))
+            foreach (var division in Entities.SDivisions.OrderBy(m=>m.Code))
             {
                 model.Division.Add(new SelectListItem { Text = division.DivisionName, Value = division.DivisionID.ToString() });
             }
@@ -82,7 +82,7 @@ namespace Inventory.Controllers
         {
             string message;
             int saveOk;
-            var towns = (from town in Entities.S_Township where town.Code == code select town).ToList();
+            var towns = (from town in Entities.STownships where town.Code == code select town).ToList();
             if (towns.Count() == 0)
             {
                 Entities.PrcInsertTownship(townshipName, code,divisionId);
@@ -108,7 +108,7 @@ namespace Inventory.Controllers
         {
             string message;
             int editOk;
-            var towns = (from town in Entities.S_Township where town.Code == code where town.TownshipID != editTownshipID select town).ToList();
+            var towns = (from town in Entities.STownships where town.Code == code where town.TownshipID != editTownshipID select town).ToList();
             if (towns.Count() == 0)
             {
                 Entities.PrcUpdateTownship(editTownshipID, townshipName, code, divisionId);

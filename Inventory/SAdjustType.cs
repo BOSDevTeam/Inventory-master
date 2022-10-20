@@ -12,7 +12,7 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class S_AdjustType
+    public partial class SAdjustType
     {
         public int AdjustTypeID { get; set; }
         public string AdjustTypeName { get; set; }

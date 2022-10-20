@@ -12,10 +12,18 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class S_Division
+    public partial class SSupplier
     {
-        public int DivisionID { get; set; }
+        public int SupplierID { get; set; }
         public string Code { get; set; }
-        public string DivisionName { get; set; }
+        public string SupplierName { get; set; }
+        public Nullable<int> TownshipID { get; set; }
+        public string Contact { get; set; }
+        public string Address { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+        public Nullable<bool> IsCredit { get; set; }
+        public Nullable<bool> IsDefault { get; set; }
+        public Nullable<int> DivisionID { get; set; }
     }
 }

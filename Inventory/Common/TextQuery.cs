@@ -7,67 +7,67 @@ namespace Inventory.Common
 {
     public class TextQuery
     {
-        public const string customerQuery = "Select CustomerID,CustomerName From S_Customer Order By IsDefault DESC";
-        public const string supplierQuery = "Select SupplierID,SupplierName From S_Supplier Order By IsDefault DESC";
-        public const string locationQuery = "Select LocationID,ShortName From S_Location";
-        public const string mainMenuQuery = "Select MainMenuID,MainMenuName From S_MainMenu Order By SortCode";
-        public const string unitQuery = "Select UnitID,Keyword From S_Unit Order By ULID";
-        public const string currencyQuery = "Select CurrencyID,Keyword From Sys_Currency Order By IsDefault DESC";
-        public const string paymentQuery = "Select PaymentID,Keyword From Sys_Payment";
-        public const string payMethodQuery = "Select PayMethodID,PayMethodName From Sys_PayMethod";
-        public const string limitedDayQuery = "Select LimitedDayID,LimitedDayName From Sys_LimitedDay";
-        public const string bankPaymentQuery = "Select BankPaymentID,BankPaymentName From S_BankPayment";
+        public const string customerQuery = "Select CustomerID,CustomerName From SCustomer Order By IsDefault DESC";
+        public const string supplierQuery = "Select SupplierID,SupplierName From SSupplier Order By IsDefault DESC";
+        public const string locationQuery = "Select LocationID,ShortName From SLocation";
+        public const string mainMenuQuery = "Select MainMenuID,MainMenuName From SMainMenu Order By SortCode";
+        public const string unitQuery = "Select UnitID,Keyword From SUnit Order By ULID";
+        public const string currencyQuery = "Select CurrencyID,Keyword From SysCurrency Order By IsDefault DESC";
+        public const string paymentQuery = "Select PaymentID,Keyword From SysPayment";
+        public const string payMethodQuery = "Select PayMethodID,PayMethodName From SysPayMethod";
+        public const string limitedDayQuery = "Select LimitedDayID,LimitedDayName From SysLimitedDay";
+        public const string bankPaymentQuery = "Select BankPaymentID,BankPaymentName From SBankPayment";
 
         public string getSubMenuQuery(int mainMenuId)
         {
             return "Select SubMenuID,SubMenuName"
-            + " From S_SubMenu Where MainMenuID=" + mainMenuId + " Order By SortCode";
+            + " From SSubMenu Where MainMenuID=" + mainMenuId + " Order By SortCode";
         }
-
+    
         public string getProductQuery(int subMenuId)
         {
             return "Select ProductID,ProductName,Code,isnull(SalePrice,0) AS SalePrice,isnull(DisPercent,0) AS DisPercent"
-            + " From S_Product Where SubMenuID=" + subMenuId + " And IsStock=1 Order By SortCode";
+            + " From SProduct Where SubMenuID=" + subMenuId + " And IsStock=1 Order By SortCode";
         }
 
         public string getProductByCodeQuery(string productCode)
         {
             return "Select ProductID,ProductName,isnull(SalePrice,0) AS SalePrice,isnull(DisPercent,0) AS DisPercent"
-            + " From S_Product Where Code='" + productCode + "' And IsStock=1";
+            + " From SProduct Where Code='" + productCode + "' And IsStock=1";
         }
 
         public string getVoucherSettingQuery(int locationId)
         {
             return "Select HeaderName,HeaderDesp,HeaderPhone,HeaderAddress,OtherHeader1,OtherHeader2,FooterMessage1,FooterMessage2,FooterMessage3,isnull(VoucherLogo,'') AS VoucherLogo"
-            + " From S_VoucherSetting Where LocationID=" + locationId;
+            + " From SVoucherSetting Where LocationID=" + locationId;
         }
 
         public string deleteSaleQuery(int saleId)
         {
-            return "Delete From T_TranSale Where SaleID=" + saleId + " Delete From T_MasterSale Where SaleID=" + saleId;           
+            return "Delete From TTranSale Where SaleID=" + saleId + " Delete From TMasterSale Where SaleID=" + saleId;           
         }
 
         public string deleteOpenBillQuery(int openBillId)
         {
-            return "Delete From T_TranOpenBill Where OpenBillID=" + openBillId + " Delete From T_MasterOpenBill Where OpenBillID=" + openBillId;
+            return "Delete From TTranOpenBill Where OpenBillID=" + openBillId + " Delete From TMasterOpenBill Where OpenBillID=" + openBillId;
         }
 
         public string getMasterOpenBillQuery(int openBillId)
         {
             return "Select UserVoucherNo,VoucherID,Subtotal,TaxAmt,ChargesAmt,Total,LocationID,CustomerID"
-            + " From T_MasterOpenBill Where OpenBillID=" + openBillId;
+            + " From TMasterOpenBill Where OpenBillID=" + openBillId;
         }
 
         public string getCLMasterSaleOrderQuery(int clSaleOrderId)
         {
             return "Select Subtotal,TaxAmt,ChargesAmt,Total,isnull(CustomerID,0) AS CustomerID"
-            + " From T_CLMasterSaleOrder Where SaleOrderID=" + clSaleOrderId;
+            + " From TCLMasterSaleOrder Where SaleOrderID=" + clSaleOrderId;
         }
 
         public string getCLTranSaleOrderQuery(int clSaleOrderId)
         {
             return "Select p.ProductName,ts.Quantity,ts.SalePrice,ts.Amount,ts.ProductID,p.Code"
-            + " From T_CLTranSaleOrder ts INNER JOIN S_Product p ON ts.ProductID=p.ProductID"
+            + " From TCLTranSaleOrder ts INNER JOIN SProduct p ON ts.ProductID=p.ProductID"
             + " Where ts.SaleOrderID=" + clSaleOrderId;
         }
     }

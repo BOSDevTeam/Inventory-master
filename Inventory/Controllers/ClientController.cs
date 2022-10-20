@@ -132,7 +132,7 @@ namespace Inventory.Controllers
         private void GetDivisionDefaultInclude()
         {
             model.Divisions.Add(new SelectListItem { Text = "Division", Value = "0" });
-            foreach (var div in Entities.S_Division.OrderBy(m => m.Code))
+            foreach (var div in Entities.SDivisions.OrderBy(m => m.Code))
             {
                 model.Divisions.Add(new SelectListItem { Text = div.DivisionName, Value = div.DivisionID.ToString() });
             }
@@ -141,9 +141,9 @@ namespace Inventory.Controllers
         private void GetTownshipDefaultInclude()
         {
             model.Townships.Add(new SelectListItem { Text = "Township", Value = "0" });
-            foreach (var town in Entities.S_Township.OrderBy(m => m.Code))
+            foreach (var town in Entities.STownships.OrderBy(m => m.Code))
             {
-                model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value = town.TownshipID.ToString() });
+                model.Townships.Add(new SelectListItem { Text = town.TownshipName, Value =town.TownshipID.ToString() });
             }
         }
     }

@@ -68,7 +68,7 @@ namespace Inventory.Controllers
             string message;
             int saveOk;
 
-            var formats = (from format in Entities.S_VoucherFormat where format.ModuleCode == module select format).ToList();
+            var formats = (from format in Entities.SVoucherFormats where format.ModuleCode == module select format).ToList();
             if (formats.Count() == 0)
             {
                 Entities.PrcInsertVoucherFormat(preFormat, midFormat, postFormat, module);
@@ -95,7 +95,7 @@ namespace Inventory.Controllers
         {
             string message;
             int editOk;
-            var formats = (from format in Entities.S_VoucherFormat where format.ModuleCode == modulecode where format.ID != editVouFormatID select format).ToList();
+            var formats = (from format in Entities.SVoucherFormats where format.ModuleCode == modulecode where format.ID != editVouFormatID select format).ToList();
             if (formats.Count == 0)
             {
                 Entities.PrcUpdateVoucherFormat(editVouFormatID, preFormat, midFormat, postFormat, modulecode);
@@ -144,15 +144,15 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult DeleteAction(int Id)
         {
-            S_VoucherFormat format = Entities.S_VoucherFormat.Where(x => x.ID == Id).Single<S_VoucherFormat>();
-            Entities.S_VoucherFormat.Remove(format);
+            SVoucherFormat format = Entities.SVoucherFormats.Where(x => x.ID == Id).Single<SVoucherFormat>();
+            Entities.SVoucherFormats.Remove(format);
             Entities.SaveChanges();
             return Json("", JsonRequestBehavior.AllowGet);
         }
 
         public void GetModule()
         {
-            foreach(var module in Entities.Sys_Module.OrderBy(m => m.ModuleCode))
+            foreach(var module in Entities.SysModules.OrderBy(m => m.ModuleCode))
             {
                 model.LstModule.Add(new SelectListItem { Text = module.ModuleName, Value = module.ModuleCode.ToString() });
             }

@@ -45,7 +45,7 @@ namespace Inventory.Controllers
         {
             string message;
             int editOk;
-            var editdivision = (from div in Entites.S_Division where div.Code == Code where div.DivisionID != editDivisionID select div).ToList();
+            var editdivision = (from div in Entites.SDivisions where div.Code == Code where div.DivisionID != editDivisionID select div).ToList();
             if (editdivision.Count == 0)
             {
                 if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
@@ -79,7 +79,7 @@ namespace Inventory.Controllers
         {
             string message;
             int saveOk;
-            var division = (from div in Entites.S_Division where div.Code == Code select div).ToList();
+            var division = (from div in Entites.SDivisions where div.Code == Code select div).ToList();
             if (division.Count() == 0)
             {
                 if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();

@@ -12,13 +12,11 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class T_CLTranSaleOrder
+    public partial class SUnit
     {
-        public int ID { get; set; }
-        public Nullable<int> SaleOrderID { get; set; }
-        public Nullable<int> ProductID { get; set; }
-        public Nullable<int> Quantity { get; set; }
-        public Nullable<int> SalePrice { get; set; }
-        public Nullable<int> Amount { get; set; }
+        public int UnitID { get; set; }
+        public string UnitName { get; set; }
+        public string Keyword { get; set; }
+        public short ULID { get; set; }
     }
 }

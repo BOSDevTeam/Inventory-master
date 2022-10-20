@@ -236,7 +236,7 @@ namespace Inventory.Controllers
         private void getAllLocation()
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand("Select LocationID,LocationName From S_Location Order By Code", (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand("Select LocationID,LocationName From SLocation Order By Code", (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.Text;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read()) model.Locations.Add(new SelectListItem { Text = Convert.ToString(reader["LocationName"]), Value = Convert.ToString(reader["LocationID"]) });
@@ -247,7 +247,7 @@ namespace Inventory.Controllers
         private void getAllUser()
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand("Select UserID,UserName From S_User", (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand("Select UserID,UserName From SUser", (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.Text;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read()) model.Users.Add(new SelectListItem { Text = Convert.ToString(reader["UserName"]), Value = Convert.ToString(reader["UserID"]) });

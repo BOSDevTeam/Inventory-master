@@ -88,7 +88,7 @@ namespace Inventory.Controllers
             List<SubMenuModels.SubMenuModel> lstSubMenu = new List<SubMenuModels.SubMenuModel>();            
 
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand("Select SubMenuID,SubMenuName From S_SubMenu Where MainMenuID=" + mainMenuId + " Order By SortCode", (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand("Select SubMenuID,SubMenuName From SSubMenu Where MainMenuID=" + mainMenuId + " Order By SortCode", (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.Text;
 
             SqlDataReader reader = cmd.ExecuteReader();
@@ -305,7 +305,7 @@ namespace Inventory.Controllers
         private void getMainMenu()
         {         
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand("Select MainMenuID,MainMenuName From S_MainMenu Order By SortCode", (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand("Select MainMenuID,MainMenuName From SMainMenu Order By SortCode", (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.Text;
 
             SqlDataReader reader = cmd.ExecuteReader();
@@ -321,7 +321,7 @@ namespace Inventory.Controllers
         {           
             model.MainMenus.Add(new SelectListItem { Text = "Main Menu", Value = "0" });
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand("Select MainMenuID,MainMenuName From S_MainMenu Order By SortCode", (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand("Select MainMenuID,MainMenuName From SMainMenu Order By SortCode", (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.Text;
 
             SqlDataReader reader = cmd.ExecuteReader();
@@ -336,7 +336,7 @@ namespace Inventory.Controllers
         private void getSubMenuByMainMenu(int mainMenuId)
         {           
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand("Select SubMenuID,SubMenuName From S_SubMenu Where MainMenuID="+ mainMenuId +" Order By SortCode", (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand("Select SubMenuID,SubMenuName From SSubMenu Where MainMenuID="+ mainMenuId +" Order By SortCode", (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.Text;
 
             SqlDataReader reader = cmd.ExecuteReader();
@@ -352,7 +352,7 @@ namespace Inventory.Controllers
         {            
             model.SubMenus.Add(new SelectListItem { Text = "Sub Menu", Value = "0" });
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand("Select SubMenuID,SubMenuName From S_SubMenu Order By SortCode", (SqlConnection)Session["SQLConnection"]);
+            SqlCommand cmd = new SqlCommand("Select SubMenuID,SubMenuName From SSubMenu Order By SortCode", (SqlConnection)Session["SQLConnection"]);
             cmd.CommandType = CommandType.Text;
 
             SqlDataReader reader = cmd.ExecuteReader();
@@ -364,21 +364,6 @@ namespace Inventory.Controllers
             dataConnectorSQL.Close();
         }
 
-        //private void getUnit()
-        //{            
-        //    if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-        //    SqlCommand cmd = new SqlCommand("Select UnitID,Keyword From S_Unit Order By ULID", (SqlConnection)Session["SQLConnection"]);
-        //    cmd.CommandType = CommandType.Text;
-
-        //    SqlDataReader reader = cmd.ExecuteReader();
-        //    while (reader.Read())
-        //    {
-        //        model.Units.Add(new SelectListItem { Text = Convert.ToString(reader["Keyword"]), Value = Convert.ToString(reader["UnitID"]) });
-        //    }
-        //    reader.Close();
-        //    dataConnectorSQL.Close();
-        //}
-
         private void clearSessionPhoto()
         {
             Session["PhotoFile"] = null;
@@ -388,7 +373,7 @@ namespace Inventory.Controllers
         {
             if (Session["PhotoFile"] != null)
             {
-                var result = Entities.S_Product.Where(x => x.ProductID == productId).SingleOrDefault();
+                var result = Entities.SProducts.Where(x => x.ProductID == productId).SingleOrDefault();
                 if (result != null)
                 {
                     HttpPostedFileBase file = (HttpPostedFileBase)Session["PhotoFile"];

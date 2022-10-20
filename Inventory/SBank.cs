@@ -12,14 +12,10 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class S_SubMenu
+    public partial class SBank
     {
-        public int SubMenuID { get; set; }
-        public string Code { get; set; }
-        public int SortCode { get; set; }
-        public string SubMenuName { get; set; }
-        public byte[] Photo { get; set; }
-        public int MainMenuID { get; set; }
-        public string PhotoUrl { get; set; }
+        public int BankID { get; set; }
+        public string BankName { get; set; }
+        public string ShortName { get; set; }
     }
 }

@@ -12,12 +12,10 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class S_User
+    public partial class SBankPayment
     {
-        public int UserID { get; set; }
-        public string UserName { get; set; }
-        public string UserPassword { get; set; }
-        public bool IsDefaultLocation { get; set; }
-        public Nullable<int> LocationID { get; set; }
+        public int BankPaymentID { get; set; }
+        public Nullable<int> BankID { get; set; }
+        public string BankPaymentName { get; set; }
     }
 }

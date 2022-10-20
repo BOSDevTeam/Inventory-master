@@ -76,7 +76,7 @@ namespace Inventory.Controllers
         {
             string message;
             int saveOk;
-            var locs = (from loc in Entities.S_Location where loc.Code == code select loc).ToList();
+            var locs = (from loc in Entities.SLocations where loc.Code == code select loc).ToList();
             if (locs.Count() == 0)
             {
                 Entities.PrcInsertLocation(locationName, shortName, description, code, phone, email, address);
@@ -133,7 +133,7 @@ namespace Inventory.Controllers
         {
             string message;
             int editOk;
-            var locs = (from loc in Entities.S_Location where loc.Code == code where loc.LocationID != editLocationID select loc).ToList();
+            var locs = (from loc in Entities.SLocations where loc.Code == code where loc.LocationID != editLocationID select loc).ToList();
             if (locs.Count() == 0)
             {
                 Entities.PrcUpdateLocation(editLocationID, locationName, shortName, description, code, phone, email, address);

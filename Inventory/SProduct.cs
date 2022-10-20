@@ -12,13 +12,21 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class S_MainMenu
+    public partial class SProduct
     {
-        public int MainMenuID { get; set; }
+        public int ProductID { get; set; }
         public string Code { get; set; }
         public int SortCode { get; set; }
-        public string MainMenuName { get; set; }
+        public string ProductName { get; set; }
+        public string Description { get; set; }
+        public int SubMenuID { get; set; }
+        public Nullable<int> PurPrice { get; set; }
+        public Nullable<int> SalePrice { get; set; }
+        public Nullable<int> WholeSalePrice { get; set; }
+        public bool IsStock { get; set; }
         public byte[] Photo { get; set; }
+        public Nullable<int> AlertQty { get; set; }
+        public Nullable<short> DisPercent { get; set; }
         public string PhotoUrl { get; set; }
     }
 }

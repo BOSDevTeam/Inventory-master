@@ -12,9 +12,16 @@ namespace Inventory
     using System;
     using System.Collections.Generic;
     
-    public partial class Sys_ShopType
+    public partial class SClient
     {
-        public int ID { get; set; }
-        public string ShopType { get; set; }
+        public int ClientID { get; set; }
+        public string ClientName { get; set; }
+        public string ClientPassword { get; set; }
+        public string ShopName { get; set; }
+        public string Phone { get; set; }
+        public Nullable<int> DivisionID { get; set; }
+        public Nullable<int> TownshipID { get; set; }
+        public string Address { get; set; }
+        public Nullable<bool> IsSalePerson { get; set; }
     }
 }
