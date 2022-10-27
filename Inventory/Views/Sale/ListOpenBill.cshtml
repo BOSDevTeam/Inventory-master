@@ -21,12 +21,18 @@
 
         $(document).ready(function () {
            
+            initializeControl();
             createMasterOpenBillData('', false);
-            createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');           
+            createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');  
+            
+            function initializeControl() {
+                $('#inputFromDate').val(getTodayDate());
+                $('#inputToDate').val(getTodayDate());
+            }
 
             function clearControl() {
-                $('#inputFromDate').val("");
-                $('#inputToDate').val("");
+                $('#inputFromDate').val(getTodayDate());
+                $('#inputToDate').val(getTodayDate());
                 $('#inputUserVoucherNo').val('');
                 $("#ddlCustomer").val('0');
             }

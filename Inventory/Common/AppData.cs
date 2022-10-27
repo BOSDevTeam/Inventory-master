@@ -194,6 +194,18 @@ namespace Inventory.Common
             return list;
         }
 
+        public int selectSalePriceByProduct(object connection, int productId)
+        {
+            int price = 0;
+            SqlCommand cmd = new SqlCommand(textQuery.getSalePriceQuery(productId), (SqlConnection)connection);
+            cmd.CommandType = CommandType.Text;
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read()) price = Convert.ToInt32(reader["SalePrice"]);
+            reader.Close();
+
+            return price;
+        }
+
         public List<UnitModels> selectUnit(object connection)
         {
             List<UnitModels> list = new List<UnitModels>();

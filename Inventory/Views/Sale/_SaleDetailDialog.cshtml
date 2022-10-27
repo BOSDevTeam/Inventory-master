@@ -47,20 +47,21 @@
     function createTranSaleDetail(response) {
         $("#tblTranSale").find("tbody").empty();
         $.each(response.LstTranSale, function (index, item) {
-            var row = '<tr class="row voucher-table-item">'
-                    + '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '</td>'
-                    + '<td class="col-md-2 col-lg-2">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
-                    + '<td class="col-md-2 col-lg-2">' + separatedComma(item.SalePrice) + '<span class="control-span-sm">' + item.CurrencyKeyword + '</span></td>'
-                    + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Discount) + '</td>'
-                    + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Amount) + '</td>'
-                    + "</tr>";
-                $('#tblTranSale tbody').append(row);
+            let row = '<tr class="row voucher-table-item">'
+            if (item.IsFOC == true) row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '(FOC)' + '</td>'
+            else row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '</td>'
+            row += '<td class="col-md-2 col-lg-2">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
+               + '<td class="col-md-2 col-lg-2">' + separatedComma(item.SalePrice) + '<span class="control-span-sm">' + item.CurrencyKeyword + '</span></td>'
+               + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Discount) + '</td>'
+               + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Amount) + '</td>'
+               + "</tr>";
+            $('#tblTranSale tbody').append(row);
         });
     }
 
     function createMasterSaleDetail(response) {
-        $('#lblUserVoucherNo').text(response.UserVoucherNo);       
-        $('#lblLocation').text(response.LocationName);              
+        $('#lblUserVoucherNo').text(response.UserVoucherNo);
+        $('#lblLocation').text(response.LocationName);
 
         if (response.LimitedDay.length != 0) $('#lblPayment').text(response.Payment + " (Duration:" + response.LimitedDay + ")");
         else $('#lblPayment').text(response.Payment);
@@ -126,6 +127,17 @@
             $('#trPcntGrandtotal').show();
             $('#lblPercentValue').text(separatedComma(payPercentAmt));
             $('#lblPcntGrandtotal').text(separatedComma(grandtotal));
+        }
+
+        let isVouFOC = response.IsVouFOC;       
+        if (isVouFOC == false) {
+            $('#trVoucherFOC').css('display', 'none');
+            $('#trVFOCGrandtotal').css('display', 'none');
+        } else {
+            $('#trVoucherFOC').show();
+            $('#trVFOCGrandtotal').show();
+            $('#lblVoucherFOC').text(separatedComma(grandtotal));
+            $('#lblVFOCGrandtotal').text('0');
         }
 
         if (response.Remark.length != 0) {

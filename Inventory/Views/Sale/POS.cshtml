@@ -22,7 +22,7 @@
         <input id="inputDate" type="date" class="form-control control-input" />
     </div>
     <div class="col-md-3 col-lg-3">
-        <input id="inputVoucherID" type="text" class="form-control control-input" placeholder="VoucherID" />
+        <input id="inputVoucherID" type="text" class="form-control control-input" placeholder="@Resource.VoucherID" />
     </div>
     <div class="col-md-3 col-lg-3">
         @Html.DropDownList("Customer",Model.Customers, new { @id = "ddlCustomer", @class = "form-control control-input" })
@@ -36,20 +36,20 @@
     <div id="divSale" class="col-md-6 col-lg-6">
         <div class="input-icons">             
              <i class="fa fa-search icon"></i>        
-             <input id="inputSearch" type="text" class="form-control control-input input-field" placeholder="Search Product"/>           
+             <input id="inputSearch" type="text" class="form-control control-input input-field" placeholder="@Resource.SearchProduct"/>           
         </div>
         <div class="m-t-5 padding-5 search-div">
             <div class="row">
                 <div class="col-md-3 col-lg-3">
                     <input id="inputNumber" type="hidden" />
                     <input id="inputProductID" type="hidden" />
-                    <input id="inputCode" type="text" class="form-control control-input" placeholder="Code" />
+                    <input id="inputCode" type="text" class="form-control control-input" placeholder="@Resource.Code" />
                 </div>
                 <div class="col-md-5 col-lg-5">
-                    <input id="inputProductName" type="text" class="form-control control-input" placeholder="Product Name" disabled />
+                    <input id="inputProductName" type="text" class="form-control control-input" placeholder="@Resource.ProductName" disabled />
                 </div>
                 <div class="col-md-2 col-lg-2">
-                    <input id="inputQuantity" type="text" class="form-control control-input numberonly" placeholder="Qty" />                   
+                    <input id="inputQuantity" type="text" class="form-control control-input numberonly" placeholder="@Resource.Qty" />                   
                 </div>
                 <div id="divUnit" class="col-md-2 col-lg-2">                   
                     @Html.DropDownList("Unit", Model.Units, new { @id = "ddlUnit", @class = "form-control control-input" })                
@@ -57,17 +57,20 @@
             </div>
             <div class="row m-t-5 align-center">
                 <div class="col-md-3 col-lg-3">
-                    <input id="inputPrice" type="text" class="form-control control-input numberonly" placeholder="Price" />
+                    <input id="inputPrice" type="text" class="form-control control-input numberonly" placeholder="@Resource.Price" />
                 </div>
                 <div id="divCurrency" class="col-md-3 col-lg-3">
                     @Html.DropDownList("Currency", Model.Currencies, new { @id = "ddlCurrency", @class = "form-control control-input" })
                 </div>
                 <div class="col-md-2 col-lg-2">
-                    <input id="inputDisPercent" type="text" class="form-control control-input numberonly" placeholder="%" maxlength="2" />
+                    <input id="inputDisPercent" type="text" class="form-control control-input numberonly" placeholder="@Resource.PercentSign" maxlength="2" />
                 </div>   
-                <div class="col-md-4 col-lg-4">
-                    <button id="btnAdd" class="btn btn-second">Add</button>
-                    <button id="btnEdit" class="btn btn-third">Edit</button>
+                <div class="col-md-2 col-lg-2">                    
+                    <input id="chkItemFOC" type="checkbox" /><span>&nbsp;&nbsp;@Resource.FOC</span>                                  
+                </div>
+                <div class="col-md-2 col-lg-2">
+                    <button id="btnAdd" class="btn btn-second">@Resource.Add</button>
+                    <button id="btnEdit" class="btn btn-third">@Resource.Edit</button>
                 </div>                  
             </div>
         </div>        
@@ -76,11 +79,11 @@
                 <table id="tblTranSale" class="width-100-percent" >      
                     <thead>
                         <tr class="row tran-table-header-row">
-                            <td class="col-md-4 col-lg-4 text-overflow"><span>Product</span></td>
-                            <td class="col-md-1 col-lg-1 text-overflow"><span>Qty</span></td>
-                            <td class="col-md-2 col-lg-2 text-overflow"><span>Price</span></td>
-                            <td class="col-md-2 col-lg-2 text-overflow"><span>Dis</span></td>
-                            <td class="col-md-2 col-lg-2 value-right text-overflow"><span>Amount</span></td>
+                            <td class="col-md-4 col-lg-4 text-overflow"><span>@Resource.Product</span></td>
+                            <td class="col-md-1 col-lg-1 text-overflow"><span>@Resource.Qty</span></td>
+                            <td class="col-md-2 col-lg-2 text-overflow"><span>@Resource.Price</span></td>
+                            <td class="col-md-2 col-lg-2 text-overflow"><span>@Resource.Dis</span></td>
+                            <td class="col-md-2 col-lg-2 value-right text-overflow"><span>@Resource.Amount</span></td>
                             <td class="col-md-1 col-lg-1"></td>
                         </tr>   
                     </thead>             
@@ -91,25 +94,25 @@
             <div style="bottom:0px;position:absolute;width:100%;">
                 <table class="width-100-percent">
                     <tr>
-                        <td class="table-border"><label class="control-label mb-0">Total Items</label></td>
+                        <td class="table-border"><label class="control-label mb-0">@Resource.TotalItems</label></td>
                         <td class="table-border"><label id="lblTotalItem" class="control-input mb-0">0</label></td>
-                        <td class="table-border"><label class="control-label mb-0">Subtotal</label></td>
+                        <td class="table-border"><label class="control-label mb-0">@Resource.Subtotal</label></td>
                         <td class="table-border value-right"><input id="inputHdnSubtotal" type="hidden" /><label id="lblSubtotal" class="control-input mb-0">0</label></td>
                     </tr>
                     <tr>
                         <td class="table-border"></td>
                         <td class="table-border"></td>
-                        <td class="table-border"><label class="control-label mb-0">Tax</label></td>
+                        <td class="table-border"><label class="control-label mb-0">@Resource.Tax</label></td>
                         <td class="table-border value-right"><input id="inputHdnTax" type="hidden" /><label id="lblTax" class="control-input mb-0">0</label></td>
                     </tr>
                     <tr>
                         <td class="table-border"></td>
                         <td class="table-border"></td>
-                        <td class="table-border"><label class="control-label mb-0">Charges</label></td>
+                        <td class="table-border"><label class="control-label mb-0">@Resource.Charges</label></td>
                         <td class="table-border value-right"><input id="inputHdnCharges" type="hidden" /><label id="lblCharges" class="control-input mb-0">0</label></td>
                     </tr>
                     <tr>
-                        <td class="table-border"><label class="total-amount-label mb-0">Total Pay</label></td>
+                        <td class="table-border"><label class="total-amount-label mb-0">@Resource.TotalPay</label></td>
                         <td class="table-border"></td>
                         <td class="table-border"></td>
                         <td class="table-border value-right"><input id="inputHdnTotal" type="hidden" /><label id="lblTotal" class="total-amount-value mb-0">0</label></td>
@@ -117,19 +120,19 @@
                 </table>
                 <div class="row mr-0">
                     <div class="col-md-3 col-lg-3">
-                        <button id="btnCancel" class="btn btn-block btn-white-outline-third">Cancel</button>
-                        <button id="btnEditCancel" class="btn btn-block btn-white-outline-third m-t-0">Cancel</button>
-                        <button id="btnOpenBillCancel" class="btn btn-block btn-white-outline-third m-t-0">Cancel</button>
-                        <button id="btnCLSaleOrderCancel" class="btn btn-block btn-white-outline-third m-t-0">Cancel</button>
+                        <button id="btnCancel" class="btn btn-block btn-white-outline-third">@Resource.Cancel</button>
+                        <button id="btnEditCancel" class="btn btn-block btn-white-outline-third m-t-0">@Resource.Cancel</button>
+                        <button id="btnOpenBillCancel" class="btn btn-block btn-white-outline-third m-t-0">@Resource.Cancel</button>
+                        <button id="btnCLSaleOrderCancel" class="btn btn-block btn-white-outline-third m-t-0">@Resource.Cancel</button>
                     </div>
                     <div class="col-md-3 col-lg-3">
-                        <button id="btnHold" class="btn btn-block btn-second">Hold</button>
+                        <button id="btnHold" class="btn btn-block btn-second">@Resource.Hold</button>
                     </div>
                     <div class="col-md-6 col-lg-6">
                         <input type="hidden" id="inputOpenBillID" />
                         <input type="hidden" id="inputCLSaleOrderID" />
-                        <button id="btnPayment" class="btn btn-block btn-first">Payment</button>
-                        <button id="btnEditPayment" class="btn btn-block btn-first m-t-0">Edit</button>
+                        <button id="btnPayment" class="btn btn-block btn-first">@Resource.Payment</button>
+                        <button id="btnEditPayment" class="btn btn-block btn-first m-t-0">@Resource.Edit</button>
                     </div>
                 </div>
             </div>
@@ -356,7 +359,7 @@
             $('#inputHdnTax').val(taxAmt);
             $('#inputHdnCharges').val(chargesAmt);
             $('#inputHdnTotal').val(parseInt(calcTotal(response.SubTotal, taxAmt, chargesAmt)));
-            $('#lblTotalItem').text(totalItem + '(' + response.TotalQuantity + ')');
+            $('#lblTotalItem').text(totalItem + '@Resource.OpenParenthesis' + response.TotalQuantity + '@Resource.CloseParenthesis');
         }
 
         function clearAmount() {
@@ -396,6 +399,7 @@
             $("#inputQuantity").val("");
             $("#inputPrice").val("");
             $("#inputDisPercent").val("");
+            $("#chkItemFOC").prop('checked', false);
             showHideUnit();
             showHideCurrency();
             showHideTranSaleAddEdit(false);
@@ -634,7 +638,7 @@
 
         function addOrEditTranSale(isEdit) {
             if (validateProductControl()) {
-                let disPercent, unitId, currencyId, unitKeyword, currencyKeyword;
+                let disPercent, unitId, currencyId, unitKeyword, currencyKeyword, isItemFOC = false;
                 let number = $("#inputNumber").val();
                 let productId = $("#inputProductID").val();
                 let productCode = $("#inputCode").val();
@@ -651,11 +655,12 @@
                     currencyId = $('#divCurrency option:selected').val();
                     currencyKeyword = $('#divCurrency option:selected').text();
                 }
+                if ($('#chkItemFOC').is(":checked")) isItemFOC = true;
                 showLoadingIcon();
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("TranSaleAddEditAction", "Sale")',
-                    data: { "productId": productId, "productCode": productCode, "productName": productName, "quantity": quantity, "price": price, "disPercent": disPercent, "unitId": unitId, "unitKeyword": unitKeyword, "currencyId": currencyId, "currencyKeyword": currencyKeyword, "isEdit": isEdit, "number": number },
+                    data: { "productId": productId, "productCode": productCode, "productName": productName, "quantity": quantity, "price": price, "disPercent": disPercent, "unitId": unitId, "unitKeyword": unitKeyword, "currencyId": currencyId, "currencyKeyword": currencyKeyword, "isEdit": isEdit, "number": number, "isItemFOC": isItemFOC },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
@@ -805,6 +810,8 @@
             let userId = localStorage.getItem("UserID");
             let openBillId = $('#inputOpenBillID').val();
             let clSaleOrderId = $('#inputCLSaleOrderID').val();
+            let isVoucherFOC = false;
+            if ($('#chkVoucherFOC').is(":checked")) isVoucherFOC = true;          
             showLoadingIcon();
             $.ajax({
                 type: "POST",
@@ -814,7 +821,7 @@
                     "paymentId": paymentId, "payMethodId": payMethodId, "limitedDayId": limitedDayId, "bankPaymentId": bankPaymentId, "remark": remark, "advancedPay": advancedPay,
                     "payPercent": payPercent, "payPercentAmt": payPercentAmt, "vouDisPercent": vouDisPercent, "vouDisAmount": vouDisAmount, "voucherDiscount": voucherDiscount,
                     "tax": tax, "taxAmt": taxAmt, "charges": charges, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total, "grandtotal": grandtotal, "userId": userId,
-                    "openBillId": openBillId, "clSaleOrderId": clSaleOrderId
+                    "openBillId": openBillId, "clSaleOrderId": clSaleOrderId, "isVoucherFOC": isVoucherFOC
                 }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -907,6 +914,8 @@
                         createCurrencyData(response);
                         $("#ddlUnit").val(response.UnitID);
                         $("#ddlCurrency").val(response.CurrencyID);
+                        if (response.IsFOC == true) $("#chkItemFOC").prop('checked', true);
+                        else $("#chkItemFOC").prop('checked', false);
                         showHideTranSaleAddEdit(true);
                     }
                 },
@@ -920,6 +929,35 @@
                 }
             });
         }
+
+        $('#chkItemFOC').change(function () {
+            let productId = $('#inputProductID').val();
+            if (productId == "") return;
+            if (this.checked) $('#inputPrice').val('0');
+            else {               
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetSalePriceAction", "Sale")',
+                    data: { "productId": productId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();                        
+                        $("#inputPrice").val(response);                                                   
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
     });
 
     function fillSelectedProductData(response, productId) {

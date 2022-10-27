@@ -5,7 +5,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:700px;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="adminModalLongTitle">Payment</h5>
+                <h5 class="modal-title" id="adminModalLongTitle">@Resource.Payment</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -18,77 +18,84 @@
                     <div class="col-md-6 col-lg-6">
                         <table class="width-100-percent" style="border-spacing:0 0.5em;border-collapse:separate;">
                             <tr>
-                                <td><label class="control-label mb-0">Pay Type</label></td>
+                                <td><label class="control-label mb-0">@Resource.PayType</label></td>
                                 <td>@Html.DropDownList("Payment", Model.PayTypes, new { @id = "ddlPayment", @class = "form-control control-input" })</td>
                             </tr>                          
                             <tr id="trLimitedDay" class="soft-gray-background">
-                                <td class="padding-10"><label class="control-label mb-0">Limited Day</label></td>
+                                <td class="padding-10"><label class="control-label mb-0">@Resource.LimitedDay</label></td>
                                 <td class="padding-10">@Html.DropDownList("LimitedDay", Model.LimitedDays, new { @id = "ddlLimitedDay", @class = "form-control control-input" })</td>
                             </tr>
                             <tr class="trAdvancedPay soft-gray-background">
-                                <td class="padding-10"><label class="control-label mb-0">Advanced Pay</label></td>
+                                <td class="padding-10"><label class="control-label mb-0">@Resource.AdvancedPay</label></td>
                                 <td class="padding-10"><input id="inputAdvancedPay" type="text" class="form-control control-input numberonly" /></td>
                             </tr>                                                 
                             <tr id="trPayMethod">
-                                <td><label class="control-label mb-0">Pay Method</label></td>
+                                <td><label class="control-label mb-0">@Resource.PayMethod</label></td>
                                 <td>@Html.DropDownList("PayMethod", Model.PayMethods, new { @id = "ddlPayMethod", @class = "form-control control-input" })</td>
                             </tr>                                                                      
                             <tr id="trBankPayment" class="soft-gray-background">
-                                <td class="padding-10"><label class="control-label mb-0">Bank/Pay</label></td>
+                                <td class="padding-10"><label class="control-label mb-0">@Resource.BankPay</label></td>
                                 <td class="padding-10">@Html.DropDownList("BankPayment", Model.BankPayments, new { @id = "ddlBankPayment", @class = "form-control control-input" })</td>
                             </tr>
                             <tr class="trPercent soft-gray-background">
-                                <td class="padding-10"><label class="control-label mb-0">Percent</label></td>
+                                <td class="padding-10"><label class="control-label mb-0">@Resource.Percent</label></td>
                                 <td class="padding-10"><input id="inputPercent" type="text" class="form-control control-input numberonly" maxlength="2" /></td>
                             </tr>                                      
                         </table>  
                         <div class="row">
                             <div class="col-md-8 col-lg-8">
                                 <div class="form-group">
-                                    <label class="control-label mb-0">Voucher Discount</label>
+                                    <label class="control-label mb-0">@Resource.VoucherDiscount</label>
                                     <input id="inputVouDisAmount" type="text" class="form-control control-input numberonly" />
                                     <input id="inputVouDisPercent" type="text" class="form-control control-input numberonly" maxlength="2" />
                                 </div>
                             </div>
                             <div class="col-md-4 col-lg-4 align-center"> 
                                 <input id="inputHdnVouDisType" type="hidden"/>
-                                <button id="btnDiscountAmount" class="discount" value="2">$</button>                                                         
-                                <button id="btnDiscountPercent" class="discount-active" value="1">%</button>                                                                                  
+                                <button id="btnDiscountAmount" class="discount" value="2">@Resource.DolorSign</button>                                                         
+                                <button id="btnDiscountPercent" class="discount-active" value="1">@Resource.PercentSign</button>                                                                                  
                             </div>
-                        </div>    
+                        </div>  
+                        <div id="divVoucherFOC" class="row">
+                            <div class="col-md-12 col-lg-12">
+                                <div class="form-group soft-gray-background padding-10">
+                                    <input id="chkVoucherFOC" type="checkbox" /><span>&nbsp;&nbsp;@Resource.VoucherFOC</span>
+                                </div>
+                            </div>
+                        </div>                         
                         <div class="row">
                             <div class="col-md-12 col-lg-12">
                                 <div class="form-group">
-                                    <label class="control-label mb-0">Remark</label>
+                                    <label class="control-label mb-0">@Resource.Remark</label>
                                     <textarea id="txtRemark" class="form-control control-input"></textarea>
                                 </div>
                             </div>
-                        </div>                     
+                        </div>                                            
                     </div>
                     <div class="col-md-6 col-lg-6">
                         <table class="width-100-percent padding-10 soft-gray-background" style="border-spacing:0.5em;border-collapse:separate;">
                             <tr>
-                                <td><label class="control-label mb-0">Total Items:</label></td>
+                                <td><label class="control-label mb-0">@Resource.TotalItems@Resource.ColonSign</label></td>
                                 <td><label id="lblPayTotalItem" class="control-input mb-0">0</label></td>
                             </tr>
                             <tr>
-                                <td><label class="control-label mb-0">Total Pay:</label></td>
+                                <td><label class="control-label mb-0">@Resource.TotalPay@Resource.ColonSign</label></td>
                                 <td class="value-right"><div class="note"><input id="inputHdnPayTotal" type="hidden" /><label id="lblPayTotal" class="control-input mb-0">0</label></div></td>
                             </tr>
                             <tr class="trAdvancedPay">
-                                <td><label class="control-label mb-0">Advanced Pay:</label></td>
+                                <td><label class="control-label mb-0">@Resource.AdvancedPay@Resource.ColonSign</label></td>
                                 <td class="value-right"><div class="note"><input id="inputHdnAdvancedPay" type="hidden" /><label id="lblAdvancedPay" class="control-input mb-0">0</label></div></td>
                             </tr>
                             <tr>
-                                <td><label class="control-label mb-0">Voucher Discount:</label></td>
+                                <td><label class="control-label mb-0">@Resource.VoucherDiscount@Resource.ColonSign</label></td>
                                 <td class="value-right"><div class="note"><input id="inputHdnVoucherDiscount" type="hidden" /><label id="lblVoucherDiscount" class="control-input mb-0">0</label></div></td>
                             </tr>
                             <tr>
-                                <td><label class="total-amount-label mb-0">Grandtotal:</label></td>
+                                <td><label class="total-amount-label mb-0">@Resource.Grandtotal@Resource.ColonSign</label></td>
                                 <td class="value-right"><div class="note"><input id="inputHdnPayGrandtotal" type="hidden" /><label id="lblPayGrandtotal" class="total-amount-value mb-0">0</label></div></td>
                             </tr>
                             <tr class="trPercent">
-                                <td><label class="control-label mb-0">Percent:</label></td>
+                                <td><label class="control-label mb-0">@Resource.Percent@Resource.ColonSign</label></td>
                                 <td class="value-right"><div class="note"><input id="inputHdnPercent" type="hidden" /><label id="lblPercent" class="control-input mb-0">0</label></div></td>
                             </tr>
                             <tr id="trPcntGrandtotal">
@@ -96,11 +103,11 @@
                                 <td class="value-right"><div class="note"><input id="inputHdnPcntGrandtotal" type="hidden" /><label id="lblPcntGrandtotal" class="total-amount-value mb-0">0</label></div></td>
                             </tr>
                             <tr>
-                                <td><label class="control-label mb-0">Paid:</label></td>
+                                <td><label class="control-label mb-0">@Resource.Paid@Resource.ColonSign</label></td>
                                 <td class="value-right"><input id="inputPaid" type="text" class="form-control control-input numberonly" style="text-align:right;"/></td>
                             </tr>
                             <tr>
-                                <td><label class="control-label mb-0">Return Change:</label></td>
+                                <td><label class="control-label mb-0">@Resource.ReturnChange@Resource.ColonSign</label></td>
                                 <td class="value-right"><div class="note"><label id="lblReturnChange" class="control-input mb-0">0</label></div></td>
                             </tr>
                         </table>
@@ -108,8 +115,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="btnClose" class="btn btn-white-outline-third">Close</button>
-                <button id="btnSubmit" class="btn btn-first" data-dismiss="modal" aria-label="Close">Submit</button>
+                <button id="btnClose" class="btn btn-white-outline-third">@Resource.Close</button>
+                <button id="btnSubmit" class="btn btn-first" data-dismiss="modal" aria-label="Close">@Resource.Submit</button>
             </div>
         </div>
     </div>
@@ -127,10 +134,12 @@
 
     function showHideByPayment(value) {
         clearByPayment();
+        let payMethodVal = $('#ddlPayMethod option:selected').val();
+        showHideVoucherFOC(value, payMethodVal);
         if (value == 1) {  //cash
             $("#trLimitedDay").css('display', 'none');
-            $(".trAdvancedPay").css('display', 'none');
-        } else if (value == 2) {  //credit
+            $(".trAdvancedPay").css('display', 'none');           
+        } else if (value == 2) {  //credit           
             showLoadingIcon();
             $.ajax({
                 type: "GET",
@@ -158,6 +167,8 @@
 
     function showHideByPayMethod(value) {
         clearByPayMethod();
+        let paymentVal = $('#ddlPayment option:selected').val();
+        showHideVoucherFOC(paymentVal, value);
         if (value == 1) {  //cash in hand
             $("#trBankPayment").css('display', 'none');
             $(".trPercent").css('display', 'none');
@@ -190,6 +201,14 @@
                 }
             });
         }
+    }
+
+    function showHideVoucherFOC(paymentVal,payMethodVal) {
+        if (paymentVal == 1 && payMethodVal == 1) {  // payment is cash and pay method is cash in hand
+            $("#divVoucherFOC").show();
+            return;
+        }
+        $("#divVoucherFOC").css('display', 'none');
     }
 
     function clearByPayment() {

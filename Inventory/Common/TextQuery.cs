@@ -36,6 +36,12 @@ namespace Inventory.Common
             + " From SProduct Where Code='" + productCode + "' And IsStock=1";
         }
 
+        public string getSalePriceQuery(int productId)
+        {
+            return "Select isnull(SalePrice,0) AS SalePrice"
+            + " From SProduct Where ProductID=" + productId;
+        }
+
         public string getVoucherSettingQuery(int locationId)
         {
             return "Select HeaderName,HeaderDesp,HeaderPhone,HeaderAddress,OtherHeader1,OtherHeader2,FooterMessage1,FooterMessage2,FooterMessage3,isnull(VoucherLogo,'') AS VoucherLogo"

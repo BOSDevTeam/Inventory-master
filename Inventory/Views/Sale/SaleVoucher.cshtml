@@ -22,8 +22,8 @@
         <div class="m-t-10" style="width:500px;background-color:#DEE2E6;">
 
             <div class="padding-10" style="text-align:center;">
-                <button id="btnPrint" class="btn btn-first">Print</button>
-                <button id="btnBack" class="btn btn-second ml-10">Back to POS</button>
+                <button id="btnPrint" class="btn btn-first">@Resource.Print</button>
+                <button id="btnBack" class="btn btn-second ml-10">@Resource.BackToPOS</button>
             </div>
 
             <div class="padding-10" style="border:1px dashed #e53f34;margin:10px;background-color:#fff;">
@@ -122,15 +122,16 @@
 
             function createTranSaleData() {
                 $("#tblTranSale").find("tbody").empty();
-                var tranSaleList = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstTranSale"]))');
+                let tranSaleList = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstTranSale"]))');
                 $.each(tranSaleList, function (index, item) {
-                    var row = '<tr class="row voucher-table-item">'
-                           + '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '</td>'
-                           + '<td class="col-md-2 col-lg-2">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
-                           + '<td class="col-md-2 col-lg-2">' + separatedComma(item.SalePrice) + '<span class="control-span-sm">' + item.CurrencyKeyword + '</span></td>'
-                           + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Discount) + '</td>'
-                           + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Amount) + '</td>'
-                           + "</tr>";
+                    let row = '<tr class="row voucher-table-item">'
+                    if (item.IsFOC == true) row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '(FOC)' + '</td>'
+                    else row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '</td>'
+                    row += '<td class="col-md-2 col-lg-2">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
+                      + '<td class="col-md-2 col-lg-2">' + separatedComma(item.SalePrice) + '<span class="control-span-sm">' + item.CurrencyKeyword + '</span></td>'
+                      + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Discount) + '</td>'
+                      + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Amount) + '</td>'
+                      + "</tr>";
                     $('#tblTranSale tbody').append(row);
                 });
             }
@@ -179,6 +180,17 @@
                     $('#trPcntGrandtotal').show();
                     $('#lblPercentValue').text(separatedComma(payPercentAmt));
                     $('#lblPcntGrandtotal').text(separatedComma(grandtotal));
+                }
+
+                let isVouFOC = '@ViewBag.IsVouFOC';
+                if (isVouFOC == 'False') {
+                    $('#trVoucherFOC').css('display', 'none');
+                    $('#trVFOCGrandtotal').css('display', 'none');
+                } else {
+                    $('#trVoucherFOC').show();
+                    $('#trVFOCGrandtotal').show();
+                    $('#lblVoucherFOC').text(separatedComma(grandtotal));
+                    $('#lblVFOCGrandtotal').text('0');
                 }
             }
 

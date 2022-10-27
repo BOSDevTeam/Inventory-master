@@ -23,7 +23,7 @@
         <div class="header">
             <div class="header-left">
                 <a href="#" class="logo">
-                    <img src="~/assets/img/logo.png" width="35" height="35" alt=""> <span>QuickInventory</span>
+                    <img src="~/assets/img/logo.png" width="35" height="35" alt=""> <span>@Resource.QuickInventory</span>
                 </a>
             </div>
             <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
@@ -62,10 +62,10 @@
             <div class="dropdown mobile-user-menu float-right">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="#">My Profile</a>
-                    <a class="dropdown-item" href="#">Edit Profile</a>
-                    <a class="dropdown-item" href="~/CompanySetting/CompanySettingEntry">Settings</a>
-                    <a class="dropdown-item" href="~/User/Login">Logout</a>
+                    <a class="dropdown-item" href="#">@Resource.MyProfile</a>
+                    <a class="dropdown-item" href="#">@Resource.EditProfile</a>
+                    <a class="dropdown-item" href="~/CompanySetting/CompanySettingEntry">@Resource.Settings</a>
+                    <a class="dropdown-item" href="~/User/Login">@Resource.Logout</a>
                 </div>
             </div>
         </div>
@@ -75,19 +75,26 @@
                     <ul>
                         <li class="menu-title">Main</li>
                         <li id="menuDashboard">
-                            <a href="~/Home/Dashboard"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                            <a href="~/Home/Dashboard"><i class="fa fa-dashboard"></i> <span>@Resource.Dashboard</span></a>
                         </li>       
                         <li class="submenu">
-                            <a href=""><i class="fa fa-dollar"></i> <span> Sale </span> <span class="menu-arrow"></span></a>
+                            <a href=""><i class="fa fa-dollar"></i> <span> @Resource.Sale </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuSaleGp">
-                                <li id="subMenuSale"><a href="#">POS</a></li>
-                                <li id="subMenuOpenBill"><a href="#">Opened Bills</a></li>
-                                <li id="subMenuSaleList"><a href="#">Sale List</a></li>
-                                <li id="subMenuClientSaleOrder"><a href="~/CLSaleOrder/CLMasterSaleOrderList">Client Sale Order</a></li>                               
+                                <li id="subMenuSale"><a href="#">@Resource.POS</a></li>
+                                <li id="subMenuOpenBill"><a href="#">@Resource.OpenedBills</a></li>
+                                <li id="subMenuSaleList"><a href="#">@Resource.SaleList</a></li>
+                                <li id="subMenuClientSaleOrder"><a href="~/CLSaleOrder/CLMasterSaleOrderList">@Resource.ClientSaleOrder</a></li>                               
+                                <li id="subMenuSaleOrder"><a href="#">@Resource.SaleOrder</a></li>
                             </ul>
-                        </li>           
+                        </li>  
+                        <li class="submenu">
+                            <a href=""><i class="fa fa-dollar"></i> <span> @Resource.Purchase </span> <span class="menu-arrow"></span></a>
+                            <ul id="subMenuPurchaseGp">
+                                <li id="subMenuPurchase"><a href="#">@Resource.Purchase</a></li>                            
+                            </ul>
+                        </li>             
                         <li>
-                            <a href="~/CompanySetting/CompanySettingEntry"><i class="fa fa-cog"></i> <span>Settings</span></a>
+                            <a href="~/CompanySetting/CompanySettingEntry"><i class="fa fa-cog"></i> <span>@Resource.Settings</span></a>
                         </li>                                            
                     </ul>
                 </div>
@@ -138,6 +145,15 @@
             });
             $('#subMenuOpenBill').click(function () {
                 window.location.href = '@Url.Action("ListOpenBill", "Sale")?userId=' + userId;
+            });
+            $('#subMenuPurchase').click(function () {
+                window.location.href = '@Url.Action("Purchase", "Purchase")?userId=' + userId;
+            });
+            $('#subMenuPurchase').click(function () {
+                window.location.href = '@Url.Action("ListPurchase", "Purchase")?userId=' + userId;
+            });
+            $('#subMenuSaleOrder').click(function () {
+                window.location.href = '@Url.Action("ListSaleOrder", "SaleOrder")?userId=' + userId;
             });
             $('.toast').toast({
                 delay: 3000

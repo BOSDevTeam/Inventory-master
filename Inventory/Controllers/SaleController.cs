@@ -156,7 +156,7 @@ namespace Inventory.Controllers
         #region SaleAction     
 
         [HttpGet]
-        public JsonResult TranSaleAddEditAction(int productId, string productCode, string productName, int quantity, int price, int disPercent, int? unitId, string unitKeyword, int? currencyId, string currencyKeyword, bool isEdit,int? number)
+        public JsonResult TranSaleAddEditAction(int productId, string productCode, string productName, int quantity, int price, int disPercent, int? unitId, string unitKeyword, int? currencyId, string currencyKeyword, bool isEdit,int? number, bool isItemFOC)
         {
             List<TranSaleModels> lstTranSale = new List<TranSaleModels>();
             TranSaleModels data = new TranSaleModels();
@@ -179,6 +179,7 @@ namespace Inventory.Controllers
             discount = ((price * quantity) * disPercent) / 100;
             data.Discount = discount;
             data.Amount = (quantity * price) - discount;
+            data.IsFOC = isItemFOC;
 
             if (!isEdit)
             {
@@ -269,7 +270,7 @@ namespace Inventory.Controllers
             int? unitId = 0, currencyId = 0;
             List<UnitModels> lstUnit = new List<UnitModels>();
             List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
-            bool isRequestSuccess = false;
+            bool isRequestSuccess = false, isFOC = false;
 
             if (Session["TranSaleData"] != null)
             {
@@ -290,6 +291,7 @@ namespace Inventory.Controllers
                         disPercent = data.DiscountPercent;
                         if (isMultiUnit) lstUnit = getUnit();
                         if (isMultiCurrency) lstCurrency = getCurrency();
+                        isFOC = data.IsFOC;
                         isRequestSuccess = true;
                     }
                 }
@@ -307,6 +309,7 @@ namespace Inventory.Controllers
                 DisPercent = disPercent,
                 LstUnit = lstUnit,
                 LstCurrency = lstCurrency,
+                IsFOC = isFOC,
                 IsRequestSuccess = isRequestSuccess
             };
 
@@ -451,7 +454,7 @@ namespace Inventory.Controllers
         public JsonResult PaymentSubmitAction(string userVoucherNo, string date, string voucherId, int customerId, int locationId,
                 int paymentId, int? payMethodId, int? limitedDayId, int? bankPaymentId, string remark, int? advancedPay,
                 int? payPercent, int? payPercentAmt, int? vouDisPercent, int? vouDisAmount, int? voucherDiscount,
-                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId,int? openBillId,int? clSaleOrderId)
+                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId,int? openBillId,int? clSaleOrderId,bool isVoucherFOC)
         {
             string systemVoucherNo = "";
             bool isRequestSuccess = true;
@@ -517,6 +520,7 @@ namespace Inventory.Controllers
                 cmd.Parameters.AddWithValue("@VoucherID", voucherId);
                 cmd.Parameters.AddWithValue("@OpenBillID", openBillId);
                 cmd.Parameters.AddWithValue("@CLSaleOrderID", clSaleOrderId);
+                cmd.Parameters.AddWithValue("@IsVoucherFOC", isVoucherFOC);
                 cmd.CommandType = CommandType.StoredProcedure;
                 SqlDataReader reader = cmd.ExecuteReader();
                 if (reader.Read()) systemVoucherNo = Convert.ToString(reader[0]);
@@ -537,7 +541,7 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SearchAction(int userId,DateTime? fromDate,DateTime? toDate,string userVoucherNo,int customerId)
+        public JsonResult SearchAction(int userId,DateTime fromDate,DateTime toDate,string userVoucherNo,int customerId)
         {
             List<SaleViewModel.MasterSaleViewModel> tempList = selectMasterSale(userId, true, fromDate, toDate, userVoucherNo, customerId);
             PagingViewModel pagingViewModel = calcMasterSalePaging(tempList);
@@ -601,7 +605,8 @@ namespace Inventory.Controllers
                 Grandtotal = item.MasterSaleModel.Grandtotal,
                 VouDisPercent = item.MasterSaleModel.VouDisPercent,
                 PaymentPercent = item.MasterSaleModel.PaymentPercent,
-                GrandTotalNotPayPercent = grandTotalNotPayPercent
+                GrandTotalNotPayPercent = grandTotalNotPayPercent,
+                IsVouFOC = item.MasterSaleModel.IsVouFOC
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
@@ -724,12 +729,19 @@ namespace Inventory.Controllers
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public JsonResult GetSalePriceAction(int productId)
+        {                     
+            int price = appData.selectSalePriceByProduct(getConnection(), productId);
+            return Json(price, JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
 
         #region OpenBillAction
 
         [HttpGet]
-        public JsonResult SearchOpenBillAction(int userId, DateTime? fromDate, DateTime? toDate, string userVoucherNo, int customerId)
+        public JsonResult SearchOpenBillAction(int userId, DateTime fromDate, DateTime toDate, string userVoucherNo, int customerId)
         {
             List<SaleViewModel.MasterOpenBillViewModel> tempList = selectMasterOpenBill(userId, true, fromDate, toDate, userVoucherNo, customerId);
             PagingViewModel pagingViewModel = calcMasterOpenBillPaging(tempList);
@@ -845,6 +857,7 @@ namespace Inventory.Controllers
                 item.MasterSaleModel.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);
                 item.MasterSaleModel.VouDisPercent = Convert.ToInt32(reader["VouDisPercent"]);
                 item.MasterSaleModel.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
+                item.MasterSaleModel.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
             }
             reader.Close();         
 
@@ -885,13 +898,14 @@ namespace Inventory.Controllers
                 item.MasterSaleModel.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
                 item.MasterSaleModel.LocationID = Convert.ToInt32(reader["LocationID"]);
                 item.MasterSaleModel.CustomerID = Convert.ToInt32(reader["CustomerID"]);
+                item.MasterSaleModel.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
             }
             reader.Close();
 
             return item;
         }
 
-        private List<SaleViewModel.MasterSaleViewModel> selectMasterSale(int userId, bool isSearch, [Optional]DateTime? fromDate, [Optional]DateTime? toDate, [Optional]string userVoucherNo, [Optional]int customerId)
+        private List<SaleViewModel.MasterSaleViewModel> selectMasterSale(int userId, bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo, [Optional]int customerId)
         {           
             List<SaleViewModel.MasterSaleViewModel> tempList = new List<SaleViewModel.MasterSaleViewModel>();
             SaleViewModel.MasterSaleViewModel item = new SaleViewModel.MasterSaleViewModel();
@@ -902,6 +916,8 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@IsSearch", isSearch);
             if (!isSearch)
             {
+                cmd.Parameters.AddWithValue("@FromDate", DateTime.Now.Date);
+                cmd.Parameters.AddWithValue("@ToDate", DateTime.Now.Date);
                 cmd.Parameters.AddWithValue("@UserVoucherNo", "");
                 cmd.Parameters.AddWithValue("@CustomerID", 0);
             }
@@ -1003,6 +1019,7 @@ namespace Inventory.Controllers
             ViewBag.PaymentPercent = item.MasterSaleModel.PaymentPercent;
             if (item.MasterSaleModel.PayPercentAmt != 0)
                 ViewBag.GrandTotalNotPayPercent = item.MasterSaleModel.Total - (item.MasterSaleModel.VoucherDiscount + item.MasterSaleModel.AdvancedPay);
+            ViewBag.IsVouFOC = item.MasterSaleModel.IsVouFOC;
         }
 
         private List<TranSaleModels> selectTranSaleBySaleID(int saleId)
@@ -1029,6 +1046,7 @@ namespace Inventory.Controllers
                 item.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
                 item.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
                 item.ProductCode= Convert.ToString(reader["Code"]);
+                item.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
                 list.Add(item);
             }
             reader.Close();
@@ -1059,7 +1077,7 @@ namespace Inventory.Controllers
             return item;
         }
 
-        private List<SaleViewModel.MasterOpenBillViewModel> selectMasterOpenBill(int userId, bool isSearch, [Optional]DateTime? fromDate, [Optional]DateTime? toDate, [Optional]string userVoucherNo, [Optional]int customerId)
+        private List<SaleViewModel.MasterOpenBillViewModel> selectMasterOpenBill(int userId, bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo, [Optional]int customerId)
         {
             List<SaleViewModel.MasterOpenBillViewModel> tempList = new List<SaleViewModel.MasterOpenBillViewModel>();
             SaleViewModel.MasterOpenBillViewModel item = new SaleViewModel.MasterOpenBillViewModel();
@@ -1070,6 +1088,8 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@IsSearch", isSearch);
             if (!isSearch)
             {
+                cmd.Parameters.AddWithValue("@FromDate", DateTime.Now.Date);
+                cmd.Parameters.AddWithValue("@ToDate", DateTime.Now.Date);
                 cmd.Parameters.AddWithValue("@UserVoucherNo", "");
                 cmd.Parameters.AddWithValue("@CustomerID", 0);
             }
@@ -1177,6 +1197,7 @@ namespace Inventory.Controllers
                 item.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
                 item.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
                 item.ProductCode = Convert.ToString(reader["Code"]);
+                item.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
                 list.Add(item);
             }
             reader.Close();
