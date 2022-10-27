@@ -21,7 +21,7 @@
 <div>
     <div class="row setup-title-layout">
         <div class="col-md-4 col-lg-4">
-            <label class="page-title">All Sale Orders</label>
+            <label class="page-title">Client Sale Orders</label>
             <!--<label class="page-title" id="fcount" hidden>All Sale Orders &nbsp;&nbsp;<span class="count-circle" id="count"></span></label>  -->
         </div>
         <div class="col-md-8 col-lg-8">
@@ -125,7 +125,7 @@
             </div>
             <div class="modal-footer" style="padding:5px;">
                 <div class="col-md-12">
-                    <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
+                    <button id="btnSave" class="btn btn-first setup-btn-save-edit" disabled="disabled">Save</button>
                 </div>
             </div>
             <div id="divAlertSuccess" class="alert alert-success alert-dismissible fade show" style="display:none;">
@@ -145,7 +145,7 @@
                                     <th class="col-md-2 col-lg-2"><label1>Amount</label1></th>
                                 </tr>
                             </thead>
-                            <tbody id="tbTranSaleOrder"></tbody>
+                            <tbody id="tbTranSaleOrder" style="display:none"></tbody>
                         </table>
                     </div>
                     <div class="col-md-12 col-lg-12" style="margin-top:5px">
@@ -198,7 +198,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
 <script type="text/javascript">
-    var actionValue, transaleId, saleorderId, quantity, subtotal, taxAmt, chargesAmt, total, saleOrderID;
+    let actionValue, transaleId, saleorderId, quantity, subtotal, taxAmt, chargesAmt, total, saleOrderID;
 
     $(function () {
 
@@ -212,12 +212,13 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("SaveAction", "CLSaleOrder")',
-                    data: { "saleOrderID": saleOrderID },
+                    data: { "saleOrderID": saleOrderID},
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
                         showAlertInDialog(1, "Save successfully!");
+                        $('#btnSave').attr('disabled', 'disabled');
                         $("#tblSaleOrder").find("tbody").empty();
                         $.each(response, function (i, item) {
                                 var rows = "<tr class='row table-item'>"
@@ -229,11 +230,12 @@
                                 + "<td class='col-md-1 col-lg-1 btn-group'><button id='btnView' class='btn btn-sm btn-dark' title='Order Detail' onclick='action(1)'><i class='fa fa-list'></i></button> <button id='' class='btn btn-sm btn-primary' title='Add to POS' onclick='action(3)'><i class='fa fa-dollar'></i></button></td>"
                                 + "<td style='display:none'>" + item.SaleOrderID + "</td>"
                                 + "</tr>";
-
                                 $('#tblSaleOrder tbody').append(rows);
+                               
 
                         });
                         $('#modalView').modal('show');
+         
                     },
                     failure: function (response) {
                         hideLoadingIcon();
@@ -245,6 +247,10 @@
                     }
                 });
 
+        });
+
+        $('#tbTranSaleOrder').on("change", function () {
+            $('#btnSave').removeAttr("disabled");          
         });
 
         $("#tbTranSaleOrder").on("change", "tr", function (event) {
@@ -269,7 +275,7 @@
                            + "</td>"
                            + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
                            + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
-                           + "<td class='col-md-2 col-lg-2'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
+                           + "<td class='col-md-2 col-lg-2'>" + "<input type='number' class='Quantity' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
                            + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
                            + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
                            + "<td style='display:none'>" + response.TranSaleOrderList[i].ID + "</td>"
@@ -368,6 +374,7 @@
                         dataType: "json",
                         success: function (response) {
                             hideLoadingIcon();
+                            $('#btnSave').attr('disabled', 'disabled');
                             $('#lbSaleOrderID').text(response.SaleOrderID);
                             $('#lblOrderNumber').text(response.OrderNumber);
                             $('#OrderDate').text(response.OrderDateTime);
@@ -468,6 +475,23 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
+                hideLoadingIcon();
+                $("#tblSaleOrder").find("tbody").empty();
+                $.each(response, function (i, item) {
+                    var rows = "<tr class='row table-item'>"
+                    + "<td class='col-md-2 col-lg-2'>" + "<span>#</span>" + item.OrderNumber + "</td>"
+                    + "<td class='col-md-2 col-lg-2'>" + item.ClientName + "</td>"
+                    + "<td class='col-md-2 col-lg-2'>" + item.CustomerName + "</td>"
+                    + "<td class='col-md-3 col-lg-3'>" + item.OrderDateTime + "</td>"
+                    + "<td class='col-md-2 col-lg-2'>" + "<span>" + item.DefaultCurrency + "&nbsp;" + "</span>" + item.Total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</td>"
+                    + "<td class='col-md-1 col-lg-1 btn-group'><button id='btnView' class='btn btn-sm btn-dark' title='Order Detail' onclick='action(1)'><i class='fa fa-list'></i></button> <button id='' class='btn btn-sm btn-primary' title='Add to POS' onclick='action(3)'><i class='fa fa-dollar'></i></button></td>"
+                    + "<td style='display:none'>" + item.SaleOrderID + "</td>"
+                    + "</tr>";
+                    $('#tblSaleOrder tbody').append(rows);
+
+                });
+                $('#modalView').modal('show');
+
             },
             failure: function (response) {
                 alert(response.responseText);
@@ -479,23 +503,29 @@
     }
 
     function transaleorder(response) {
-        let rows = "";
-        for (var i = 0; i < response.TranSaleOrderList.length; i++) {
-            rows += "<tr class='row table-item'>"
-           + "<td class='col-md-1 col-lg-1'>"
-           + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-remove' aria-hidden='true'></i></button>"
-           + "</td>"
-           + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
-           + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
-           + "<td class='col-md-2 col-lg-2'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
-           + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
-           + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
-           + "<td style='display:none'>" + response.TranSaleOrderList[i].ID + "</td>"
-           + "</tr>";
-            $('#tbTranSaleOrder').html(rows);
-            $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);
-
+        if (response.TranSaleOrderList.length != 0) {
+            let rows = "";
+            for (var i = 0; i < response.TranSaleOrderList.length; i++) {
+                rows += "<tr class='row table-item'>"
+               + "<td class='col-md-1 col-lg-1'>"
+               + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-remove' aria-hidden='true'></i></button>"
+               + "</td>"
+               + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
+               + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
+               + "<td class='col-md-2 col-lg-2'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
+               + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+               + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+               + "<td style='display:none'>" + response.TranSaleOrderList[i].ID + "</td>"
+               + "</tr>";
+                $('#tbTranSaleOrder').html(rows);
+                $('#tbTranSaleOrder').show();
+                $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);
+            }
         }
+        else {
+            $('#tbTranSaleOrder').hide();
+        }
+        
     }
 
     function deletetransaleorder(response) {
@@ -516,7 +546,7 @@
             $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);
         }
     }
-
+ 
 </script>
 
 

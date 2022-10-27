@@ -16,7 +16,7 @@ namespace Inventory.Controllers
         CLMasterSaleOrderModels model = new CLMasterSaleOrderModels();
         CLTranSaleOrderModels tranmodel = new CLTranSaleOrderModels();
         List<CLMasterSaleOrderModels> Lstmso = new List<CLMasterSaleOrderModels>();
-        List<CLTranSaleOrderModels> transaleList = new List<CLTranSaleOrderModels>();
+        List<CLTranSaleOrderModels> TsoList = new List<CLTranSaleOrderModels>();
         DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
         Procedure procedure = new Procedure();
 
@@ -44,11 +44,10 @@ namespace Inventory.Controllers
                 cmd.Parameters.AddWithValue("@temptbl", dt);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.ExecuteNonQuery();
-                dataConnectorSQL.Close();
+                dataConnectorSQL.Close();              
             }
 
             List<CLMasterSaleOrderModels> List = Session["LstMSale"] as List<CLMasterSaleOrderModels>;
-
             if (List.Count != 0)
             {
                 int index = List.FindIndex(item => item.SaleOrderID == saleOrderID);             
@@ -58,7 +57,9 @@ namespace Inventory.Controllers
                 newItem.OrderDateTime = result.OrderDateTime;
                 newItem.OrderNumber = result.OrderNumber;
                 newItem.ClientName = result.ClientName;
+                newItem.ClientPhone = result.ClientPhone;
                 newItem.CustomerName = result.CustomerName;
+                newItem.CustomerPhone = result.CustomerPhone;
                 newItem.DefaultCurrency = result.DefaultCurrency;
                 newItem.Subtotal = Convert.ToInt32(Session["TotalAmt"]);
                 newItem.TaxAmt = Convert.ToInt32(Session["TaxAmt"]);
@@ -67,12 +68,12 @@ namespace Inventory.Controllers
                 newItem.Remark = result.Remark;
                 newItem.Counts = List.Count();
                 List[index] = newItem;
-                
+                clearSession();
             }
             return Json(List, JsonRequestBehavior.AllowGet);
         }
         public ActionResult CLMasterSaleOrderList()
-        {
+        {           
             CLMasterSaleOrderModels mastersalemodel = new CLMasterSaleOrderModels();
             model.Lstmso = new List<CLMasterSaleOrderModels>();
             Lstmso = new List<CLMasterSaleOrderModels>();
@@ -98,7 +99,6 @@ namespace Inventory.Controllers
                 mastersalemodel.Remark = mastersale.Remark;
                 model.Lstmso.Add(mastersalemodel);
                 Lstmso.Add(mastersalemodel);
-
             }
             var lstmsale = Lstmso;
             Session["LstMSale"] = lstmsale;
@@ -129,7 +129,7 @@ namespace Inventory.Controllers
                     }
                 }
 
-                Session["TranSaleList"] = List;
+                
                 qtyPriceAmount = amount;
                 totalAmt = calculateSubtotal();
                 tax = (totalAmt * result.Tax) / 100;
@@ -156,6 +156,14 @@ namespace Inventory.Controllers
             return jsonResult;
         }
 
+        public void clearSession()
+        {
+            Session["TotalAmt"] = null;
+            Session["TaxAmt"] = null;
+            Session["ChargeAmt"] = null;
+            Session["Total"] = null;
+        }
+
         private int calculateSubtotal()
         {
             int subtotal = 0;
@@ -175,9 +183,10 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult SaleOrderDetail(int saleorderId)
         {
+            clearSession();
             CLTranSaleOrderModels transaleModel = new CLTranSaleOrderModels();
             tranmodel.TsoList = new List<CLTranSaleOrderModels>();
-            transaleList = new List<CLTranSaleOrderModels>();
+            TsoList = new List<CLTranSaleOrderModels>();
             string saleordernumber = "", clientname = "", clientphone = "", customername = "", customerphone = "", datetime = "", remark = "";
             int subtotal = 0, taxAmt = 0, tax = 0, charges = 0, chargesAmt = 0, total = 0;
             List<CLMasterSaleOrderModels> lstMsale = Session["LstMSale"] as List<CLMasterSaleOrderModels>;
@@ -214,13 +223,13 @@ namespace Inventory.Controllers
                 transaleModel.Tax = Convert.ToInt32(transale.Tax);
                 transaleModel.Charges = Convert.ToInt32(transale.Charges);
                 tranmodel.TsoList.Add(transaleModel);
-                transaleList.Add(transaleModel);
-                Session["TranSaleList"] = transaleList;
+                TsoList.Add(transaleModel);
+                Session["TranSaleList"] = TsoList;
             }
 
             var myResult = new
             {
-                TranSaleOrderList = transaleList,
+                TranSaleOrderList = TsoList,
                 SaleOrderID = saleorderId,
                 OrderNumber = saleordernumber,
                 OrderDateTime = datetime,
@@ -251,7 +260,9 @@ namespace Inventory.Controllers
                 mastersalemodel.SaleOrderID = Convert.ToInt32(s.SaleOrderID);
                 mastersalemodel.OrderNumber = s.OrderNumber;
                 mastersalemodel.ClientName = s.ClientName;
+                mastersalemodel.ClientPhone = s.ClientPhone;
                 mastersalemodel.CustomerName = s.CustomerName;
+                mastersalemodel.CustomerPhone = s.CustomerPhne;
                 mastersalemodel.OrderDateTime = s.Date;
                 mastersalemodel.Subtotal = Convert.ToInt32(s.Subtotal);
                 mastersalemodel.ChargesAmt = Convert.ToInt32(s.ChargesAmt);
@@ -286,6 +297,7 @@ namespace Inventory.Controllers
                     break;
                 }
             }
+
             if (result != null)
             {
                 totalAmt = calculateSubtotal();
@@ -330,7 +342,32 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.ExecuteNonQuery();
             dataConnectorSQL.Close();
-            return Json("", JsonRequestBehavior.AllowGet);
+
+            List<CLMasterSaleOrderModels> List = Session["LstMSale"] as List<CLMasterSaleOrderModels>;
+
+            if (List.Count != 0)
+            {
+                int index = List.FindIndex(item => item.SaleOrderID == saleOrderID);
+                var result = List.Where(c => c.SaleOrderID == saleOrderID).SingleOrDefault();
+                CLMasterSaleOrderModels newItem = new CLMasterSaleOrderModels();
+                newItem.SaleOrderID = saleOrderID;
+                newItem.OrderDateTime = result.OrderDateTime;
+                newItem.OrderNumber = result.OrderNumber;
+                newItem.ClientName = result.ClientName;
+                newItem.ClientPhone = result.ClientPhone;
+                newItem.CustomerName = result.CustomerName;
+                newItem.CustomerPhone = result.CustomerPhone;
+                newItem.DefaultCurrency = result.DefaultCurrency;
+                newItem.Subtotal = Convert.ToInt32(Session["DeleteTotalAmt"]);
+                newItem.TaxAmt = Convert.ToInt32(Session["DeleteTaxAmt"]);
+                newItem.ChargesAmt = Convert.ToInt32(Session["DeleteChargeAmt"]);
+                newItem.Total = Convert.ToInt32(Session["DeleteTotal"]);
+                newItem.Remark = result.Remark;
+                newItem.Counts = List.Count();
+                List[index] = newItem;
+
+            }
+            return Json(List, JsonRequestBehavior.AllowGet);
         }
     }
 }
