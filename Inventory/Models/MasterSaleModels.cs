@@ -36,6 +36,7 @@ namespace Inventory.Models
         public int LimitedDayID { get; set; }
         public int PayPercentAmt { get; set; }
         public string Remark { get; set; }
-        public int SlipID { get; set; }       
+        public int SlipID { get; set; }
+        public bool IsVouFOC { get; set; }
     }
 }

@@ -117,7 +117,187 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Bank" xml:space="preserve">
-    <value>Bank</value>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="AdvancedPay" xml:space="preserve">
+    <value>Advanced Pay</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="BackToPOS" xml:space="preserve">
+    <value>Back to POS</value>
+  </data>
+  <data name="BankPay" xml:space="preserve">
+    <value>Bank/Pay</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Charges" xml:space="preserve">
+    <value>Charges</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="CloseParenthesis" xml:space="preserve">
+    <value>)</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="ColonSign" xml:space="preserve">
+    <value>:</value>
+  </data>
+  <data name="Dis" xml:space="preserve">
+    <value>Dis</value>
+  </data>
+  <data name="DolorSign" xml:space="preserve">
+    <value>$</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EnterNote" xml:space="preserve">
+    <value>Enter a Note</value>
+  </data>
+  <data name="FOC" xml:space="preserve">
+    <value>FOC</value>
+  </data>
+  <data name="Grandtotal" xml:space="preserve">
+    <value>Grandtotal</value>
+  </data>
+  <data name="Hold" xml:space="preserve">
+    <value>Hold</value>
+  </data>
+  <data name="LimitedDay" xml:space="preserve">
+    <value>Limited Day</value>
+  </data>
+  <data name="Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="OpenParenthesis" xml:space="preserve">
+    <value>(</value>
+  </data>
+  <data name="Paid" xml:space="preserve">
+    <value>Paid</value>
+  </data>
+  <data name="Payment" xml:space="preserve">
+    <value>Payment</value>
+  </data>
+  <data name="PayMethod" xml:space="preserve">
+    <value>Pay Method</value>
+  </data>
+  <data name="PayType" xml:space="preserve">
+    <value>Pay Type</value>
+  </data>
+  <data name="Percent" xml:space="preserve">
+    <value>Percent</value>
+  </data>
+  <data name="PercentSign" xml:space="preserve">
+    <value>%</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="Product" xml:space="preserve">
+    <value>Product</value>
+  </data>
+  <data name="ProductName" xml:space="preserve">
+    <value>Product Name</value>
+  </data>
+  <data name="Qty" xml:space="preserve">
+    <value>Qty</value>
+  </data>
+  <data name="Remark" xml:space="preserve">
+    <value>Remark</value>
+  </data>
+  <data name="ReturnChange" xml:space="preserve">
+    <value>Return Change</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SearchProduct" xml:space="preserve">
+    <value>Search Product</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Subtotal" xml:space="preserve">
+    <value>Subtotal</value>
+  </data>
+  <data name="SuspendSale" xml:space="preserve">
+    <value>Suspend Sale</value>
+  </data>
+  <data name="Tax" xml:space="preserve">
+    <value>Tax</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="TotalItems" xml:space="preserve">
+    <value>Total Items</value>
+  </data>
+  <data name="TotalPay" xml:space="preserve">
+    <value>Total Pay</value>
+  </data>
+  <data name="VoucherDiscount" xml:space="preserve">
+    <value>Voucher Discount</value>
+  </data>
+  <data name="VoucherFOC" xml:space="preserve">
+    <value>Voucher FOC</value>
+  </data>
+  <data name="VoucherID" xml:space="preserve">
+    <value>VoucherID</value>
+  </data>
+  <data name="ClientSaleOrder" xml:space="preserve">
+    <value>Client Sale Order</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="EditProfile" xml:space="preserve">
+    <value>Edit Profile</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="MyProfile" xml:space="preserve">
+    <value>My Profile</value>
+  </data>
+  <data name="OpenedBills" xml:space="preserve">
+    <value>Opened Bills</value>
+  </data>
+  <data name="POS" xml:space="preserve">
+    <value>POS</value>
+  </data>
+  <data name="Purchase" xml:space="preserve">
+    <value>Purchase</value>
+  </data>
+  <data name="PurchaseOrder" xml:space="preserve">
+    <value>Purchase Order</value>
+  </data>
+  <data name="QuickInventory" xml:space="preserve">
+    <value>QuickInventory</value>
+  </data>
+  <data name="Sale" xml:space="preserve">
+    <value>Sale</value>
+  </data>
+  <data name="SaleList" xml:space="preserve">
+    <value>Sale List</value>
+  </data>
+  <data name="SaleOrder" xml:space="preserve">
+    <value>Sale Order</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
   </data>
 </root>

@@ -177,7 +177,9 @@
     <Compile Include="Controllers\MainMenuController.cs" />
     <Compile Include="Controllers\CLSaleOrderController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\PurchaseController.cs" />
     <Compile Include="Controllers\SaleController.cs" />
+    <Compile Include="Controllers\SaleOrderController.cs" />
     <Compile Include="Controllers\SubMenuController.cs" />
     <Compile Include="Controllers\SupplierController.cs" />
     <Compile Include="Controllers\TechnicianController.cs" />
@@ -217,8 +219,10 @@
     <Compile Include="Models\LocationModels.cs" />
     <Compile Include="Models\MainMenuModels.cs" />
     <Compile Include="Models\CLMasterSaleOrderModels.cs" />
+    <Compile Include="Models\MasterPurchaseModels.cs" />
     <Compile Include="Models\MasterSaleModels.cs" />
     <Compile Include="Models\LimitedDayModels.cs" />
+    <Compile Include="Models\MasterSaleOrderModels.cs" />
     <Compile Include="Models\PaymentModels.cs" />
     <Compile Include="Models\PayMethodModels.cs" />
     <Compile Include="Models\ProductModels.cs" />
@@ -227,7 +231,9 @@
     <Compile Include="Models\SupplierModels.cs" />
     <Compile Include="Models\TechnicianSettingModels.cs" />
     <Compile Include="Models\TownshipModels.cs" />
+    <Compile Include="Models\TranPurchaseModels.cs" />
     <Compile Include="Models\TranSaleModels.cs" />
+    <Compile Include="Models\TranSaleOrderModels.cs" />
     <Compile Include="Models\UnitModels.cs" />
     <Compile Include="Models\UserModels.cs" />
     <Compile Include="Models\VoucherFormatModels.cs" />
@@ -399,6 +405,8 @@
     <Compile Include="ViewModels\PagingViewModel.cs" />
     <Compile Include="ViewModels\PaymentViewModel.cs" />
     <Compile Include="ViewModels\ProductMenuViewModel.cs" />
+    <Compile Include="ViewModels\PurchaseViewModel.cs" />
+    <Compile Include="ViewModels\SaleOrderViewModel.cs" />
     <Compile Include="ViewModels\SaleViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -562,6 +570,10 @@
     <Content Include="Views\Shared\_ConfirmDialog.cshtml" />
     <Content Include="Views\Shared\_RemarkDialog.cshtml" />
     <Content Include="Views\Client\ClientList.cshtml" />
+    <Content Include="Views\Purchase\Purchase.cshtml" />
+    <Content Include="Views\Purchase\ListPurchase.cshtml" />
+    <Content Include="Views\SaleOrder\SaleOrder.cshtml" />
+    <Content Include="Views\SaleOrder\ListSaleOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -580,7 +592,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resource.My.resx" />
     <EmbeddedResource Include="Resource.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
