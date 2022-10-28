@@ -306,19 +306,12 @@
             $("#ddlCurrency").append(currency);
         }
 
-        $(".numberonly").keypress(function (e) {
-            var txt = String.fromCharCode(e.which);
-            if (!txt.match(/^[0-9]*$/)) {
-                return false;
-            }
-        });
-
         function validateProductControl() {
-            if ($("#inputProductID").val().length == 0 && $("#inputProductID").val() == 0) return false;
-            else if ($("#inputQuantity").val().length == 0 && $("#inputQuantity").val() == 0) {
+            if ($("#inputProductID").val().length == 0 || $("#inputProductID").val() == 0) return false;
+            else if ($("#inputQuantity").val().length == 0 || $("#inputQuantity").val() == 0) {
                 $("#inputQuantity").focus();
                 return false;
-            } else if ($("#inputPrice").val().length == 0 && $("#inputPrice").val() == 0) {
+            } else if ($("#inputPrice").val().length == 0) {
                 $("#inputPrice").focus();
                 return false;
             }

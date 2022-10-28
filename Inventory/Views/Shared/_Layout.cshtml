@@ -213,6 +213,13 @@
             }
         }
 
+        $(".numberonly").keypress(function (e) {
+            var txt = String.fromCharCode(e.which);
+            if (!txt.match(/^[0-9]*$/)) {
+                return false;
+            }
+        });
+
     </script>
 
 </body>

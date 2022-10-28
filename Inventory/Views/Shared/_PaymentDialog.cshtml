@@ -245,6 +245,7 @@
         if (event.which === 13) {
             let totalPay = $("#inputHdnPayTotal").val();
             let advancedPay = $("#inputAdvancedPay").val();
+            if (advancedPay.length == 0 || advancedPay == 0) return;
             if (parseInt(advancedPay) > parseInt(totalPay)) {               
                 showAlertInDialog(0,"Advanced Pay is greater than Total Pay!");                
                 return;
