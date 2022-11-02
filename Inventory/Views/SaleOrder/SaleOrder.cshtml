@@ -16,10 +16,125 @@
     </style>
 </head>
 
+<div class="row m-t-5 m-b-5 m-l-5">
+    <div class="col-md-2 col-lg-2 note align-justify-center">
+        <label id="lblUserVoucherNo" class="control-label mb-0"></label>
+    </div>
+    <div class="col-md-2 col-lg-2">
+        <input id="inputDate" type="date" class="form-control control-input" />
+    </div>
+    <div class="col-md-3 col-lg-3">
+        <input id="inputVoucherID" type="text" class="form-control control-input" placeholder="@Resource.VoucherID" />
+    </div>
+    <div class="col-md-3 col-lg-3">
+        @Html.DropDownList("Customer", Model.Customers, new { @id = "ddlCustomer", @class = "form-control control-input" })
+    </div>
+    <div class="col-md-2 col-lg-2">
+        @Html.DropDownList("Location", Model.Locations, new { @id = "ddlLocation", @class = "form-control control-input" })
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 col-lg-6">
+        <div id="divSaleOrder" class="input-icons">
+            <i class="fa fa-search icon"></i>   
+            <input id="inputSearch" type="text" class="form-control control-input input-field" placeholder="@Resource.SearchProduct" />
+        </div>
+        <div class="m-t-5 padding-5 search-div">
+            <div class="row">
+                <div class="col-md-3 col-lg-3">
+                    <input id="inputNumber" type="hidden"/>
+                    <input id="inputProductID" type="hidden"/>
+                    <input id="inputCode" type="text" class="form-control control-input input-field" placeholder="@Resource.Code" />
+                </div>
+                <div class="col-md-5 col-lg-5">
+                    <input id="inputProductName" type="text" class="form-control control-input input-field" placeholder="@Resource.ProductName" disabled/>
+                </div>
+                <div class="col-md-2 col-lg-2">
+                    <input id="inputQuantity" type="text" class="form-control control-input input-field numberonly" placeholder="@Resource.Qty" />
+                </div>
+                <div class="col-md-2 col-lg-2">
+                    @Html.DropDownList("Unit", Model.Units, new { @id = "ddlUnit", @class = "form-control control-input" })
+                </div>
+            </div>
+            <div class="row m-t-5 align-center">
+                <div class="col-md-5 col-lg-5">
+                    <input id="inputPrice" type="text" class="form-control control-input input-field numberonly" placeholder="@Resource.Price" />
+                </div>
+                <div class="col-md-3 col-lg-3">
+                    @Html.DropDownList("Currency", Model.Currencies, new { @id = "ddlCurrency", @class = "form-control control-input" })
+                </div>
+                <div class="col-md-2 col-lg-2">
+                    <input id="chkItemFOC" type="checkbox"/> <span>&nbsp;&nbsp;@Resource.FOC</span>
+                </div>
+                <div class="col-md-2 col-lg-2">
+                    <button id="btnAdd" class="btn btn-second">@Resource.Add</button>
+                    <button id="btnEdit" class="btn btn-third">@Resource.Edit</button>
+                </div>
+            </div>
+        </div>
+        <div id="divSaleChild">
+            <div id="divSaleTran" class="tran-table">
+                <table id="tblTranSale" class="width-100-percent">
+                    <thead>
+                        <tr class="row tran-table-header-row">
+                            <td class="col-md-4 col-lg-4 text-overflow"><span>@Resource.Product</span></td>
+                            <td class="col-md-2 col-lg-2 text-overflow"><span>@Resource.Qty</span></td>
+                            <td class="col-md-2 col-lg-2 text-overflow"><span>@Resource.Price</span></td>
+                            <td class="col-md-2 col-lg-2 value-right text-overflow"><span>@Resource.Amount</span></td>
+                            <td class="col-md-2 col-lg-2"></td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div style="bottom:0px;position:absolute;width:100%;">
+                <table class="width-100-percent">
+
+
+                </table>
+
+            </div>
+
+
+
+        </div>
+
+    </div>
+    <div class="col-md-6 col-lg-6">
+        @{ 
+            Html.RenderPartial("_ProductMenu",Model);
+        }
+    </div>
+</div>
+
 <script type="text/javascript">
-
     document.getElementById('subMenuSaleOrder').className = 'active';
+    $(document).ready(function () {
 
+        $('#').click(function (e) {
+        });
+
+        function validateProductControl() {
+            if ($("#inputProductID").val().length == 0 || $("#inputProductID").val() == 0) return false;
+            else if ($("#inputQuantity").val().length == 0 || $("#inputQuantity").val() == 0) {
+                $("#inputQuantity").focus();
+                return false;
+            } else if ($("#inputPrice").val().length == 0) {
+                $("inputPrice").focus();
+                return false;
+            }
+            return true;
+        }
+
+        function addOrEditTranSale(isEdit) {
+
+        }
+
+    })
 </script>
+
+
+
 
 

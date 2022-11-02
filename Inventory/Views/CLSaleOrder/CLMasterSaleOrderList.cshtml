@@ -13,6 +13,9 @@
         #subMenuSaleGp {
             display: block;
         }
+        .cnumber {
+            border-width:thin;
+        }
     </style>
     <script type="text/javascript">
         document.getElementById('subMenuClientSaleOrder').className = 'active';
@@ -198,7 +201,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
 <script type="text/javascript">
-    let actionValue, transaleId, saleorderId, quantity, subtotal, taxAmt, chargesAmt, total, saleOrderID;
+    let actionValue, transaleId, saleorderId, quantity,oldQty, subtotal, taxAmt, chargesAmt, total, saleOrderID;
 
     $(function () {
 
@@ -253,11 +256,24 @@
             $('#btnSave').removeAttr("disabled");          
         });
 
+        $("#tbTranSaleOrder").on("focus", "tr", function (event) {
+            selectedRow = $(this).parent('tr');
+            $(this).find("td:last").each(function () {
+                transaleId = $(this).text();
+                oldQty = $('#qty' + transaleId).val();
+            });
+        });
         $("#tbTranSaleOrder").on("change", "tr", function (event) {
             selectedRow = $(this).parent('tr');
             $(this).find("td:last").each(function () {
                 transaleId = $(this).text();
                 quantity = $('#qty' + transaleId).val();
+                if (quantity == 0 || quantity == null)
+                {
+                    quantity = oldQty;
+                    //$('#qty' + transaleId).val(oldQty);
+                    //return;
+                }
                 showLoadingIcon();
                 $.ajax({
                     type: "GET",
@@ -275,7 +291,7 @@
                            + "</td>"
                            + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
                            + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
-                           + "<td class='col-md-2 col-lg-2'>" + "<input type='number' class='Quantity' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
+                           + "<td class='col-md-2 col-lg-2'>" + "<input type='text'  maxlength='5' size='4' class='cnumber' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
                            + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
                            + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
                            + "<td style='display:none'>" + response.TranSaleOrderList[i].ID + "</td>"
@@ -456,6 +472,39 @@
             window.location.reload();
         });
 
+        $(document).on('change', '.cnumber', function (e) {
+            var txt = String.fromCharCode(e.which);
+            if (!txt.match(/^[0-9]*$/)) {
+                return false;
+            }
+        });
+
+        function transaleorder(response) {
+            if (response.TranSaleOrderList.length != 0) {
+                let rows = "";   
+                for (var i = 0; i < response.TranSaleOrderList.length; i++) {
+                    rows += "<tr class='row table-item'>"
+                   + "<td class='col-md-1 col-lg-1'>"
+                   + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-remove' aria-hidden='true'></i></button>"
+                   + "</td>"
+                   + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
+                   + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
+                   + "<td class='col-md-2 col-lg-2'>" + "<input type='text' maxlength='5' size='4' class='cnumber' id='qty" + response.TranSaleOrderList[i].ID + "' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
+                   + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+                   + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
+                   + "<td style='display:none'>" + response.TranSaleOrderList[i].ID + "</td>"
+                   + "</tr>";
+
+                    $('#tbTranSaleOrder').html(rows);
+                    $('#tbTranSaleOrder').show();
+                    $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);
+                }
+            }
+            else {
+                $('#tbTranSaleOrder').hide();
+            }
+        }
+
     });
 
     //$('#reload').click(function () {
@@ -502,31 +551,9 @@
         });
     }
 
-    function transaleorder(response) {
-        if (response.TranSaleOrderList.length != 0) {
-            let rows = "";
-            for (var i = 0; i < response.TranSaleOrderList.length; i++) {
-                rows += "<tr class='row table-item'>"
-               + "<td class='col-md-1 col-lg-1'>"
-               + "<button id='btnDelete' title='Delete' class='btn btn-sm button4 btn-list-action' onclick='action(4)'><i class='fa fa-remove' aria-hidden='true'></i></button>"
-               + "</td>"
-               + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
-               + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
-               + "<td class='col-md-2 col-lg-2'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
-               + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
-               + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
-               + "<td style='display:none'>" + response.TranSaleOrderList[i].ID + "</td>"
-               + "</tr>";
-                $('#tbTranSaleOrder').html(rows);
-                $('#tbTranSaleOrder').show();
-                $('#DefaultCurrency').text(response.TranSaleOrderList[i].DefaultCurrency);
-            }
-        }
-        else {
-            $('#tbTranSaleOrder').hide();
-        }
-        
-    }
+
+
+
 
     function deletetransaleorder(response) {
         let rows = "";
@@ -537,7 +564,7 @@
            + "</td>"
            + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
            + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
-           + "<td class='col-md-2 col-lg-2'>" + "<input type='number' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
+           + "<td class='col-md-2 col-lg-2'>" + "<input type='number' maxlength='5' size='4' class='cnumber' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
            + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
            + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
            + "<td style='display:none'>" + response.TranSaleOrderList[i].ID + "</td>"

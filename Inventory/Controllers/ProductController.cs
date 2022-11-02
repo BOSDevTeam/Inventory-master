@@ -125,7 +125,8 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@AlertQty", alertQty);
             cmd.Parameters.AddWithValue("@DisPercent", disPercent);
             cmd.Parameters.AddWithValue("@IsStock", isStock);
-            cmd.Parameters.AddWithValue("@SubMenuID", subMenuID);         
+            cmd.Parameters.AddWithValue("@SubMenuID", subMenuID);
+            cmd.Parameters.AddWithValue("@CurrentDateTime", DateTime.Now);        
 
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.Read())

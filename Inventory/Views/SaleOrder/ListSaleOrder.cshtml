@@ -14,12 +14,68 @@
             display: block;
         }
     </style>
-</head>
-
-<script type="text/javascript">
+    <script type="text/javascript">
 
     document.getElementById('subMenuSaleOrder').className = 'active';
 
-</script>
+    </script>
+</head>
+
+<div>
+
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">Sale Order List</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("SaleOrder","SaleOrder")?userId=0'">ADD</button>
+        </div>
+    </div>
+
+    <div class="row setup-title-layout search-div">
+        <table class="width-100-percent">
+            <tr>
+                <td class="control-label" style="text-align:center;">From Date</td>
+                <td><input id="inputFromDate" type="date" class="form-control control-input" /></td>
+                <td class="control-label" style="text-align:center;">To Date</td>
+                <td><input id="inputToDate" type="date" class="form-control control-input" /></td>
+                <td><input id="inputUserVoucherNo" type="text" class="form-control control-input" placeholder="Voucher No." /></td>
+                <td>@Html.DropDownList("Customer", Model.Customers, new { @id = "ddlCustomer", @class = "form-control control-input" })</td>
+                <td>
+                    <div class="btn-group" style="float:right">
+                        <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                        <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblSaleList" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-2 col-lg-2">Date</th>
+                        <th class="col-md-3 col-lg-3">Voucher No.</th>
+                        <th class="col-md-3 col-lg-3">Customer</th>
+                        <th class="col-md-1 col-lg-1">Pay Type</th>
+                        <th class="col-md-2 col-lg-2 aligh-right">Grand Total</th>
+                        <th class="col-md-1 col-lg-1">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="divPaging" class="row paging">
+        <div class="col-md-1 col-lg-1"><label id="lblPageNumber" class="page-num"></label></div>
+        <div id="divPagingItem" class="col-md-11 col-lg-11 paging-item"></div>
+    </div>
+
+</div>
+
+
 
 
