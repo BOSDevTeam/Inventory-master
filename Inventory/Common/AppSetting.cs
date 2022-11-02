@@ -37,5 +37,17 @@ namespace Inventory.Common
             return date.ToString("yyyy-MM-dd");  // output yyyy-MM-dd
         }
 
+        public DateTime getLocalDate()
+        {
+            DateTime MyanmarStd = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Myanmar Standard Time");
+            return MyanmarStd.Date;
+        }
+
+        public DateTime getLocalDateTime()
+        {
+            DateTime MyanmarStd = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Myanmar Standard Time");
+            return MyanmarStd;
+        }
+
     }
 }

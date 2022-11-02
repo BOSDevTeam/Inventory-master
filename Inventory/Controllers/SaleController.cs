@@ -916,8 +916,8 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@IsSearch", isSearch);
             if (!isSearch)
             {
-                cmd.Parameters.AddWithValue("@FromDate", DateTime.Now.Date);
-                cmd.Parameters.AddWithValue("@ToDate", DateTime.Now.Date);
+                cmd.Parameters.AddWithValue("@FromDate", setting.getLocalDate());
+                cmd.Parameters.AddWithValue("@ToDate", setting.getLocalDate());
                 cmd.Parameters.AddWithValue("@UserVoucherNo", "");
                 cmd.Parameters.AddWithValue("@CustomerID", 0);
             }
@@ -1088,8 +1088,8 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@IsSearch", isSearch);
             if (!isSearch)
             {
-                cmd.Parameters.AddWithValue("@FromDate", DateTime.Now.Date);
-                cmd.Parameters.AddWithValue("@ToDate", DateTime.Now.Date);
+                cmd.Parameters.AddWithValue("@FromDate", setting.getLocalDate());
+                cmd.Parameters.AddWithValue("@ToDate", setting.getLocalDate());
                 cmd.Parameters.AddWithValue("@UserVoucherNo", "");
                 cmd.Parameters.AddWithValue("@CustomerID", 0);
             }
