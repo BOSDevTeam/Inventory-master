@@ -22,6 +22,7 @@ namespace Inventory.Controllers
         static int editProductID;
         DataTable dtUnit = new DataTable();
         AppSetting.Paging paging = new AppSetting.Paging();
+        AppSetting appSetting = new AppSetting();
 
         public ActionResult ProductEntry(int productId)
         {                     
@@ -126,7 +127,7 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@DisPercent", disPercent);
             cmd.Parameters.AddWithValue("@IsStock", isStock);
             cmd.Parameters.AddWithValue("@SubMenuID", subMenuID);
-            cmd.Parameters.AddWithValue("@CurrentDateTime", DateTime.Now);        
+            cmd.Parameters.AddWithValue("@CurrentDateTime", appSetting.getLocalDateTime());        
 
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.Read())

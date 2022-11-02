@@ -19,6 +19,7 @@ namespace Inventory.Controllers
         List<CLTranSaleOrderModels> TsoList = new List<CLTranSaleOrderModels>();
         DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
         Procedure procedure = new Procedure();
+        AppSetting appSetting = new AppSetting();
 
         [HttpGet]
         public JsonResult SaveAction(int saleOrderID)
@@ -37,7 +38,7 @@ namespace Inventory.Controllers
                 if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
                 SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateCLTranSaleOrder, (SqlConnection)Session["SQLConnection"]);
                 cmd.Parameters.AddWithValue("@SaleOrderID", saleOrderID);
-                cmd.Parameters.AddWithValue("@CurrentDateTime", DateTime.Now);
+                cmd.Parameters.AddWithValue("@CurrentDateTime", appSetting.getLocalDateTime());
                 cmd.Parameters.AddWithValue("@Subtotal", Convert.ToInt32(Session["TotalAmt"]));
                 cmd.Parameters.AddWithValue("@TaxAmt", Convert.ToInt32(Session["TaxAmt"]));
                 cmd.Parameters.AddWithValue("@ChargesAmt", Convert.ToInt32(Session["ChargeAmt"]));
