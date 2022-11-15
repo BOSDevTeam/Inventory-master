@@ -76,5 +76,15 @@ namespace Inventory.Common
             + " From TCLTranSaleOrder ts INNER JOIN SProduct p ON ts.ProductID=p.ProductID"
             + " Where ts.SaleOrderID=" + clSaleOrderId;
         }
+
+        public string deleteSaleOrderQuery(int saleOrderId)
+        {
+            return "Delete From TTranSaleOrder Where SaleOrderID=" + saleOrderId + " Delete From TMasterSaleOrder Where SaleOrderID=" + saleOrderId;
+        }
+
+        public string deletePurchaseQuery(int purchaseId)
+        {
+            return "Delete From TTranPurchase Where PurchaseID=" + purchaseId + " Delete From TMasterPurchase Where PurchaseID=" + purchaseId;
+        }
     }
 }
