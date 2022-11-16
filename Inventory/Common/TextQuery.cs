@@ -86,5 +86,10 @@ namespace Inventory.Common
         {
             return "Delete From TTranPurchase Where PurchaseID=" + purchaseId + " Delete From TMasterPurchase Where PurchaseID=" + purchaseId;
         }
+
+        public string deletePurchaseOrderQuery(int purchaseOrderId)
+        {
+            return "Delete From TTranPurchaseOrder Where PurchaseOrderID=" + purchaseOrderId + " Delete From TMasterPurchaseOrder Where PurchaseOrderID=" + purchaseOrderId;
+        }
     }
 }
