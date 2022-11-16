@@ -16,5 +16,6 @@ namespace Inventory.ViewModels
         public string UserName { get; set; }
         public string CustomerName { get; set; }
         public string LocationName { get; set; }
+
     }
 }

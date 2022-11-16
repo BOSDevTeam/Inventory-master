@@ -404,6 +404,7 @@
     <Compile Include="TCLTranSaleOrder.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\MasterSaleOrderViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleVoucherViewModel.cs" />
     <Compile Include="ViewModels\PagingViewModel.cs" />
     <Compile Include="ViewModels\PaymentViewModel.cs" />
@@ -580,6 +581,8 @@
     <Content Include="Views\SaleOrder\ListSaleOrder.cshtml" />
     <Content Include="Views\PurchaseOrder\PurchaseOrder.cshtml" />
     <Content Include="Views\PurchaseOrder\ListPurchaseOrder.cshtml" />
+    <Content Include="Views\SaleOrder\_SaleOrderDetailChild.cshtml" />
+    <Content Include="Views\SaleOrder\_SaleOrderDetailDialog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
