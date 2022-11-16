@@ -178,6 +178,7 @@
     <Compile Include="Controllers\CLSaleOrderController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\PurchaseController.cs" />
+    <Compile Include="Controllers\PurchaseOrderController.cs" />
     <Compile Include="Controllers\SaleController.cs" />
     <Compile Include="Controllers\SaleOrderController.cs" />
     <Compile Include="Controllers\SubMenuController.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="Models\MainMenuModels.cs" />
     <Compile Include="Models\CLMasterSaleOrderModels.cs" />
     <Compile Include="Models\MasterPurchaseModels.cs" />
+    <Compile Include="Models\MasterPurchaseOrderModels.cs" />
     <Compile Include="Models\MasterSaleModels.cs" />
     <Compile Include="Models\LimitedDayModels.cs" />
     <Compile Include="Models\MasterSaleOrderModels.cs" />
@@ -232,6 +234,7 @@
     <Compile Include="Models\TechnicianSettingModels.cs" />
     <Compile Include="Models\TownshipModels.cs" />
     <Compile Include="Models\TranPurchaseModels.cs" />
+    <Compile Include="Models\TranPurchaseOrderModels.cs" />
     <Compile Include="Models\TranSaleModels.cs" />
     <Compile Include="Models\TranSaleOrderModels.cs" />
     <Compile Include="Models\UnitModels.cs" />
@@ -401,11 +404,11 @@
     <Compile Include="TCLTranSaleOrder.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\MasterSaleOrderViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleVoucherViewModel.cs" />
     <Compile Include="ViewModels\PagingViewModel.cs" />
     <Compile Include="ViewModels\PaymentViewModel.cs" />
     <Compile Include="ViewModels\ProductMenuViewModel.cs" />
+    <Compile Include="ViewModels\PurchaseOrderViewModel.cs" />
     <Compile Include="ViewModels\PurchaseViewModel.cs" />
     <Compile Include="ViewModels\SaleOrderViewModel.cs" />
     <Compile Include="ViewModels\SaleViewModel.cs" />
@@ -575,8 +578,8 @@
     <Content Include="Views\Purchase\ListPurchase.cshtml" />
     <Content Include="Views\SaleOrder\SaleOrder.cshtml" />
     <Content Include="Views\SaleOrder\ListSaleOrder.cshtml" />
-    <Content Include="Views\SaleOrder\_SaleOrderDetailDialog.cshtml" />
-    <Content Include="Views\SaleOrder\_SaleOrderDetailChild.cshtml" />
+    <Content Include="Views\PurchaseOrder\PurchaseOrder.cshtml" />
+    <Content Include="Views\PurchaseOrder\ListPurchaseOrder.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

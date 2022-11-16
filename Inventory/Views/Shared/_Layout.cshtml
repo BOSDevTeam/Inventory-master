@@ -90,7 +90,8 @@
                         <li class="submenu">
                             <a href=""><i class="fa fa-dollar"></i> <span> @Resource.Purchase </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuPurchaseGp">
-                                <li id="subMenuPurchase"><a href="#">@Resource.Purchase</a></li>                            
+                                <li id="subMenuPurchase"><a href="#">@Resource.Purchase</a></li>   
+                                <li id="subMenuPurchaseOrder"><a href="#">@Resource.PurchaseOrder</a></li>                            
                             </ul>
                         </li>             
                         <li>
@@ -154,6 +155,9 @@
             });
             $('#subMenuSaleOrder').click(function () {
                 window.location.href = '@Url.Action("ListSaleOrder", "SaleOrder")?userId=' + userId;
+            });
+            $('#subMenuPurchaseOrder').click(function () {
+                window.location.href = '@Url.Action("ListPurchaseOrder", "PurchaseOrder")?userId=' + userId;
             });
             $('.toast').toast({
                 delay: 3000
