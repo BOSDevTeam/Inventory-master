@@ -23,5 +23,14 @@ namespace Inventory.ViewModels
         public List<SelectListItem> Units { get; set; }
         public List<SelectListItem> Currencies { get; set; }
         public ProductMenuViewModel ProductMenus { get; set; }
+
+        public class MasterSaleOrderViewModel
+        {
+            public int SaleOrderID { get; set; }
+            public string OrderDateTime { get; set; }
+            public string UserVoucherNo { get; set; }
+            public string   CustomerName { get; set; }
+            public int Total { get; set; }
+        }
     }
 }

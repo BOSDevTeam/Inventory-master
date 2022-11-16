@@ -15,20 +15,17 @@
         }
     </style>
     <script type="text/javascript">
-
     document.getElementById('subMenuSaleOrder').className = 'active';
-
     </script>
 </head>
 
 <div>
-
     <div class="row setup-title-layout">
         <div class="col-md-6 col-lg-6">
             <label class="page-title">Sale Order List</label>
         </div>
         <div class="col-md-6 col-lg-6">
-            <button id="btnAdd" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("SaleOrder","SaleOrder")?userId=0'">ADD</button>
+            <button id="btnAdd" class="btn btn-primary" style="float:right" onclick="addAction('1')">ADD</button>
         </div>
     </div>
 
@@ -53,15 +50,14 @@
 
     <div class="row padding-10">
         <div class="col-md-12 col-lg-12">
-            <table id="tblSaleList" class="col-md-12 col-lg-12" role="grid">
+            <table id="tblSaleOrderList" class="col-md-12 col-lg-12" role="grid">
                 <thead>
                     <tr class="row table-header">
                         <th class="col-md-2 col-lg-2">Date</th>
                         <th class="col-md-3 col-lg-3">Voucher No.</th>
                         <th class="col-md-3 col-lg-3">Customer</th>
-                        <th class="col-md-1 col-lg-1">Pay Type</th>
-                        <th class="col-md-2 col-lg-2 aligh-right">Grand Total</th>
-                        <th class="col-md-1 col-lg-1">Action</th>
+                        <th class="col-md-2 col-lg-2">Total</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -75,6 +71,247 @@
     </div>
 
 </div>
+
+<div>
+    @{ 
+        Html.RenderPartial("_ConfirmDialog");
+    }
+</div>
+<div>
+    @{ 
+        Html.RenderPartial("_SaleOrderDetailDialog");
+    }
+</div>
+
+<script type="text/javascript">
+    let listActionValue, selectedRowIndex;
+    $(document).ready(function () {
+        initializeControl();
+        createMasterSaleOrderData('', false);
+        createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');
+
+        function initializeControl() {
+            $('#inputFromDate').val(getTodayDate());
+            $('#inputToDate').val(getTodayDate());
+        }
+
+        function clearControl() {
+            $('#inputFromDate').val(getTodayDate());
+            $('#inputToDate').val(getTodayDate());
+            $('#inputUserVoucherNo').val('');
+            $("#ddlCustomer").val('0');
+        }
+
+        $('#btnSearch').click(function () {
+            let fromDate = $('#inputFromDate').val();
+            let toDate = $('#inputToDate').val();
+            let userVoucherNo = $('#inputUserVoucherNo').val();
+            let customerId = $('#ddlCustomer option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SearchAction", "SaleOrder")',
+                data: { "userId": userId, "fromDate": fromDate, "toDate": toDate, "userVoucherNo": userVoucherNo, "customerId": customerId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterSaleOrderData(response.LstMasterSaleOrder, true);
+                    createPaging(response.TotalPage, response.CurrentPage);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                
+            });
+        });
+
+        $(document).on("click", ".btnPage", function () {
+            let currentPage = $(this).text();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SaleOrderPagingAction", "SaleOrder")',
+                data: { "currentPage": currentPage },
+                contentType: "application/json, charset=utf-8",
+                dataType: "Json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess) {
+                        redirectToLogin();
+                    }
+                    else {
+                        createMasterSaleOrderData(response.LstMasterSaleOrder, true);
+                        createPaging(response.TotalPage, currentPage);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+            });
+        });
+
+        $('#btnRefresh').click(function () {
+            clearControl();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("RefreshAction", "SaleOrder")',
+                data: { "userId": userId },
+                contentType: "applicaton/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();            
+                    createMasterSaleOrderData(response.LstMasterSaleOrder, true);
+                    createPaging(response.TotalPage, response.CurrentPage);
+
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+            });
+        });
+
+        $('#btnDelOk').click(function () {
+            let saleOrderId = $('#btnDelOk').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url:'@Url.Action("DeleteAction", "SaleOrder")',
+                data: { "saleOrderId": saleOrderId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess) {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (selectedRowIndex != null) {
+                            document.getElementById("tblSaleOrderList").deleteRow(selectedRowIndex);
+                            createPaging(response.TotalPage, "");
+                            showToast(1, 'Deleted Successfully!');
+                        }                       
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+                
+            });
+
+        });
+
+        function createMasterSaleOrderData(response, isFromJson) {
+            $("#tblSaleOrderList").find("tbody").empty();
+            if(!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterSaleOrder"]))');
+            $.each(response,  function (index, item) {
+                var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
+                          +'<td class="col-md-2 col-lg-2 text-overflow">' + item.OrderDateTime + '</td>'
+                          + '<td class="col-md-3 col-lg-3">' + item.UserVoucherNo + '</td>'
+                          + '<td class="col-md-3 col-lg-3 text-overflow">' + item.CustomerName + '</td>'
+                          + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Total) + '</td>'
+                          + '<td class="col-md-2 col-lg-2 btn-group">'
+                              + '<button title="View" class="btn btn-sm btn-dark" onclick="listTableAction(1)"><i class="fa fa-list"></i></button>'
+                              + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
+                              + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
+                          +'</td>'
+                          + '<td style="display:none">' + item.SaleOrderID + '</td>'
+                      +'</tr>'
+                $('#tblSaleOrderList tbody').append(row);
+            })
+        }
+
+        $('#tblSaleOrderList').on("click", "tbody tr", function (event) {
+            $(this).find("td:last").each(function () {
+                let saleOrderId = $(this).text();
+                if (listActionValue == 1) {
+                    clearTableAction();
+                    viewDetail(saleOrderId);
+                }
+                else if (listActionValue == 2) {
+                    clearTableAction();
+                    window.location.href = '@Url.Action("SaleOrder", "SaleOrder")?userId=' + userId + '&saleOrderId=' + saleOrderId;
+                }
+                else if (listActionValue == 3) {
+                    clearTableAction();
+                    $('#modalConfirm').modal('show');
+                    $('#btnDelOk').val(saleOrderId);
+                }
+            });
+        });
+
+        function viewDetail(saleOrderId) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("ViewAction", "SaleOrder")',
+                data: { "saleOrderId": saleOrderId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterSaleOrderDetail(response);
+                    createTranSaleOrderDetail(response);
+                    $('#modalSaleOrderDetail').modal('show');
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+
+            });
+        }
+
+    });
+
+    $("#btnAdd").on("click", function () {
+        if (addActionValue == 1) {
+            window.location.href = '@Url.Action("SaleOrder", "SaleOrder")?userId=' + userId;
+        }       
+    });
+
+    function addAction(value) {
+        addActionValue = value;
+    }
+
+    function listTableAction(value) {
+        listActionValue = value;
+    }
+    
+    function clearTableAction(value) {
+        listActionValue = 0;
+    }
+
+    function findRowIndex(x) {
+        selectedRowIndex = x.rowIndex;
+    }
+
+</script>
 
 
 

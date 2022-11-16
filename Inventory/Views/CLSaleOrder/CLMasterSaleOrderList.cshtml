@@ -396,7 +396,13 @@
                             $('#OrderDate').text(response.OrderDateTime);
                             $('#ClientName').text(response.ClientName);
                             $('#ClientPhone').text(response.ClientPhone);
-                            $('#CustomerName').text(response.CustomerName);
+                            if (response.CustomerName != "" ) {
+                                $('#CustomerName').text(response.CustomerName);
+                            }
+                            else {
+                                $('#CustomerName').text('-');
+                            }
+                            
                             $('#CustomerPhone').text(response.CustomerPhone);
                             if (response.Remark.length == 0) $('#remark').hide();                           
                             else {

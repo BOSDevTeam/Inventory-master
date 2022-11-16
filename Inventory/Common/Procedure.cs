@@ -53,5 +53,10 @@ namespace Inventory.Common
         public const string PrcSearchClient = "PrcSearchClient";
         public const string PrcDeleteCustomer = "PrcDeleteCustomer";
         public const string PrcDeleteLocation = "PrcDeleteLocation";
+        public const string PrcInsertSaleOrder = "PrcInsertSaleOrder";
+        public const string PrcGetMasterSaleOrderList = "PrcGetMasterSaleOrderList";
+        public const string PrcGetMasterSaleOrderBySaleOrderID = "PrcGetMasterSaleOrderBySaleOrderID";
+        public const string PrcGetTranSaleOrderBySaleOrderID = "PrcGetTranSaleOrderBySaleOrderID";
+        public const string PrcUpdateSaleOrder = "PrcUpdateSaleOrder";
     }
 }
