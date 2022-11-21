@@ -35,7 +35,7 @@ namespace Inventory.Controllers
         public JsonResult ProductClickAction(int productId, bool isMultiUnit, bool isMultiCurrency)
         {
             string productName = "", code = "";
-            int salePrice = 0;
+            int salePrice = 0, purPrice = 0;
             short? disPercent = 0;
             List<UnitModels> lstUnit = new List<UnitModels>();
             List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
@@ -50,6 +50,7 @@ namespace Inventory.Controllers
                     productName = result.ProductName;
                     code = result.Code;
                     salePrice = result.SalePrice;
+                    purPrice = result.PurchasePrice;
                     disPercent = result.DisPercent;
                     if (isMultiUnit) lstUnit = getUnit();
                     if (isMultiCurrency) lstCurrency = getCurrency();
@@ -62,6 +63,7 @@ namespace Inventory.Controllers
                 ProductName = productName,
                 Code = code,
                 SalePrice = salePrice,
+                PurPrice = purPrice,
                 DisPercent = disPercent,
                 LstUnit = lstUnit,
                 LstCurrency = lstCurrency,
