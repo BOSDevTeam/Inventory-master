@@ -144,6 +144,7 @@ namespace Inventory.Common
                 item.Code = Convert.ToString(reader["Code"]);
                 item.SalePrice = Convert.ToInt32(reader["SalePrice"]);
                 item.DisPercent = Convert.ToInt16(reader["DisPercent"]);
+                item.PurchasePrice = Convert.ToInt32(reader["PurPrice"]);
                 list.Add(item);
             }
             reader.Close();
@@ -164,6 +165,7 @@ namespace Inventory.Common
                 item.ProductName = Convert.ToString(reader["ProductName"]);
                 item.SalePrice = Convert.ToInt32(reader["SalePrice"]);
                 item.DisPercent = Convert.ToInt16(reader["DisPercent"]);
+                item.PurchasePrice = Convert.ToInt32(reader["PurPrice"]);
             }
             reader.Close();
 
@@ -186,7 +188,8 @@ namespace Inventory.Common
                 item.ProductName = Convert.ToString(reader["ProductName"]);
                 item.Code = Convert.ToString(reader["Code"]);            
                 item.SalePrice = Convert.ToInt32(reader["SalePrice"]);
-                item.DisPercent = Convert.ToInt16(reader["DisPercent"]);             
+                item.DisPercent = Convert.ToInt16(reader["DisPercent"]);
+                item.PurchasePrice = Convert.ToInt32(reader["PurPrice"]);
                 list.Add(item);
             }
             reader.Close();
@@ -201,6 +204,18 @@ namespace Inventory.Common
             cmd.CommandType = CommandType.Text;
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.Read()) price = Convert.ToInt32(reader["SalePrice"]);
+            reader.Close();
+
+            return price;
+        }
+
+        public int selectPurPriceByProduct(object connection, int productId)
+        {
+            int price = 0;
+            SqlCommand cmd = new SqlCommand(textQuery.getPurPriceQuery(productId), (SqlConnection)connection);
+            cmd.CommandType = CommandType.Text;
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read()) price = Convert.ToInt32(reader["PurPrice"]);
             reader.Close();
 
             return price;

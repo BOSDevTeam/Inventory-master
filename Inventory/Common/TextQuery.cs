@@ -26,19 +26,25 @@ namespace Inventory.Common
     
         public string getProductQuery(int subMenuId)
         {
-            return "Select ProductID,ProductName,Code,isnull(SalePrice,0) AS SalePrice,isnull(DisPercent,0) AS DisPercent"
+            return "Select ProductID,ProductName,Code,isnull(SalePrice,0) AS SalePrice,isnull(DisPercent,0) AS DisPercent,isnull(PurPrice,0) AS PurPrice"
             + " From SProduct Where SubMenuID=" + subMenuId + " And IsStock=1 Order By SortCode";
         }
 
         public string getProductByCodeQuery(string productCode)
         {
-            return "Select ProductID,ProductName,isnull(SalePrice,0) AS SalePrice,isnull(DisPercent,0) AS DisPercent"
+            return "Select ProductID,ProductName,isnull(SalePrice,0) AS SalePrice,isnull(DisPercent,0) AS DisPercent,isnull(PurPrice,0) AS PurPrice"
             + " From SProduct Where Code='" + productCode + "' And IsStock=1";
         }
 
         public string getSalePriceQuery(int productId)
         {
             return "Select isnull(SalePrice,0) AS SalePrice"
+            + " From SProduct Where ProductID=" + productId;
+        }
+
+        public string getPurPriceQuery(int productId)
+        {
+            return "Select isnull(PurPrice,0) AS PurPrice"
             + " From SProduct Where ProductID=" + productId;
         }
 
