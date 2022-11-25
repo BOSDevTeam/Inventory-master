@@ -1,0 +1,155 @@
+﻿<div class="modal fade" id="modalPurchaseDetail" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:700px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="width-100-percent light-background">
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Voucher No.</label></td>
+                        <td class="aligh-right padding-5"><label id="lblUserVoucherNo" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">VoucherID</label></td>
+                        <td class="aligh-right padding-5"><label id="lblVoucherID" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Date</label></td>
+                        <td class="aligh-right padding-5"><label id="lblPurchaseDateTime" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">Supplier</label></td>
+                        <td class="aligh-right padding-5"><label id="lblSupplierName" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">User</label></td>
+                        <td class="aligh-right padding-5"><label id="lblUserName" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">Location</label></td>
+                        <td class="aligh-right padding-5"><label id="lblLocation" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Pay Type</label></td>
+                        <td class="aligh-right padding-5"><label id="lblPayment" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">Pay Method</label></td>
+                        <td class="aligh-right padding-5"><label id="lblPayMethod" class="control-input mb-0"></label></td>
+                    </tr>
+                    
+                </table>
+
+                @{
+                    Html.RenderPartial("_PurchaseDetailChild");
+                }
+
+                <div id="divRemark" class="light-background padding-5" style="text-align:center;">
+                    <label id="lblRemark" class="control-label mb-0"></label>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function createTranPurchaseDetail(response) {
+        $("#tblTranPurchase").find("tbody").empty();
+        $.each(response.LstTranPurchase, function (index, item) {
+            let row = '<tr class="row voucher-table-item">'
+            if (item.IsFOC == true) row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '(FOC)' + '</td>'
+            else row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '</td>'
+            row += '<td class="col-md-2 col-lg-2">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
+               + '<td class="col-md-2 col-lg-2">' + separatedComma(item.PurchasePrice) + '<span class="control-span-sm">' + item.CurrencyKeyword + '</span></td>'
+               + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Discount) + '</td>'
+               + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Amount) + '</td>'
+               + "</tr>";
+            $('#tblTranPurchase tbody').append(row);
+        });
+    }
+
+    function createMasterPurchaseDetail(response) {
+        $('#lblUserVoucherNo').text(response.UserVoucherNo);
+        if (response.VoucherID.length != 0) $('#lblVoucherID').text(response.VoucherID);
+        else $('#lblVoucherID').text('-');
+
+        $('#lblPurchaseDateTime').text(response.PurchaseDateTime);
+        $('#lblSupplierName').text(response.SupplierName);
+
+        $('#lblUserName').text(response.UserName);
+        $('#lblLocation').text(response.LocationName);
+
+        $('#lblPayment').text(response.Payment);
+        if (response.PayMethod.length != 0) {
+            $('#lblPayMethod').text(response.PayMethod);
+            $('#tdPayMethod').show();
+            $('#tdPayMethodValue').show();
+        }
+        else {
+            $('#tdPayMethod').css('display', 'none');
+            $('#tdPayMethodValue').css('display', 'none');
+        }
+        //if (response.BankPayment.length != 0) {
+        //    $('#lblBankPayment').text(response.BankPayment);
+        //    $('#tdBankPayment').show();
+        //    $('#tdBankPaymentValue').show();
+        //}
+        //else {
+        //    $('#tdBankPayment').css('display', 'none');
+        //    $('#tdBankPaymentValue').css('display', 'none');
+        //}        
+
+        $('#lblSubtotal').text(separatedComma(response.Subtotal));
+        $('#lblTaxValue').text(separatedComma(response.TaxAmt));
+        $('#lblChargesValue').text(separatedComma(response.ChargesAmt));
+        $('#lblTotal').text(separatedComma(response.Total));
+        $('#lblVoucherDiscountValue').text(separatedComma(response.VoucherDiscount));
+
+        let vouDisPercent = response.VouDisPercent;
+        if (vouDisPercent != 0) $('#lblVoucherDiscount').text('Voucher Discount('+vouDisPercent+'%):');
+        else $('#lblVoucherDiscount').text('Voucher Discount:');
+
+        let advancedPay = response.AdvancedPay;
+        if (advancedPay == 0) $('#trAdvancedPay').css('display', 'none');
+        else {
+            $('#trAdvancedPay').show();
+            $('#lblAdvancedPay').text(separatedComma(advancedPay));
+        }
+
+        let grandtotal = response.Grandtotal;
+
+        let paymentPercent = response.PaymentPercent;
+        if (paymentPercent != 0) $('#lblPercent').text('Percent(' + paymentPercent + '%):');
+
+        let payPercentAmt = response.PayPercentAmt;
+        if (payPercentAmt == 0) {
+            $('#lblGrandtotal').text(separatedComma(grandtotal));
+            $('#trPercent').css('display', 'none');
+            $('#trPcntGrandtotal').css('display', 'none');
+        } else {
+            $('#lblGrandtotal').text(separatedComma(response.GrandTotalNotPayPercent));
+            $('#trPercent').show();
+            $('#trPcntGrandtotal').show();
+            $('#lblPercentValue').text(separatedComma(payPercentAmt));
+            $('#lblPcntGrandtotal').text(separatedComma(grandtotal));
+        }
+
+        let isVouFOC = response.IsVouFOC;
+        if (isVouFOC == false) {
+            $('#trVoucherFOC').css('display', 'none');
+            $('#trVFOCGrandtotal').css('display', 'none');
+        } else {
+            $('#trVoucherFOC').show();
+            $('#trVFOCGrandtotal').show();
+            $('#lblVoucherFOC').text(separatedComma(grandtotal));
+            $('#lblVFOCGrandtotal').text('0');
+        }
+
+        if (response.Remark.length != 0) {
+            $('#lblRemark').text(response.Remark);
+            $('#divRemark').show();
+        } else $('#divRemark').css('display', 'none');
+    }
+
+</script>
+
+
+

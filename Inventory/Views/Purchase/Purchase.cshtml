@@ -168,7 +168,8 @@
     }
 
     $(document).ready(function () {
-        initializeControl();
+        if ('@ViewBag.IsEdit' == 'True') fillEditData();
+        else initializeControl();
         function initializeControl() {
             $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
             $('#inputDate').val(getTodayDate());
@@ -715,6 +716,71 @@
                     $('#inputVoucherID').val("");
                     $("#ddlSupplier").val(defaultSupplierId);
                     $("#ddlLocation").val(defaultLocationId);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+        function fillEditData() {
+            $('#btnEditPayment').val('@ViewBag.PurchaseID');
+            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputDate').val('@ViewBag.Date');
+            $('#inputVoucherID').val('@ViewBag.VoucherID');
+            $("#ddlSupplier").val('@ViewBag.SupplierID');
+            $("#ddlLocation").val('@ViewBag.LocationID');
+            $('#lblSubtotal').text(separatedComma('@ViewBag.Subtotal'));
+            $('#lblTax').text(separatedComma('@ViewBag.TaxAmt'));
+            $('#lblCharges').text(separatedComma('@ViewBag.ChargesAmt'));
+            $('#lblTotal').text(separatedComma('@ViewBag.Total'));
+            $('#lblTotalItem').text('@ViewBag.TotalItem' + '(' + '@ViewBag.TotalQuantity' + ')');
+            $("#inputHdnSubtotal").val('@ViewBag.Subtotal');
+            $("#inputHdnTax").val('@ViewBag.TaxAmt');
+            $("#inputHdnCharges").val('@ViewBag.ChargesAmt');
+            $("#inputHdnTotal").val('@ViewBag.Total');
+            showHideUnit();
+            showHideCurrency();
+            showHideTranPurchaseAddEdit(false);
+            showHideMainButton(true, false, false);
+            let tranPurchaseList = JSON.parse('@Html.Raw(Json.Encode(Session["TranPurchaseData"]))');
+            createTranPurchaseData(tranPurchaseList);
+        }
+        $("#btnEditPayment").click(function (e) {
+            let row = $("#tblTranPurchase tbody tr").length;
+            if (row < 1) return;
+            let purchaseId = $(this).val();
+            let date = $('#inputDate').val();
+            let voucherId = $('#inputVoucherID').val();
+            let supplierId = $('#ddlSupplier option:selected').val();
+            let locationId = $('#ddlLocation option:selected').val();
+            let subtotal = $("#inputHdnSubtotal").val();
+            let taxAmt = $("#inputHdnTax").val();
+            let chargesAmt = $("#inputHdnCharges").val();
+            let total = $("#inputHdnTotal").val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("PaymentEditAction", "Purchase")',
+                data: {
+                    "purchaseId": purchaseId, "date": date, "voucherId": voucherId, "supplierId": supplierId, "locationId": locationId,
+                    "taxAmt": taxAmt, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total
+                },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess) {
+                        alert("Session Expired!");
+                        redirectToLogin();
+                    }
+                    else {
+                        window.location.href = '@Url.Action("ListPurchase", "Purchase")?userId=' + userId;
+                    }
                 },
                 failure: function (response) {
                     hideLoadingIcon();

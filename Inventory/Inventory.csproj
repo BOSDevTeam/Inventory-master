@@ -408,6 +408,7 @@
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AdjustmentViewModel.cs" />
+    <Compile Include="ViewModels\MasterPurchaseViewModel.cs" />
     <Compile Include="ViewModels\MasterPurOrderViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleOrderViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleVoucherViewModel.cs" />
@@ -592,6 +593,8 @@
     <Content Include="Views\Adjustment\ListAdjustment.cshtml" />
     <Content Include="Views\PurchaseOrder\_PurOrderDetailChild.cshtml" />
     <Content Include="Views\PurchaseOrder\_PurOrderDetailDialog.cshtml" />
+    <Content Include="Views\Purchase\_PurchaseDetailChild.cshtml" />
+    <Content Include="Views\Purchase\_PurchaseDetailDialog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

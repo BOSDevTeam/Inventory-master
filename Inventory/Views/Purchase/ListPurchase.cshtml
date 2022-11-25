@@ -19,6 +19,213 @@
 <script type="text/javascript">
 
     document.getElementById('subMenuPurchase').className = 'active';
+    var userId = 0, userName;
+    userId = localStorage.getItem("UserID");
+    userName = localStorage.getItem("UserName");
+    let listActionValue, selectedRowIndex;
+    $(function () {
+        $('#btnAdd').click(function () {
+            window.location.href = '@Url.Action("Purchase", "Purchase")?userId=' + userId;
+        });
+    })
+    $(document).ready(function () {
+        initializeControl();
+        createMasterPurchaseData('', false);
+        createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');
+
+        function initializeControl() {
+            $('#inputFromDate').val(getTodayDate());
+            $('#inputToDate').val(getTodayDate());
+        }
+        function clearControl() {
+            $('#inputFromDate').val(getTodayDate());
+            $('#inputToDate').val(getTodayDate());
+            $('#inputUserVoucherNo').val('');
+            $("#ddlSupplier").val('0');
+        }
+        function createMasterPurchaseData(response, isFromJson) {
+            $("#tblPurchaseList").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterPurchase"]))');
+            $.each(response, function (index, item) {
+                var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
+                        + '<td class="col-md-2 col-lg-2 text-overflow">' + item.PurchaseDateTime + '</td>'
+                        + '<td class="col-md-3 col-lg-3">' + item.UserVoucherNo + '</td>'
+                        + '<td class="col-md-3 col-lg-3 text-overflow">' + item.SupplierName + '</td>'
+                        + '<td class="col-md-1 col-lg-1">' + item.PaymentKeyword + '</td>'
+                        + '<td class="col-md-2 col-lg-2 value-right">' + separatedComma(item.Grandtotal) + '</td>'
+                        + '<td class="col-md-1 col-lg-1 btn-group">'
+                            + '<button title="View" class="btn btn-sm btn-dark" onclick="listTableAction(1)"><i class="fa fa-list"></i></button>'
+                            + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
+                            + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
+                        + '</td>'
+                        + '<td style="display:none">' + item.PurchaseID + '</td>'
+                    + '</tr>'
+                $('#tblPurchaseList tbody').append(row);
+            });
+        }
+        $(document).on('click', '.btnPage', function (e) {
+            let currentPage = $(this).text();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("PurchcasePagingAction", "Purchase")',
+                data: { "currentPage": currentPage },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess)
+                        redirectToLogin();
+                    else {
+                        createMasterPurchaseData(response.LstMasterPurchase, true);
+                        createPaging(response.TotalPage, currentPage);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#tblPurchaseList").on("click", "tbody tr", function (event) {
+            $(this).find("td:last").each(function () {
+                let purchaseId = $(this).text();
+                if (listActionValue == 1) {   // view
+                    clearTableAction();
+                    viewDetail(purchaseId);
+                } else if (listActionValue == 2) {  // edit
+                    clearTableAction();
+                    window.location.href = '@Url.Action("Purchase", "Purchase")?userId=' + userId + '&purchaseId=' + purchaseId;
+                } else if (listActionValue == 3) {  // delete
+                    clearTableAction();
+                    $('#modalConfirm').modal('show');
+                    $("#btnDelOk").val(purchaseId);
+                }
+            });
+        });
+        $("#btnDelOk").click(function () {
+            let purchaseId = $("#btnDelOk").val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DeleteAction", "Purchase")',
+                data: { "purchaseId": purchaseId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess)
+                        redirectToLogin();
+                    else {
+                        if (selectedRowIndex != null) {
+                            document.getElementById("tblPurchaseList").deleteRow(selectedRowIndex);
+                            createPaging(response.TotalPage, "");
+                            showToast(1, 'Deleted Successfully!');
+                        }
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+        function viewDetail(purchaseId) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("ViewAction", "Purchase")',
+                data: { "purchaseId": purchaseId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterPurchaseDetail(response);
+                    createTranPurchaseDetail(response);
+                    $('#modalPurchaseDetail').modal('show');
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        }
+
+        $("#btnSearch").click(function (e) {
+            let fromDate = $('#inputFromDate').val();
+            let toDate = $('#inputToDate').val();
+            let userVoucherNo = $('#inputUserVoucherNo').val();
+            let supplierId = $('#ddlSupplier option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SearchAction", "Purchase")',
+                data: { "userId": userId, "fromDate": fromDate, "toDate": toDate, "userVoucherNo": userVoucherNo, "supplierId": supplierId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterPurchaseData(response.LstMasterPurchase, true);
+                    createPaging(response.TotalPage, response.CurrentPage);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnRefresh").click(function (e) {
+            clearControl();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("RefreshAction", "Purchase")',
+                data: { "userId": userId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterPurchaseData(response.LstMasterPurchase, true);
+                    createPaging(response.TotalPage, response.CurrentPage);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+    });
+    function listTableAction(value) {
+        listActionValue = value;
+    }
+    function findRowIndex(x) {
+        selectedRowIndex = x.rowIndex;
+    }
+    function clearTableAction() {
+        listActionValue = 0;
+    }
 
 </script>
 <div>
@@ -30,17 +237,57 @@
             <button id="btnAdd" class="btn btn-primary" style="float:right">ADD</button>
         </div>
     </div>
+    <div class="row setup-title-layout search-div">
+        <table class="width-100-percent">
+            <tr>
+                <td class="control-label" style="text-align:center;">From Date</td>
+                <td><input id="inputFromDate" type="date" class="form-control control-input" /></td>
+                <td class="control-label" style="text-align:center;">To Date</td>
+                <td><input id="inputToDate" type="date" class="form-control control-input" /></td>
+                <td><input id="inputUserVoucherNo" type="text" class="form-control control-input" placeholder="Voucher No." /></td>
+                <td>@Html.DropDownList("Supplier", Model.Suppliers, new { @id = "ddlSupplier", @class = "form-control control-input" })</td>
+                <td>
+                    <div class="btn-group" style="float:right">
+                        <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                        <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblPurchaseList" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-2 col-lg-2">Date</th>
+                        <th class="col-md-3 col-lg-3">Voucher No.</th>
+                        <th class="col-md-3 col-lg-3">Supplier</th>
+                        <th class="col-md-1 col-lg-1">Pay Type</th>
+                        <th class="col-md-2 col-lg-2 aligh-right">Grand Total</th>
+                        <th class="col-md-1 col-lg-1">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="divPaging" class="row paging">
+        <div class="col-md-1 col-lg-1"><label id="lblPageNumber" class="page-num"></label></div>
+        <div id="divPagingItem" class="col-md-11 col-lg-11 paging-item"></div>
+    </div>
+
+</div>
+<div>
+    @{
+        Html.RenderPartial("_PurchaseDetailDialog");
+    }
 </div>
 
-<script type="text/javascript">
-    var userId = 0, userName;
-    userId = localStorage.getItem("UserID");
-    userName = localStorage.getItem("UserName");
-    $(function () {
-        $('#btnAdd').click(function () {
-            window.location.href = '@Url.Action("Purchase", "Purchase")?userId=' + userId;
-        });
-    })
-</script>
+<div>
+    @{
+        Html.RenderPartial("_ConfirmDialog");
+    }
+</div>
 
 

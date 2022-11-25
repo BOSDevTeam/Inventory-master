@@ -1,0 +1,59 @@
+﻿<table id="tblTranPurchase" class="width-100-percent">
+    <thead>
+        <tr class="row voucher-table-header">
+            <td class="col-md-4 col-lg-4">@Resource.Product</td>
+            <td class="col-md-2 col-lg-2">@Resource.Qty</td>
+            <td class="col-md-2 col-lg-2">@Resource.Price</td>
+            <td class="col-md-2 col-lg-2">@Resource.Dis</td>
+            <td class="col-md-2 col-lg-2 aligh-right">@Resource.Amount</td>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<table class="width-100-percent">
+    <tr class="voucher-divider">
+        <td><label class="voucher-sub-footer">@Resource.Subtotal@Resource.ColonSign</label></td>
+        <td class="aligh-right"><label id="lblSubtotal" class="voucher-sub-footer"></label></td>
+    </tr>
+    <tr>
+        <td><label class="voucher-sub-footer">@Resource.Tax@Resource.ColonSign</label></td>
+        <td class="aligh-right"><label id="lblTaxValue" class="voucher-sub-footer"></label></td>
+    </tr>
+    <tr>
+        <td><label class="voucher-sub-footer">@Resource.Charges@Resource.ColonSign</label></td>
+        <td class="aligh-right"><label id="lblChargesValue" class="voucher-sub-footer"></label></td>
+    </tr>
+    <tr>
+        <td><label class="voucher-sub-footer">@Resource.Total@Resource.ColonSign</label></td>
+        <td class="aligh-right"><label id="lblTotal" class="voucher-sub-footer"></label></td>
+    </tr>
+    <tr class="voucher-divider">
+        <td><label id="lblVoucherDiscount" class="voucher-sub-footer">@Resource.VoucherDiscount@Resource.ColonSign</label></td>
+        <td class="aligh-right"><label id="lblVoucherDiscountValue" class="voucher-sub-footer"></label></td>
+    </tr>
+    <tr id="trAdvancedPay">
+        <td><label class="voucher-sub-footer">@Resource.AdvancedPay@Resource.ColonSign</label></td>
+        <td class="aligh-right"><label id="lblAdvancedPay" class="voucher-sub-footer"></label></td>
+    </tr>
+    <tr class="voucher-divider">
+        <td><label class="voucher-sub-footer">@Resource.Grandtotal@Resource.ColonSign</label></td>
+        <td class="aligh-right"><label id="lblGrandtotal" class="voucher-sub-footer"></label></td>
+    </tr>
+    <tr id="trPercent">
+        <td><label id="lblPercent" class="voucher-sub-footer">@Resource.Percent@Resource.ColonSign</label></td>
+        <td class="aligh-right"><label id="lblPercentValue" class="voucher-sub-footer"></label></td>
+    </tr>
+    <tr id="trPcntGrandtotal" class="voucher-divider">
+        <td></td>
+        <td class="aligh-right"><label id="lblPcntGrandtotal" class="voucher-sub-footer"></label></td>
+    </tr>
+    <tr id="trVoucherFOC">
+        <td><label class="voucher-sub-footer">@Resource.VoucherFOC@Resource.ColonSign</label></td>
+        <td class="aligh-right"><label id="lblVoucherFOC" class="voucher-sub-footer"></label></td>
+    </tr>
+    <tr id="trVFOCGrandtotal" class="voucher-divider">
+        <td></td>
+        <td class="aligh-right"><label id="lblVFOCGrandtotal" class="voucher-sub-footer"></label></td>
+    </tr>
+</table>

@@ -17,18 +17,49 @@ namespace Inventory.Controllers
         DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
         AppData appData = new AppData();
         PurchaseViewModel purchaseViewModel = new PurchaseViewModel();
+        AppSetting setting = new AppSetting();
+        AppSetting.Paging paging = new AppSetting.Paging();
+        TextQuery textQuery = new TextQuery();
 
         public ActionResult Purchase(int userId,int? purchaseId)
         {
             if(checkConnection())
             {
-                //int totalQuantity = 0;
-                getSupplier();
+                int totalQuantity = 0;
+                getSupplier(false);
                 getLocation();
                 getMainMenu();
                 getSubMenu(getFirstMainMenuID());
                 getProduct(getFirstSubMenuID());
-                ViewBag.UserVoucherNo = getUserVoucherNo(userId); // new Purchase
+
+                if(purchaseId!=null)    //edit mode
+                {
+                    ViewBag.IsEdit = true;
+                    MasterPurchaseViewModel data = selectMasterPurchase((int)purchaseId);
+                    List<TranPurchaseModels> lstTranPurchase = selectTranPurchaseByPurchaseID((int)purchaseId);
+                    for (int i = 0; i < lstTranPurchase.Count(); i++)
+                    {
+                        totalQuantity += lstTranPurchase[i].Quantity;
+                    }
+                    Session["TranPurchaseData"] = lstTranPurchase;
+                    ViewBag.TotalItem = lstTranPurchase.Count();
+                    ViewBag.UserVoucherNo = data.MasterPurchaseModel.UserVoucherNo;
+                    DateTime date = setting.convertStringToDate(data.MasterPurchaseModel.PurchaseDateTime);
+                    ViewBag.Date = setting.convertDateToString(date);
+                    ViewBag.VoucherID = data.MasterPurchaseModel.VoucherID;
+                    ViewBag.SupplierID = data.MasterPurchaseModel.SupplierID;
+                    ViewBag.LocationID = data.MasterPurchaseModel.LocationID;
+                    ViewBag.Subtotal = data.MasterPurchaseModel.Subtotal;
+                    ViewBag.TaxAmt = data.MasterPurchaseModel.TaxAmt;
+                    ViewBag.ChargesAmt = data.MasterPurchaseModel.ChargesAmt;
+                    ViewBag.Total = data.MasterPurchaseModel.Total;
+                    ViewBag.TotalQuantity = totalQuantity;
+                    ViewBag.PurchaseID = purchaseId;
+                }
+                else
+                {
+                    ViewBag.UserVoucherNo = getUserVoucherNo(userId); // new Purchase
+                }               
                 return View(purchaseViewModel);
             }                       
             return RedirectToAction("Login", "User");
@@ -36,7 +67,19 @@ namespace Inventory.Controllers
 
         public ActionResult ListPurchase(int userId)
         {
-            return View();
+            if(checkConnection())
+            {
+                getSupplier(true);
+                List<PurchaseViewModel.MasterPurchaseViewModel> tempList = selectMasterPurchase(userId, false);
+                PagingViewModel pagingViewModel = calcMasterPurchasePaging(tempList);
+                List<PurchaseViewModel.MasterPurchaseViewModel> lstMasterPurchase = getMasterPurchaseByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+                ViewData["LstMasterPurchase"] = lstMasterPurchase;
+                ViewBag.TotalPageNum = pagingViewModel.TotalPageNum;
+                ViewBag.CurrentPage = pagingViewModel.CurrentPage;
+                return View(purchaseViewModel);
+            }
+            return RedirectToAction("Login", "User");
+            
         }
         #region Purchase Action
         [HttpGet]
@@ -366,6 +409,180 @@ namespace Inventory.Controllers
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public JsonResult PurchcasePagingAction(int currentPage)
+        {
+            bool isRequestSuccess = true;
+            List<PurchaseViewModel.MasterPurchaseViewModel> lstMasterPurchase = new List<PurchaseViewModel.MasterPurchaseViewModel>();
+            PagingViewModel pagingViewModel = new PagingViewModel();
+
+            if (Session["MasterPurchaseData"] != null)
+            {
+                List<PurchaseViewModel.MasterPurchaseViewModel> tempList = Session["MasterPurchaseData"] as List<PurchaseViewModel.MasterPurchaseViewModel>;
+                pagingViewModel = calcMasterPurchasePaging(tempList, currentPage);
+                lstMasterPurchase = getMasterPurchaseByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+            }
+            else isRequestSuccess = false;
+
+            var jsonResult = new
+            {
+                LstMasterPurchase = lstMasterPurchase,
+                TotalPage = pagingViewModel.TotalPageNum,
+                IsRequestSuccess = isRequestSuccess
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult DeleteAction(int purchaseId)
+        {
+            bool isRequestSuccess = true;
+            int totalPageNum = 0;
+
+            if (Session["MasterPurchaseData"] != null)
+            {
+                SqlCommand cmd = new SqlCommand(textQuery.deletePurchaseQuery(purchaseId), (SqlConnection)getConnection());
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+
+                List<PurchaseViewModel.MasterPurchaseViewModel> lstMasterPurchase = Session["MasterPurchaseData"] as List<PurchaseViewModel.MasterPurchaseViewModel>;
+                int index = lstMasterPurchase.FindIndex(x => x.PurchaseID == purchaseId);
+                lstMasterPurchase.RemoveAt(index);
+
+                if (lstMasterPurchase.Count > paging.eachItemCount)
+                {
+                    totalPageNum = lstMasterPurchase.Count / paging.eachItemCount;
+                    paging.lastItemCount = lstMasterPurchase.Count % paging.eachItemCount;
+                    if (paging.lastItemCount != 0) totalPageNum += 1;
+                }
+            }
+            else isRequestSuccess = false;
+
+            var jsonResult = new
+            {
+                TotalPage = totalPageNum,
+                IsRequestSuccess = isRequestSuccess
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+        [HttpGet]
+        public JsonResult ViewAction(int purchaseId)
+        {
+            MasterPurchaseViewModel item = selectMasterPurchase(purchaseId);
+            List<TranPurchaseModels> lstTranPurchase = selectTranPurchaseByPurchaseID(purchaseId);
+            int grandTotalNotPayPercent = 0;
+
+            if (item.MasterPurchaseModel.PayPercentAmt != 0)
+                grandTotalNotPayPercent = item.MasterPurchaseModel.Total - (item.MasterPurchaseModel.VoucherDiscount + item.MasterPurchaseModel.AdvancedPay);
+
+            var jsonResult = new
+            {
+                LstTranPurchase = lstTranPurchase,
+                UserVoucherNo = item.MasterPurchaseModel.UserVoucherNo,
+                VoucherID = item.MasterPurchaseModel.VoucherID,
+                Remark = item.MasterPurchaseModel.Remark,
+                LocationName = item.LocationName,
+                Payment = item.Payment,
+                PayMethod = item.PayMethod,
+                BankPayment = item.BankPayment,
+                
+                PurchaseDateTime = item.MasterPurchaseModel.PurchaseDateTime,
+                UserName = item.UserName,
+                SupplierName = item.SupplierName,
+                Subtotal = item.MasterPurchaseModel.Subtotal,
+                TaxAmt = item.MasterPurchaseModel.TaxAmt,
+                ChargesAmt = item.MasterPurchaseModel.ChargesAmt,
+                Total = item.MasterPurchaseModel.Total,
+                VoucherDiscount = item.MasterPurchaseModel.VoucherDiscount,
+                AdvancedPay = item.MasterPurchaseModel.AdvancedPay,
+                PayPercentAmt = item.MasterPurchaseModel.PayPercentAmt,
+                Grandtotal = item.MasterPurchaseModel.Grandtotal,
+                VouDisPercent = item.MasterPurchaseModel.VouDisPercent,
+                PaymentPercent = item.MasterPurchaseModel.PaymentPercent,
+                GrandTotalNotPayPercent = grandTotalNotPayPercent,
+                IsVouFOC = item.MasterPurchaseModel.IsVouFOC
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult SearchAction(int userId, DateTime fromDate, DateTime toDate, string userVoucherNo, int supplierId)
+        {
+            List<PurchaseViewModel.MasterPurchaseViewModel> tempList = selectMasterPurchase(userId, true, fromDate, toDate, userVoucherNo, supplierId);
+            PagingViewModel pagingViewModel = calcMasterPurchasePaging(tempList);
+            List<PurchaseViewModel.MasterPurchaseViewModel> lstMasterPurchase = getMasterPurchaseByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+            var jsonResult = new
+            {
+                TotalPage = pagingViewModel.TotalPageNum,
+                CurrentPage = pagingViewModel.CurrentPage,
+                LstMasterPurchase = lstMasterPurchase
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult RefreshAction(int userId)
+        {
+            List<PurchaseViewModel.MasterPurchaseViewModel> tempList = selectMasterPurchase(userId, false);
+            PagingViewModel pagingViewModel = calcMasterPurchasePaging(tempList);
+            List<PurchaseViewModel.MasterPurchaseViewModel> lstMasterPurchase = getMasterPurchaseByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+            var jsonResult = new
+            {
+                TotalPage = pagingViewModel.TotalPageNum,
+                CurrentPage = pagingViewModel.CurrentPage,
+                LstMasterPurchase = lstMasterPurchase
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+        [HttpGet]
+        public JsonResult PaymentEditAction(int purchaseId, string date, string voucherId, int supplierId, int locationId, int taxAmt, int chargesAmt, int subtotal, int total)
+        {
+            bool isRequestSuccess = true;
+
+            if (Session["TranPurchaseData"] != null)
+            {
+                List<TranPurchaseModels> list = Session["TranPurchaseData"] as List<TranPurchaseModels>;
+                DataTable dt = new DataTable();
+                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
+                dt.Columns.Add(new DataColumn("PurchasePrice", typeof(int)));
+                dt.Columns.Add(new DataColumn("CurrencyID", typeof(int)));
+                dt.Columns.Add(new DataColumn("DiscountPercent", typeof(int)));
+                dt.Columns.Add(new DataColumn("Discount", typeof(int)));
+                dt.Columns.Add(new DataColumn("Amount", typeof(int)));
+                dt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
+                for (int i = 0; i < list.Count; i++)
+                {
+                    dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurchasePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
+                }
+
+                DateTime purchaseDateTime = DateTime.Parse(date);
+                SqlCommand cmd = new SqlCommand(Procedure.PrcUpdatePurchase, dataConnectorSQL.Connect());
+                cmd.Parameters.AddWithValue("@PurchaseID", purchaseId);
+                cmd.Parameters.AddWithValue("@PurchaseDateTime", purchaseDateTime);
+                cmd.Parameters.AddWithValue("@SupplierID", supplierId);
+                cmd.Parameters.AddWithValue("@LocationID", locationId);
+                cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
+                cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
+                cmd.Parameters.AddWithValue("@Subtotal", subtotal);
+                cmd.Parameters.AddWithValue("@Total", total);
+                cmd.Parameters.AddWithValue("@temptbl", dt);
+                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.ExecuteNonQuery();
+                dataConnectorSQL.Close();
+                clearTranPurchase();
+            }
+            else isRequestSuccess = false;
+
+            var jsonResult = new
+            {
+                IsRequestSuccess = isRequestSuccess
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
 
         #endregion
         #region methods
@@ -407,8 +624,10 @@ namespace Inventory.Controllers
             purchaseViewModel.ProductMenus.Products = appData.selectProduct(getConnection(), subMenuId);
             Session["ProductData"] = purchaseViewModel.ProductMenus.Products;
         }
-        private void getSupplier()
+        private void getSupplier(bool isIncludeDefault)
         {
+            if (isIncludeDefault) purchaseViewModel.Suppliers.Add(new SelectListItem { Text = "All Supplier", Value = "0" });
+
             List<SupplierModels.SupplierModel> list = appData.selectSupplier(getConnection());
             for(int i=0;i<list.Count;i++)
             {
@@ -463,6 +682,172 @@ namespace Inventory.Controllers
         {
             Session["TranPurchaseData"] = null;
         }
+
+        private List<PurchaseViewModel.MasterPurchaseViewModel> selectMasterPurchase(int userId, bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo, [Optional]int supplierId)
+        {
+            List<PurchaseViewModel.MasterPurchaseViewModel> tempList = new List<PurchaseViewModel.MasterPurchaseViewModel>();
+            PurchaseViewModel.MasterPurchaseViewModel item = new PurchaseViewModel.MasterPurchaseViewModel();
+
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterPurchaseList, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@UserID", userId);
+            cmd.Parameters.AddWithValue("@IsSearch", isSearch);
+            if (!isSearch)
+            {
+                cmd.Parameters.AddWithValue("@FromDate", setting.getLocalDate());
+                cmd.Parameters.AddWithValue("@ToDate", setting.getLocalDate());
+                cmd.Parameters.AddWithValue("@UserVoucherNo", "");
+                cmd.Parameters.AddWithValue("@SupplierID", 0);
+            }
+            else
+            {
+                cmd.Parameters.AddWithValue("@FromDate", fromDate);
+                cmd.Parameters.AddWithValue("@ToDate", toDate);
+                cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+                cmd.Parameters.AddWithValue("@SupplierID", supplierId);
+            }
+
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new PurchaseViewModel.MasterPurchaseViewModel();
+                item.PurchaseID = Convert.ToInt32(reader["PurchaseID"]);
+                item.PurchaseDateTime = Convert.ToString(reader["PurchaseDateTime"]);
+                item.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
+                item.SupplierName = Convert.ToString(reader["SupplierName"]);
+                item.PaymentKeyword = Convert.ToString(reader["PaymentKeyword"]);
+                item.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);
+                tempList.Add(item);
+            }
+            reader.Close();
+            Session["MasterPurchaseData"] = tempList;  // for paging
+
+            return tempList;
+        }
+        private PagingViewModel calcMasterPurchasePaging(List<PurchaseViewModel.MasterPurchaseViewModel> tempList, [Optional]int currentPage)
+        {
+            PagingViewModel item = new PagingViewModel();
+            int totalPageNum = 0;
+
+            if (currentPage == 0) currentPage = 1;
+            if (tempList.Count > paging.eachItemCount)
+            {
+                totalPageNum = tempList.Count / paging.eachItemCount;
+                paging.lastItemCount = tempList.Count % paging.eachItemCount;
+                if (paging.lastItemCount != 0) totalPageNum += 1;
+
+                int i = currentPage * paging.eachItemCount;
+                int j = (i - paging.eachItemCount) + 1;
+                int start = j;
+                int end = i;
+                paging.startItemIndex = start - 1;
+                paging.endItemIndex = end - 1;
+            }
+            else
+            {
+                paging.startItemIndex = 0;
+                paging.endItemIndex = tempList.Count - 1;
+            }
+
+            item.CurrentPage = currentPage;
+            item.TotalPageNum = totalPageNum;
+            item.StartItemIndex = paging.startItemIndex;
+            item.EndItemIndex = paging.endItemIndex;
+
+            return item;
+        }
+        private List<PurchaseViewModel.MasterPurchaseViewModel> getMasterPurchaseByPaging(List<PurchaseViewModel.MasterPurchaseViewModel> tempList, int startRowIndex, int endRowIndex)
+        {
+            List<PurchaseViewModel.MasterPurchaseViewModel> list = new List<PurchaseViewModel.MasterPurchaseViewModel>();
+            PurchaseViewModel.MasterPurchaseViewModel item = new PurchaseViewModel.MasterPurchaseViewModel();
+
+            for (int page = startRowIndex; page < tempList.Count; page++)
+            {
+                if (page > endRowIndex) break;
+
+                item = new PurchaseViewModel.MasterPurchaseViewModel();
+                item.PurchaseID = tempList[page].PurchaseID;
+                item.PurchaseDateTime = tempList[page].PurchaseDateTime;
+                item.UserVoucherNo = tempList[page].UserVoucherNo;
+                item.SupplierName = tempList[page].SupplierName;
+                item.PaymentKeyword = tempList[page].PaymentKeyword;
+                item.Grandtotal = tempList[page].Grandtotal;
+                list.Add(item);
+            }
+            return list;
+        }
+        private MasterPurchaseViewModel selectMasterPurchase(int purchaseId)
+        {
+            MasterPurchaseViewModel item = new MasterPurchaseViewModel();
+
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterPurchaseByPurchaseID, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@PurchaseID", purchaseId);
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                item.MasterPurchaseModel.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
+                item.MasterPurchaseModel.VoucherID = Convert.ToString(reader["VoucherID"]);
+                item.MasterPurchaseModel.Remark = Convert.ToString(reader["Remark"]);
+                item.LocationName = Convert.ToString(reader["LocationName"]);
+                item.Payment = Convert.ToString(reader["Payment"]);
+                item.PayMethod = Convert.ToString(reader["PayMethod"]);
+                item.BankPayment = Convert.ToString(reader["BankPayment"]);
+                
+                item.MasterPurchaseModel.PurchaseDateTime = Convert.ToString(reader["Date"]);
+                item.UserName = Convert.ToString(reader["UserName"]);
+                item.SupplierName = Convert.ToString(reader["SupplierName"]);
+                
+                item.MasterPurchaseModel.Subtotal = Convert.ToInt32(reader["Subtotal"]);
+                item.MasterPurchaseModel.TaxAmt = Convert.ToInt32(reader["TaxAmt"]);
+                item.MasterPurchaseModel.ChargesAmt = Convert.ToInt32(reader["ChargesAmt"]);
+                item.MasterPurchaseModel.Total = Convert.ToInt32(reader["Total"]);
+                item.MasterPurchaseModel.VoucherDiscount = Convert.ToInt32(reader["VoucherDiscount"]);
+                item.MasterPurchaseModel.AdvancedPay = Convert.ToInt32(reader["AdvancedPay"]);
+                item.MasterPurchaseModel.PayPercentAmt = Convert.ToInt32(reader["PayPercentAmt"]);
+                item.MasterPurchaseModel.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);
+                item.MasterPurchaseModel.VouDisPercent = Convert.ToInt32(reader["VouDisPercent"]);
+                item.MasterPurchaseModel.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
+                item.MasterPurchaseModel.LocationID = Convert.ToInt32(reader["LocationID"]);
+                item.MasterPurchaseModel.SupplierID = Convert.ToInt32(reader["SupplierID"]);
+                item.MasterPurchaseModel.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
+            }
+            reader.Close();
+
+            return item;
+        }
+        private List<TranPurchaseModels> selectTranPurchaseByPurchaseID(int purchaseId)
+        {
+            List<TranPurchaseModels> list = new List<TranPurchaseModels>();
+            TranPurchaseModels item = new TranPurchaseModels();
+
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetTranPurchaseByPurchaseID, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@PurchaseID", purchaseId);
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new TranPurchaseModels();
+                item.ProductName = Convert.ToString(reader["ProductName"]);
+                item.Quantity = Convert.ToInt32(reader["Quantity"]);
+                item.PurchasePrice = Convert.ToInt32(reader["PurPrice"]);
+                item.Discount = Convert.ToInt32(reader["Discount"]);
+                item.Amount = Convert.ToInt32(reader["Amount"]);
+                item.UnitKeyword = Convert.ToString(reader["UnitKeyword"]);
+                item.CurrencyKeyword = Convert.ToString(reader["CurrencyKeyword"]);
+                item.ProductID = Convert.ToInt32(reader["ProductID"]);
+                item.UnitID = Convert.ToInt32(reader["UnitID"]);
+                item.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
+                item.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
+                item.ProductCode = Convert.ToString(reader["Code"]);
+                item.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
+                list.Add(item);
+            }
+            reader.Close();
+
+            return list;
+        }
+
         #endregion
     }
 }
