@@ -12,6 +12,7 @@ namespace Inventory.ViewModels
         {
             this.MasterPurchaseOrderModel = new MasterPurchaseOrderModels();
         }
+
         public MasterPurchaseOrderModels MasterPurchaseOrderModel { get; set; }
         public string UserName { get; set; }
         public string SupplierName { get; set; }
