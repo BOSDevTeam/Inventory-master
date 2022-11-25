@@ -78,7 +78,7 @@
                             <a href="~/Home/Dashboard"><i class="fa fa-dashboard"></i> <span>@Resource.Dashboard</span></a>
                         </li>       
                         <li class="submenu">
-                            <a href=""><i class="fa fa-dollar"></i> <span> @Resource.Sale </span> <span class="menu-arrow"></span></a>
+                            <a href=""><i class="fa fa-fax"></i> <span> @Resource.Sale </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuSaleGp">
                                 <li id="subMenuSale"><a href="#">@Resource.POS</a></li>
                                 <li id="subMenuOpenBill"><a href="#">@Resource.OpenedBills</a></li>
@@ -88,12 +88,18 @@
                             </ul>
                         </li>  
                         <li class="submenu">
-                            <a href=""><i class="fa fa-dollar"></i> <span> @Resource.Purchase </span> <span class="menu-arrow"></span></a>
+                            <a href=""><i class="fa fa-plus"></i> <span> @Resource.Purchase </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuPurchaseGp">
                                 <li id="subMenuPurchase"><a href="#">@Resource.Purchase</a></li>   
                                 <li id="subMenuPurchaseOrder"><a href="#">@Resource.PurchaseOrder</a></li>                            
                             </ul>
-                        </li>             
+                        </li>  
+                        <li id="menuAdjustment">
+                            <a href="#"><i class="fa fa-adjust"></i> <span>@Resource.Adjustment</span></a>
+                        </li> 
+                        <li id="menuOpeningStock">
+                            <a href="#"><i class="fa fa-cubes"></i> <span>@Resource.OpeningStock</span></a>
+                        </li>            
                         <li>
                             <a href="~/CompanySetting/CompanySettingEntry"><i class="fa fa-cog"></i> <span>@Resource.Settings</span></a>
                         </li>                                            
@@ -158,6 +164,12 @@
             });
             $('#subMenuPurchaseOrder').click(function () {
                 window.location.href = '@Url.Action("ListPurchaseOrder", "PurchaseOrder")?userId=' + userId;
+            });
+            $('#menuAdjustment').click(function () {
+                window.location.href = '@Url.Action("ListAdjustment", "Adjustment")?userId=' + userId;
+            });
+            $('#menuOpeningStock').click(function () {
+                window.location.href = '@Url.Action("ListOpeningStock", "OpeningStock")?userId=' + userId;
             });
             $('.toast').toast({
                 delay: 3000

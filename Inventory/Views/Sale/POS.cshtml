@@ -530,7 +530,7 @@
                         $("#inputHdnPayTotal").val(hdnTotal);
                         $("#inputHdnPayGrandtotal").val(hdnTotal);
                         $('#modalPayment').modal('show');
-                        initializePaymentControl();
+                        initializePaymentControl(true);
                     }
                 },
                 failure: function (response) {

@@ -17,6 +17,7 @@ namespace Inventory.Common
         public const string payMethodQuery = "Select PayMethodID,PayMethodName From SysPayMethod";
         public const string limitedDayQuery = "Select LimitedDayID,LimitedDayName From SysLimitedDay";
         public const string bankPaymentQuery = "Select BankPaymentID,BankPaymentName From SBankPayment";
+        public const string adjustTypeQuery = "Select AdjustTypeID,ShortName From SAdjustType";
 
         public string getSubMenuQuery(int mainMenuId)
         {

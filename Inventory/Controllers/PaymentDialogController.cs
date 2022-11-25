@@ -29,7 +29,8 @@ namespace Inventory.Controllers
                 if (isBankPayment) lstPayMethod = getPayMethod();
             }else if(moduleCode == AppConstants.PurchaseModule && Session["TranPurchaseData"] != null)
             {
-
+                lstPayment = getPayment();
+                if (isBankPayment) lstPayMethod = getPayMethod();
             }
             else isRequestSuccess = false;
 

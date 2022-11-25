@@ -102,11 +102,11 @@
                                 <td></td>
                                 <td class="value-right"><div class="note"><input id="inputHdnPcntGrandtotal" type="hidden" /><label id="lblPcntGrandtotal" class="total-amount-value mb-0">0</label></div></td>
                             </tr>
-                            <tr>
+                            <tr id="trPaid">
                                 <td><label class="control-label mb-0">@Resource.Paid@Resource.ColonSign</label></td>
                                 <td class="value-right"><input id="inputPaid" type="text" class="form-control control-input numberonly" style="text-align:right;"/></td>
                             </tr>
-                            <tr>
+                            <tr id="trReturnChange">
                                 <td><label class="control-label mb-0">@Resource.ReturnChange@Resource.ColonSign</label></td>
                                 <td class="value-right"><div class="note"><label id="lblReturnChange" class="control-input mb-0">0</label></div></td>
                             </tr>
@@ -124,7 +124,10 @@
 
 <script type="text/javascript">
 
-    function initializePaymentControl() {
+    var isDisplayLimitedDay;
+
+    function initializePaymentControl(isDisplayLimitedDay) {
+        this.isDisplayLimitedDay = isDisplayLimitedDay;
         showHideByPayment(1);
         showHideByPayMethod(1);
         $("#inputHdnVouDisType").val('');
@@ -138,30 +141,32 @@
         showHideVoucherFOC(value, payMethodVal);
         if (value == 1) {  //cash
             $("#trLimitedDay").css('display', 'none');
-            $(".trAdvancedPay").css('display', 'none');           
-        } else if (value == 2) {  //credit           
-            showLoadingIcon();
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("GetLimitedDayAction", "PaymentDialog")',
-                data: {},
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    hideLoadingIcon();
-                    createLimitedDayData(response);
-                    $("#trLimitedDay").show();
-                    $(".trAdvancedPay").show();
-                },
-                failure: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                }
-            });
+            $(".trAdvancedPay").css('display', 'none');
+        } else if (value == 2) {  //credit  
+            $(".trAdvancedPay").show();
+            if (isDisplayLimitedDay == true) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetLimitedDayAction", "PaymentDialog")',
+                    data: {},
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        createLimitedDayData(response);
+                        $("#trLimitedDay").show();
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
         }
     }
 

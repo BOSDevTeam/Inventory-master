@@ -300,4 +300,22 @@
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="PurchaseList" xml:space="preserve">
+    <value>Purchase List</value>
+  </data>
+  <data name="PurchaseOrderList" xml:space="preserve">
+    <value>Purchase Order List</value>
+  </data>
+  <data name="SaleOrderList" xml:space="preserve">
+    <value>Sale Order List</value>
+  </data>
+  <data name="Adjustment" xml:space="preserve">
+    <value>Adjustment</value>
+  </data>
+  <data name="AdjustmentList" xml:space="preserve">
+    <value>Adjustment List</value>
+  </data>
+  <data name="OpeningStock" xml:space="preserve">
+    <value>Opening Stock</value>
+  </data>
 </root>

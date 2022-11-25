@@ -11,8 +11,8 @@ namespace Inventory.Controllers
     public class AdjustTypeController : MyController
     {
         InventoryDBEntities Entities = new InventoryDBEntities();
-        AdjustTypeModels.AdjustTypeModel model = new AdjustTypeModels.AdjustTypeModel();
-        static List<AdjustTypeModels.AdjustTypeModel> lstAdjustTypeList = new List<AdjustTypeModels.AdjustTypeModel>();
+        AdjustTypeModels model = new AdjustTypeModels();
+        static List<AdjustTypeModels> lstAdjustTypeList = new List<AdjustTypeModels>();
         static int editAdjustTypeID;
 
         public ActionResult AdjustTypeEntry(int adjustTypeId)
@@ -40,13 +40,13 @@ namespace Inventory.Controllers
 
         public ActionResult AdjustTypeList()
         {
-            AdjustTypeModels.AdjustTypeModel adjustTypeModel = new AdjustTypeModels.AdjustTypeModel();
-            model.LstAdjustType = new List<AdjustTypeModels.AdjustTypeModel>();
-            lstAdjustTypeList = new List<AdjustTypeModels.AdjustTypeModel>();
+            AdjustTypeModels adjustTypeModel = new AdjustTypeModels();
+            model.LstAdjustType = new List<AdjustTypeModels>();
+            lstAdjustTypeList = new List<AdjustTypeModels>();
 
             foreach (var adjust in Entities.SAdjustTypes)
             {
-                adjustTypeModel = new AdjustTypeModels.AdjustTypeModel();
+                adjustTypeModel = new AdjustTypeModels();
                 adjustTypeModel.AdjustTypeID = adjust.AdjustTypeID;
                 adjustTypeModel.AdjustTypeName = adjust.AdjustTypeName;
                 adjustTypeModel.ShortName = adjust.ShortName;
@@ -78,13 +78,13 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult SearchAction(string keyword)
         {
-            AdjustTypeModels.AdjustTypeModel adjustTypeModel = new AdjustTypeModels.AdjustTypeModel();
-            model.LstAdjustType = new List<AdjustTypeModels.AdjustTypeModel>();
-            lstAdjustTypeList = new List<AdjustTypeModels.AdjustTypeModel>();
+            AdjustTypeModels adjustTypeModel = new AdjustTypeModels();
+            model.LstAdjustType = new List<AdjustTypeModels>();
+            lstAdjustTypeList = new List<AdjustTypeModels>();
 
             foreach (var adjust in Entities.PrcSearchAdjustType(keyword))
             {
-                adjustTypeModel = new AdjustTypeModels.AdjustTypeModel();
+                adjustTypeModel = new AdjustTypeModels();
                 adjustTypeModel.AdjustTypeID = adjust.AdjustTypeID;
                 adjustTypeModel.AdjustTypeName = adjust.AdjustTypeName;
                 adjustTypeModel.ShortName = adjust.ShortName;

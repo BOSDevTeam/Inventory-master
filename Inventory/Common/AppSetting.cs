@@ -19,14 +19,18 @@ namespace Inventory.Common
         public DateTime convertStringToDate(string date)  // input dd/MM/yyyy
         {
             // change input to MM/dd/yyyy        
-            string[] arr = date.Split('/');
-            string day = arr[0];
-            string month = arr[1];
-            string year = arr[2];
-            date = month + "/" + day + "/" + year;
+            //string[] arr = date.Split('/');
+            //string day = arr[0];
+            //string month = arr[1];
+            //string year = arr[2];
+            //date = month + "/" + day + "/" + year;
 
             // parse string to datetime format
-            DateTime dateTime = DateTime.Parse(date);
+            //DateTime dateTime = DateTime.Parse(date);
+            //DateTime dateOnly = dateTime.Date;
+
+            string inputDate = @date;
+            DateTime dateTime = DateTime.ParseExact(inputDate, @"dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
             DateTime dateOnly = dateTime.Date;
 
             return dateOnly;

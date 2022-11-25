@@ -366,5 +366,25 @@ namespace Inventory.Common
 
             return item;
         }
+
+        public List<AdjustTypeModels> selectAdjustType(object connection)
+        {
+            List<AdjustTypeModels> list = new List<AdjustTypeModels>();
+            AdjustTypeModels item;
+
+            SqlCommand cmd = new SqlCommand(TextQuery.adjustTypeQuery, (SqlConnection)connection);
+            cmd.CommandType = CommandType.Text;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new AdjustTypeModels();
+                item.AdjustTypeID = Convert.ToInt32(reader["AdjustTypeID"]);
+                item.ShortName = Convert.ToString(reader["ShortName"]);
+                list.Add(item);
+            }
+            reader.Close();
+
+            return list;
+        }
     }
 }
