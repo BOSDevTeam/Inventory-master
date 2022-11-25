@@ -1,0 +1,73 @@
+﻿<div class="modal fade" id="modalPurOrderDetail" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:700px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="width-100-percent light-background">
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Voucher No.</label></td>
+                        <td class="aligh-right padding-5"><label id="lblUserVoucherNo" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">VoucherID</label></td>
+                        <td class="aligh-right padding-5"><label id="lblVoucherID" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Location</label></td>
+                        <td class="aligh-right padding-5"><label id="lblLocation" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">Date Time</label></td>
+                        <td class="aligh-right padding-5"><label id="lblPurDateTime" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Supplier Name</label></td>
+                        <td class="aligh-right padding-5"><label id="lblSupplierName" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">User Name</label></td>
+                        <td class="aligh-right padding-5"><label id="lblUserName" class="control-input mb-0"></label></td>
+                    </tr>
+                </table>
+
+                @{
+                    Html.RenderPartial("_PurOrderDetailChild");
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function createTranPurOrderDetail(response) {
+        $('#tblTranPurOrder').find("tbody").empty();
+        $.each(response.LstTranPurchaseOrder, function (index, item) {
+            let row = '<tr class="row voucher-table-item">'
+            if (item.IsFOC == true) row += '<td class="col-md-5 col-lg-5 text-overflow">' + item.ProductName + '(FOC)' + '</td>'
+            else row += '<td class="col-md-5 col-lg-5 text-overflow">' + item.ProductName + '</td>'
+            row += '<td class="col-md-3 col-lg-3">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
+               + '<td class="col-md-2 col-lg-2">' + separatedComma(item.PurPrice) + '<span class="control-span-sm">' + item.CurrencyKeyword + '</span></td>'
+               + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Amount) + '</td>'
+               + "</tr>";
+            $('#tblTranPurOrder tbody').append(row);
+        });
+    }
+
+    function createMasterPurOrderDetail(response) {
+        $('#lblUserVoucherNo').text(response.UserVoucherNo);
+        $('#lblLocation').text(response.LocationName);
+        if (response.VoucherID.length != 0) $('#lblVoucherID').text(response.VoucherID);
+        else $('#lblVoucherID').text('-');
+        $('#lblPurDateTime').text(response.PurOrderDateTime);
+        $('#lblSupplierName').text(response.SupplierName);
+        $('#lblUserName').text(response.User);
+        $('#lblSubtotal').text(separatedComma(response.Subtotal));
+        $('#lblTaxValue').text(separatedComma(response.TaxAmt));
+        $('#lblChargesValue').text(separatedComma(response.ChargesAmt));
+        $('#lblTotal').text(separatedComma(response.Total));
+    }
+
+</script>
+
+
+

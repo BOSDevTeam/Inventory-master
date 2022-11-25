@@ -58,5 +58,10 @@ namespace Inventory.Common
         public const string PrcGetMasterSaleOrderBySaleOrderID = "PrcGetMasterSaleOrderBySaleOrderID";
         public const string PrcGetTranSaleOrderBySaleOrderID = "PrcGetTranSaleOrderBySaleOrderID";
         public const string PrcUpdateSaleOrder = "PrcUpdateSaleOrder";
+        public const string PrcInsertPurchaseOrder = "PrcInsertPurchaseOrder";
+        public const string PrcGetMasterPurchaseOrderList = "PrcGetMasterPurchaseOrderList";
+        public const string PrcGetMasterPurOrderByPurOrderID = "PrcGetMasterPurOrderByPurOrderID";
+        public const string PrcGetTranPurOrderByPurOrderID = "PrcGetTranPurOrderByPurOrderID";
+        public const string PrcUpdatePurchaseOrder = "PrcUpdatePurchaseOrder";
     }
 }

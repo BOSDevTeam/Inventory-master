@@ -14,11 +14,303 @@
             display: block;
         }
     </style>
-    <script type="text/javascript">
+</head>
 
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">Purchase Order List</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right" onclick="addAction('1')">ADD</button>
+        </div>
+    </div>
+
+    <div class="row setup-title-layout search-div">
+        <table class="width-100-percent">
+            <tr>
+                <td class="control-label" style="text-align:center;">From Date</td>
+                <td><input id="inputFromDate" type="date" class="form-control control-input" /></td>
+                <td class="control-label" style="text-align:center;">To Date</td>
+                <td><input id="inputToDate" type="date" class="form-control control-input" /></td>
+                <td><input id="inputUserVoucherNo" type="text" class="form-control control-input" placeholder="Voucher No." /></td>
+                <td>@Html.DropDownList("Supplier", Model.Suppliers, new { @id = "ddlSupplier", @class = "form-control control-input" })</td>
+                <td>
+                    <div class="btn-group" style="float:right">
+                        <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                        <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblPurOrderList" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-2 col-lg-2">Date</th>
+                        <th class="col-md-3 col-lg-3">Voucher No.</th>
+                        <th class="col-md-3 col-lg-3">Supplier</th>
+                        <th class="col-md-2 col-lg-2">Total</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="divPaging" class="row paging">
+        <div class="col-md-1 col-lg-1"><label id="lblPageNumber" class="page-num"></label></div>
+        <div id="divPagingItem" class="col-md-11 col-lg-11 paging-item"></div>
+    </div>
+
+</div>
+
+<div>
+    @{ 
+        Html.RenderPartial("_PurOrderDetailDialog");
+    }
+</div>
+<div>
+    @{
+        Html.RenderPartial("_ConfirmDialog");
+     }
+</div>
+
+<script type="text/javascript">
     document.getElementById('subMenuPurchaseOrder').className = 'active';
 
-    </script>
-</head>
+    let selectedRowIndex;
+    $(document).ready(function () {
+        initializeControl();
+        createMasterPurOrderData('', false);
+        createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');
+
+        function initializeControl() {
+            $('#inputFromDate').val(getTodayDate());
+            $('#inputToDate').val(getTodayDate);
+            $('#inputUserVoucherNo').val('');
+            $('#ddlSupplier').val(0);
+        }
+
+        $('#btnSearch').on("click", function () {
+            let fromDate = $('#inputFromDate').val();
+            let toDate = $('#inputToDate').val();
+            let userVoucherNo = $('#inputUserVoucherNo').val();
+            let supplierId = $('#ddlSupplier option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SearchAction", "PurchaseOrder")',
+                data: { "userId": userId, "fromDate": fromDate, "toDate": toDate, "userVoucherNo": userVoucherNo, "supplierId": supplierId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterPurOrderData(response.LstMasterPurOrder, true);
+                    createPaging(response.TotalPage, response.CurrentPage);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+
+            });
+        })
+
+        $('#btnRefresh').click(function () {
+            clearControl();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("RefreshAction", "PurchaseOrder")',
+                data: { "userId": userId },
+                contentType: "applicaton/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterPurOrderData(response.LstMasterPurOrder, true);
+                    createPaging(response.TotalPage, response.CurrentPage);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+            });
+        });
+
+        $(document).on("click", ".btnPage", function () {
+            let currentPage = $(this).text();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("PurOrderPagingAction", "PurchaseOrder")',
+                data: { "currentPage": currentPage },
+                contentType: "application/json, charset=utf-8",
+                dataType: "Json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess) {
+                        redirectToLogin();
+                    }
+                    else {
+                        createMasterPurOrderData(response.LstMasterPurOrder, true);
+                        createPaging(response.TotalPage, currentPage);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+            });
+        });
+
+        function clearControl() {
+            $('#inputFromDate').val(getTodayDate());
+            $('#inputToDate').val(getTodayDate());
+            $('#inputUserVoucherNo').val('');
+            $("#ddlSupplier").val('0');
+        }
+
+        function createMasterPurOrderData(response, isFromJson) {
+            $("#tblPurOrderList").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterPurOrder"]))');
+            $.each(response, function (index, item) {
+                var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
+                          + '<td class="col-md-2 col-lg-2 text-overflow">' + item.OrderDateTime + '</td>'
+                          + '<td class="col-md-3 col-lg-3">' + item.UserVoucherNo + '</td>'
+                          + '<td class="col-md-3 col-lg-3 text-overflow">' + item.SupplierName + '</td>'
+                          + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Total) + '</td>'
+                          + '<td class="col-md-2 col-lg-2 btn-group">'
+                              + '<button title="View" class="btn btn-sm btn-dark" onclick="listTableAction(1)"><i class="fa fa-list"></i></button>'
+                              + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
+                              + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
+                          + '</td>'
+                          + '<td style="display:none">' + item.PurchaseOrderID + '</td>'
+                      + '</tr>'
+                $('#tblPurOrderList tbody').append(row);
+            })
+        }
+
+        $('#tblPurOrderList').on("click", "tbody tr", function (event) {
+            $(this).find("td:last").each(function () {
+                let purOrderId = $(this).text();
+                if (listActionValue == 1) {
+                    clearTableAction();
+                    viewDetail(purOrderId);
+                }
+                else if (listActionValue == 2) {
+                    clearTableAction();
+                    window.location.href = '@Url.Action("PurchaseOrder", "PurchaseOrder")?userId=' + userId + '&purOrderId=' + purOrderId;
+                }
+                else if (listActionValue == 3) {
+                    clearTableAction();
+                    $('#modalConfirm').modal('show');
+                    $('#btnDelOk').val(purOrderId);
+                }
+            });
+        });
+
+        function viewDetail(purOrderId) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("ViewAction", "PurchaseOrder")',
+                data: { "purOrderId": purOrderId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterPurOrderDetail(response);
+                    createTranPurOrderDetail(response);
+                    $('#modalPurOrderDetail').modal('show');
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+
+            });
+        }
+
+        $('#btnDelOk').click(function () {
+            let purOrderId = $('#btnDelOk').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url:'@Url.Action("DeleteAction", "PurchaseOrder")',
+                data: { "purOrderId": purOrderId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess) {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (selectedRowIndex != null) {
+                            document.getElementById("tblPurOrderList").deleteRow(selectedRowIndex);
+                            showToast(1, 'Deleted Successfully!');
+                        }
+
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+            });
+
+        })
+
+    }) // jquery
+
+    function listTableAction(value) {
+        listActionValue = value;
+    }
+
+    function clearTableAction(value) {
+        listActionValue = 0;
+    }
+
+    function findRowIndex(x) {
+        selectedRowIndex = x.rowIndex;
+    }
+
+    function addAction(value) {
+        addActionValue = value;
+    }
+
+    $('#btnAdd').click(function () {
+        if (addActionValue == 1) {
+            window.location.href = '@Url.Action("PurchaseOrder", "PurchaseOrder")?userId=' + userId;
+        }
+    });
+
+</script>
+
 
 
