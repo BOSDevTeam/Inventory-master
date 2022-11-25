@@ -163,6 +163,7 @@
     <Compile Include="Common\Procedure.cs" />
     <Compile Include="Common\AppSetting.cs" />
     <Compile Include="Common\TextQuery.cs" />
+    <Compile Include="Controllers\AdjustmentController.cs" />
     <Compile Include="Controllers\AdjustTypeController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\PaymentDialogController.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="Models\LocationModels.cs" />
     <Compile Include="Models\MainMenuModels.cs" />
     <Compile Include="Models\CLMasterSaleOrderModels.cs" />
+    <Compile Include="Models\MasterAdjustmentModels.cs" />
     <Compile Include="Models\MasterPurchaseModels.cs" />
     <Compile Include="Models\MasterPurchaseOrderModels.cs" />
     <Compile Include="Models\MasterSaleModels.cs" />
@@ -233,6 +235,7 @@
     <Compile Include="Models\SupplierModels.cs" />
     <Compile Include="Models\TechnicianSettingModels.cs" />
     <Compile Include="Models\TownshipModels.cs" />
+    <Compile Include="Models\TranAdjustmentModels.cs" />
     <Compile Include="Models\TranPurchaseModels.cs" />
     <Compile Include="Models\TranPurchaseOrderModels.cs" />
     <Compile Include="Models\TranSaleModels.cs" />
@@ -404,7 +407,7 @@
     <Compile Include="TCLTranSaleOrder.cs">
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\MasterPurOrderViewModel.cs" />
+    <Compile Include="ViewModels\AdjustmentViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleOrderViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleVoucherViewModel.cs" />
     <Compile Include="ViewModels\PagingViewModel.cs" />
@@ -584,8 +587,8 @@
     <Content Include="Views\PurchaseOrder\ListPurchaseOrder.cshtml" />
     <Content Include="Views\SaleOrder\_SaleOrderDetailChild.cshtml" />
     <Content Include="Views\SaleOrder\_SaleOrderDetailDialog.cshtml" />
-    <Content Include="Views\PurchaseOrder\_PurOrderDetailChild.cshtml" />
-    <Content Include="Views\PurchaseOrder\_PurOrderDetailDialog.cshtml" />
+    <Content Include="Views\Adjustment\Adjustment.cshtml" />
+    <Content Include="Views\Adjustment\ListAdjustment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

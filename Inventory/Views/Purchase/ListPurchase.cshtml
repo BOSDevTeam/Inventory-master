@@ -21,5 +21,26 @@
     document.getElementById('subMenuPurchase').className = 'active';
 
 </script>
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">@Resource.PurchaseList</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right">ADD</button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var userId = 0, userName;
+    userId = localStorage.getItem("UserID");
+    userName = localStorage.getItem("UserName");
+    $(function () {
+        $('#btnAdd').click(function () {
+            window.location.href = '@Url.Action("Purchase", "Purchase")?userId=' + userId;
+        });
+    })
+</script>
 
 

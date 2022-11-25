@@ -70,6 +70,24 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Adjustment.
+        /// </summary>
+        public static string Adjustment {
+            get {
+                return ResourceManager.GetString("Adjustment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjustment List.
+        /// </summary>
+        public static string AdjustmentList {
+            get {
+                return ResourceManager.GetString("AdjustmentList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Advanced Pay.
         /// </summary>
         public static string AdvancedPay {
@@ -304,6 +322,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Opening Stock.
+        /// </summary>
+        public static string OpeningStock {
+            get {
+                return ResourceManager.GetString("OpeningStock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (.
         /// </summary>
         public static string OpenParenthesis {
@@ -421,11 +448,29 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Purchase List.
+        /// </summary>
+        public static string PurchaseList {
+            get {
+                return ResourceManager.GetString("PurchaseList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Purchase Order.
         /// </summary>
         public static string PurchaseOrder {
             get {
                 return ResourceManager.GetString("PurchaseOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Purchase Order List.
+        /// </summary>
+        public static string PurchaseOrderList {
+            get {
+                return ResourceManager.GetString("PurchaseOrderList", resourceCulture);
             }
         }
         
@@ -489,6 +534,15 @@ namespace Inventory {
         public static string SaleOrder {
             get {
                 return ResourceManager.GetString("SaleOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sale Order List.
+        /// </summary>
+        public static string SaleOrderList {
+            get {
+                return ResourceManager.GetString("SaleOrderList", resourceCulture);
             }
         }
         
