@@ -26,8 +26,10 @@ namespace Inventory.Models
         public string ShopName { get; set; }
         public string Phone { get; set; }
         public int DivisionID { get; set; }
+        public int VDivisionID { get; set; }
         public string DivisionName { get; set; }
         public int TownshipID { get; set; }
+        public int VTownshipID { get; set; }
         public string TownshipName { get; set; }
         public string Address { get; set; }
         public bool? IsSalePerson { get; set; }

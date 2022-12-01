@@ -20,6 +20,10 @@
             width: 20%;
         }
 
+        .mt {
+            margin-top:10px;
+        }
+
         divC {
             display: inline-block;
             position: relative;
@@ -58,9 +62,9 @@
                 @Html.DropDownListFor(m => m.DivisionID, Model.Divisions, new { @class = "form-control control-input mr-10" })
                 @Html.DropDownListFor(m => m.TownshipID, Model.Townships, new { @class = "form-control control-input mr-10" })
                 <select name="client" id="Client" class="form-control control-input">
-                    <option value="0">Client Type</option>
+                    <option>Client Type</option>
                     <option value="1">Sale Person</option>
-                    <option value="2">Work In Client</option>
+                    <option value="0">Walk In Client</option>
                 </select>
                 <button id="btnSearch" class="btn btn-first setup-btn-search" style="margin-left:10px" title="Search"><i class="fa fa-search"></i></button>
                 <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
@@ -72,33 +76,36 @@
             <table id="tblClient" class="col-md-12 col-lg-12" rold="grid">
                 <thead>
                     <tr class="row table-header">
-                        <th class="col-md-2 col-lg-2">Client Name</th>
-                        <th class="col-md-2 col-lg-2">Shop Name</th>
-                        <th class="col-md-2 col-lg-2">Phone</th>
+                        <th class="col-md-3 col-lg-3">Client Name</th>
+                        @*<th class="col-md-2 col-lg-2">Shop Name</th>*@
+                        <th class="col-md-3 col-lg-3">Phone</th>
                         <th class="col-md-2 col-lg-2">Division Name</th>
                         <th class="col-md-2 col-lg-2">Township Name</th>
-                        <th class="col-md-1 col-lg-1">Address</th>
-                        <th class="col-md-1 col-lg-1"></th>
+                        <th class="col-md-2 col-lg-2">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     @for (int i = 0; i < Model.LstClient.Count(); i++)
                     {
                         <tr class="row table-item">
-                            <td class="col-md-2 col-lg-2">@Model.LstClient[i].ClientName</td>
-                            <td class="col-md-2 col-lg-2">@Model.LstClient[i].ShopName</td>
-                            <td class="col-md-2 col-lg-2"><divC>@Model.LstClient[i].Phone</divC></td>
+                            <td class="col-md-3 col-lg-3">@Model.LstClient[i].ClientName</td>
+                            @*<td class="col-md-2 col-lg-2">@Model.LstClient[i].ShopName</td>*@
+                            <td class="col-md-3 col-lg-3"><divC>@Model.LstClient[i].Phone</divC></td>
                             <td class="col-md-2 col-lg-2">@Model.LstClient[i].DivisionName</td>
                             <td class="col-md-2 col-lg-2">@Model.LstClient[i].TownshipName</td>
-                            <td class="col-md-1 col-lg-1"><divC>@Model.LstClient[i].Address</divC></td>
-                           @if (Model.LstClient[i].IsSalePerson != true)
+                            <td class="col-md-2 col-lg-2">
+                                <button id="btnView" class="btn btn-sm btn-dark btn-list-action" onclick="action('1')">View</button>
+                                <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('2')">Delete</button>
+                            </td>
+                            @*<td class="col-md-1 col-lg-1"><divC>@Model.LstClient[i].Address</divC></td>*@
+                           @*@if (Model.LstClient[i].IsSalePerson != true)
                            {
                             <td class="col-md-1 col-lg-1"></td>
                            }
                            else
                            {
                             <td class="col-md-1 col-lg-1"><divC>Sale Person</divC></td>
-                           }
+                           }*@
 
                             <td style="display:none">@Model.LstClient[i].ClientID</td>
                         </tr>
@@ -107,10 +114,87 @@
             </table>
         </div>
     </div>
+
+</div>
+
+<div class="modal fade bd-example-modal-centered" id="modalView" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle"><b>Client Detail</b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="reload">&times;</span>
+                </button>
+            </div>
+
+            <div id="divAlertSuccess" class="alert alert-success alert-dismissible fade show" style="display:none;">
+                <h4 class="alert-heading">Success!</h4><span id="spnAlertMessage"></span>
+            </div>
+
+            <div class="modal-body">
+                <div class="row" style="margin-top:-10px">
+                    <div class="col-md-4 col-lg-4" id="lblSalePerson">
+                        <div class="note align-justify-center control-label mb-0">Sale Person</div>
+                    </div>
+                    <div class="col-md-4 col-lg-4" id="emptySperson">
+                    </div>
+                    <div class="col-md-8 col-lg-8" style="text-align:right">
+                        <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" title="Edit" onclick="action('4')"> <i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+
+                    <div class="row" style="margin-top:10px">
+                        <div class="col-md-12">
+                            <div style="display:none;"><label id="lblClientID"></label></div>
+                            <div class="row">
+                                <div class="col-md-4"><label class="control-label">Client Name</label></div>
+                                <div class="col-md-8"><input type="text" id="lblClientName" class="form-control control-input" disabled="disabled" /></div>
+                            </div>
+                            <div class="row mt">
+                                <div class="col-md-4"><label class="control-label">Shop Name</label></div>
+                                <div class="col-md-8"><input type="text" id="lblShopName" class="form-control control-input" disabled="disabled" /></div>
+                            </div>
+                            <div class="row mt">
+                                <div class="col-md-4"><label class="control-label">Phone</label></div>
+                                <div class="col-md-8"><input type="text" id="lblPhone" class="form-control control-input" disabled="disabled" /></div>
+                            </div>
+                            <div class="row mt">
+                                <div class="col-md-4"><label class="control-label">Division</label></div>
+                                <div class="col-md-8">@Html.DropDownListFor(m => m.VDivisionID, Model.Divisions, new { @class = "form-control control-input", disabled = "disabled" })</div>
+                            </div>
+                            <div class="row mt">
+                                <div class="col-md-4"><label class="control-label">Township</label></div>
+                                <div class="col-md-8">
+                                @Html.DropDownListFor(m => m.VTownshipID, Model.Townships, new { @class = "form-control control-input", disabled = "disabled" })
+                                    <label id="vldTownship" class="text-danger" style="display:none">Township Require!</label>
+                                </div>
+
+                            </div>
+                            <div class="row mt">
+                                <div class="col-md-4"><label class="control-label">Address</label></div>
+                                <div class="col-md-8"><textarea id="lblAddress" class="form-control control-input" disabled="disabled"></textarea></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="modal-footer" style="padding:5px;">
+                <div class="col-md-12">
+                    <button id="btnSave" class="btn btn-first setup-btn-save-edit" disabled="disabled">Save</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div>
+    @{
+        Html.RenderPartial("_ConfirmDialog");
+    }
 </div>
 
 <script type="text/javascript">
-
+    var actionValue, clientId, vldOk;
     $(function () {
 
         $('#DivisionID').change(function () {
@@ -130,7 +214,6 @@
                         town += '<option value= "' + response[i].TownshipID + '">' + response[i].TownshipName + '</option>';
                     }
                     $('#TownshipID').append(town);
-
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -140,7 +223,6 @@
                     hideLoadingIcon();
                     alert(response.responseText);
                 }
-
 
             });
         });
@@ -160,37 +242,7 @@
                 success: function (response) {
                     hideLoadingIcon();
                     $("#tblClient").find("tbody").empty();
-                    $.each(response, function (i, item) {
-                        if (item.IsSalePerson != true)
-                        {
-                            var rows = "<tr class='row table-item'>"
-                       + "<td class='col-md-2 col-lg-2'>"  + item.ClientName + "</td>"
-                       + "<td class='col-md-2 col-lg-2'>"  + item.ShopName + "</td>"
-                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.Phone + "</div>" + "</td>"
-                       + "<td class='col-md-2 col-lg-2'>" + item.DivisionName + "</td>"
-                       + "<td class='col-md-2 col-lg-2'>" + item.TownshipName +  "</td>"
-                       + "<td class='col-md-1 col-lg-1'>" + "<divC>" + item.Address + "</div>" + "</td>"
-                       + "<td class='col-md-1 col-lg-1'>" +  + "</td>"
-                       + "<td style='display:none'>" + item.ClientID + "</td>"
-                       + "</tr>";
-                            $('#tblClient tbody').append(rows);
-                        }
-                        else {
-                            var rows = "<tr class='row table-item'>"
-                       + "<td class='col-md-2 col-lg-2'>" + item.ClientName  + "</td>"
-                       + "<td class='col-md-2 col-lg-2'>" + item.ShopName +"</td>"
-                       + "<td class='col-md-2 col-lg-2'>" + "<divC>" + item.Phone + "</div>" + "</td>"
-                       + "<td class='col-md-2 col-lg-2'>" +  item.DivisionName + "</td>"
-                       + "<td class='col-md-2 col-lg-2'>" + item.TownshipName +  "</td>"
-                       + "<td class='col-md-1 col-lg-1'>" + "<divC>" + item.Address + "</div>" + "</td>"
-                       + "<td class='col-md-1 col-lg-1'>" + "<divC>"+ "Sale Person" + "</div>" + "</td>"
-                       + "<td style='display:none'>" + item.ClientID + "</td>"
-                       + "</tr>";
-                            $('#tblClient tbody').append(rows);
-                        }
-
-
-                    });
+                    createClient(response);
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -203,12 +255,232 @@
             });
         });
 
-
         $('#btnRefresh').click(function () {
             window.location.reload();
         });
 
+        function addDisable() {
+            $('#lblClientName').attr('disabled', 'disabled');
+            $('#lblShopName').attr('disabled', 'disabled');
+            $('#lblPhone').attr('disabled', 'disabled');
+            $('#VDivisionID').attr('disabled', 'disabled');
+            $('#VTownshipID').attr('disabled', 'disabled');
+            $('#lblAddress').attr('disabled', 'disabled');
+            $('#btnSave').attr('disabled', 'disabled');
+        }
+
+        $('#btnEdit').click(function () {
+            if (actionValue == 4) {
+                $('#lblClientName').removeAttr("disabled");
+                $('#lblShopName').removeAttr("disabled");
+                $('#lblPhone').removeAttr("disabled");
+                $('#VDivisionID').removeAttr("disabled");
+                $('#VTownshipID').removeAttr("disabled");
+                $('#lblAddress').removeAttr("disabled");
+                $('#btnSave').removeAttr("disabled");
+            }
+        })
+
+        $('#tblClient').on("click", "tbody tr", function () {
+            selectRow = $(this).parent("tr");
+            $(this).find("td:last").each(function () {
+                clientId = $(this).text();
+                if (actionValue == 1) {
+                    showLoadingIcon();
+                    $.ajax({
+                        type: "GET",
+                        url:'@Url.Action("ViewAction", "Client")',
+                        data: { "clientId": clientId },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            hideLoadingIcon();
+                            addDisable();
+                            $('#vldTownship').hide();
+                            if (response.IsSalePerson == true) {
+                                $('#lblSalePerson').show();
+                                $('#emptySperson').hide();
+                            }
+                            else {
+                                $('#lblSalePerson').hide();
+                                $('#emptySperson').show();
+                            }
+
+                            $('#lblClientID').val(response.ClientID);
+                            $('#lblClientName').val(response.ClientName);
+                            $('#lblShopName').val(response.ShopName);
+                            var editDivisionID = response.Division;
+                            if (editDivisionID.length != 0 && editDivisionID != 0) $('#VDivisionID').val(editDivisionID);
+                            var town;
+                            $("#VTownshipID").html("");
+                            for (var i = 0; i < response.TownshipList.length; i++) {
+                                town += '<option value="' + response.TownshipList[i].TownshipID + '">' + response.TownshipList[i].TownshipName + '</option>';
+                            }
+                            $("#VTownshipID").append(town);
+                            var editTownshipID = response.Township;
+                            if (editTownshipID.length != 0 && editTownshipID != 0) $('#VTownshipID').val(editTownshipID);
+                            $('#lblPhone').val(response.Phone);
+                            $('#lblAddress').text(response.Address);
+                        },
+                        failure: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        },
+                    });
+
+                    $('#modalView').modal('show');
+                }
+                else if (actionValue == 2) {
+                    $('#btnDelOk').val(clientId);
+                    $('#modalConfirm').modal('show');    
+                }
+            })
+
+        })
+
+        $('#btnDelOk').click(function () {
+            let clientId = $('#btnDelOk').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url:'@Url.Action("DeleteAction", "Client")',
+                data: { "clientId": clientId },
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (response.IsSuccess == true) {
+                        if (selectRow != null) {
+                            selectRow.remove();
+                            location.reload();
+                            showToast(1, response.Message);
+                        }
+
+                    }
+                    else if (response.IsSuccess == false) {
+                        showToast(0, response.Message);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+            });
+
+        })
+
+        $('#VDivisionID').change(function () {
+            var val = $('#VDivisionID option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetDivsionSelectTownship", "Customer")',
+                data: { "divisionId": val },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    var town;
+                    $('#VTownshipID').html("");
+                    for (var i = 0 ; i < response.length; i++) {
+                        town += '<option value= "' + response[i].TownshipID + '">' + response[i].TownshipName + '</option>';
+                    }
+                    $('#VTownshipID').append(town);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        })
+
+        $('#btnSave').click(function () {
+            let clientId = $('#lblClientID').val();
+            let clientName = $('#lblClientName').val();
+            let shopName = $('#lblShopName').val();
+            let phone = $('#lblPhone').val();
+            let divisionId = $('#VDivisionID option:selected').val();
+            let townshipId = $('#VTownshipID option:selected').val() || 0;
+            let address = $('#lblAddress').val();
+            if (townshipId == 0) {
+                $('#vldTownship').show();
+                vldOk = 0;
+            } else {
+                vldOk = 1;
+            }
+            if (vldOk == 1) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("SaveAction", "Client")',
+                    data: { "clientId": clientId, "clientName": clientName, "shopName": shopName, "phone": phone, "divisionId": divisionId, "townshipId": townshipId, "townshipId": townshipId, "address": address },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        addDisable();
+                        showAlertInDialog(1, "Edit successfully!");
+                        $("#tblClient").find("tbody").empty();
+                        createClient(response);
+                        $('#modalView').modal('show');
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+
+
+        })
+
+        function showAlertInDialog(type, message) {
+            if (type == 1) $("#divAlertSuccess").delay(3000).addClass("in").toggle(true).fadeOut(500);
+            else if (type == 0) $("#divAlertError").delay(3000).addClass("in").toggle(true).fadeOut(500);
+            $("#spnAlertMessage").text(message);
+        }
+
+        function createClient(response) {
+            $.each(response, function (i, item) {
+                var rows = "<tr class='row table-item'>"
+           + "<td class='col-md-3 col-lg-3'>" + item.ClientName + "</td>"
+           + "<td class='col-md-3 col-lg-3'>" + item.Phone + "</td>"
+           + "<td class='col-md-2 col-lg-2'>" + item.DivisionName + "</td>"
+           + "<td class='col-md-2 col-lg-2'>" + item.TownshipName + "</td>"
+           + "<td class='col-md-2 col-lg-2'>"
+           + "<button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button> <button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' onclick='action(2)'>Delete</button>"
+           + "</td>"
+           + "<td style='display:none'>" + item.ClientID + "</td>"
+           + "</tr>";
+                $('#tblClient tbody').append(rows);
+            });
+        }
+
+        $('#VDivisionID').change(function () {
+            $('#vldTownship').hide();
+        });
+
     });
+
+    function action(value) {
+        actionValue = value;
+    }
 
 </script>
 
