@@ -747,7 +747,7 @@ namespace Inventory.Controllers
 
         private void getCustomer(bool isIncludeDefault)
         {
-            if (isIncludeDefault) saleOrderViewModel.Customers.Add(new SelectListItem { Text = "All Customer", Value = "0" });
+            if (isIncludeDefault) saleOrderViewModel.Customers.Add(new SelectListItem { Text = AppConstants.AllCustomer, Value = "0" });
             List < CustomerModels.CustomerModel > list = appData.selectCustomer(getConnection());
             for (int i = 0; i < list.Count; i++)
             {

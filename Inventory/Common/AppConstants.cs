@@ -16,8 +16,17 @@ namespace Inventory.Common
         public const int PurchaseReturnModule = 6;
         public const int OpeningStockModule = 7;
         public const int AdjustmentModule = 8;
+        public const int TransferModule = 9;
+        public const int CustomerConsignModule = 10;
 
         //Session Values
         public const string SQLConnection = "SQLConnection";
+
+        //Drop Down Default Values
+        public const string AllCustomer = "All Customer";
+        public const string AllSupplier = "All Supplier";
+        public const string SelectLocation = "Select Location";
+        public const string Division = "Division";
+        public const string SalePerson = "Sale Person";
     }
 }

@@ -166,6 +166,8 @@
     <Compile Include="Controllers\AdjustmentController.cs" />
     <Compile Include="Controllers\AdjustTypeController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
+    <Compile Include="Controllers\CustomerConsignController.cs" />
+    <Compile Include="Controllers\OpeningStockController.cs" />
     <Compile Include="Controllers\PaymentDialogController.cs" />
     <Compile Include="Controllers\ProductMenuController.cs" />
     <Compile Include="Controllers\BankController.cs" />
@@ -186,6 +188,7 @@
     <Compile Include="Controllers\SupplierController.cs" />
     <Compile Include="Controllers\TechnicianController.cs" />
     <Compile Include="Controllers\TownshipController.cs" />
+    <Compile Include="Controllers\TransferController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\VoucherFormatController.cs" />
     <Compile Include="Controllers\VoucherSettingController.cs" />
@@ -222,11 +225,14 @@
     <Compile Include="Models\MainMenuModels.cs" />
     <Compile Include="Models\CLMasterSaleOrderModels.cs" />
     <Compile Include="Models\MasterAdjustmentModels.cs" />
+    <Compile Include="Models\MasterCustomerConsignModels.cs" />
+    <Compile Include="Models\MasterOpeningStockModels.cs" />
     <Compile Include="Models\MasterPurchaseModels.cs" />
     <Compile Include="Models\MasterPurchaseOrderModels.cs" />
     <Compile Include="Models\MasterSaleModels.cs" />
     <Compile Include="Models\LimitedDayModels.cs" />
     <Compile Include="Models\MasterSaleOrderModels.cs" />
+    <Compile Include="Models\MasterTransferModels.cs" />
     <Compile Include="Models\PaymentModels.cs" />
     <Compile Include="Models\PayMethodModels.cs" />
     <Compile Include="Models\ProductModels.cs" />
@@ -236,10 +242,13 @@
     <Compile Include="Models\TechnicianSettingModels.cs" />
     <Compile Include="Models\TownshipModels.cs" />
     <Compile Include="Models\TranAdjustmentModels.cs" />
+    <Compile Include="Models\TranCustomerConsignModels.cs" />
+    <Compile Include="Models\TranOpeningStockModels.cs" />
     <Compile Include="Models\TranPurchaseModels.cs" />
     <Compile Include="Models\TranPurchaseOrderModels.cs" />
     <Compile Include="Models\TranSaleModels.cs" />
     <Compile Include="Models\TranSaleOrderModels.cs" />
+    <Compile Include="Models\TranTransferModels.cs" />
     <Compile Include="Models\UnitModels.cs" />
     <Compile Include="Models\UserModels.cs" />
     <Compile Include="Models\VoucherFormatModels.cs" />
@@ -336,7 +345,7 @@
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resource.Designer.cs">
+    <Compile Include="Resource1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource.resx</DependentUpon>
@@ -408,10 +417,12 @@
       <DependentUpon>Inventory.tt</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AdjustmentViewModel.cs" />
+    <Compile Include="ViewModels\CustomerConsignViewModel.cs" />
     <Compile Include="ViewModels\MasterPurchaseViewModel.cs" />
     <Compile Include="ViewModels\MasterPurOrderViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleOrderViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleVoucherViewModel.cs" />
+    <Compile Include="ViewModels\OpeningStockViewModel.cs" />
     <Compile Include="ViewModels\PagingViewModel.cs" />
     <Compile Include="ViewModels\PaymentViewModel.cs" />
     <Compile Include="ViewModels\ProductMenuViewModel.cs" />
@@ -419,6 +430,7 @@
     <Compile Include="ViewModels\PurchaseViewModel.cs" />
     <Compile Include="ViewModels\SaleOrderViewModel.cs" />
     <Compile Include="ViewModels\SaleViewModel.cs" />
+    <Compile Include="ViewModels\TransferViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\css\bootstrap-datetimepicker.min.css" />
@@ -595,6 +607,12 @@
     <Content Include="Views\PurchaseOrder\_PurOrderDetailDialog.cshtml" />
     <Content Include="Views\Purchase\_PurchaseDetailChild.cshtml" />
     <Content Include="Views\Purchase\_PurchaseDetailDialog.cshtml" />
+    <Content Include="Views\CustomerConsign\ListCustomerConsign.cshtml" />
+    <Content Include="Views\Transfer\ListTransfer.cshtml" />
+    <Content Include="Views\Transfer\Transfer.cshtml" />
+    <Content Include="Views\CustomerConsign\CustomerConsign.cshtml" />
+    <Content Include="Views\OpeningStock\OpeningStock.cshtml" />
+    <Content Include="Views\OpeningStock\ListOpeningStock.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -614,7 +632,7 @@
     <EmbeddedResource Include="Resource.My.resx" />
     <EmbeddedResource Include="Resource.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -18,6 +18,8 @@ namespace Inventory.Common
         public const string limitedDayQuery = "Select LimitedDayID,LimitedDayName From SysLimitedDay";
         public const string bankPaymentQuery = "Select BankPaymentID,BankPaymentName From SBankPayment";
         public const string adjustTypeQuery = "Select AdjustTypeID,ShortName From SAdjustType";
+        public const string divisionQuery = "Select DivisionID,DivisionName From SDivision";
+        public const string clientSalePersonQuery = "Select ClientID,ClientName From SClient Where IsSalePerson=1";
 
         public string getSubMenuQuery(int mainMenuId)
         {

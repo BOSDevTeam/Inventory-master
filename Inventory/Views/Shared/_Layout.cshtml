@@ -94,12 +94,34 @@
                                 <li id="subMenuPurchaseOrder"><a href="#">@Resource.PurchaseOrder</a></li>                            
                             </ul>
                         </li>  
-                        <li id="menuAdjustment">
-                            <a href="#"><i class="fa fa-adjust"></i> <span>@Resource.Adjustment</span></a>
+                        <li class="submenu">
+                            <a href=""><i class="fa fa-adjust"></i> <span> @Resource.Adjustment </span> <span class="menu-arrow"></span></a>
+                            <ul id="subMenuAdjustmentGp">
+                                <li id="subMenuAdjustmentList"><a href="#">@Resource.ListAdjustment</a></li>
+                                <li id="subMenuAdjustment"><a href="#">@Resource.AddAdjustment</a></li>
+                            </ul>
                         </li> 
-                        <li id="menuOpeningStock">
-                            <a href="#"><i class="fa fa-cubes"></i> <span>@Resource.OpeningStock</span></a>
-                        </li>            
+                        <li class="submenu">
+                            <a href=""><i class="fa fa-exchange"></i> <span> @Resource.Transfer </span> <span class="menu-arrow"></span></a>
+                            <ul id="subMenuTransferGp">
+                                <li id="subMenuTransferList"><a href="#">@Resource.ListTransfer</a></li>
+                                <li id="subMenuTransfer"><a href="#">@Resource.AddTransfer</a></li>
+                            </ul>
+                        </li> 
+                        <li class="submenu">
+                            <a href=""><i class="fa fa-sitemap"></i> <span> @Resource.Consignment </span> <span class="menu-arrow"></span></a>
+                            <ul id="subMenuConsignmentGp">
+                                <li id="subMenuCustomerConsignList"><a href="#">@Resource.ListCustomerConsign</a></li>
+                                <li id="subMenuCustomerConsign"><a href="#">@Resource.AddCustomerConsign</a></li>
+                            </ul>
+                        </li>  
+                        <li class="submenu">
+                            <a href=""><i class="fa fa-cubes"></i> <span> @Resource.OpeningStock </span> <span class="menu-arrow"></span></a>
+                            <ul id="subMenuOpeningStockGp">
+                                <li id="subMenuOpeningStockList"><a href="#">@Resource.ListOpeningStock</a></li>
+                                <li id="subMenuOpeningStock"><a href="#">@Resource.AddOpeningStock</a></li>
+                            </ul>
+                        </li>          
                         <li>
                             <a href="~/CompanySetting/CompanySettingEntry"><i class="fa fa-cog"></i> <span>@Resource.Settings</span></a>
                         </li>                                            
@@ -165,11 +187,29 @@
             $('#subMenuPurchaseOrder').click(function () {
                 window.location.href = '@Url.Action("ListPurchaseOrder", "PurchaseOrder")?userId=' + userId;
             });
-            $('#menuAdjustment').click(function () {
+            $('#subMenuAdjustmentList').click(function () {
                 window.location.href = '@Url.Action("ListAdjustment", "Adjustment")?userId=' + userId;
             });
-            $('#menuOpeningStock').click(function () {
+            $('#subMenuAdjustment').click(function () {
+                window.location.href = '@Url.Action("Adjustment", "Adjustment")?userId=' + userId;
+            });
+            $('#subMenuTransferList').click(function () {
+                window.location.href = '@Url.Action("ListTransfer", "Transfer")?userId=' + userId;
+            });
+            $('#subMenuTransfer').click(function () {
+                window.location.href = '@Url.Action("Transfer", "Transfer")?userId=' + userId;
+            });
+            $('#subMenuCustomerConsignList').click(function () {
+                window.location.href = '@Url.Action("ListCustomerConsign", "CustomerConsign")?userId=' + userId;
+            });
+            $('#subMenuCustomerConsign').click(function () {
+                window.location.href = '@Url.Action("CustomerConsign", "CustomerConsign")?userId=' + userId;
+            });
+            $('#subMenuOpeningStockList').click(function () {
                 window.location.href = '@Url.Action("ListOpeningStock", "OpeningStock")?userId=' + userId;
+            });
+            $('#subMenuOpeningStock').click(function () {
+                window.location.href = '@Url.Action("OpeningStock", "OpeningStock")?userId=' + userId;
             });
             $('.toast').toast({
                 delay: 3000

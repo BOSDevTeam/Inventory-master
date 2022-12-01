@@ -61,11 +61,65 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Action.
+        /// </summary>
+        public static string Action {
+            get {
+                return ResourceManager.GetString("Action", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>
         public static string Add {
             get {
                 return ResourceManager.GetString("Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Adjustment.
+        /// </summary>
+        public static string AddAdjustment {
+            get {
+                return ResourceManager.GetString("AddAdjustment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Customer Consign.
+        /// </summary>
+        public static string AddCustomerConsign {
+            get {
+                return ResourceManager.GetString("AddCustomerConsign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Opening Stock.
+        /// </summary>
+        public static string AddOpeningStock {
+            get {
+                return ResourceManager.GetString("AddOpeningStock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Remark.
+        /// </summary>
+        public static string AddRemark {
+            get {
+                return ResourceManager.GetString("AddRemark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Transfer.
+        /// </summary>
+        public static string AddTransfer {
+            get {
+                return ResourceManager.GetString("AddTransfer", resourceCulture);
             }
         }
         
@@ -187,11 +241,47 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Consignment.
+        /// </summary>
+        public static string Consignment {
+            get {
+                return ResourceManager.GetString("Consignment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Continue.
+        /// </summary>
+        public static string Continue {
+            get {
+                return ResourceManager.GetString("Continue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Customer.
+        /// </summary>
+        public static string Customer {
+            get {
+                return ResourceManager.GetString("Customer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dashboard.
         /// </summary>
         public static string Dashboard {
             get {
                 return ResourceManager.GetString("Dashboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date.
+        /// </summary>
+        public static string Date {
+            get {
+                return ResourceManager.GetString("Date", resourceCulture);
             }
         }
         
@@ -205,11 +295,29 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Division.
+        /// </summary>
+        public static string Division {
+            get {
+                return ResourceManager.GetString("Division", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to $.
         /// </summary>
         public static string DolorSign {
             get {
                 return ResourceManager.GetString("DolorSign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Due Date.
+        /// </summary>
+        public static string DueDate {
+            get {
+                return ResourceManager.GetString("DueDate", resourceCulture);
             }
         }
         
@@ -250,6 +358,24 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to From Date.
+        /// </summary>
+        public static string FromDate {
+            get {
+                return ResourceManager.GetString("FromDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to From Location.
+        /// </summary>
+        public static string FromLocation {
+            get {
+                return ResourceManager.GetString("FromLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Grandtotal.
         /// </summary>
         public static string Grandtotal {
@@ -273,6 +399,51 @@ namespace Inventory {
         public static string LimitedDay {
             get {
                 return ResourceManager.GetString("LimitedDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List Adjustment.
+        /// </summary>
+        public static string ListAdjustment {
+            get {
+                return ResourceManager.GetString("ListAdjustment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List Customer Consign.
+        /// </summary>
+        public static string ListCustomerConsign {
+            get {
+                return ResourceManager.GetString("ListCustomerConsign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List Opening Stock.
+        /// </summary>
+        public static string ListOpeningStock {
+            get {
+                return ResourceManager.GetString("ListOpeningStock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List Transfer.
+        /// </summary>
+        public static string ListTransfer {
+            get {
+                return ResourceManager.GetString("ListTransfer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Location.
+        /// </summary>
+        public static string Location {
+            get {
+                return ResourceManager.GetString("Location", resourceCulture);
             }
         }
         
@@ -502,6 +673,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        public static string Reset {
+            get {
+                return ResourceManager.GetString("Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Return Change.
         /// </summary>
         public static string ReturnChange {
@@ -543,6 +723,15 @@ namespace Inventory {
         public static string SaleOrderList {
             get {
                 return ResourceManager.GetString("SaleOrderList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sale Person.
+        /// </summary>
+        public static string SalePerson {
+            get {
+                return ResourceManager.GetString("SalePerson", resourceCulture);
             }
         }
         
@@ -610,6 +799,24 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to To Date.
+        /// </summary>
+        public static string ToDate {
+            get {
+                return ResourceManager.GetString("ToDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To Location.
+        /// </summary>
+        public static string ToLocation {
+            get {
+                return ResourceManager.GetString("ToLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Total.
         /// </summary>
         public static string Total {
@@ -637,6 +844,24 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Transfer.
+        /// </summary>
+        public static string Transfer {
+            get {
+                return ResourceManager.GetString("Transfer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transfer Qty.
+        /// </summary>
+        public static string TransferQty {
+            get {
+                return ResourceManager.GetString("TransferQty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Voucher Discount.
         /// </summary>
         public static string VoucherDiscount {
@@ -660,6 +885,15 @@ namespace Inventory {
         public static string VoucherID {
             get {
                 return ResourceManager.GetString("VoucherID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Voucher No..
+        /// </summary>
+        public static string VoucherNo {
+            get {
+                return ResourceManager.GetString("VoucherNo", resourceCulture);
             }
         }
     }
