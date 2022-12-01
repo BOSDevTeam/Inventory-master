@@ -386,5 +386,45 @@ namespace Inventory.Common
 
             return list;
         }
+
+        public List<DivisionModels> selectDivision(object connection)
+        {
+            List<DivisionModels> list = new List<DivisionModels>();
+            DivisionModels item;
+
+            SqlCommand cmd = new SqlCommand(TextQuery.divisionQuery, (SqlConnection)connection);
+            cmd.CommandType = CommandType.Text;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new DivisionModels();
+                item.DivisionID = Convert.ToInt32(reader["DivisionID"]);
+                item.DivisionName = Convert.ToString(reader["DivisionName"]);
+                list.Add(item);
+            }
+            reader.Close();
+
+            return list;
+        }
+
+        public List<ClientModels> selectClientSalePerson(object connection)
+        {
+            List<ClientModels> list = new List<ClientModels>();
+            ClientModels item;
+
+            SqlCommand cmd = new SqlCommand(TextQuery.clientSalePersonQuery, (SqlConnection)connection);
+            cmd.CommandType = CommandType.Text;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new ClientModels();
+                item.ClientID = Convert.ToInt32(reader["ClientID"]);
+                item.ClientName = Convert.ToString(reader["ClientName"]);
+                list.Add(item);
+            }
+            reader.Close();
+
+            return list;
+        }
     }
 }

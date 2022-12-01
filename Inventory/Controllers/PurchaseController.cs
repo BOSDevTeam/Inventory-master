@@ -626,7 +626,7 @@ namespace Inventory.Controllers
         }
         private void getSupplier(bool isIncludeDefault)
         {
-            if (isIncludeDefault) purchaseViewModel.Suppliers.Add(new SelectListItem { Text = "All Supplier", Value = "0" });
+            if (isIncludeDefault) purchaseViewModel.Suppliers.Add(new SelectListItem { Text = AppConstants.AllSupplier, Value = "0" });
 
             List<SupplierModels.SupplierModel> list = appData.selectSupplier(getConnection());
             for(int i=0;i<list.Count;i++)

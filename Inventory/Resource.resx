@@ -318,4 +318,82 @@
   <data name="OpeningStock" xml:space="preserve">
     <value>Opening Stock</value>
   </data>
+  <data name="Action" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="AddRemark" xml:space="preserve">
+    <value>Add Remark</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Division" xml:space="preserve">
+    <value>Division</value>
+  </data>
+  <data name="DueDate" xml:space="preserve">
+    <value>Due Date</value>
+  </data>
+  <data name="FromDate" xml:space="preserve">
+    <value>From Date</value>
+  </data>
+  <data name="FromLocation" xml:space="preserve">
+    <value>From Location</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="SalePerson" xml:space="preserve">
+    <value>Sale Person</value>
+  </data>
+  <data name="ToDate" xml:space="preserve">
+    <value>To Date</value>
+  </data>
+  <data name="ToLocation" xml:space="preserve">
+    <value>To Location</value>
+  </data>
+  <data name="TransferQty" xml:space="preserve">
+    <value>Transfer Qty</value>
+  </data>
+  <data name="VoucherNo" xml:space="preserve">
+    <value>Voucher No.</value>
+  </data>
+  <data name="Consignment" xml:space="preserve">
+    <value>Consignment</value>
+  </data>
+  <data name="ListCustomerConsign" xml:space="preserve">
+    <value>List Customer Consign</value>
+  </data>
+  <data name="Transfer" xml:space="preserve">
+    <value>Transfer</value>
+  </data>
+  <data name="AddCustomerConsign" xml:space="preserve">
+    <value>Add Customer Consign</value>
+  </data>
+  <data name="AddTransfer" xml:space="preserve">
+    <value>Add Transfer</value>
+  </data>
+  <data name="ListTransfer" xml:space="preserve">
+    <value>List Transfer</value>
+  </data>
+  <data name="AddAdjustment" xml:space="preserve">
+    <value>Add Adjustment</value>
+  </data>
+  <data name="AddOpeningStock" xml:space="preserve">
+    <value>Add Opening Stock</value>
+  </data>
+  <data name="ListAdjustment" xml:space="preserve">
+    <value>List Adjustment</value>
+  </data>
+  <data name="ListOpeningStock" xml:space="preserve">
+    <value>List Opening Stock</value>
+  </data>
 </root>
