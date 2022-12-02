@@ -396,4 +396,7 @@
   <data name="ListOpeningStock" xml:space="preserve">
     <value>List Opening Stock</value>
   </data>
+  <data name="HashSign" xml:space="preserve">
+    <value>#</value>
+  </data>
 </root>

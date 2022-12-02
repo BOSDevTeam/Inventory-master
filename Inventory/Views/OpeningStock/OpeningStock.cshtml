@@ -15,10 +15,243 @@
             display: block;
         }
     </style>
-
-    <script type="text/javascript">
-        document.getElementById('subMenuOpeningStock').className = 'active';
-    </script>
 </head>
+
+<div class="row m-t-5 m-b-5 m-l-5">
+    <div class="col-md-3 col-lg-3 note align-justify-center">
+        <label id="lblUserVoucherNo" class="control-label mb-0"></label>
+    </div>
+    <div class="col-md-3 col-lg-3">
+        <input id="inputDate" type="date" class="form-control control-input" />
+    </div>
+    <div class="col-md-3 col-lg-3">
+        <input id="inputVoucherID" type="text" class="form-control control-input" placeholder="@Resource.VoucherID" />
+    </div>  
+    <div class="col-md-3 col-lg-3">
+        @Html.DropDownList("Location", Model.Locations, new { @id = "ddlLocation", @class = "form-control control-input" })
+    </div>
+</div>
+
+<div>
+    <div class="row m-0">
+        <div class="col-md-12 col-lg-12 mainmenu">
+            <table class="ml-10">
+                <tr>
+                    @foreach (var item in Model.ProductMenus.MainMenus)
+                    {
+                        <td>
+                            <button class="btnMainMenu menu-main" value="@item.MainMenuID">@item.MainMenuName</button>
+                        </td>
+                    }
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="row m-0">
+        <div id="divSubMenu" class="col-md-3 col-lg-3 submenu">
+            @foreach (var item in Model.ProductMenus.SubMenus)
+            {
+                <button class="btnSubMenu menu-sub" value="@item.SubMenuID">@item.SubMenuName</button>
+            }
+        </div>
+
+        <div id="divOpeningStock" class="col-md-9 col-lg-9">
+
+            <div id="divOpeningStockTran" class="tran-table">
+                <table id="tblTranOpeningStock" class="width-100-percent">
+                    <thead>
+                        <tr class="row table-header">
+                            <td class="col-md-1 col-lg-1"><span>@Resource.HashSign</span></td>
+                            <td class="col-md-3 col-lg-3"><span>@Resource.Code</span></td>
+                            <td class="col-md-6 col-lg-6"><span>@Resource.Product</span></td>                          
+                            <td class="col-md-2 col-lg-2"><span>@Resource.Qty</span></td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="row soft-gray-background pt-1" style="bottom:0px;position:absolute;width:100%;">               
+                <div class="col-md-2 col-lg-2">
+                    <button id="btnReset" class="btn btn-white-outline-third">@Resource.Reset</button>
+                </div>
+                <div class="col-md-7 col-lg-7"></div>
+                <div class="col-md-3 col-lg-3 aligh-right">                      
+                    <button id="btnSave" class="btn btn-first">@Resource.Save</button>                     
+                </div>              
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    let num = 0, productId;
+
+    document.getElementById('subMenuOpeningStock').className = 'active';
+    calcDivHeight();
+
+    $(document).ready(function () {
+
+        initializeControl();
+
+        $(document).on('click', '.btnMainMenu', function (e) {
+            let mainMenuId = $(this).val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("MainMenuClickAction", "ProductMenu")',
+                data: { "mainMenuId": mainMenuId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    clearSubMenuData();
+                    createSubMenuData(response);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $(document).on('click', '.btnSubMenu', function (e) {
+            let subMenuId = $(this).val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SubMenuClickAction", "OpeningStock")',
+                data: { "subMenuId": subMenuId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createTranOpeningStockData(response);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnReset").click(function (e) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("ResetAction", "OpeningStock")',
+                data: {},
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    num = 0;
+                    $("#tblTranOpeningStock").find("tbody").empty();                  
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#tblTranOpeningStock").on("click", "tbody tr", function (event) {
+            $('#tblTranOpeningStock tr').removeClass("selected");
+            $(this).addClass("selected");
+            $(this).find("td:last").each(function () {
+                productId = $(this).text();                
+            })           
+        });
+
+        $("#tblTranOpeningStock").on("keydown", "tbody tr .inputQty", function (event) {
+            if (event.which === 13) {
+                let quantity = $(this).val();
+                if (quantity == "") quantity = 0;
+                let trId = $(this).closest('tr').attr('id'); // table row ID
+                let nextTrId = parseInt(trId) + 1;
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("AddQuantityAction", "OpeningStock")',
+                    data: { "productId": productId, "quantity": quantity },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        $('#tblTranOpeningStock tr').removeClass("selected");
+                        $('#tblTranOpeningStock #' + nextTrId + '').addClass("selected");
+                        $('#tblTranOpeningStock #' + nextTrId + ' .inputQty').focus();
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        function initializeControl() {
+            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputDate').val(getTodayDate());
+        }
+
+        function clearSubMenuData() {
+            $(".btnSubMenu").remove();
+        }
+
+        function createSubMenuData(response) {
+            $.each(response.SubMenus, function (i, item) {
+                let btn = '<button class="btnSubMenu menu-sub" value=' + item.SubMenuID + '>' + item.SubMenuName + '</button>'
+                $('#divSubMenu').append(btn);
+            })
+        }
+
+        function createTranOpeningStockData(response) {
+            $.each(response.ProductMenus.Products, function (i, item) {
+                num += 1;
+                let row = '<tr id=' + num + ' class="row table-item">'
+                       + '<td class="col-md-1 col-lg-1"><label class="control-label mb-0">' + num + '</label></td>'
+                       + '<td class="col-md-3 col-lg-3"><label class="control-label mb-0">' + item.Code + '</label></td>'
+                       + '<td class="col-md-6 col-lg-6"><label class="control-label mb-0">' + item.ProductName + '</label></td>'
+                       + '<td class="col-md-2 col-lg-2"><input type="text" class="inputQty border-gray control-input mb-0 numberonly" style="width:100px;text-align:center;" /></td>'
+                       + '<td style="display:none;">' + item.ProductID + '</td>'
+                       + '</tr>';
+                $('#tblTranOpeningStock tbody').append(row);
+            })
+        }
+
+    });
+
+    function calcDivHeight() {
+        let windowHeight = window.innerHeight;
+        let thingsHeight = 167; // average other component height
+        let extraHeight = 10;
+        let divHeight = windowHeight - (thingsHeight + extraHeight);
+        let tranHeight = divHeight - 35;  // 35 is bottom component
+        document.getElementById('divSubMenu').setAttribute("style", "height:" + divHeight + "px");
+        document.getElementById('divOpeningStock').setAttribute("style", "height:" + divHeight + "px");
+        document.getElementById('divOpeningStockTran').setAttribute("style", "height:" + tranHeight + "px");
+    }
+
+</script>
 
 

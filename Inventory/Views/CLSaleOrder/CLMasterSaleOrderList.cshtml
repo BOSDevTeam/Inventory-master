@@ -13,7 +13,7 @@
         #subMenuSaleGp {
             display: block;
         }
-        .cnumber {
+        .numberonly {
             border-width:thin;
         }
     </style>
@@ -291,7 +291,7 @@
                            + "</td>"
                            + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
                            + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
-                           + "<td class='col-md-2 col-lg-2'>" + "<input type='text'  maxlength='5' size='4' class='cnumber' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
+                           + "<td class='col-md-2 col-lg-2'>" + "<input type='text'  maxlength='5' size='4' class='numberonly' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
                            + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
                            + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
                            + "<td style='display:none'>" + response.TranSaleOrderList[i].ID + "</td>"
@@ -478,13 +478,6 @@
             window.location.reload();
         });
 
-        $(document).on('keypress', '.cnumber', function (e) {
-            var txt = String.fromCharCode(e.which);
-            if (!txt.match(/^[0-9]*$/)) {
-                return false;
-            }
-        });
-
         function transaleorder(response) {
             if (response.TranSaleOrderList.length != 0) {
                 let rows = "";   
@@ -495,7 +488,7 @@
                    + "</td>"
                    + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
                    + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
-                   + "<td class='col-md-2 col-lg-2'>" + "<input type='text' maxlength='5' size='4' class='cnumber' id='qty" + response.TranSaleOrderList[i].ID + "' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
+                   + "<td class='col-md-2 col-lg-2'>" + "<input type='text' maxlength='5' size='4' class='numberonly' id='qty" + response.TranSaleOrderList[i].ID + "' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
                    + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
                    + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
                    + "<td style='display:none'>" + response.TranSaleOrderList[i].ID + "</td>"
@@ -570,7 +563,7 @@
            + "</td>"
            + "<td class='col-md-1 col-lg-1'>" + (i + 1) + "</td>"
            + "<td class='col-md-4 col-lg-4'>" + response.TranSaleOrderList[i].ProductName + "</td>"
-           + "<td class='col-md-2 col-lg-2'>" + "<input type='number' maxlength='5' size='4' class='cnumber' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
+           + "<td class='col-md-2 col-lg-2'>" + "<input type='number' maxlength='5' size='4' class='numberonly' id='qty" + response.TranSaleOrderList[i].ID + "' min='1' max='1000' value='" + response.TranSaleOrderList[i].Quantity + "' />" + "</td>"
            + "<td class='col-md-2 col-lg-2'>" + "<label1  id='SalePrice'>" + response.TranSaleOrderList[i].SalePrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
            + "<td class='col-md-2 col-lg-2'>" + "<label1  name='totalValue' id='totalValue'>" + response.TranSaleOrderList[i].Amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "</label1></td>"
            + "<td style='display:none'>" + response.TranSaleOrderList[i].ID + "</td>"

@@ -100,5 +100,20 @@ namespace Inventory.Common
         {
             return "Delete From TTranPurchaseOrder Where PurchaseOrderID=" + purchaseOrderId + " Delete From TMasterPurchaseOrder Where PurchaseOrderID=" + purchaseOrderId;
         }
+
+        public string deleteAdjustmentQuery(int adjustmentId)
+        {
+            return "Delete From TTranAdjustment Where AdjustmentID=" + adjustmentId + " Delete From TMasterAdjustment Where AdjustmentID=" + adjustmentId;
+        }
+
+        public string deleteTransferQuery(int transferId)
+        {
+            return "Delete From TTranTransfer Where TransferID=" + transferId + " Delete From TMasterTransfer Where TransferID=" + transferId;
+        }
+
+        public string deleteCustomerConsignQuery(int customerConsignId)
+        {
+            return "Delete From TTranCustomerConsign Where CustomerConsignID=" + customerConsignId + " Delete From TMasterCustomerConsign Where CustomerConsignID=" + customerConsignId;
+        }
     }
 }

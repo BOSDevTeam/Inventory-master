@@ -163,8 +163,20 @@
 <script type="text/javascript">
     noBack();
     let tranPurchaseAction, defaultSupplierId, defaultLocationId;
+    calcPurchaseHeight();
     function noBack() {
         window.history.forward();
+    }
+    function calcPurchaseHeight() {
+        let windowHeight = window.innerHeight;
+        let thingsHeight = 100; // average other component height
+        let extraHeight = 20;
+        let purchaseAreaHeight = windowHeight - (thingsHeight + extraHeight);
+        let purchaseChildHeight = purchaseAreaHeight - 100;  // 100 is top component
+        let purchaseTranHeight = purchaseChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra
+        document.getElementById('divPurchase').setAttribute("style", "height:" + purchaseAreaHeight + "px");
+        document.getElementById('divPurchaseChild').setAttribute("style", "height:" + purchaseChildHeight + "px");
+        document.getElementById('divPurchaseTran').setAttribute("style", "height:" + purchaseTranHeight + "px");
     }
 
     $(document).ready(function () {

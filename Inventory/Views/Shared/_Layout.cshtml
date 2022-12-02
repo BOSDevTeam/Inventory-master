@@ -269,7 +269,7 @@
             }
         }
 
-        $(".numberonly").keypress(function (e) {
+        $(document).on('keypress', '.numberonly', function (e) {
             var txt = String.fromCharCode(e.which);
             if (!txt.match(/^[0-9]*$/)) {
                 return false;

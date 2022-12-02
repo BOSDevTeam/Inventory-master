@@ -1,0 +1,77 @@
+﻿
+<div class="modal fade" id="modalAdjustmentDetail" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:700px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="width-100-percent m-b-30">
+                    <tr class="table-border">
+                        <td class="padding-5 table-border"><label class="control-label mb-0">Voucher No.</label></td>
+                        <td class="aligh-right padding-5 table-border"><label id="lblUserVoucherNo" class="control-input mb-0"></label></td>
+                        <td class="padding-5 table-border"><label class="control-label mb-0">VoucherID</label></td>
+                        <td class="aligh-right padding-5"><label id="lblVoucherID" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr class="table-border">
+                        <td class="padding-5 table-border"><label class="control-label mb-0">Date</label></td>
+                        <td class="aligh-right padding-5 table-border"><label id="lblAdjustDateTime" class="control-input mb-0"></label></td>
+                        <td class="padding-5 table-border"><label class="control-label mb-0">User</label></td>
+                        <td class="aligh-right padding-5"><label id="lblUserName" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr class="table-border">
+                        <td class="padding-5 table-border"><label class="control-label mb-0">Location</label></td>
+                        <td class="aligh-right padding-5 table-border"><label id="lblLocation" class="control-input mb-0"></label></td>
+                        <td class="padding-5 table-border"><label class="control-label mb-0"></label></td>
+                        <td class="aligh-right padding-5"></td>
+                    </tr>
+
+                </table>
+
+                @{
+                    Html.RenderPartial("_AdjustmentDetailChild");
+                }
+
+                <div id="divRemark" class="light-background padding-5" style="text-align:center;">
+                    <label id="lblRemark" class="control-label mb-0"></label>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function createTranAdjustmentDetail(response) {
+        $("#tblTranAdjustment").find("tbody").empty();
+        $.each(response.LstTranAdjustment, function (index, item) {
+            let row = '<tr class="row voucher-table-item">'          
+            row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '</td>'
+            row += '<td class="col-md-4 col-lg-4">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
+               + '<td class="col-md-4 col-lg-4 aligh-right">' + item.AdjustTypeKeyword + '</td>'
+               + "</tr>";
+            $('#tblTranAdjustment tbody').append(row);
+        });
+    }
+
+    function createMasterAdjustmentDetail(response) {
+        $('#lblUserVoucherNo').text(response.UserVoucherNo);
+        if (response.VoucherID.length != 0) $('#lblVoucherID').text(response.VoucherID);
+        else $('#lblVoucherID').text('-');
+        $('#lblAdjustDateTime').text(response.AdjustDateTime);
+        $('#lblUserName').text(response.UserName);
+        $('#lblLocation').text(response.LocationName);
+        if (response.Remark.length != 0) {
+            $('#lblRemark').text(response.Remark);
+            $('#divRemark').show();
+        } else $('#divRemark').css('display', 'none');
+    }
+
+</script>
+
+
+

@@ -385,6 +385,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to #.
+        /// </summary>
+        public static string HashSign {
+            get {
+                return ResourceManager.GetString("HashSign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hold.
         /// </summary>
         public static string Hold {

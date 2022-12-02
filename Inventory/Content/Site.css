@@ -2,10 +2,10 @@
 /*
 first color:#39c164
 second color:#36b4e5
-third color:#e53f34
+third color:#f19690
 accent color:#e5e53e
 gray color:#DEE2E6
-soft gray color:#f8f9fa
+soft gray color:#edeff1
 light color:#ecedef
 */
 /** end color code */
@@ -31,17 +31,17 @@ div.paging-item{display:flex;justify-content:right;color:transparent;font-size:0
 
 
 /** buttons */
-.btn-first{color:#ffffff;background-color:#39c164;}
+.btn-first{color:#ffffff;background-color:#39c164;padding:6px 30px;}
 .btn-first:hover{background-color:#2fb158;}
 .btn-second{color:#ffffff;background-color:#36b4e5;}
 .btn-second:hover{background-color:#2fa8d7;}
-.btn-third{color:#ffffff;background-color:#e53f34;}
+.btn-third{color:#ffffff;background-color:#f19690;}
 .btn-third:hover{background-color:#d7382e;}
 .btn-light{color:#425367;background-color:#ECEDEF;border:1px solid #ccc;font-size:small}
 .btn-light:hover{background-color:#F8FBFF;}
 .btn-gray{color:#425367;background-color:#DEE2E6;}
 .btn-gray:hover{background-color:#C6CACE;}
-.btn-white-outline-third{color:#3E445C;background-color:#fff;border:1px solid #e53f34;}
+.btn-white-outline-third{color:#3E445C;background-color:#fff;border:1px solid #f19690;}
 .btn-white-outline-third:hover{color:#fff;background-color:#d7382e;}
 .btn-dialog-ok{background-color:#36b4e5;color:#fff;}
 .btn-dialog-ok:hover{background-color:#2fa8d7;}
@@ -114,11 +114,13 @@ div.note{background-color:#ffffcc;padding:5px;}
 button.discount{padding:5px 10px;background-color:#DEE2E6;font-size:14px;font-family: 'Rubik',sans-serif;color:#666;border:none;}
 button.discount:hover{cursor:pointer;color:#39c164;}
 button.discount-active{padding:5px 10px;background-color:#39c164;font-size:14px;font-family: 'Rubik',sans-serif;color:#fff;border:none;}
-.soft-gray-background{background-color:#f8f9fa;}
+.soft-gray-background{background-color:#edeff1;}
 .light-background{background-color:#ecedef;}
 table tr td.text-overflow{text-overflow:ellipsis;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;}
 div.tran-table{overflow-y:auto;overflow-x:hidden;}
 table tr.selected{background-color:#e5e53e;}
+.border-gray{border:1px solid #DEE2E6;}
+.m-0{margin:0px;}
 /** end general */
 
 

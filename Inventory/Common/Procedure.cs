@@ -70,5 +70,10 @@ namespace Inventory.Common
         public const string PrcUpdatePurchase = "PrcUpdatePurchase";
         public const string PrcUpdateClient = "PrcUpdateClient";
         public const string PrcDeleteClient = "PrcDeleteClient";
+        public const string PrcInsertAdjustment = "PrcInsertAdjustment";
+        public const string PrcGetMasterAdjustmentList = "PrcGetMasterAdjustmentList";
+        public const string PrcGetMasterAdjustmentByAdjustmentID = "PrcGetMasterAdjustmentByAdjustmentID";
+        public const string PrcGetTranAdjustmentByAdjustmentID = "PrcGetTranAdjustmentByAdjustmentID";
+        public const string PrcUpdateAdjustment = "PrcUpdateAdjustment";
     }
 }
