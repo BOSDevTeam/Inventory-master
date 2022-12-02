@@ -20,6 +20,7 @@ namespace Inventory.Controllers
         AppSetting setting = new AppSetting();
         AppSetting.Paging paging = new AppSetting.Paging();
         TextQuery textQuery = new TextQuery();
+
         public ActionResult Adjustment(int userId,int? adjustmentId)
         {
             if (checkConnection())
