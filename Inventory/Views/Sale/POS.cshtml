@@ -169,6 +169,7 @@
     let tranSaleAction, defaultCustomerId, defaultLocationId;
     document.getElementById('subMenuSale').className = 'active';
 
+    calcMenuHeight(155);
     calcSaleHeight();
 
     function noBack() {
@@ -178,7 +179,7 @@
     function calcSaleHeight() {
         let windowHeight = window.innerHeight;
         let thingsHeight = 100; // average other component height
-        let extraHeight = 20;
+        let extraHeight = 11;
         let saleAreaHeight = windowHeight - (thingsHeight + extraHeight);
         let saleChildHeight = saleAreaHeight - 100;  // 100 is top component
         let saleTranHeight = saleChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra

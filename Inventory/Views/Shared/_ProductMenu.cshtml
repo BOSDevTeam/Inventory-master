@@ -32,11 +32,8 @@
 
 <script type="text/javascript">
 
-    calcMenuHeight();
-
-    function calcMenuHeight() {
+    function calcMenuHeight(thingsHeight) {
         let windowHeight = window.innerHeight;
-        let thingsHeight = 167; // average other component height
         let extraHeight = 20;
         let menuHeight = windowHeight - (thingsHeight + extraHeight);
         document.getElementById('divSubMenu').setAttribute("style", "height:" + menuHeight + "px");
