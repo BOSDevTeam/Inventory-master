@@ -125,6 +125,7 @@ table tr.selected{background-color:#e5e53e;}
 button:disabled{background-color:#edeff1;}
 button:disabled:hover{background-color:#edeff1;cursor:default;color:#000;}
 span{font-size:13px;}
+.hideVerticalScrollbar{overflow-y: hidden!important;}
 /** end general */
 
 
