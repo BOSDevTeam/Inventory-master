@@ -15,9 +15,627 @@
         }
     </style>
 </head>
+<div class="row m-t-5 m-b-5 m-l-5">
+    <div class="col-md-4 col-lg-4 note align-justify-center">
+        <label id="lblUserVoucherNo" class="control-label mb-0"></label>
+    </div>
+    <div class="col-md-4 col-lg-4">
+        <input id="inputDate" type="date" class="form-control control-input" />
+    </div>
+    <div class="col-md-4 col-lg-4">
+        <input type="text" id="inputVoucherID" class="form-control control-input" placeholder="@Resource.VoucherID"  />
+    </div>
+</div>
+<div class="row m-t-5 m-b-5 m-l-5" style="margin-top:10px;">
+    <div class="col-md-6 col-lg-6">
+        <div class="row">
+            <div class="col-md-1 col-lg-1"></div>
+            <div class="col-md-3 col-lg-3">From Location</div>
+            <div class="col-md-8 col-lg-8">
+                @Html.DropDownList("Location", Model.Locations, new { @id = "fromLocation", @class = "form-control control-input", @style = "background-color:#D2D2CF" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-6">
+        <div class="row">
+            <div class="col-md-1 col-lg-1"></div>
+            <div class="col-md-3 col-lg-3">From Location</div>
+            <div class="col-md-8 col-lg-8">
+                @Html.DropDownList("Location", Model.Locations, new { @id = "toLocation", @class = "form-control control-input", @style = "background-color:#D2D2CF" })
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="margin-top:10px">
+    <div id="divTransfer" class="col-md-6 col-lg-6">
+        <div class="input-icons">
+            <i class="fa fa-search icon"></i>   
+            <input id="inputSearch" class="form-control control-input input-field" placeholder="@Resource.SearchProduct" />
+        </div>
+        <div class="m-t-5 padding-5 search-div">
+            <div class="row">
+                <input id="inputNumber" type="hidden" />
+                <input id="inputProductID" type="hidden" />
+                <div class="col-md-4 col-lg-4">
+                    <input id="inputCode" type="text" class="form-control control-input" placeholder="@Resource.Code"/>
+
+                </div>
+                <div class="col-md-8 col-lg-8">
+                    <input id="inputProductName" type="text" class="form-control control-input" placeholder="@Resource.ProductName"/>
+                </div>
+
+            </div>
+
+            <div class="row m-t-5 align-center">
+                <div class="col-md-5 col-lg-5">
+                    <input id="inputQuantity" type="text" class="form-control control-input" placeholder="@Resource.Qty" />
+                </div>
+                <div id="divUnit" class="col-md-3 col-lg-3">
+                    @Html.DropDownList("Unit", Model.Units, new { @id = "ddlUnit", @class = "form-control control-input" })
+                </div>
+                <div class="col-md-2 col-lg-2">
+
+                </div>
+                <div class="col-md-2 col-lg-2">
+                    <button id="btnAdd" class="btn btn-second">@Resource.Add</button>
+                    <button id="btnEdit" class="btn btn-third">@Resource.Edit</button>
+                </div>
+            </div>
+        </div>
+        <div id="divTransferChild">
+            <div id="divTranTransfer" class="tran-table">
+                <table id="tblTranTransfer" class="width-100-percent">
+                    <thead>
+                        <tr class="row tran-table-header-row">
+                            <td class="col-md-5 col-lg-5 text-overflow"><span>@Resource.Product</span></td>
+                            <td class="col-md-2 col-lg-2"></td>
+                            <td class="col-md-3 col-lg-3 text-overflow"><span>@Resource.Qty</span></td>
+                            <td class="col-md-2 col-lg-2"></td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div style="bottom:0px;position:absolute;width:100%;">
+                <table class="width-100-percent">
+                    <tr>
+                        <td class="col-md-5 col-lg-5 text-overflow table-border"><span>@Resource.Total</span></td>
+                        <td class="col-md-2 col-lg-2 table-border"></td>
+                        <td class="col-md-3 col-lg-3 text-overflow table-border"><span id="lblTotalQty">0</span></td>
+                        <td class="col-md-2 col-lg-2 table-border"></td>
+                    </tr>
+                </table>
+                <div class="row mr-0">
+                    <div class="col-md-2 col-lg-2">
+                        <button id="btnReset" class="btn btn-block btn-white-outline-third">@Resource.Reset</button>
+                    </div>
+                    @*<div class="col-md-3 col-lg-3">
+                        <button id="btnHold" class="btn btn-block btn-second">@Resource.Hold</button>
+                    </div>*@
+                    <div class="col-md-2 col-lg-2">
+                        <button id="btnPrint" class="btn btn-block btn-danger">@Resource.Print</button>
+                    </div>
+                    <div class="col-md-2 col-lg-2"></div>
+                    <div class="col-md-6 col-lg-6"> 
+                        <button id="btnSave" class="btn btn-block btn-first">@Resource.Save</button>
+                        <button id="btnEditPayment" class="btn btn-block btn-first m-t-0">@Resource.Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+    <div class="col-md-6 col-lg-6">
+        @{ 
+            Html.RenderPartial("_ProductMenu", Model);
+        }
+    </div>
+</div>
+    
+<div>
+    @{ 
+        Html.RenderPartial("_SearchProductDialog");
+    }
+</div>
+
+
+
+
+
+
 
 <script type="text/javascript">
+
+    noBack();
+    let tranTransferAction, defaultLocationId;
     document.getElementById('subMenuTransfer').className = 'active';
+    calcSaleHeight();
+
+    function noBack() {
+        window.history.forward();
+    }
+
+    function calcSaleHeight() {
+        let windowHeight = window.innerHeight;
+        let thingsHeight = 145; // average other component height
+        let extraHeight = 20;
+        let saleAreaHeight = windowHeight - (thingsHeight + extraHeight);
+        let saleChildHeight = saleAreaHeight - 100;  // 100 is top component
+        let saleTranHeight = saleChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra
+        document.getElementById('divTransfer').setAttribute("style", "height:" + saleAreaHeight + "px");
+        document.getElementById('divTransferChild').setAttribute("style", "height:" + saleChildHeight + "px");
+        document.getElementById('divTranTransfer').setAttribute("style", "height:" + saleTranHeight + "px");
+    }
+
+
+    $(document).ready(function () {
+        initializeControl();
+
+
+        function initializeControl() {
+            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputDate').val(getTodayDate());
+            showHideUnit();
+            showHideTranTransferAddEdit(false);
+            showHideMainButton(false);
+        }
+
+        function showHideUnit() {
+            if (isMultiUnit == "True") {
+                createDefaultUnit();
+                $("#divUnit").show();
+            }
+            else $('#divUnit').css("display", "none");
+        }
+
+        function createDefaultUnit() {
+            let unit;
+            $("#ddlUnit").html("");
+            unit = '<option value="0">Unit</option>'
+            $("#ddlUnit").append(unit);
+        }
+
+
+        $(document).on("click", '.btnProduct', function (e) {
+            let productId = $(this).val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("ProductClickAction", "ProductMenu")',
+                data: { "productId": productId, "isMultiUnit": isMultiUnit, "isMultiCurrency": isMultiCurrency },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess) redirectToLogin();
+                    else fillSelectedProductData(response, productId);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        })
+
+        $('#inputSearch').keydown(function (e) {
+            if (e.which === 13) {
+                let keyword = $('#inputSearch').val();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url:'@Url.Action("GetProductByKeywordAction", "Transfer")',
+                    data: { "keyword": keyword },
+                    contentType: "applicaton/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (response.length == 0) {
+                            showToast(0, 'Not found product!');
+                        }
+                        else {
+                            createSearchProductData(response);
+                            $('#modalSearchProduct').modal('show');
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                });
+            }
+
+        })
+
+        $('#tblSearchProduct').on("click", "tbody tr", function () {
+            $(this).find("td:first").each(function () {
+                let productId = $(this).text();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url:'@Url.Action("SearchProductClickAction", "Transfer")',
+                    data: { "productId": productId ,"isMultiUnit":isMultiUnit},
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.IsRequestSuccess) {
+                            redirectToLogin();
+                        }
+                        else {
+                            fillSelectedProductData(response, productId);
+                            $('#modalSearchProduct').modal('hide');
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                });
+
+            });
+        });
+
+        $('#inputCode').keydown(function (e) {
+            if (e.which === 13) {
+                let code = $('#inputCode').val();
+                $.ajax({
+                    type: "GET",
+                    url:'@Url.Action("GetProductByCodeAction", "Transfer")',
+                    data: { "code": code, "isMultiUnit": isMultiUnit },
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.IsExistProduct) {
+                            showToast(0, 'Not found product!');
+                        }
+                        else {
+                            $("#inputProductID").val(response.ProductID);
+                            $("#inputProductName").val(response.ProductName);
+                            $("#inputQuantity").val('1');
+                            createUnitData(response);
+
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                });
+            }
+        })
+
+
+
+
+
+
+
+
+
+
+        $('#btnAdd').click(function (e) {
+            addOrEditTranTransfer(false);
+        });
+
+        $('#btnEdit').click(function (e) {
+            addOrEditTranTransfer(true);
+        });
+
+        function validateTransferControl() {
+            if ($('#inputProductID').val().length == 0 || $('#inputProductID').val() == 0) return false;
+            else return true;
+        }
+
+        function addOrEditTranTransfer(isEdit)
+        {
+            if (validateTransferControl()) {
+                let unitId, unitKeyword;
+                let number = $("#inputNumber").val();
+                let productId = $("#inputProductID").val();
+                let productCode = $("#inputCode").val();
+                let productName = $("#inputProductName").val();
+                let quantity = $("#inputQuantity").val();
+                if (isMultiUnit == "True") {
+                    unitId = $('#divUnit option:selected').val();
+                    unitKeyword = $('#divUnit option:selected').text();
+                }
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("TranTransferAddEditAction", "Transfer")',
+                    data: { "productId": productId, "productCode": productCode, "productName": productName, "quantity": quantity, "unitId": unitId, "unitKeyword": unitKeyword, "isEdit": isEdit, "number": number },
+                    contentType: "application/json, charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.IsRequestSuccess) {
+                            redirectToLogin();
+                        } else {
+                            createTranTransferData(response.LstTranTransfer);
+                            createQty(response);
+                            clearTransferControl();
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+
+            }         
+        }
+
+
+
+
+        $('#tblTranTransfer').on("click", "tbody tr", function () {
+            $('#tblTranTransfer tr').removeClass("selected");
+            $(this).addClass("selected");
+            $(this).find("td:last").each(function () {
+                let number = $(this).text();
+                if (tranTransferAction == 3) {
+                    tranTransferAction = 0;
+                    alert(number);
+                    deleteTranTransfer(number);
+                    
+                }
+                else prepareToEditTranTransfer(number);
+                
+
+            })
+        });
+
+        $('#btnReset').click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CancelAction", "Transfer")',
+                data: {},
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function () {
+                    hideLoadingIcon();
+                    clearTransferControl();
+                    $('#tblTranTransfer').find("tbody").empty();
+                    $('#lblTotalQty').text('0');
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+            });
+        });
+
+        $('#btnSave').click(function () {
+            let fromLocation = $('#fromLocation').val();
+            let toLocation = $('#toLocation').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SaveAction", "Transfer")',
+                data: { "formLocation": fromLocation, "toLocation": toLocation },
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess) {
+                        showToast(0, 'Not transfer same Location!');
+
+                    }
+                    else {
+                        alert(Process);
+                    }
+
+                   
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+            });
+            
+
+        })
+
+
+
+
+        function clearTransferControl() {
+            $("#inputNumber").val("");
+            $("#inputProductID").val("");
+            $("#inputCode").val("");
+            $("#inputProductName").val("");
+            $("#inputQuantity").val("");
+            showHideUnit();
+            showHideTranTransferAddEdit(false);
+        }
+
+
+
+
+
+    })
+
+
+
+    function fillSelectedProductData(response, productId) {
+        $("#inputProductID").val(productId);
+        $('#inputCode').val(response.Code);
+        $('#inputProductName').val(response.ProductName);
+        $('#inputQuantity').val('1');
+        createUnitData(response);
+
+
+    }
+
+    function createUnitData(response) {
+        let unit;
+        $('#ddlUnit').html("");
+        for (var i = 0; i < response.LstUnit.length; i++) {
+            unit += '<option value="' + response.LstUnit[i].UnitID + '">' + response.LstUnit[i].Keyword + '</option>'
+        }
+        $('#ddlUnit').append(unit);
+
+    }
+
+    function showHideTranTransferAddEdit(isEdit) {
+        if (isEdit) {
+            $('#btnAdd').css("display", "none");
+            $("#btnEdit").show();
+        }
+        else {
+            $("#btnAdd").show();
+            $('#btnEdit').css("display", "none");
+        }
+    }
+
+    function showHideMainButton(isEdit) {
+        if (isEdit) {
+            $('#btnSave').css("display", "none");
+            $('#btnEditPayment').show();
+        }
+        else {
+            $('#btnSave').show();
+            $('#btnEditPayment').css("display","none");
+        }
+
+    }
+
+
+    function createSearchProductData(response) {
+        $('#tblSearchProduct').find("tbody").empty();
+        $.each(response, function (i, item) {
+            var row = "<tr class='row table-item' style='cursor:pointer;'>"
+                    + "<td style='display:none;'>" + item.ProductID + "</td>"
+                    + '<td class="col-md-8 col-lg-8"><label class="control-label mb-0 text-overflow">' + item.ProductName + '</label></td>'
+                    + '<td class="col-md-4 col-lg-4 value-right"><label class="control-label mb-0">' + item.Code + '</label></td>'
+                    + "</tr>";
+            $('#tblSearchProduct').append(row);
+        });
+    }
+
+
+    function createTranTransferData(LstTranTransfer) {
+        let num = 0;
+        $('#tblTranTransfer').find("tbody").empty();
+        $.each(LstTranTransfer, function (i, item) {
+            num += 1;
+            let row = '<tr class="row tran-table-item-row">'
+                   + '<td style="display:none;">' + item.ProductID + '</td>'
+                   + '<td class="col-md-5 col-lg-5"><label class="control-label mb-0 text-link text-overflow">' + item.ProductName + '</label></td>'
+                   + '<td class="col-md-2 col-lg-2"></td>'
+                   + '<td class="col-md-3 col-lg-3"><label class="control-label mb-0">' + item.Quantity + '<span class="control-span-sm">&nbsp;' + item.UnitKeyword + '</span></label></td>'
+                   + '<td class="col-md-2 col-lg-2 value-right"><button class="btn-icon gray" title="Delete" onclick="tranTransferTableAction(3)"><i class="fa fa-remove"></i></button></td>'
+                   + '<td style="display:none;">' + num + '</td>'
+                   + '</tr>';
+            $('#tblTranTransfer tbody').append(row);
+        });
+
+    }
+
+    function createQty(response) {
+        $('#lblTotalQty').text(response.TotalQuantity);
+    }
+
+    function prepareToEditTranTransfer(number) {
+        showLoadingIcon();
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("PrepareToEditTranTransferAction", "Transfer")',
+            data: { "number": number, "isMultiUnit": isMultiUnit },
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                hideLoadingIcon();
+                if (!response.IsRequestSuccess) {
+                    redirectToLogin();
+                }
+                else {
+                    $("#inputNumber").val(number);
+                    $("#inputProductID").val(response.ProductID);
+                    $("#inputCode").val(response.ProductCode);
+                    $("#inputProductName").val(response.ProductName);
+                    $("#inputQuantity").val(response.Quantity);
+                    createUnitData(response);
+                    $("#ddlUnit").val(response.UnitID);
+                    showHideTranTransferAddEdit(true);
+                }
+
+            },
+            failure: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            },
+        });
+    }
+
+
+    function deleteTranTransfer(number) {
+        showLoadingIcon();
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("TransferDeleteAction", "Transfer")',
+            data: { "number": number },
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                hideLoadingIcon();
+                if (!response.IsRequestSuccess) redirectToLogin();
+                else {
+                    createTranTransferData(response.LstTranTransfer);
+                    createQty(response);
+                }
+            },
+            failure: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            },
+        });
+    }
+
+    function tranTransferTableAction(vaule){
+        tranTransferAction = vaule;
+    }
 </script>
 
 
