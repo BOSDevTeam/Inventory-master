@@ -51,8 +51,8 @@
     <div class="row m-0">
         <div id="divSubMenu" class="col-md-3 col-lg-3 submenu">
             @foreach (var item in Model.ProductMenus.SubMenus)
-            {
-                <button class="btnSubMenu menu-sub" value="@item.SubMenuID">@item.SubMenuName</button>
+            {                
+                <button id="@("btnSubMenu"+item.SubMenuID)" class="btnSubMenu menu-sub" value="@item.SubMenuID">@item.SubMenuName</button>
             }
         </div>
 
@@ -77,8 +77,9 @@
                     <button id="btnReset" class="btn btn-white-outline-third">@Resource.Reset</button>
                 </div>
                 <div class="col-md-7 col-lg-7"></div>
-                <div class="col-md-3 col-lg-3 aligh-right">                      
-                    <button id="btnSave" class="btn btn-first">@Resource.Save</button>                     
+                <div class="col-md-3 col-lg-3 aligh-right">       
+                    <button id="btnEdit" class="btn btn-first plr-30">@Resource.Edit</button>                  
+                    <button id="btnSave" class="btn btn-first plr-30">@Resource.Save</button>                     
                 </div>              
             </div>
 
@@ -88,14 +89,17 @@
 
 <script type="text/javascript">
 
-    let num = 0, productId;
+    let num = 0, productId, defaultLocationId;
 
     document.getElementById('subMenuOpeningStock').className = 'active';
     calcDivHeight();
 
     $(document).ready(function () {
 
-        initializeControl();
+        setModuleTitle('@Resource.OpeningStock', '@Resource.AddOpeningStock');
+
+        if ('@ViewBag.IsEdit' == 'True') fillEditData();
+        else initializeControl();
 
         $(document).on('click', '.btnMainMenu', function (e) {
             let mainMenuId = $(this).val();
@@ -133,7 +137,10 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    createTranOpeningStockData(response);
+                    if (!response.IsRequestSuccess)
+                        showToast(0, 'Already added products for this submenu!');
+                    else createTranOpeningStockData(response.Products);
+                    $("#btnSubMenu" + subMenuId).prop("disabled", true);
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -156,8 +163,69 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    num = 0;
-                    $("#tblTranOpeningStock").find("tbody").empty();                  
+                    clearTransaction();
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnSave").click(function (e) {
+            let userVoucherNo = $('#lblUserVoucherNo').text();
+            let date = $('#inputDate').val();
+            let voucherId = $('#inputVoucherID').val();
+            let locationId = $('#ddlLocation option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveAction", "OpeningStock")',
+                data: JSON.stringify({ "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "locationId": locationId, "userId": userId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess) {
+                        if (response.Message != "") showToast(0, response.Message);
+                    }
+                    else {
+                        showToast(1, 'Saved Successfully!');
+                        $("#lblUserVoucherNo").text(response.UserVoucherNo);
+                        $('#inputDate').val(getTodayDate());
+                        $('#inputVoucherID').val("");
+                        $("#ddlLocation").val(defaultLocationId);
+                        clearTransaction();
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnEdit").click(function (e) {
+            let openingStockId = $(this).val();
+            showLoadingIcon();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("EditAction", "OpeningStock")',
+                data: JSON.stringify({ "openingStockId": openingStockId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (response.IsRequestSuccess)
+                        window.location.href = '@Url.Action("ListOpeningStock", "OpeningStock")?userId=' + userId;
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -174,12 +242,13 @@
             $('#tblTranOpeningStock tr').removeClass("selected");
             $(this).addClass("selected");
             $(this).find("td:last").each(function () {
-                productId = $(this).text();                
-            })           
+                productId = $(this).text();
+            })
         });
 
         $("#tblTranOpeningStock").on("keydown", "tbody tr .inputQty", function (event) {
             if (event.which === 13) {
+                if (productId == "") return;
                 let quantity = $(this).val();
                 if (quantity == "") quantity = 0;
                 let trId = $(this).closest('tr').attr('id'); // table row ID
@@ -193,9 +262,14 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        $('#tblTranOpeningStock tr').removeClass("selected");
-                        $('#tblTranOpeningStock #' + nextTrId + '').addClass("selected");
-                        $('#tblTranOpeningStock #' + nextTrId + ' .inputQty').focus();
+                        if (!response.IsRequestSuccess)
+                            redirectToLogin();
+                        else {
+                            $('#tblTranOpeningStock tr').removeClass("selected");
+                            $('#tblTranOpeningStock #' + nextTrId + '').addClass("selected");
+                            $('#tblTranOpeningStock #' + nextTrId + ' .inputQty').focus();
+                            productId = $('#tblTranOpeningStock #' + nextTrId + ' td:last').text();
+                        }
                     },
                     failure: function (response) {
                         hideLoadingIcon();
@@ -212,6 +286,14 @@
         function initializeControl() {
             $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
             $('#inputDate').val(getTodayDate());
+            showHideMainButton(false);
+            defaultLocationId = $('#ddlLocation option:selected').val();
+        }
+
+        function clearTransaction() {
+            num = 0;
+            $("#tblTranOpeningStock").find("tbody").empty();
+            $(".btnSubMenu").prop("disabled", false);
         }
 
         function clearSubMenuData() {
@@ -220,23 +302,42 @@
 
         function createSubMenuData(response) {
             $.each(response.SubMenus, function (i, item) {
-                let btn = '<button class="btnSubMenu menu-sub" value=' + item.SubMenuID + '>' + item.SubMenuName + '</button>'
+                let btn = '<button id="btnSubMenu'+item.SubMenuID+'" class="btnSubMenu menu-sub" value=' + item.SubMenuID + '>' + item.SubMenuName + '</button>'
                 $('#divSubMenu').append(btn);
             })
         }
 
         function createTranOpeningStockData(response) {
-            $.each(response.ProductMenus.Products, function (i, item) {
+            $.each(response, function (i, item) {
                 num += 1;
                 let row = '<tr id=' + num + ' class="row table-item">'
                        + '<td class="col-md-1 col-lg-1"><label class="control-label mb-0">' + num + '</label></td>'
                        + '<td class="col-md-3 col-lg-3"><label class="control-label mb-0">' + item.Code + '</label></td>'
                        + '<td class="col-md-6 col-lg-6"><label class="control-label mb-0">' + item.ProductName + '</label></td>'
-                       + '<td class="col-md-2 col-lg-2"><input type="text" class="inputQty border-gray control-input mb-0 numberonly" style="width:100px;text-align:center;" /></td>'
+                       + '<td class="col-md-2 col-lg-2"><input type="text" class="inputQty border-gray control-input mb-0 numberonly" style="width:100px;text-align:center;" value="'+ item.Quantity +'" /></td>'
                        + '<td style="display:none;">' + item.ProductID + '</td>'
                        + '</tr>';
                 $('#tblTranOpeningStock tbody').append(row);
             })
+        }
+
+        function fillEditData() {
+            $('#btnEdit').val('@ViewBag.OpeningStockID');
+            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputDate').val('@ViewBag.Date');
+            $('#inputVoucherID').val('@ViewBag.VoucherID');
+            $("#ddlLocation").val('@ViewBag.LocationID');
+            $('#inputDate').prop("disabled", true);
+            $('#inputVoucherID').prop("disabled", true);
+            $('#ddlLocation').prop("disabled", true);
+            showHideMainButton(true);
+            let tranOpeningStockList = JSON.parse('@Html.Raw(Json.Encode(Session["TranOpeningStockData"]))');
+            createTranOpeningStockData(tranOpeningStockList);
+        }
+
+        function showHideMainButton(isEdit) {
+            if (isEdit) $('#btnSave').css("display", "none");
+            else $("#btnEdit").css("display", "none");
         }
 
     });

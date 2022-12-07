@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Add" xml:space="preserve">
-    <value>Add</value>
+    <value>ADD</value>
   </data>
   <data name="AdvancedPay" xml:space="preserve">
     <value>Advanced Pay</value>
@@ -369,8 +369,8 @@
   <data name="Consignment" xml:space="preserve">
     <value>Consignment</value>
   </data>
-  <data name="ListCustomerConsign" xml:space="preserve">
-    <value>List Customer Consign</value>
+  <data name="CustomerConsignList" xml:space="preserve">
+    <value>Customer Consign List</value>
   </data>
   <data name="Transfer" xml:space="preserve">
     <value>Transfer</value>
@@ -381,8 +381,8 @@
   <data name="AddTransfer" xml:space="preserve">
     <value>Add Transfer</value>
   </data>
-  <data name="ListTransfer" xml:space="preserve">
-    <value>List Transfer</value>
+  <data name="TransferList" xml:space="preserve">
+    <value>Transfer List</value>
   </data>
   <data name="AddAdjustment" xml:space="preserve">
     <value>Add Adjustment</value>
@@ -390,13 +390,46 @@
   <data name="AddOpeningStock" xml:space="preserve">
     <value>Add Opening Stock</value>
   </data>
+  <data name="OpeningStockList" xml:space="preserve">
+    <value>Opening Stock List</value>
+  </data>
+  <data name="HashSign" xml:space="preserve">
+    <value>#</value>
+  </data>
   <data name="ListAdjustment" xml:space="preserve">
     <value>List Adjustment</value>
+  </data>
+  <data name="ListCustomerConsign" xml:space="preserve">
+    <value>List Customer Consign</value>
   </data>
   <data name="ListOpeningStock" xml:space="preserve">
     <value>List Opening Stock</value>
   </data>
-  <data name="HashSign" xml:space="preserve">
-    <value>#</value>
+  <data name="ListTransfer" xml:space="preserve">
+    <value>List Transfer</value>
+  </data>
+  <data name="AddPurchase" xml:space="preserve">
+    <value>Add Purchase</value>
+  </data>
+  <data name="AddPurchaseOrder" xml:space="preserve">
+    <value>Add Purchase Order</value>
+  </data>
+  <data name="AddSaleOrder" xml:space="preserve">
+    <value>Add Sale Order</value>
+  </data>
+  <data name="ListPurchase" xml:space="preserve">
+    <value>List Purchase</value>
+  </data>
+  <data name="ListPurchaseOrder" xml:space="preserve">
+    <value>List Purchase Order</value>
+  </data>
+  <data name="ListSale" xml:space="preserve">
+    <value>List Sale</value>
+  </data>
+  <data name="ListSaleOrder" xml:space="preserve">
+    <value>List Sale Order</value>
+  </data>
+  <data name="Main" xml:space="preserve">
+    <value>Main</value>
   </data>
 </root>

@@ -6,6 +6,9 @@ using System.Web.Mvc;
 using Inventory.ViewModels;
 using Inventory.Common;
 using Inventory.Models;
+using System.Data;
+using System.Data.SqlClient;
+using System.Runtime.InteropServices;
 
 namespace Inventory.Controllers
 {
@@ -18,7 +21,7 @@ namespace Inventory.Controllers
         AppSetting setting = new AppSetting();
         AppSetting.Paging paging = new AppSetting.Paging();
 
-        public ActionResult OpeningStock(int userId)
+        public ActionResult OpeningStock(int userId, int? openingStockId)
         {
             if (checkConnection())
             {               
@@ -26,35 +29,81 @@ namespace Inventory.Controllers
                 getMainMenu();
                 getSubMenu(getFirstMainMenuID());
                 clearOSSession();
-                ViewBag.UserVoucherNo = getUserVoucherNo(userId);
+                if(openingStockId != null) // edit
+                {
+                    ViewBag.IsEdit = true;
+                    OpeningStockViewModel.MasterOpeningStockViewModel data = selectMasterOpeningStockByID((int)openingStockId);
+                    List<ProductModels.ProductModel> lstTranOpeningStock = selectTranOpeningStockByID((int)openingStockId);                  
+                    Session["TranOpeningStockData"] = lstTranOpeningStock;                 
+                    ViewBag.UserVoucherNo = data.UserVoucherNo;
+                    DateTime date = setting.convertStringToDate(data.OpeningDateTime);
+                    ViewBag.Date = setting.convertDateToString(date);
+                    ViewBag.VoucherID = data.VoucherID;                 
+                    ViewBag.LocationID = data.LocationID;                  
+                    ViewBag.OpeningStockID = openingStockId;
+                }
+                else ViewBag.UserVoucherNo = getUserVoucherNo(userId);
 
                 return View(openingStockViewModel);
             }
             return RedirectToAction("Login", "User");
         }
 
-        public ActionResult ListOpeningStock()
+        public ActionResult ListOpeningStock(int userId)
         {
-            return View();
+            if (checkConnection())
+            {              
+                List<OpeningStockViewModel.MasterOpeningStockViewModel> tempList = selectMasterOpeningStock(userId);
+                PagingViewModel pagingViewModel = calcMasterOpeningStockPaging(tempList);
+                List<OpeningStockViewModel.MasterOpeningStockViewModel> lstMasterOpeningStock = getMasterOpeningStockByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+                ViewData["LstMasterOpeningStock"] = lstMasterOpeningStock;
+                ViewBag.TotalPageNum = pagingViewModel.TotalPageNum;
+                ViewBag.CurrentPage = pagingViewModel.CurrentPage;
+                return View(openingStockViewModel);
+            }
+            return RedirectToAction("Login", "User");
         }
 
         [HttpGet]
-        public JsonResult AddQuantityAction(int productId,int quantity)
+        public JsonResult AddQuantityAction(int productId, int quantity)
         {
-          
-            return Json("", JsonRequestBehavior.AllowGet);
+            bool isRequestSuccess = true;
+
+            if (Session["TranOpeningStockData"] != null)
+            {
+                List<ProductModels.ProductModel> lstTranOpeningStock = Session["TranOpeningStockData"] as List<ProductModels.ProductModel>;
+                ProductModels.ProductModel product = lstTranOpeningStock.Where(x => x.ProductID == productId).SingleOrDefault();
+                int index = lstTranOpeningStock.IndexOf(product);
+                product.Quantity = quantity;
+                lstTranOpeningStock.RemoveAt(index);
+                lstTranOpeningStock.Insert(index, product);
+                Session["TranOpeningStockData"] = lstTranOpeningStock;
+            }
+            else isRequestSuccess = false;
+
+            var jsonResult = new
+            {
+                IsRequestSuccess = isRequestSuccess
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
         public JsonResult SubMenuClickAction(int subMenuId)
         {
-            if(Session["TranOpeningStockData"] != null)
-            {
-                //lstTranSale = Session["TranOpeningStockData"] as List<>;
-            }
+            bool isRequestSuccess = true;
             getProduct(subMenuId);
-            setOSSession();
-            return Json(openingStockViewModel, JsonRequestBehavior.AllowGet);
+            if (!checkIsExistInTran(openingStockViewModel.ProductMenus.Products)) setOSSession();
+            else isRequestSuccess = false;
+
+            var jsonResult = new
+            {
+                Products = openingStockViewModel.ProductMenus.Products,
+                IsRequestSuccess = isRequestSuccess
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
@@ -64,11 +113,287 @@ namespace Inventory.Controllers
             return Json("", JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public JsonResult SaveAction(string userVoucherNo, string date, string voucherId, int locationId, int userId)
+        {
+            bool isRequestSuccess = false;
+            string message = "";
+
+            if (Session["TranOpeningStockData"] != null)
+            {
+                List<ProductModels.ProductModel> list = Session["TranOpeningStockData"] as List<ProductModels.ProductModel>;
+                DataTable dt = new DataTable();
+                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                for (int i = 0; i < list.Count; i++)
+                {
+                    dt.Rows.Add(list[i].ProductID, list[i].Quantity);
+                }
+
+                DateTime openingDateTime = DateTime.Parse(date);
+                SqlCommand cmd = new SqlCommand(Procedure.PrcInsertOpeningStock, dataConnectorSQL.Connect());
+                cmd.Parameters.AddWithValue("@OpeningDateTime", openingDateTime);
+                cmd.Parameters.AddWithValue("@LocationID", locationId);
+                cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.OpeningStockModule);
+                cmd.Parameters.AddWithValue("@temptbl", dt);
+                cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    string val = Convert.ToString(reader[0]);
+                    if (val.Length == 1)  // duplicate location
+                        message = "Already have opening stock with this location!";
+                    else
+                    {
+                        userVoucherNo = val;
+                        clearOSSession();
+                        isRequestSuccess = true;
+                    }
+                }
+                reader.Close();
+                dataConnectorSQL.Close();
+            }
+
+            var jsonResult = new
+            {
+                UserVoucherNo = userVoucherNo,
+                IsRequestSuccess = isRequestSuccess,
+                Message = message
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult EditAction(int openingStockId)
+        {
+            bool isRequestSuccess = true;
+
+            if (Session["TranOpeningStockData"] != null)
+            {
+                List<ProductModels.ProductModel> list = Session["TranOpeningStockData"] as List<ProductModels.ProductModel>;
+                DataTable dt = new DataTable();
+                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                for (int i = 0; i < list.Count; i++)
+                {
+                    dt.Rows.Add(list[i].ProductID, list[i].Quantity);
+                }
+
+                SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateOpeningStock, dataConnectorSQL.Connect());
+                cmd.Parameters.AddWithValue("@OpeningStockID", openingStockId);
+                cmd.Parameters.AddWithValue("@temptbl", dt);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.ExecuteNonQuery();
+                dataConnectorSQL.Close();
+            }
+            else isRequestSuccess = false;
+
+            var jsonResult = new
+            {
+                IsRequestSuccess = isRequestSuccess,
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult DeleteAction(int openingStockId)
+        {
+            bool isRequestSuccess = true;
+            int totalPageNum = 0;
+
+            if (Session["MasterOpeningStockData"] != null)
+            {
+                SqlCommand cmd = new SqlCommand(textQuery.deleteOpeningStockQuery(openingStockId), (SqlConnection)getConnection());
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+
+                List<OpeningStockViewModel.MasterOpeningStockViewModel> lstMasterOpeningStock = Session["MasterOpeningStockData"] as List<OpeningStockViewModel.MasterOpeningStockViewModel>;
+                int index = lstMasterOpeningStock.FindIndex(x => x.OpeningStockID == openingStockId);
+                lstMasterOpeningStock.RemoveAt(index);
+
+                if (lstMasterOpeningStock.Count > paging.eachItemCount)
+                {
+                    totalPageNum = lstMasterOpeningStock.Count / paging.eachItemCount;
+                    paging.lastItemCount = lstMasterOpeningStock.Count % paging.eachItemCount;
+                    if (paging.lastItemCount != 0) totalPageNum += 1;
+                }
+            }
+            else isRequestSuccess = false;
+
+            var jsonResult = new
+            {
+                TotalPage = totalPageNum,
+                IsRequestSuccess = isRequestSuccess
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult OpeningStockPagingAction(int currentPage)
+        {
+            bool isRequestSuccess = true;
+            List<OpeningStockViewModel.MasterOpeningStockViewModel> lstMasterOpeningStock = new List<OpeningStockViewModel.MasterOpeningStockViewModel>();
+            PagingViewModel pagingViewModel = new PagingViewModel();
+
+            if (Session["MasterOpeningStockData"] != null)
+            {
+                List<OpeningStockViewModel.MasterOpeningStockViewModel> tempList = Session["MasterOpeningStockData"] as List<OpeningStockViewModel.MasterOpeningStockViewModel>;
+                pagingViewModel = calcMasterOpeningStockPaging(tempList, currentPage);
+                lstMasterOpeningStock = getMasterOpeningStockByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+            }
+            else isRequestSuccess = false;
+
+            var jsonResult = new
+            {
+                LstMasterOpeningStock = lstMasterOpeningStock,
+                TotalPage = pagingViewModel.TotalPageNum,
+                IsRequestSuccess = isRequestSuccess
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
         #region Method
+
+        private OpeningStockViewModel.MasterOpeningStockViewModel selectMasterOpeningStockByID(int openingStockId)
+        {
+            OpeningStockViewModel.MasterOpeningStockViewModel item = new OpeningStockViewModel.MasterOpeningStockViewModel();
+
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterOpeningStockByID, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@OpeningStockID", openingStockId);
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                item.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
+                item.VoucherID = Convert.ToString(reader["VoucherID"]);
+                item.OpeningDateTime = Convert.ToString(reader["Date"]);               
+                item.LocationID = Convert.ToInt32(reader["LocationID"]);
+            }
+            reader.Close();
+
+            return item;
+        }
+
+        private List<OpeningStockViewModel.MasterOpeningStockViewModel> selectMasterOpeningStock(int userId)
+        {
+            List<OpeningStockViewModel.MasterOpeningStockViewModel> tempList = new List<OpeningStockViewModel.MasterOpeningStockViewModel>();
+            OpeningStockViewModel.MasterOpeningStockViewModel item = new OpeningStockViewModel.MasterOpeningStockViewModel();
+
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterOpeningStockList, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@UserID", userId);
+
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new OpeningStockViewModel.MasterOpeningStockViewModel();
+                item.OpeningStockID = Convert.ToInt32(reader["OpeningStockID"]);
+                item.OpeningDateTime = Convert.ToString(reader["OpeningDateTime"]);
+                item.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
+                item.VoucherID = Convert.ToString(reader["VoucherID"]);
+                item.LocationName = Convert.ToString(reader["LocationName"]);
+                item.UserName = Convert.ToString(reader["UserName"]);
+                tempList.Add(item);
+            }
+            reader.Close();
+            Session["MasterOpeningStockData"] = tempList;  // for paging
+
+            return tempList;
+        }
+
+        private List<ProductModels.ProductModel> selectTranOpeningStockByID(int openingStockId)
+        {
+            List<ProductModels.ProductModel> list = new List<ProductModels.ProductModel>();
+            ProductModels.ProductModel item = new ProductModels.ProductModel();
+
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetTranOpeningStockByID, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@OpeningStockID", openingStockId);
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new ProductModels.ProductModel();
+                item.ProductID = Convert.ToInt32(reader["ProductID"]);
+                item.Code = Convert.ToString(reader["Code"]);
+                item.ProductName = Convert.ToString(reader["ProductName"]);
+                item.Quantity = Convert.ToInt32(reader["Quantity"]);
+                list.Add(item);
+            }
+            reader.Close();
+
+            return list;
+        }
+
+        private PagingViewModel calcMasterOpeningStockPaging(List<OpeningStockViewModel.MasterOpeningStockViewModel> tempList, [Optional]int currentPage)
+        {
+            PagingViewModel item = new PagingViewModel();
+            int totalPageNum = 0;
+
+            if (currentPage == 0) currentPage = 1;
+            if (tempList.Count > paging.eachItemCount)
+            {
+                totalPageNum = tempList.Count / paging.eachItemCount;
+                paging.lastItemCount = tempList.Count % paging.eachItemCount;
+                if (paging.lastItemCount != 0) totalPageNum += 1;
+
+                int i = currentPage * paging.eachItemCount;
+                int j = (i - paging.eachItemCount) + 1;
+                int start = j;
+                int end = i;
+                paging.startItemIndex = start - 1;
+                paging.endItemIndex = end - 1;
+            }
+            else
+            {
+                paging.startItemIndex = 0;
+                paging.endItemIndex = tempList.Count - 1;
+            }
+
+            item.CurrentPage = currentPage;
+            item.TotalPageNum = totalPageNum;
+            item.StartItemIndex = paging.startItemIndex;
+            item.EndItemIndex = paging.endItemIndex;
+
+            return item;
+        }
+
+        private List<OpeningStockViewModel.MasterOpeningStockViewModel> getMasterOpeningStockByPaging(List<OpeningStockViewModel.MasterOpeningStockViewModel> tempList, int startRowIndex, int endRowIndex)
+        {
+            List<OpeningStockViewModel.MasterOpeningStockViewModel> list = new List<OpeningStockViewModel.MasterOpeningStockViewModel>();
+            OpeningStockViewModel.MasterOpeningStockViewModel item = new OpeningStockViewModel.MasterOpeningStockViewModel();
+
+            for (int page = startRowIndex; page < tempList.Count; page++)
+            {
+                if (page > endRowIndex) break;
+
+                item = new OpeningStockViewModel.MasterOpeningStockViewModel();
+                item.OpeningStockID = tempList[page].OpeningStockID;
+                item.OpeningDateTime = tempList[page].OpeningDateTime;
+                item.UserVoucherNo = tempList[page].UserVoucherNo;
+                item.VoucherID = tempList[page].VoucherID;
+                item.LocationName = tempList[page].LocationName;
+                item.UserName = tempList[page].UserName;
+                list.Add(item);
+            }
+            return list;
+        }
 
         private void setOSSession()
         {
-            Session["TranOpeningStockData"] = openingStockViewModel.ProductMenus.Products;
+            if (Session["TranOpeningStockData"] != null)
+            {
+                List<ProductModels.ProductModel> lstTranOpeningStock = Session["TranOpeningStockData"] as List<ProductModels.ProductModel>;
+                lstTranOpeningStock.AddRange(openingStockViewModel.ProductMenus.Products);
+            }
+            else
+                Session["TranOpeningStockData"] = openingStockViewModel.ProductMenus.Products;
         }
 
         private void clearOSSession()
@@ -99,8 +424,29 @@ namespace Inventory.Controllers
 
         private void getProduct(int subMenuId)
         {
-            openingStockViewModel.ProductMenus.Products = appData.selectProduct(getConnection(), subMenuId);           
-        }      
+            openingStockViewModel.ProductMenus.Products = appData.selectProduct(getConnection(), subMenuId);      
+        }
+
+        private bool checkIsExistInTran(IEnumerable<ProductModels.ProductModel> products)
+        {
+            bool result = false;
+            int productId = 0;
+
+            if (products.Count() != 0)
+            {
+                productId = products.ElementAt(0).ProductID;
+                if (Session["TranOpeningStockData"] != null)
+                {
+                    List<ProductModels.ProductModel> lstTranOpeningStock = Session["TranOpeningStockData"] as List<ProductModels.ProductModel>;
+                    if (lstTranOpeningStock.Count() != 0)
+                    {
+                        ProductModels.ProductModel product=lstTranOpeningStock.Where(x => x.ProductID == productId).SingleOrDefault();
+                        if (product != null) result = true;                      
+                    }
+                }
+            }
+            return result;
+        }
 
         private void getLocation()
         {

@@ -49,6 +49,7 @@ namespace Inventory.Models
             public string SubMenuName { get; set; }
             public string MainMenuName { get; set; }
             public int TotalPageNum { get; set; }
+            public int Quantity { get; set; }
         }     
         public class ProductDetail
         {

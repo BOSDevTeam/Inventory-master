@@ -17,8 +17,172 @@
     </style>
 
     <script type="text/javascript">
+
+        let listActionValue, selectedRowIndex;
         document.getElementById('subMenuOpeningStockList').className = 'active';
+
+        $(document).ready(function () {
+
+            setModuleTitle('@Resource.OpeningStock', '@Resource.ListOpeningStock');
+            createMasterOpeningStockData('', false);
+            createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');
+
+            $("#btnDelOk").click(function () {
+                let openingStockId = $("#btnDelOk").val();
+                showLoadingIcon();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("DeleteAction", "OpeningStock")',
+                    data: JSON.stringify({ "openingStockId": openingStockId }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.IsRequestSuccess)
+                            redirectToLogin();
+                        else {
+                            if (selectedRowIndex != null) {
+                                document.getElementById("tblOpeningStockList").deleteRow(selectedRowIndex);
+                                createPaging(response.TotalPage, "");
+                                showToast(1, 'Deleted Successfully!');
+                            }
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+            $("#tblOpeningStockList").on("click", "tbody tr", function (event) {
+                $(this).find("td:last").each(function () {
+                    let openingStockId = $(this).text();
+                    if (listActionValue == 2) {  // edit
+                        clearTableAction();
+                        window.location.href = '@Url.Action("OpeningStock", "OpeningStock")?userId=' + userId + '&openingStockId=' + openingStockId;
+                    } else if (listActionValue == 3) {  // delete
+                        clearTableAction();
+                        $('#modalConfirm').modal('show');
+                        $("#btnDelOk").val(openingStockId);
+                    }
+                });
+            });
+
+            function createMasterOpeningStockData(response, isFromJson) {
+                $("#tblOpeningStockList").find("tbody").empty();
+                if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterOpeningStock"]))');
+                $.each(response, function (index, item) {
+                    var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
+                            + '<td class="col-md-2 col-lg-2 text-overflow">' + item.OpeningDateTime + '</td>'
+                            + '<td class="col-md-3 col-lg-3">' + item.UserVoucherNo + '</td>'
+                            + '<td class="col-md-2 col-lg-2">' + item.VoucherID + '</td>'
+                            + '<td class="col-md-2 col-lg-2">' + item.LocationName + '</td>'
+                            + '<td class="col-md-2 col-lg-2">' + item.UserName + '</td>'
+                            + '<td class="col-md-1 col-lg-1 btn-group">'
+                                + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
+                                + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
+                            + '</td>'
+                            + '<td style="display:none">' + item.OpeningStockID + '</td>'
+                        + '</tr>'
+                    $('#tblOpeningStockList tbody').append(row);
+                });
+            }
+
+            $(document).on('click', '.btnPage', function (e) {
+                let currentPage = $(this).text();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("OpeningStockPagingAction", "OpeningStock")',
+                    data: { "currentPage": currentPage },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.IsRequestSuccess)
+                            redirectToLogin();
+                        else {
+                            createMasterOpeningStockData(response.LstMasterOpeningStock, true);
+                            createPaging(response.TotalPage, currentPage);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+            $("#btnAdd").click(function () {
+                window.location.href = '@Url.Action("OpeningStock", "OpeningStock")?userId=' + userId;
+            });
+
+        });
+
+        function listTableAction(value) {
+            listActionValue = value;
+        }
+
+        function findRowIndex(x) {
+            selectedRowIndex = x.rowIndex;
+        }
+
+        function clearTableAction() {
+            listActionValue = 0;
+        }
+
     </script>
 </head>
+
+<div>
+
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">@Resource.OpeningStockList</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right">@Resource.Add</button>
+        </div>
+    </div>
+
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblOpeningStockList" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-2 col-lg-2">Date</th>
+                        <th class="col-md-3 col-lg-3">Voucher No.</th>
+                        <th class="col-md-2 col-lg-2">VoucherID</th>
+                        <th class="col-md-2 col-lg-2">Location</th>
+                        <th class="col-md-2 col-lg-2">User</th>
+                        <th class="col-md-1 col-lg-1">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="divPaging" class="row paging">
+        <div class="col-md-1 col-lg-1"><label id="lblPageNumber" class="page-num"></label></div>
+        <div id="divPagingItem" class="col-md-11 col-lg-11 paging-item"></div>
+    </div>
+
+</div>
+
+<div>
+    @{
+        Html.RenderPartial("_ConfirmDialog");
+    }
+</div>
 
 

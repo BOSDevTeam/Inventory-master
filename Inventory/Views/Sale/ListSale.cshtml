@@ -20,12 +20,13 @@
         document.getElementById('subMenuSaleList').className = 'active';
 
         $(document).ready(function () {
-           
+
+            setModuleTitle('@Resource.Sale', '@Resource.ListSale');
             initializeControl();
             createMasterSaleData('', false);
-            createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');   
-            
-            function initializeControl() {              
+            createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');
+
+            function initializeControl() {
                 $('#inputFromDate').val(getTodayDate());
                 $('#inputToDate').val(getTodayDate());
             }
@@ -109,7 +110,7 @@
                                 createPaging(response.TotalPage, "");
                                 showToast(1, 'Deleted Successfully!');
                             }
-                        }                     
+                        }
                     },
                     failure: function (response) {
                         hideLoadingIcon();
@@ -186,7 +187,7 @@
             }
 
             $(document).on('click', '.btnPage', function (e) {
-                let currentPage = $(this).text();             
+                let currentPage = $(this).text();
                 showLoadingIcon();
                 $.ajax({
                     type: "GET",
@@ -201,7 +202,7 @@
                         else {
                             createMasterSaleData(response.LstMasterSale, true);
                             createPaging(response.TotalPage, currentPage);
-                        }                       
+                        }
                     },
                     failure: function (response) {
                         hideLoadingIcon();
@@ -212,6 +213,10 @@
                         alert(response.responseText);
                     }
                 });
+            });
+
+            $("#btnAdd").click(function () {
+                window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId;
             });
 
         });
@@ -234,9 +239,12 @@
 <div>
 
     <div class="row setup-title-layout">
-        <div class="col-md-12 col-lg-12">
+        <div class="col-md-6 col-lg-6">
             <label class="page-title">@Resource.SaleList</label>
-        </div>       
+        </div>   
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right">@Resource.Add</button>
+        </div>    
     </div>
 
     <div class="row setup-title-layout search-div">

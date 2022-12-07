@@ -118,21 +118,19 @@
                         <td class="table-border value-right"><input id="inputHdnTotal" type="hidden" /><label id="lblTotal" class="total-amount-value mb-0">0</label></td>
                     </tr>
                 </table>
-                <div class="row mr-0">
-                    <div class="col-md-3 col-lg-3">
-                        <button id="btnCancel" class="btn btn-block btn-white-outline-third">@Resource.Cancel</button>
-                        <button id="btnEditCancel" class="btn btn-block btn-white-outline-third m-t-0">@Resource.Cancel</button>
-                        <button id="btnOpenBillCancel" class="btn btn-block btn-white-outline-third m-t-0">@Resource.Cancel</button>
-                        <button id="btnCLSaleOrderCancel" class="btn btn-block btn-white-outline-third m-t-0">@Resource.Cancel</button>
-                    </div>
-                    <div class="col-md-3 col-lg-3">
-                        <button id="btnHold" class="btn btn-block btn-second">@Resource.Hold</button>
-                    </div>
+                <div class="row mr-0 soft-gray-background pt-1">
                     <div class="col-md-6 col-lg-6">
+                        <button id="btnCancel" class="btn btn-third">@Resource.Reset</button>
+                        <button id="btnEditCancel" class="btn btn-third m-t-0">@Resource.Cancel</button>
+                        <button id="btnOpenBillCancel" class="btn btn-third m-t-0">@Resource.Cancel</button>
+                        <button id="btnCLSaleOrderCancel" class="btn btn-third m-t-0">@Resource.Cancel</button>
+                        <button id="btnHold" class="btn btn-second plr-30">@Resource.Hold</button>
+                    </div>
+                    <div class="col-md-6 col-lg-6 aligh-right">
                         <input type="hidden" id="inputOpenBillID" />
                         <input type="hidden" id="inputCLSaleOrderID" />
-                        <button id="btnPayment" class="btn btn-block btn-first">@Resource.Payment</button>
-                        <button id="btnEditPayment" class="btn btn-block btn-first m-t-0">@Resource.Edit</button>
+                        <button id="btnPayment" class="btn btn-first plr-30">@Resource.Payment</button>
+                        <button id="btnEditPayment" class="btn btn-first plr-30 m-t-0">@Resource.Edit</button>
                     </div>
                 </div>
             </div>
@@ -190,6 +188,8 @@
     }
 
     $(document).ready(function () {
+
+        setModuleTitle('@Resource.Sale', '@Resource.POS');
 
         if ('@ViewBag.IsEdit' == 'True') fillEditData();
         else if ('@ViewBag.IsFromOpenBill' == 'True') fillOpenBillData();
@@ -572,9 +572,7 @@
                         alert("Session Expired!");
                         redirectToLogin();
                     }
-                    else {
-                        window.location.href = '@Url.Action("ListSale", "Sale")?userId=' + userId;
-                    }
+                    else window.location.href = '@Url.Action("ListSale", "Sale")?userId=' + userId;
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -804,7 +802,7 @@
             let openBillId = $('#inputOpenBillID').val();
             let clSaleOrderId = $('#inputCLSaleOrderID').val();
             let isVoucherFOC = false;
-            if ($('#chkVoucherFOC').is(":checked")) isVoucherFOC = true;          
+            if ($('#chkVoucherFOC').is(":checked")) isVoucherFOC = true;
             showLoadingIcon();
             $.ajax({
                 type: "POST",
@@ -927,7 +925,7 @@
             let productId = $('#inputProductID').val();
             if (productId == "") return;
             if (this.checked) $('#inputPrice').val('0');
-            else {               
+            else {
                 showLoadingIcon();
                 $.ajax({
                     type: "GET",
@@ -936,8 +934,8 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
-                        hideLoadingIcon();                        
-                        $("#inputPrice").val(response);                                                   
+                        hideLoadingIcon();
+                        $("#inputPrice").val(response);
                     },
                     failure: function (response) {
                         hideLoadingIcon();

@@ -11,7 +11,7 @@ namespace Inventory.Common
     {       
         public class Paging
         {
-            public int eachItemCount = 15; // item count in each paging
+            public int eachItemCount = 20; // item count in each paging
             public int lastItemCount; // item count in last paging
             public int startItemIndex, endItemIndex;
         }

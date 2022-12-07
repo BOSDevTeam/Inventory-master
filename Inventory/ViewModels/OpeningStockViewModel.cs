@@ -18,5 +18,16 @@ namespace Inventory.ViewModels
         public List<SelectListItem> Locations { get; set; }
         public ProductMenuViewModel ProductMenus { get; set; }
         public TranOpeningStockModels TranOpeningStock { get; set; }
+
+        public class MasterOpeningStockViewModel
+        {
+            public int OpeningStockID { get; set; }
+            public string UserVoucherNo { get; set; }
+            public string OpeningDateTime { get; set; }
+            public string VoucherID { get; set; }
+            public string LocationName { get; set; }
+            public string UserName { get; set; }
+            public int LocationID { get; set; }
+        }
     }
 }

@@ -75,5 +75,10 @@ namespace Inventory.Common
         public const string PrcGetMasterAdjustmentByAdjustmentID = "PrcGetMasterAdjustmentByAdjustmentID";
         public const string PrcGetTranAdjustmentByAdjustmentID = "PrcGetTranAdjustmentByAdjustmentID";
         public const string PrcUpdateAdjustment = "PrcUpdateAdjustment";
+        public const string PrcInsertOpeningStock = "PrcInsertOpeningStock";
+        public const string PrcUpdateOpeningStock = "PrcUpdateOpeningStock";
+        public const string PrcGetMasterOpeningStockList = "PrcGetMasterOpeningStockList";
+        public const string PrcGetMasterOpeningStockByID = "PrcGetMasterOpeningStockByID";
+        public const string PrcGetTranOpeningStockByID = "PrcGetTranOpeningStockByID";
     }
 }

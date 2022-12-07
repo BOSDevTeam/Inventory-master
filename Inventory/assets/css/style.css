@@ -701,7 +701,7 @@ textarea.form-control {
 -----------------------*/
 
 .header {
-	background-color: #39c164;
+	background-color: #27ae61;
 	left: 0;
 	position: fixed;
 	right: 0;
@@ -716,8 +716,16 @@ textarea.form-control {
 	padding: 0 20px;
 	position: relative;
 	text-align: center;
-	width: 230px;
+	/*width: 230px;*/
 	z-index: 1;
+}
+.header .header-left .header-module {
+	color:#fff;
+    font-family: 'Rubik',sans-serif;
+}
+.header .header-left .header-sub-module {
+	color:#edeff1;
+    font-family: 'Rubik',sans-serif;
 }
 .logo {
 	align-items: center;
@@ -848,20 +856,20 @@ textarea.form-control {
 .sidebar-menu li a {
 	color: #888;
 	display: block;
-	font-size: 15px;
+	font-size: 14px;
 	height: auto;
 	padding: 0 20px;
 }
 .sidebar-menu li a:hover {
-	color: #39c164;
+	color: #27ae61;
 }
 .sidebar-menu li.active a {
-	color: #39c164;
+	color: #27ae61;
 	background-color: #f3f3f3;
 }
 .menu-title {
 	color: #333;
-	font-size: 15px;
+	font-size: 14px;
 	font-weight: 500;
 	padding: 12px 20px;
 }
@@ -879,7 +887,7 @@ textarea.form-control {
 	color: #fff;
 	display: block;
 	float: none;
-	font-size: 15px;
+	font-size: 14px;
 	line-height: inherit;
 	margin-bottom: 15px;
 }
@@ -4402,7 +4410,7 @@ blockquote p {
 	}
 	.mini-sidebar .header .header-left {
 		padding: 0 5px;
-		width: 60px;
+		/*width: 60px;*/
 	}
 	.mini-sidebar .sidebar {
 		width: 60px;

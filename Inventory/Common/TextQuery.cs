@@ -115,5 +115,10 @@ namespace Inventory.Common
         {
             return "Delete From TTranCustomerConsign Where CustomerConsignID=" + customerConsignId + " Delete From TMasterCustomerConsign Where CustomerConsignID=" + customerConsignId;
         }
+
+        public string deleteOpeningStockQuery(int openingStockId)
+        {
+            return "Delete From TTranOpeningStock Where OpeningStockID=" + openingStockId + " Delete From TMasterOpeningStock Where OpeningStockID=" + openingStockId;
+        }
     }
 }

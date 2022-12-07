@@ -20,11 +20,12 @@
         document.getElementById('subMenuOpenBill').className = 'active';
 
         $(document).ready(function () {
-           
+
+            setModuleTitle('@Resource.Sale', '@Resource.OpenedBills');
             initializeControl();
             createMasterOpenBillData('', false);
-            createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');  
-            
+            createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');
+
             function initializeControl() {
                 $('#inputFromDate').val(getTodayDate());
                 $('#inputToDate').val(getTodayDate());
@@ -109,7 +110,7 @@
                                 createPaging(response.TotalPage, "");
                                 showToast(1, 'Deleted Successfully!');
                             }
-                        }                       
+                        }
                     },
                     failure: function (response) {
                         hideLoadingIcon();
