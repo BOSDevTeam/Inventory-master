@@ -53,6 +53,7 @@ namespace Inventory.Controllers
                     ViewBag.Total = data.MasterTransferModel.TotalQuantity;
                     ViewBag.TotalQuantity = totalQuantity;
                     ViewBag.TransferID = transferId;
+                    ViewBag.Remark = data.MasterTransferModel.Remark;
                 }
                 return View(transferViewModel);
 
@@ -345,7 +346,7 @@ namespace Inventory.Controllers
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult EditAction(int transferId, string date, string voucherId, int formLocation, int toLocation, int totalQty)
+        public JsonResult EditAction(int transferId, string date, string voucherId, int formLocation, int toLocation, int totalQty, string remark)
         {
             bool message = true;
             bool isRequestSuccess = true;
@@ -373,6 +374,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@TransferDateTime", date);
                     cmd.Parameters.AddWithValue("@VoucherID", voucherId);
                     cmd.Parameters.AddWithValue("@TotalQuantity", totalQty);
+                    cmd.Parameters.AddWithValue("@Remark", remark);
                     cmd.Parameters.AddWithValue("@temptbl", dt);
                     cmd.ExecuteNonQuery();
                     dataConnectorSQL.Close();

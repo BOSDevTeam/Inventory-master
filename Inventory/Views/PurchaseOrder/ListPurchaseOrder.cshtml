@@ -50,11 +50,11 @@
             <table id="tblPurOrderList" class="col-md-12 col-lg-12" role="grid">
                 <thead>
                     <tr class="row table-header">
-                        <th class="col-md-2 col-lg-2">Date</th>
+                        <th class="col-md-3 col-lg-3">Date</th>
                         <th class="col-md-3 col-lg-3">Voucher No.</th>
                         <th class="col-md-3 col-lg-3">Supplier</th>
                         <th class="col-md-2 col-lg-2">Total</th>
-                        <th class="col-md-2 col-lg-2">Action</th>
+                        <th class="col-md-1 col-lg-1">Action</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -194,11 +194,11 @@
             if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterPurOrder"]))');
             $.each(response, function (index, item) {
                 var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
-                          + '<td class="col-md-2 col-lg-2 text-overflow">' + item.OrderDateTime + '</td>'
+                          + '<td class="col-md-3 col-lg-3 text-overflow">' + item.OrderDateTime + '</td>'
                           + '<td class="col-md-3 col-lg-3">' + item.UserVoucherNo + '</td>'
                           + '<td class="col-md-3 col-lg-3 text-overflow">' + item.SupplierName + '</td>'
                           + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Total) + '</td>'
-                          + '<td class="col-md-2 col-lg-2 btn-group">'
+                          + '<td class="col-md-1 col-lg-1 btn-group">'
                               + '<button title="View" class="btn btn-sm btn-dark" onclick="listTableAction(1)"><i class="fa fa-list"></i></button>'
                               + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
                               + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'

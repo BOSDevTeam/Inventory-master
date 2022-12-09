@@ -117,7 +117,8 @@
                 </table>
                 <div class="row mr-0 soft-gray-background pt-1">
                     <div class="col-md-3 col-lg-3">
-                        <button id="btnCancel" class="btn btn-third">@Resource.Reset</button>
+                        <button id="btnReset" class="btn btn-third">@Resource.Reset</button>
+                        <button id="btnCancel" class="btn btn-third">@Resource.Cancel</button>
                     </div>
                     <div class="col-md-3 col-lg-3">
                     </div>                    
@@ -351,7 +352,7 @@
             return total;
         }
 
-        $('#btnCancel').click(function () {
+        $('#btnReset').click(function () {
             showLoadingIcon();
             $.ajax({
                 type: "GET",
@@ -374,6 +375,10 @@
                 },
             });
         });
+
+        $('#btnCancel').click(function () {
+            window.location.href = '@Url.Action("PurchaseOrder", "PurchaseOrder")?userId=' + userId;
+        })
 
         $('#chkItemFOC').change(function () {
             let productId = $('#inputProductID').val();
@@ -780,9 +785,13 @@
     function showHideMainButton(isEdit) {
         if (isEdit) {
             $('#btnSave').css("display", "none");
+            $('#btnCancel').show();
+            $('#btnReset').css("display", "none");
         }
         else {
             $('#btnEditPayment').css("display", "none");
+            $('#btnCancel').css("display", "none");
+            $('#btnReset').show();
         }
     }
 

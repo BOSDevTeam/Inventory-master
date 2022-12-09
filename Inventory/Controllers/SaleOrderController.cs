@@ -32,6 +32,7 @@ namespace Inventory.Controllers
                 getMainMenu();
                 getSubMenu(getFirstMainMenuID());
                 getProduct(getFirstSubMenuID());
+                ViewBag.UserVoucherNo = getUserVoucherNo(userId);
                 clearTranSaleOrder();
                 int totalQuantity = 0;
                 if (saleOrderId != null) // saleorder edit
@@ -59,7 +60,6 @@ namespace Inventory.Controllers
                     ViewBag.SaleOrderID = saleOrderId;
                 }
 
-                ViewBag.UserVoucherNo = getUserVoucherNo(userId); 
                 return View(saleOrderViewModel);
             }
             return RedirectToAction("Login", "User");          

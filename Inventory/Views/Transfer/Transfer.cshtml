@@ -111,6 +111,7 @@
                 <div class="row mr-0 soft-gray-background pt-1">
                     <div class="col-md-6 col-lg-6">
                         <button id="btnReset" class="btn btn-third">@Resource.Reset</button>
+                        <button id="btnCancel" class="btn btn-third">@Resource.Cancel</button>
                         <button id="btnHold" class="btn btn-second plr-30">@Resource.Print</button>
                     </div>
                     <div class="col-md-6 col-lg-6 aligh-right">
@@ -185,6 +186,7 @@
             $('#fromLocation').val('@ViewBag.FromLocationID');
             $('#toLocation').val('@ViewBag.ToLocationID');
             $('#lblTotalQty').text('@ViewBag.Total');
+            $('#txtRemarkNote').text('@ViewBag.Remark');
             showHideUnit();
             showHideTranTransferAddEdit(false);
             showHideMainButton(true);
@@ -393,7 +395,6 @@
                 let number = $(this).text();
                 if (tranTransferAction == 3) {
                     tranTransferAction = 0;
-                    alert(number);
                     deleteTranTransfer(number);
                 }
                 else prepareToEditTranTransfer(number);
@@ -427,12 +428,19 @@
             });
         });
 
+        $("#btnCancel").click(function (e) {
+            window.location.href = '@Url.Action("Transfer", "Transfer")?userId=' + userId;
+        });
+
         $('#btnContinue').click(function () {
             let row = $('#tblTranTransfer tbody tr').length;
             if (row < 1) return;
             $("#modalRemarkTitle").text('@Resource.AddRemark');
             $("#lblRemark").text('@Resource.EnterNote');
             $('#modalRemark').modal('show');
+            
+            $('#btnRemarkEdit').css("display", "none");
+            $('#btnRemarkOk').show();
         })
 
         $('#btnRemarkOk').click(function () {
@@ -488,19 +496,29 @@
         $('#btnCEdit').click(function () {
             let row = $('#tblTranTransfer tbody tr').length;
             if (row < 1) return;
-            let transferId = $(this).val();
+            $("#modalRemarkTitle").text('@Resource.AddRemark');
+            $("#lblRemark").text('@Resource.EnterNote');
+            $('#txtRemarkNote').val();
+            $('#modalRemark').modal('show');
+            $('#btnRemarkOk').css("display","none");
+            $('#btnRemarkEdit').show();
+        })
+
+        $('#btnRemarkEdit').click(function () {
+            let transferId = $('#btnCEdit').val();
             let fromLocation = $('#fromLocation option:selected').val();
             let toLocation = $('#toLocation option:selected').val();
             let date = $('#inputDate').val();
             let voucherId = $('#inputVoucherID').val();
             let totalQty = $('#lblTotalQty').text();
+            let remark = $('#txtRemarkNote').val();
             showLoadingIcon();
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("EditAction", "Transfer")',
                 data: {
                     "transferId": transferId, "date": date, "voucherId": voucherId, "formLocation": fromLocation, "toLocation": toLocation,
-                    "totalQty": totalQty
+                    "totalQty": totalQty, "remark": remark
                 },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -577,10 +595,14 @@
         if (isEdit) {
             $('#btnContinue').css("display", "none");
             $('#btnCEdit').show();
+            $('#btnReset').css("display", "none");
+            $('#btnCancel').show();
         }
         else {
             $('#btnContinue').show();
             $('#btnCEdit').css("display", "none");
+            $('#btnReset').show();
+            $('#btnCancel').css("display", "none");
         }
 
     }
