@@ -20,5 +20,19 @@ namespace Inventory.ViewModels
         public List<SelectListItem> Units { get; set; }
         public ProductMenuViewModel ProductMenus { get; set; }
         public TranTransferModels TranTransferModel { get; set; }
+
+        public class MasterTransferModels
+        {
+            public int TransferID { get; set; }
+            public string TransferDateTime { get; set; }
+            public string UserVoucherNo { get; set; }
+            public int FromLocationID { get; set; }
+            public string FromLocationName { get; set; }
+            public int ToLocationID { get; set; }
+            public string ToLocationName { get; set; }
+            public int TotalQuantity { get; set; }
+
+
+        }
     }
 }

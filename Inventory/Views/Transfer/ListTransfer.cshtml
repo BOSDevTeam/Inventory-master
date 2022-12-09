@@ -16,8 +16,296 @@
     </style>
 </head>
 
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">@Resource.TransferList</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right">@Resource.Add</button>
+        </div>
+    </div>
+
+    <div class="row setup-title-layout search-div">
+        <table class="width-100-percent">
+            <tr>
+                <td class="control-label" style="text-align:center;">From Date</td>
+                <td><input id="inputFromDate" type="date" class="form-control control-input" /></td>
+                <td class="control-label" style="text-align:center;">To Date</td>
+                <td><input id="inputToDate" type="date" class="form-control control-input" /></td>
+                <td><input id="inputUserVoucherNo" type="text" class="form-control control-input" placeholder="Voucher No." /></td>
+                <td>
+                    <div class="btn-group" style="float:right">
+                        <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                        <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblTransferList" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-2 col-lg-2">Date</th>
+                        <th class="col-md-2 col-lg-2">Voucher No.</th>
+                        <th class="col-md-2 col-lg-2">From Location</th>
+                        <th class="col-md-2 col-lg-2">To Location</th>
+                        <th class="col-md-2 col-lg-2">Transfer Qty</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="divPaging" class="row paging">
+        <div class="col-md-1 col-lg-1"><label id="lblPageNumber" class="page-num"></label></div>
+        <div id="divPagingItem" class="col-md-11 col-lg-11 paging-item"></div>
+    </div>
+
+</div>
+
+<div>
+    @{ 
+        Html.RenderPartial("_TransferDetailDialog");
+    }
+</div>
+<div>
+    @{
+        Html.RenderPartial("_ConfirmDialog");
+    }
+</div>
+
 <script type="text/javascript">
+
+    let selectedRowIndex, listActionValue;
     document.getElementById('subMenuTransferList').className = 'active';
+
+    $(document).ready(function () {
+
+        setModuleTitle('@Resource.Transfer', '@Resource.ListTransfer');
+        initializeControl();
+        createMasterTransferData('', false);
+        createPaging('@ViewBag.TotalPage', '@ViewBag.CurrentPage');
+
+        function initializeControl() {
+            $('#inputFromDate').val(getTodayDate());
+            $('#inputToDate').val(getTodayDate());
+            $('#inputUserVoucherNo').val('');
+        }
+
+        $('#btnSearch').click(function () {
+            let fromDate = $('#inputFromDate').val();
+            let toDate = $('#inputToDate').val();
+            let userVoucherNo = $('#inputUserVoucherNo').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SearchAction", "Transfer")',
+                data: { "userId": userId,"fromDate": fromDate, "toDate": toDate, "userVoucherNo": userVoucherNo },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterTransferData(response.LstMasterTransfer, true);
+                    createPaging(response.TotalPage, response.CurrentPage);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+
+            });
+        })
+
+        $('#btnRefresh').click(function () {
+            clearControl();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("RefreshAction", "Transfer")',
+                data: { "userId": userId},
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterTransferData(response.LstMasterTransfer, true);
+                    createPaging(response.TotalPage, response.CurrentPage);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+
+            });
+        })
+
+        $(document).on("click", ".btnPage", function () {
+            let currentPage = $(this).text();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("TransferPagingAction", "Transfer")',
+                data: { "currentPage": currentPage },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess) {
+                        redirectToLogin();
+                    }
+                    else {
+                        createMasterTransferData(response.LstMasterTransfer, true);
+                        createPaging(response.TotalPage, currentPage);
+                    }
+
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+
+            });
+        })
+
+        $('#tblTransferList').on("click", "tbody tr", function (event) {
+            $(this).find("td:last").each(function () {
+                let transferId = $(this).text();
+                if (listActionValue == 1) {
+                    clearTableAction();
+                    viewDetail(transferId);
+                }
+                else if (listActionValue == 2) {
+                    clearTableAction();
+                    window.location.href = '@Url.Action("Transfer", "Transfer")?userId=' + userId + '&transferId=' + transferId;
+                }
+                else if (listActionValue == 3) {
+                    clearTableAction();
+                    $('#modalConfirm').modal('show');
+                    $('#btnDelOk').val(transferId);
+                }
+            });
+        });
+
+        function viewDetail(transferId) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("ViewAction", "Transfer")',
+                data: { "transferId": transferId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterTransferDetail(response);
+                    createTranTransferDetail(response);
+                    $('#modalTransferDetail').modal('show');
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+
+            });
+        }
+
+        $('#btnDelOk').on("click", function () {
+            let transferId = $('#btnDelOk').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DeleteAction", "Transfer")',
+                data: { "transferId": transferId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess) {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (selectedRowIndex != null) {
+                            document.getElementById("tblTransferList").deleteRow(selectedRowIndex);
+                            showToast(1, 'Deleted Successfully!');
+                        }
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+            });
+        })
+
+        function createMasterTransferData(response, isFromJson) {
+            $("#tblTransferList").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterTansfer"]))');
+            $.each(response, function (index, item) {
+                var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
+                          + '<td class="col-md-2 col-lg-2 text-overflow">' + item.TransferDateTime + '</td>'
+                          + '<td class="col-md-2 col-lg-2">' + item.UserVoucherNo + '</td>'
+                          + '<td class="col-md-2 col-lg-2 text-overflow">' + item.FromLocationName + '</td>'
+                          + '<td class="col-md-2 col-lg-2 text-overflow">' + item.ToLocationName + '</td>'
+                          + '<td class="col-md-2 col-lg-2">' + separatedComma(item.TotalQuantity) + '</td>'
+                          + '<td class="col-md-2 col-lg-2 btn-group">'
+                              + '<button title="View" class="btn btn-sm btn-dark" onclick="listTableAction(1)"><i class="fa fa-list"></i></button>'
+                              + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
+                              + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
+                          + '</td>'
+                          + '<td style="display:none">' + item.TransferID + '</td>'
+                      + '</tr>'
+                $('#tblTransferList tbody').append(row);
+            })
+        }
+
+        function clearControl() {
+            $('#inputFromDate').val(getTodayDate());
+            $('#inputToDate').val(getTodayDate());
+            $('#inputUserVoucherNo').val('');
+        }
+
+    }) // jquery
+
+    $('#btnAdd').click(function () {
+        window.location.href = '@Url.Action("Transfer", "Transfer")?userId=' + userId;
+    });
+
+    function findRowIndex(x) {
+        selectedRowIndex = x.rowIndex;
+    }
+
+    function listTableAction(value) {
+        listActionValue = value;
+    }
+
+    function clearTableAction() {
+        listActionValue = 0;
+    }
+
 </script>
 
 

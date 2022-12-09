@@ -58,13 +58,13 @@
                 </div>
             </div>
             <div class="row m-t-5 align-center">
-                <div class="col-md-5 col-lg-5">
+                <div class="col-md-3 col-lg-3">
                     <input id="inputPrice" type="text" class="form-control control-input numberonly" placeholder="@Resource.Price" />
                 </div>
                 <div id="divCurrency" class="col-md-3 col-lg-3">
                     @Html.DropDownList("Currency", Model.Currencies, new { @id = "ddlCurrency", @class = "form-control control-input" })
                 </div>
-                <div class="col-md-2 col-lg-2">
+                <div class="col-md-4 col-lg-4">
                 </div>
                 <div class="col-md-2 col-lg-2" style="display:none;">
                     <input id="chkItemFOC" type="checkbox"/> <span>&nbsp;&nbsp;@Resource.FOC</span>
@@ -117,10 +117,12 @@
                         <td class="table-border value-right"><input id="inputHdnTotal" type="hidden"/><lable id="lblTotal" class="total-amount-label mb-0">0</lable></td>
                     </tr>
                 </table>
-                <div class="row mr-0">
-                    <div class="col-md-3 col-lg-3"></div>
+                <div class="row mr-0 soft-gray-background pt-1">
                     <div class="col-md-3 col-lg-3">
-                        <button id="btnCancel" class="btn btn-block btn-white-outline-third">@Resource.Cancel</button>
+                        <button id="btnCancel" class="btn btn-third">@Resource.Reset</button>
+                    </div>
+                    <div class="col-md-3 col-lg-3">
+
                     </div>                   
                     @*<div class="col-md-3 col-lg-3">
                         <button id="btnHold" class="btn btn-block btn-second">@Resource.Hold</button>
@@ -128,9 +130,9 @@
                     <div class="col-md-3 col-lg-3">
                         <button id="btnPrint" class="btn btn-block btn-danger">@Resource.Print</button>   
                     </div>*@
-                    <div class="col-md-6 col-lg-6">
-                        <button id="btnSave" class="btn btn-block btn-first">@Resource.Save</button> 
-                        <button id="btnEditPayment" class="btn btn-block btn-first m-t-0">@Resource.Edit</button>                   
+                    <div class="col-md-6 col-lg-6 aligh-right">
+                        <button id="btnSave" class="btn btn-first plr-30 ">@Resource.Save</button> 
+                        <button id="btnEditPayment" class="btn btn-first plr-30  m-t-0">@Resource.Edit</button>                   
                     </div>
                 </div>
             </div>
@@ -150,19 +152,16 @@
 
 <script type="text/javascript">
 
-    noBack();
     let tranSaleOrderAction, defaultCustomerId, defaultLocationId;
     document.getElementById('subMenuSaleOrder').className = 'active';
+    $('body').addClass("hideVerticalScrollbar");
     calcSaleHeight();
-
-    function noBack() {
-        window.history.forward();
-    }
+    calcMenuHeight(155);
 
     function calcSaleHeight() {
         let windowHeight = window.innerHeight;
         let thingsHeight = 100; // average other component height
-        let extraHeight = 20;
+        let extraHeight = 11;
         let saleAreaHeight = windowHeight - (thingsHeight + extraHeight);
         let saleChildHeight = saleAreaHeight - 100;  // 100 is top component
         let saleTranHeight = saleChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra
@@ -172,6 +171,7 @@
     }
 
     $(document).ready(function () {
+        setModuleTitle('@Resource.Sale','@Resource.AddSaleOrder');
         if ('@ViewBag.IsEdit' == 'True') fillEditData();
         else initializeControl();
 

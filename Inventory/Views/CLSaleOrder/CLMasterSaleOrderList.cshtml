@@ -204,7 +204,7 @@
     let actionValue, transaleId, saleorderId, quantity,oldQty, subtotal, taxAmt, chargesAmt, total, saleOrderID;
 
     $(function () {
-
+        setModuleTitle('@Resource.Sale','@Resource.ClientSaleOrder');
         $('#btnSave').click(function () {
             saleOrderID = $('#lbSaleOrderID').text();
             subtotal = $('#Subtotal').text();

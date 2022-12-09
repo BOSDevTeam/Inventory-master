@@ -423,6 +423,7 @@
     <Compile Include="ViewModels\MasterPurOrderViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleOrderViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleVoucherViewModel.cs" />
+    <Compile Include="ViewModels\MasterTransferViewModel.cs" />
     <Compile Include="ViewModels\OpeningStockViewModel.cs" />
     <Compile Include="ViewModels\PagingViewModel.cs" />
     <Compile Include="ViewModels\PaymentViewModel.cs" />
@@ -616,6 +617,8 @@
     <Content Include="Views\OpeningStock\ListOpeningStock.cshtml" />
     <Content Include="Views\Adjustment\_AdjustmentDetailChild.cshtml" />
     <Content Include="Views\Adjustment\_AdjustmentDetailDialog.cshtml" />
+    <Content Include="Views\Transfer\_TransferDetailDialog.cshtml" />
+    <Content Include="Views\Transfer\_TransferDetailChild.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

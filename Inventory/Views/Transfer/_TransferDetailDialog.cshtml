@@ -1,0 +1,83 @@
+﻿<div class="modal fade" id="modalTransferDetail" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:700px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="width-100-percent light-background">
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Voucher No.</label></td>
+                        <td class="aligh-right padding-5"><label id="lblUserVoucherNo" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">VoucherID</label></td>
+                        <td class="aligh-right padding-5"><label id="lblVoucherID" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Date Time</label></td>
+                        <td class="aligh-right padding-5"><label id="lblDateTime" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">User Name</label></td>
+                        <td class="aligh-right padding-5"><label id="lblUserName" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">From Location</label></td>
+                        <td class="aligh-right padding-5"><label id="lblFromLocation" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">To Locatoin</label></td>
+                        <td class="aligh-right padding-5"><label id="lblToLocation" class="control-input mb-0"></label></td>
+                    </tr>
+                </table>
+
+                @{
+                    Html.RenderPartial("_TransferDetailChild");
+                }
+
+                <table class="width-100-percent">
+                    <tr class="voucher-divider">
+                        <td><label class="voucher-sub-footer">@Resource.Total</label></td>
+                        <td class="aligh-right"><label id="lblTotalQty" class="voucher-sub-footer"></label></td>
+                    </tr>
+                </table>
+
+                <br />
+                <div class="col-md-12 col-lg-12">
+                    <div id="remark" class="light-background padding-5" style="text-align:center; display:none">
+                        <label id="lblRemark" class="control-label mb-0"></label>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function createTranTransferDetail(response) {
+        $('#tblTranTransfer').find("tbody").empty();
+        $.each(response.LstTranTransfer, function (index, item) {
+            let row = '<tr class="row voucher-table-item">'
+               + '<td class="col-md-6 col-lg-6 text-overflow">' + item.ProductName + '</td>'
+               + '<td class="col-md-6 col-lg-6 aligh-right"><label class="control-label mb-0">' + item.Quantity + '<span class="control-span-sm">&nbsp;' + item.UnitKeyword + '</span></label></td>'
+               + "</tr>";
+            $('#tblTranTransfer tbody').append(row);
+        });
+    }
+
+    function createMasterTransferDetail(response) {
+        $('#lblUserVoucherNo').text(response.UserVoucherNo);
+        $('#lblFromLocation').text(response.FromLocationName);
+        $('#lblToLocation').text(response.ToLocationName);
+        if (response.VoucherID.length != 0) $('#lblVoucherID').text(response.VoucherID);
+        else $('#lblVoucherID').text('-');
+        $('#lblDateTime').text(response.TransferDateTime);
+        $('#lblUserName').text(response.User);
+        $('#lblTotalQty').text(response.TotalQty);
+        if (response.Remark.length == 0) $('#remark').hide();
+        else {
+            $('#remark').show();
+            $('#lblRemark').text(response.Remark);
+        }
+    }
+
+</script>

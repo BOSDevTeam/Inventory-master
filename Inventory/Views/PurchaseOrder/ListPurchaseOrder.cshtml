@@ -81,10 +81,12 @@
 </div>
 
 <script type="text/javascript">
-    document.getElementById('subMenuPurchaseOrder').className = 'active';
+    document.getElementById('subMenuPurchaseOrderList').className = 'active';
 
     let selectedRowIndex;
     $(document).ready(function () {
+
+        setModuleTitle('@Resource.Purchase', '@Resource.ListPurchaseOrder');
         initializeControl();
         createMasterPurOrderData('', false);
         createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');

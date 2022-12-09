@@ -8,6 +8,7 @@ using Inventory.Common;
 using Inventory.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
+using System.Runtime.InteropServices;
 
 namespace Inventory.Controllers
 {
@@ -17,7 +18,11 @@ namespace Inventory.Controllers
         DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
         TransferViewModel transferViewModel = new TransferViewModel();
         AppData appData = new AppData();
-        public ActionResult Transfer(int userId)
+        AppSetting appSetting = new AppSetting();
+        AppSetting.Paging paging = new AppSetting.Paging();
+        TextQuery textQuery = new TextQuery();
+
+        public ActionResult Transfer(int userId, int? transferId)
         {
             if (checkConnection()) {
                 getLocation();
@@ -27,23 +32,140 @@ namespace Inventory.Controllers
                 getProduct(getFirstSubMenuID());
                 clearTranTransfer();
                 ViewBag.UserVoucherNo = getUserVoucherNo(userId);
+                int totalQuantity = 0;
+                if (transferId != null)
+                {
+                    ViewBag.IsEdit = true;
+                    MasterTransferViewModel data = selectMasterTransferByTransferID((int)transferId);
+                    List<TranTransferModels> lstTranTransfer = selectTranTransferByTransferID((int)transferId);
+                    for (int i = 0; i < lstTranTransfer.Count(); i++)
+                    {
+                        totalQuantity = lstTranTransfer[i].Quantity;
+                    }
+                    Session["TranTransferData"] = lstTranTransfer;
+                    ViewBag.TotalItem = lstTranTransfer.Count();
+                    ViewBag.UserVoucherNo = data.MasterTransferModel.UserVoucherNo;
+                    DateTime date = appSetting.convertStringToDate(data.MasterTransferModel.TransferDateTime);
+                    ViewBag.Date = appSetting.convertDateToString(date);
+                    ViewBag.VoucherID = data.MasterTransferModel.VoucherID;
+                    ViewBag.FromLocationID = data.FromLocationID;
+                    ViewBag.ToLocationID = data.ToLocationID;
+                    ViewBag.Total = data.MasterTransferModel.TotalQuantity;
+                    ViewBag.TotalQuantity = totalQuantity;
+                    ViewBag.TransferID = transferId;
+                }
                 return View(transferViewModel);
 
             }
             return RedirectToAction("Login", "User");
 
-
-
         }
 
-        public ActionResult ListTransfer()
+        public ActionResult ListTransfer(int userId)
         {
-            return View();
+            List<TransferViewModel.MasterTransferModels> templist = selectMasterTransfer(userId,false);
+            PagingViewModel pagingViewModel = calcMasterTransferPaging(templist);
+            List<TransferViewModel.MasterTransferModels> lstMaterTransfer = getMasterTransferByPaging(templist, paging.startItemIndex, paging.endItemIndex );
+            ViewBag.TotalPage = pagingViewModel.TotalPageNum;
+            ViewBag.CurrentPage = pagingViewModel.CurrentPage;
+            ViewData["LstMasterTansfer"] = lstMaterTransfer;
+            return View(transferViewModel);
         }
 
         #endregion
 
         #region Transfer Action
+
+        public JsonResult SearchAction(int userId,DateTime fromDate, DateTime toDate, string userVoucherNo)
+        {
+            List<TransferViewModel.MasterTransferModels> templist = selectMasterTransfer(userId, true, fromDate, toDate, userVoucherNo);
+            PagingViewModel pagingViewModel = calcMasterTransferPaging(templist);
+            List<TransferViewModel.MasterTransferModels> lstMaterTransfer = getMasterTransferByPaging(templist, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+            
+            var jsonResult = new
+            {
+                LstMasterTransfer = lstMaterTransfer,
+                TotalPage = pagingViewModel.TotalPageNum,
+                CurrentPage = pagingViewModel.CurrentPage
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult RefreshAction(int userId)
+        {
+            List<TransferViewModel.MasterTransferModels> templist = selectMasterTransfer(userId, false);
+            PagingViewModel pagingViewModel = calcMasterTransferPaging(templist);
+            List<TransferViewModel.MasterTransferModels> lstMaterTransfer = getMasterTransferByPaging(templist, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+            var jsonResult = new
+            {
+                LstMasterTransfer = lstMaterTransfer,
+                TotalPage = pagingViewModel.TotalPageNum,
+                CurrentPage = pagingViewModel.CurrentPage
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult TransferPagingAction(int currentPage)
+        {
+            List<TransferViewModel.MasterTransferModels> lstMaterTransfer = new List<TransferViewModel.MasterTransferModels>();
+            PagingViewModel pagingViewModel = new PagingViewModel();
+            bool isRequestSuccess = true;
+            if (Session["MasterTransferData"] != null)
+            {
+                List<TransferViewModel.MasterTransferModels> templist = Session["MasterTransferData"] as List<TransferViewModel.MasterTransferModels>;
+                pagingViewModel = calcMasterTransferPaging(templist, currentPage);
+                lstMaterTransfer = getMasterTransferByPaging(templist, paging.startItemIndex, paging.endItemIndex);
+            }
+            else isRequestSuccess = false;
+
+            var jsonResult = new
+            {
+                LstMasterTransfer = lstMaterTransfer,
+                TotalPage = pagingViewModel.TotalPageNum,
+                IsRequestSuccess = isRequestSuccess
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult ViewAction(int transferId)
+        {
+            MasterTransferViewModel item = selectMasterTransferByTransferID(transferId);
+            List<TranTransferModels> lstTranTransfer = selectTranTransferByTransferID(transferId);
+            var jsonResult = new
+            {
+                LstTranTransfer = lstTranTransfer,
+                UserVoucherNo = item.MasterTransferModel.UserVoucherNo,
+                VoucherID = item.MasterTransferModel.VoucherID,
+                FromLocationName = item.FromLocationName,
+                ToLocationName = item.ToLocationName,
+                TransferDateTime = item.MasterTransferModel.TransferDateTime,
+                User = item.UserName,
+                TotalQty = item.MasterTransferModel.TotalQuantity,
+                Remark = item.MasterTransferModel.Remark
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+
+        }
+
+        public JsonResult DeleteAction(int transferId)
+        {
+            bool isRequestSuccess = true;
+            if (Session["MasterTransferData"] != null)
+            {
+                SqlCommand cmd = new SqlCommand(textQuery.deleteTransferQuery(transferId), (SqlConnection)getConnection());
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+                List<TransferViewModel.MasterTransferModels> lstMaterTransfer = Session["MasterTransferData"] as List<TransferViewModel.MasterTransferModels>;
+                int index = lstMaterTransfer.FindIndex(p => p.TransferID == transferId);
+                lstMaterTransfer.RemoveAt(index);
+            }
+            else isRequestSuccess = false;
+            var jsonResult = new
+            {
+                IsRequestSuccess = isRequestSuccess,
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
 
         public JsonResult PrepareToEditTranTransferAction(int number, bool isMultiUnit)
         {
@@ -83,7 +205,6 @@ namespace Inventory.Controllers
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
-
 
         public JsonResult TranTransferAddEditAction(int productId, string productCode, string productName, int quantity, int? unitId, string unitKeyword, bool isEdit, int? number)
         {
@@ -136,7 +257,6 @@ namespace Inventory.Controllers
 
             };
 
-
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
@@ -168,8 +288,8 @@ namespace Inventory.Controllers
             return Json(JsonResult, JsonRequestBehavior.AllowGet);
         }
 
-
-        public JsonResult SaveAction(int formLocation, int toLocation)
+        public JsonResult SaveAction(int formLocation, int toLocation, string userVoucherNo, string date, string voucherId, 
+            int userId, int totalQty, string remark)
         {
             bool isRequestSuccess = true;
             if (formLocation != toLocation)
@@ -186,7 +306,31 @@ namespace Inventory.Controllers
                     {
                         dt.Rows.Add(list[i].TransferID, list[i].ProductID, list[i].Quantity, list[i].UnitID);
                     }
+
+                    DateTime transferDateTime = DateTime.Parse(date);
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcInsertTransfer, (SqlConnection)dataConnectorSQL.Connect());
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@FromLocationID", formLocation);
+                    cmd.Parameters.AddWithValue("@ToLocationID", toLocation);
+                    cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+                    cmd.Parameters.AddWithValue("@TransferDateTime", date);
+                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@TotalQuantity", totalQty);
+                    cmd.Parameters.AddWithValue("@Remark", remark);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.TransferModule);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        userVoucherNo = Convert.ToString(reader[0]);
+                        reader.Close();
+                    }
+                    dataConnectorSQL.Close();
+                    clearTranTransfer();
+                    
                 }
+
             }
             else
             {
@@ -195,11 +339,61 @@ namespace Inventory.Controllers
             }
             var jsonResult = new
             {
+                UserVoucherNo = userVoucherNo,
                 IsRequestSuccess = isRequestSuccess
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult EditAction(int transferId, string date, string voucherId, int formLocation, int toLocation, int totalQty)
+        {
+            bool message = true;
+            bool isRequestSuccess = true;
+            if (formLocation != toLocation)
+            {
+                if (Session["TranTransferData"] != null)
+                {
+                    List<TranTransferModels> list = Session["TranTransferData"] as List<TranTransferModels>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add("TransferID", typeof(int));
+                    dt.Columns.Add("ProductID", typeof(int));
+                    dt.Columns.Add("Quantity", typeof(int));
+                    dt.Columns.Add("UnitID", typeof(int));
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        dt.Rows.Add(list[i].TransferID, list[i].ProductID, list[i].Quantity, list[i].UnitID);
+                    }
+
+                    DateTime transferDateTime = DateTime.Parse(date);
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateTransfer, (SqlConnection)dataConnectorSQL.Connect());
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@TransferID", transferId);
+                    cmd.Parameters.AddWithValue("@FromLocationID", formLocation);
+                    cmd.Parameters.AddWithValue("@ToLocationID", toLocation);
+                    cmd.Parameters.AddWithValue("@TransferDateTime", date);
+                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.Parameters.AddWithValue("@TotalQuantity", totalQty);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.ExecuteNonQuery();
+                    dataConnectorSQL.Close();
+                    clearTranTransfer();
+                }
+                else isRequestSuccess = false;
+            }
+            else
+            {
+                message = false;
+            }
+
+            var jsonResult = new
+            {
+                Message = message,
+                IsRequestSuccess = isRequestSuccess
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+
+        }
 
         public JsonResult GetProductByCodeAction(string code, bool isMultiUnit)
         {
@@ -270,10 +464,140 @@ namespace Inventory.Controllers
 
         #endregion
 
-
         #region Method
 
+        private MasterTransferViewModel selectMasterTransferByTransferID(int transferId)
+        {
+            MasterTransferViewModel item = new MasterTransferViewModel();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterTransferByTransferID, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@TransferID", transferId);
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                item.UserName = Convert.ToString(reader["UserName"]);
+                item.FromLocationID = Convert.ToInt32(reader["FromLocationID"]);
+                item.FromLocationName = Convert.ToString(reader["FromLocationName"]);
+                item.ToLocationID = Convert.ToInt32(reader["ToLocationID"]);
+                item.ToLocationName = Convert.ToString(reader["ToLocationName"]);
+                item.MasterTransferModel.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
+                item.MasterTransferModel.VoucherID = Convert.ToString(reader["VoucherID"]);
+                item.MasterTransferModel.TransferDateTime = Convert.ToString(reader["Date"]);
+                item.MasterTransferModel.TotalQuantity = Convert.ToInt32(reader["TotalQuantity"]);
+                item.MasterTransferModel.Remark = Convert.ToString(reader["Remark"]);
+            }
+            reader.Close();
+            return item;
+        }
 
+        private List<TranTransferModels> selectTranTransferByTransferID(int transferId)
+        {
+            List<TranTransferModels> list = new List<TranTransferModels>();
+            TranTransferModels item = new TranTransferModels();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetTranTransferByTransferID, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@TransferID", transferId);
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new TranTransferModels();
+                item.ProductID = Convert.ToInt32(reader["ProductID"]);
+                item.ProductName = Convert.ToString(reader["ProductName"]);
+                item.Quantity = Convert.ToInt32(reader["Quantity"]);
+                item.UnitKeyword = Convert.ToString(reader["UnitKeyword"]);
+                item.UnitID = Convert.ToInt32(reader["UnitID"]);
+                list.Add(item);
+            }
+            reader.Close();
+            return list;
+        }
+
+        private List<TransferViewModel.MasterTransferModels> getMasterTransferByPaging(List<TransferViewModel.MasterTransferModels> tempList, int startRowIndex, int endRowIndex)
+        {
+            List<TransferViewModel.MasterTransferModels> list = new List<TransferViewModel.MasterTransferModels>();
+            TransferViewModel.MasterTransferModels item = new TransferViewModel.MasterTransferModels();
+            for (int page = startRowIndex; page < tempList.Count(); page++)
+            {
+                if (page > endRowIndex) break;
+                item = new TransferViewModel.MasterTransferModels();
+                item.TransferID = tempList[page].TransferID;
+                item.TransferDateTime = tempList[page].TransferDateTime;
+                item.UserVoucherNo = tempList[page].UserVoucherNo;
+                item.FromLocationName = tempList[page].FromLocationName;
+                item.ToLocationName = tempList[page].ToLocationName;
+                item.TotalQuantity = tempList[page].TotalQuantity;
+                list.Add(item);
+            }
+            return list;
+        }
+
+        private PagingViewModel calcMasterTransferPaging(List<TransferViewModel.MasterTransferModels> tempList, [Optional] int currentPage)
+        {
+            PagingViewModel item = new PagingViewModel();
+            int totalPageNum = 0;
+            if (currentPage == 0) currentPage = 1;
+            if (tempList.Count > paging.eachItemCount)
+            {
+                totalPageNum = tempList.Count / paging.eachItemCount;
+                paging.lastItemCount = tempList.Count % paging.eachItemCount;
+                if (paging.lastItemCount != 0) totalPageNum += 1;
+                int i = currentPage * paging.eachItemCount;
+                int j = (i - paging.eachItemCount) + 1;
+                int start = j;
+                int end = i;
+                paging.startItemIndex = start - 1;
+                paging.endItemIndex = end - 1;
+
+            }
+            else
+            {
+                paging.startItemIndex = 0;
+                paging.endItemIndex = tempList.Count - 1;
+            }
+            item.CurrentPage = currentPage;
+            item.TotalPageNum = totalPageNum;
+            item.StartItemIndex = paging.startItemIndex;
+            item.EndItemIndex = paging.endItemIndex;
+            return item;
+
+        }
+
+        private List<TransferViewModel.MasterTransferModels> selectMasterTransfer(int userId, bool isSearch, [Optional]DateTime fromDate, [Optional] DateTime toDate, [Optional] string userVoucherNo)
+        {
+            List<TransferViewModel.MasterTransferModels> tempList = new List<TransferViewModel.MasterTransferModels>();
+            TransferViewModel.MasterTransferModels item = new TransferViewModel.MasterTransferModels();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterTransferList, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@UserID", userId);
+            cmd.Parameters.AddWithValue("@IsSearch", isSearch);
+            if (!isSearch)
+            {
+                cmd.Parameters.AddWithValue("@FromDate", appSetting.getLocalDate());
+                cmd.Parameters.AddWithValue("@ToDate", appSetting.getLocalDate());
+                cmd.Parameters.AddWithValue("@UserVoucherNo", "");
+            }
+            else
+            {
+                cmd.Parameters.AddWithValue("@FromDate", fromDate);
+                cmd.Parameters.AddWithValue("@ToDate", toDate);
+                cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+            }
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new TransferViewModel.MasterTransferModels();
+                item.TransferID = Convert.ToInt32(reader["TransferID"]);
+                item.TransferDateTime = Convert.ToString(reader["TransferDateTime"]);
+                item.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
+                item.FromLocationName = Convert.ToString(reader["FromLocationName"]);
+                item.ToLocationName = Convert.ToString(reader["ToLocationName"]);
+                item.TotalQuantity = Convert.ToInt32(reader["TotalQuantity"]);
+                tempList.Add(item);
+            }
+            reader.Close();
+            Session["MasterTransferData"] = tempList;
+            return tempList;
+        }
 
         private void getProduct(int subMenuId)
         {

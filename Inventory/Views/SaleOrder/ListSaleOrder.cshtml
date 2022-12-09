@@ -14,9 +14,6 @@
             display: block;
         }
     </style>
-    <script type="text/javascript">
-    document.getElementById('subMenuSaleOrder').className = 'active';
-    </script>
 </head>
 
 <div>
@@ -84,8 +81,13 @@
 </div>
 
 <script type="text/javascript">
+
     let listActionValue, selectedRowIndex;
+    document.getElementById("subMenuSaleOrderList").className = 'active';
+
+
     $(document).ready(function () {
+        setModuleTitle('@Resource.Sale','@Resource.ListSaleOrder');
         initializeControl();
         createMasterSaleOrderData('', false);
         createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');

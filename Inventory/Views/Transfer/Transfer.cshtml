@@ -13,6 +13,9 @@
         #subMenuTransferGp {
             display: block;
         }
+        .m-l {
+            margin:auto;
+        }
     </style>
 </head>
 <div class="row m-t-5 m-b-5 m-l-5">
@@ -30,18 +33,18 @@
     <div class="col-md-6 col-lg-6">
         <div class="row">
             <div class="col-md-1 col-lg-1"></div>
-            <div class="col-md-3 col-lg-3">From Location</div>
+            <div class="col-md-3 col-lg-3 m-l">From Location</div>
             <div class="col-md-8 col-lg-8">
-                @Html.DropDownList("Location", Model.Locations, new { @id = "fromLocation", @class = "form-control control-input", @style = "background-color:#D2D2CF" })
+                @Html.DropDownList("Location", Model.Locations, new { @id = "fromLocation", @class = "form-control control-input"})
             </div>
         </div>
     </div>
     <div class="col-md-6 col-lg-6">
         <div class="row">
             <div class="col-md-1 col-lg-1"></div>
-            <div class="col-md-3 col-lg-3">From Location</div>
+            <div class="col-md-3 col-lg-3 m-l">From Location</div>
             <div class="col-md-8 col-lg-8">
-                @Html.DropDownList("Location", Model.Locations, new { @id = "toLocation", @class = "form-control control-input", @style = "background-color:#D2D2CF" })
+                @Html.DropDownList("Location", Model.Locations, new { @id = "toLocation", @class = "form-control control-input"})
             </div>
         </div>
     </div>
@@ -68,14 +71,13 @@
             </div>
 
             <div class="row m-t-5 align-center">
-                <div class="col-md-5 col-lg-5">
+                <div class="col-md-4 col-lg-4">
                     <input id="inputQuantity" type="text" class="form-control control-input" placeholder="@Resource.Qty" />
                 </div>
                 <div id="divUnit" class="col-md-3 col-lg-3">
                     @Html.DropDownList("Unit", Model.Units, new { @id = "ddlUnit", @class = "form-control control-input" })
                 </div>
-                <div class="col-md-2 col-lg-2">
-
+                <div class="col-md-3 col-lg-3">
                 </div>
                 <div class="col-md-2 col-lg-2">
                     <button id="btnAdd" class="btn btn-second">@Resource.Add</button>
@@ -106,27 +108,19 @@
                         <td class="col-md-2 col-lg-2 table-border"></td>
                     </tr>
                 </table>
-                <div class="row mr-0">
-                    <div class="col-md-2 col-lg-2">
-                        <button id="btnReset" class="btn btn-block btn-white-outline-third">@Resource.Reset</button>
+                <div class="row mr-0 soft-gray-background pt-1">
+                    <div class="col-md-6 col-lg-6">
+                        <button id="btnReset" class="btn btn-third">@Resource.Reset</button>
+                        <button id="btnHold" class="btn btn-second plr-30">@Resource.Print</button>
                     </div>
-                    @*<div class="col-md-3 col-lg-3">
-                        <button id="btnHold" class="btn btn-block btn-second">@Resource.Hold</button>
-                    </div>*@
-                    <div class="col-md-2 col-lg-2">
-                        <button id="btnPrint" class="btn btn-block btn-danger">@Resource.Print</button>
-                    </div>
-                    <div class="col-md-2 col-lg-2"></div>
-                    <div class="col-md-6 col-lg-6"> 
-                        <button id="btnSave" class="btn btn-block btn-first">@Resource.Save</button>
-                        <button id="btnEditPayment" class="btn btn-block btn-first m-t-0">@Resource.Edit</button>
+                    <div class="col-md-6 col-lg-6 aligh-right">
+                        <button id="btnContinue" class="btn btn-first plr-30">@Resource.Continue</button>
+                        <button id="btnCEdit" class="btn btn-first plr-30 m-t-0">@Resource.Edit</button>
                     </div>
                 </div>
+
             </div>
         </div>
-
-
-
     </div>
     <div class="col-md-6 col-lg-6">
         @{ 
@@ -141,24 +135,22 @@
     }
 </div>
 
-
-
-
-
-
+<div>
+    @{ 
+        Html.RenderPartial("_RemarkDialog");
+    }
+</div>
 
 <script type="text/javascript">
 
-    noBack();
     let tranTransferAction, defaultLocationId;
     document.getElementById('subMenuTransfer').className = 'active';
-    calcSaleHeight();
+    $('body').addClass("hideVerticalScrollbar");
 
-    function noBack() {
-        window.history.forward();
-    }
+    calcTransferHeight();
+    calcMenuHeight(210);
 
-    function calcSaleHeight() {
+    function calcTransferHeight() {
         let windowHeight = window.innerHeight;
         let thingsHeight = 145; // average other component height
         let extraHeight = 20;
@@ -170,10 +162,11 @@
         document.getElementById('divTranTransfer').setAttribute("style", "height:" + saleTranHeight + "px");
     }
 
-
     $(document).ready(function () {
-        initializeControl();
 
+        setModuleTitle('@Resource.Transfer', '@Resource.AddTransfer');
+        if ('@ViewBag.IsEdit' == 'True') fillEditData();
+        else initializeControl();
 
         function initializeControl() {
             $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
@@ -181,6 +174,22 @@
             showHideUnit();
             showHideTranTransferAddEdit(false);
             showHideMainButton(false);
+            defaultLocationId = $('#fromLocation option:selected').val();
+        }
+
+        function fillEditData() {
+            $('#btnCEdit').val('@ViewBag.TransferID');
+            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputDate').val('@ViewBag.Date');
+            $('#inputVoucherID').val('@ViewBag.VoucherID');
+            $('#fromLocation').val('@ViewBag.FromLocationID');
+            $('#toLocation').val('@ViewBag.ToLocationID');
+            $('#lblTotalQty').text('@ViewBag.Total');
+            showHideUnit();
+            showHideTranTransferAddEdit(false);
+            showHideMainButton(true);
+            let tranTransferList = JSON.parse('@Html.Raw(Json.Encode(Session["TranTransferData"]))');
+            createTranTransferData(tranTransferList);
         }
 
         function showHideUnit() {
@@ -197,7 +206,6 @@
             unit = '<option value="0">Unit</option>'
             $("#ddlUnit").append(unit);
         }
-
 
         $(document).on("click", '.btnProduct', function (e) {
             let productId = $(this).val();
@@ -230,7 +238,7 @@
                 showLoadingIcon();
                 $.ajax({
                     type: "GET",
-                    url:'@Url.Action("GetProductByKeywordAction", "Transfer")',
+                    url: '@Url.Action("GetProductByKeywordAction", "Transfer")',
                     data: { "keyword": keyword },
                     contentType: "applicaton/json;charset=utf-8",
                     dataType: "json",
@@ -263,8 +271,8 @@
                 showLoadingIcon();
                 $.ajax({
                     type: "GET",
-                    url:'@Url.Action("SearchProductClickAction", "Transfer")',
-                    data: { "productId": productId ,"isMultiUnit":isMultiUnit},
+                    url: '@Url.Action("SearchProductClickAction", "Transfer")',
+                    data: { "productId": productId, "isMultiUnit": isMultiUnit },
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",
                     success: function (response) {
@@ -295,7 +303,7 @@
                 let code = $('#inputCode').val();
                 $.ajax({
                     type: "GET",
-                    url:'@Url.Action("GetProductByCodeAction", "Transfer")',
+                    url: '@Url.Action("GetProductByCodeAction", "Transfer")',
                     data: { "code": code, "isMultiUnit": isMultiUnit },
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",
@@ -309,7 +317,6 @@
                             $("#inputProductName").val(response.ProductName);
                             $("#inputQuantity").val('1');
                             createUnitData(response);
-
                         }
                     },
                     failure: function (response) {
@@ -324,15 +331,6 @@
             }
         })
 
-
-
-
-
-
-
-
-
-
         $('#btnAdd').click(function (e) {
             addOrEditTranTransfer(false);
         });
@@ -346,8 +344,7 @@
             else return true;
         }
 
-        function addOrEditTranTransfer(isEdit)
-        {
+        function addOrEditTranTransfer(isEdit) {
             if (validateTransferControl()) {
                 let unitId, unitKeyword;
                 let number = $("#inputNumber").val();
@@ -386,11 +383,8 @@
                     }
                 });
 
-            }         
+            }
         }
-
-
-
 
         $('#tblTranTransfer').on("click", "tbody tr", function () {
             $('#tblTranTransfer tr').removeClass("selected");
@@ -401,11 +395,8 @@
                     tranTransferAction = 0;
                     alert(number);
                     deleteTranTransfer(number);
-                    
                 }
                 else prepareToEditTranTransfer(number);
-                
-
             })
         });
 
@@ -422,6 +413,8 @@
                     clearTransferControl();
                     $('#tblTranTransfer').find("tbody").empty();
                     $('#lblTotalQty').text('0');
+                    $("#toLocation").val(defaultLocationId);
+                    $("#fromLocation").val(defaultLocationId);
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -434,27 +427,52 @@
             });
         });
 
-        $('#btnSave').click(function () {
-            let fromLocation = $('#fromLocation').val();
-            let toLocation = $('#toLocation').val();
+        $('#btnContinue').click(function () {
+            let row = $('#tblTranTransfer tbody tr').length;
+            if (row < 1) return;
+            $("#modalRemarkTitle").text('@Resource.AddRemark');
+            $("#lblRemark").text('@Resource.EnterNote');
+            $('#modalRemark').modal('show');
+        })
+
+        $('#btnRemarkOk').click(function () {
+            let row = $('#tblTranTransfer tbody tr').length;
+            if (row < 1) return;
+            let fromLocation = $('#fromLocation option:selected').val();
+            let toLocation = $('#toLocation option:selected').val();
+            let userVoucherNo = $('#lblUserVoucherNo').text();
+            let date = $('#inputDate').val();
+            let voucherId = $('#inputVoucherID').val();
+            let userId = localStorage.getItem("UserID");
+            let totalQty = $('#lblTotalQty').text();
+            let remark = $('#txtRemarkNote').val();
             showLoadingIcon();
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("SaveAction", "Transfer")',
-                data: { "formLocation": fromLocation, "toLocation": toLocation },
+                data: { "formLocation": fromLocation, "toLocation": toLocation, "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "userId": userId, "totalQty": totalQty, "remark": remark },
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
                     if (!response.IsRequestSuccess) {
+                        $('#modalRemark').modal('hide');
                         showToast(0, 'Not transfer same Location!');
-
                     }
                     else {
-                        alert(Process);
+                        $('#modalRemark').modal('hide');
+                        showToast(1, 'Saved Successfully!');
+                        $("#lblUserVoucherNo").text(response.UserVoucherNo);
+                        $('#inputDate').val(getTodayDate());
+                        $('#inputVoucherID').val("");
+                        $("#toLocation").val(defaultLocationId);
+                        $("#fromLocation").val(defaultLocationId);
+                        clearTransferControl();
+                        $('#tblTranTransfer').find("tbody").empty();
+                        $('#lblTotalQty').text('0');
+
                     }
 
-                   
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -465,12 +483,55 @@
                     alert(response.responseText);
                 },
             });
-            
-
         })
 
+        $('#btnCEdit').click(function () {
+            let row = $('#tblTranTransfer tbody tr').length;
+            if (row < 1) return;
+            let transferId = $(this).val();
+            let fromLocation = $('#fromLocation option:selected').val();
+            let toLocation = $('#toLocation option:selected').val();
+            let date = $('#inputDate').val();
+            let voucherId = $('#inputVoucherID').val();
+            let totalQty = $('#lblTotalQty').text();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("EditAction", "Transfer")',
+                data: {
+                    "transferId": transferId, "date": date, "voucherId": voucherId, "formLocation": fromLocation, "toLocation": toLocation,
+                    "totalQty": totalQty
+                },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.Message) {
+                        $('#modalRemark').modal('hide');
+                        showToast(0, 'Not transfer same Location!');
+                    }
+                    else {
+                        if (!response.IsRequestSuccess) {
+                            alert("Session Expired!");
+                            redirectToLogin();
+                        }
+                        else {
+                            window.location.href = '@Url.Action("ListTransfer", "Transfer")?userId=' + userId;
+                        }
+                    }
 
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
 
+            });
+        })
 
         function clearTransferControl() {
             $("#inputNumber").val("");
@@ -481,14 +542,7 @@
             showHideUnit();
             showHideTranTransferAddEdit(false);
         }
-
-
-
-
-
     })
-
-
 
     function fillSelectedProductData(response, productId) {
         $("#inputProductID").val(productId);
@@ -496,8 +550,6 @@
         $('#inputProductName').val(response.ProductName);
         $('#inputQuantity').val('1');
         createUnitData(response);
-
-
     }
 
     function createUnitData(response) {
@@ -523,16 +575,15 @@
 
     function showHideMainButton(isEdit) {
         if (isEdit) {
-            $('#btnSave').css("display", "none");
-            $('#btnEditPayment').show();
+            $('#btnContinue').css("display", "none");
+            $('#btnCEdit').show();
         }
         else {
-            $('#btnSave').show();
-            $('#btnEditPayment').css("display","none");
+            $('#btnContinue').show();
+            $('#btnCEdit').css("display", "none");
         }
 
     }
-
 
     function createSearchProductData(response) {
         $('#tblSearchProduct').find("tbody").empty();
@@ -545,7 +596,6 @@
             $('#tblSearchProduct').append(row);
         });
     }
-
 
     function createTranTransferData(LstTranTransfer) {
         let num = 0;
@@ -592,7 +642,6 @@
                     $("#ddlUnit").val(response.UnitID);
                     showHideTranTransferAddEdit(true);
                 }
-
             },
             failure: function (response) {
                 hideLoadingIcon();
@@ -604,7 +653,6 @@
             },
         });
     }
-
 
     function deleteTranTransfer(number) {
         showLoadingIcon();
@@ -633,9 +681,10 @@
         });
     }
 
-    function tranTransferTableAction(vaule){
+    function tranTransferTableAction(vaule) {
         tranTransferAction = vaule;
     }
+
 </script>
 
 
