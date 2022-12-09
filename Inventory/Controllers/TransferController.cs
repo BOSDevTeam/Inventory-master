@@ -505,6 +505,7 @@ namespace Inventory.Controllers
                 item = new TranTransferModels();
                 item.ProductID = Convert.ToInt32(reader["ProductID"]);
                 item.ProductName = Convert.ToString(reader["ProductName"]);
+                item.ProductCode = Convert.ToString(reader["Code"]);
                 item.Quantity = Convert.ToInt32(reader["Quantity"]);
                 item.UnitKeyword = Convert.ToString(reader["UnitKeyword"]);
                 item.UnitID = Convert.ToInt32(reader["UnitID"]);

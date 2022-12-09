@@ -157,7 +157,7 @@
         let extraHeight = 20;
         let saleAreaHeight = windowHeight - (thingsHeight + extraHeight);
         let saleChildHeight = saleAreaHeight - 100;  // 100 is top component
-        let saleTranHeight = saleChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra
+        let saleTranHeight = saleChildHeight - 70 - 40;  // 135 is bottom component and 40 is extra
         document.getElementById('divTransfer').setAttribute("style", "height:" + saleAreaHeight + "px");
         document.getElementById('divTransferChild').setAttribute("style", "height:" + saleChildHeight + "px");
         document.getElementById('divTranTransfer').setAttribute("style", "height:" + saleTranHeight + "px");
@@ -181,6 +181,7 @@
         function fillEditData() {
             $('#btnCEdit').val('@ViewBag.TransferID');
             $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputCode').text();
             $('#inputDate').val('@ViewBag.Date');
             $('#inputVoucherID').val('@ViewBag.VoucherID');
             $('#fromLocation').val('@ViewBag.FromLocationID');
