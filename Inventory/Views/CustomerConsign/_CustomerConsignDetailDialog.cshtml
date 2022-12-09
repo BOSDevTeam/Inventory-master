@@ -1,5 +1,5 @@
 ﻿
-<div class="modal fade" id="modalAdjustmentDetail" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="modalCustomerConsignDetail" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:700px;">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <table class="width-100-percent m-b-30 light-background">
+                <table class="width-100-percent m-b-10 light-background">
                     <tr>
                         <td class="padding-5"><label class="control-label mb-0">Voucher No.</label></td>
                         <td class="aligh-right padding-5"><label id="lblUserVoucherNo" class="control-input mb-0"></label></td>
@@ -18,21 +18,33 @@
                     </tr>
                     <tr>
                         <td class="padding-5"><label class="control-label mb-0">Date</label></td>
-                        <td class="aligh-right padding-5"><label id="lblAdjustDateTime" class="control-input mb-0"></label></td>
+                        <td class="aligh-right padding-5"><label id="lblConsignDateTime" class="control-input mb-0"></label></td>
                         <td class="padding-5"><label class="control-label mb-0">User</label></td>
                         <td class="aligh-right padding-5"><label id="lblUserName" class="control-input mb-0"></label></td>
                     </tr>
                     <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Customer</label></td>
+                        <td class="aligh-right padding-5"><label id="lblCustomer" class="control-input mb-0"></label></td>
                         <td class="padding-5"><label class="control-label mb-0">Location</label></td>
                         <td class="aligh-right padding-5"><label id="lblLocation" class="control-input mb-0"></label></td>
-                        <td class="padding-5"><label class="control-label mb-0"></label></td>
+                    </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Division</label></td>
+                        <td class="aligh-right padding-5"><label id="lblDivision" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">Sale Person</label></td>
+                        <td class="aligh-right padding-5"><label id="lblSalePerson" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Due Date</label></td>
+                        <td class="aligh-right padding-5"><label id="lblDueDate" class="control-input mb-0"></label></td>
+                        <td class="padding-5"></td>
                         <td class="aligh-right padding-5"></td>
                     </tr>
 
                 </table>
 
                 @{
-                    Html.RenderPartial("_AdjustmentDetailChild");
+                    Html.RenderPartial("_CustomerConsignDetailChild");
                 }
 
                 <div id="divRemark" class="light-background padding-5" style="text-align:center;">
@@ -46,25 +58,29 @@
 
 <script type="text/javascript">
 
-    function createTranAdjustmentDetail(response) {
-        $("#tblTranAdjustment").find("tbody").empty();
-        $.each(response.LstTranAdjustment, function (index, item) {
-            let row = '<tr class="row voucher-table-item">'          
-            row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '</td>'
-            row += '<td class="col-md-4 col-lg-4">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
-               + '<td class="col-md-4 col-lg-4 aligh-right">' + item.AdjustTypeKeyword + '</td>'
+    function createTranCustomerConsignDetail(response) {
+        $("#tblTranCustomerConsign").find("tbody").empty();
+        $.each(response.LstTranCustomerConsign, function (index, item) {
+            let row = '<tr class="row voucher-table-item">'
+            row += '<td class="col-md-6 col-lg-6 text-overflow">' + item.ProductName + '</td>'
+            row += '<td class="col-md-6 col-lg-6">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'           
                + "</tr>";
-            $('#tblTranAdjustment tbody').append(row);
+            $('#tblTranCustomerConsign tbody').append(row);
         });
     }
 
-    function createMasterAdjustmentDetail(response) {
+    function createMasterCustomerConsignDetail(response) {
         $('#lblUserVoucherNo').text(response.UserVoucherNo);
         if (response.VoucherID.length != 0) $('#lblVoucherID').text(response.VoucherID);
         else $('#lblVoucherID').text('-');
-        $('#lblAdjustDateTime').text(response.AdjustDateTime);
+        $('#lblConsignDateTime').text(response.ConsignDateTime);
+        if (response.DueDateTime.length != 0) $('#lblDueDate').text(response.DueDateTime);
+        else $('#lblDueDate').text('-');
         $('#lblUserName').text(response.UserName);
+        $('#lblCustomer').text(response.CustomerName);
         $('#lblLocation').text(response.LocationName);
+        $('#lblDivision').text(response.DivisionName);
+        $('#lblSalePerson').text(response.SalePersonName);
         if (response.Remark.length != 0) {
             $('#lblRemark').text(response.Remark);
             $('#divRemark').show();
@@ -72,6 +88,7 @@
     }
 
 </script>
+
 
 
 
