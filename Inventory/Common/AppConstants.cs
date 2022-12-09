@@ -28,5 +28,16 @@ namespace Inventory.Common
         public const string SelectLocation = "Select Location";
         public const string Division = "Division";
         public const string SalePerson = "Sale Person";
+
+        public enum RequestUnSuccessful
+        {
+            SessionExpired, InCompletedData, UnExpectedError
+        }
+
+        public class Message
+        {
+            public const string SaveSuccessOpenBill = "Saved Successfully to Opened Bills!";
+            public const string DeleteSuccess = "Deleted Successfully!";
+        }
     }
 }

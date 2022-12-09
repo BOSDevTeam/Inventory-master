@@ -162,6 +162,7 @@
     <Compile Include="Common\AppData.cs" />
     <Compile Include="Common\Procedure.cs" />
     <Compile Include="Common\AppSetting.cs" />
+    <Compile Include="Common\ResultDefaultData.cs" />
     <Compile Include="Common\TextQuery.cs" />
     <Compile Include="Controllers\AdjustmentController.cs" />
     <Compile Include="Controllers\AdjustTypeController.cs" />
@@ -193,6 +194,7 @@
     <Compile Include="Controllers\VoucherFormatController.cs" />
     <Compile Include="Controllers\VoucherSettingController.cs" />
     <Compile Include="DataConnectorSQL.cs" />
+    <Compile Include="Filters\SessionTimeoutFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -619,6 +621,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="App_Themes\Theme1\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

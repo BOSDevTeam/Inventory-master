@@ -853,6 +853,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Session Expired.
+        /// </summary>
+        public static string SessionExpired {
+            get {
+                return ResourceManager.GetString("SessionExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string Settings {
