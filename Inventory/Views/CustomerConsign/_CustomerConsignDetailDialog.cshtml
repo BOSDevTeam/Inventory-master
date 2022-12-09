@@ -62,8 +62,8 @@
         $("#tblTranCustomerConsign").find("tbody").empty();
         $.each(response.LstTranCustomerConsign, function (index, item) {
             let row = '<tr class="row voucher-table-item">'
-            row += '<td class="col-md-6 col-lg-6 text-overflow">' + item.ProductName + '</td>'
-            row += '<td class="col-md-6 col-lg-6">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'           
+            row += '<td class="col-md-11 col-lg-11 text-overflow">' + item.ProductName + '</td>'
+            row += '<td class="col-md-1 col-lg-1">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'           
                + "</tr>";
             $('#tblTranCustomerConsign tbody').append(row);
         });
@@ -79,8 +79,10 @@
         $('#lblUserName').text(response.UserName);
         $('#lblCustomer').text(response.CustomerName);
         $('#lblLocation').text(response.LocationName);
-        $('#lblDivision').text(response.DivisionName);
-        $('#lblSalePerson').text(response.SalePersonName);
+        if (response.DivisionName.length != 0) $('#lblDivision').text(response.DivisionName);      
+        else $('#lblDivision').text('-');
+        if (response.SalePersonName.length != 0) $('#lblSalePerson').text(response.SalePersonName);
+        else $('#lblSalePerson').text('-');
         if (response.Remark.length != 0) {
             $('#lblRemark').text(response.Remark);
             $('#divRemark').show();

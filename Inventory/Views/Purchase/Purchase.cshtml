@@ -163,7 +163,7 @@
     $('body').addClass("hideVerticalScrollbar");
     calcMenuHeight(155);
     calcPurchaseHeight();
-   
+
     function calcPurchaseHeight() {
         let windowHeight = window.innerHeight;
         let thingsHeight = 100; // average other component height
@@ -802,6 +802,9 @@
                     alert(response.responseText);
                 }
             });
+        });
+        $("#btnEditCancel").click(function (e) {
+            window.location.href = '@Url.Action("ListPurchase", "Purchase")?userId=' + userId;
         });
 
     });

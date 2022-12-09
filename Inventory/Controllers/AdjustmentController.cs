@@ -269,17 +269,7 @@ namespace Inventory.Controllers
             Session["TranAdjustmentData"] = null;
             return Json("", JsonRequestBehavior.AllowGet);
         }
-        [HttpGet]
-        public JsonResult EditCancelAction(int userId)
-        {
-            string UserVoucherNo = getUserVoucherNo(userId);
-            Session["TranAdjustmentData"] = null;
-            var jsonResult = new
-            {
-                UserVoucherNo = UserVoucherNo               
-            };
-            return Json(jsonResult, JsonRequestBehavior.AllowGet);
-        }
+        
         [HttpPost]
         public JsonResult AdjustmentSubmitAction(string userVoucherNo, string date, string voucherId, int locationId,
                 string remark, int userId)

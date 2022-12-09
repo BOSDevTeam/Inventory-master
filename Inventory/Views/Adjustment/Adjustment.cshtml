@@ -111,19 +111,19 @@
 </div>
 <div>
     @{
-        Html.RenderPartial("_AdjustmentRemarkDialog");
+        Html.RenderPartial("_RemarkDialog");
     }
 </div>
 
 
 
 <script type="text/javascript">
-    
+
     let tranAdjustmentAction, defaultLocationId, defaultAdjustTypeId;
     $('body').addClass("hideVerticalScrollbar");
     calcMenuHeight(155);
     calcAdjustmentHeight();
-    
+
     function calcAdjustmentHeight() {
         let windowHeight = window.innerHeight;
         let thingsHeight = 100; // average other component height
@@ -500,6 +500,8 @@
         $("#btnContinue").click(function (e) {
             let row = $("#tblTranAdjustment tbody tr").length;
             if (row < 1) return;
+            $("#modalRemarkTitle").text("Add Remark");
+            $("#lblRemark").text("Enter a Note");
             $('#modalRemark').modal('show');
         });
         $("#btnRemarkOk").click(function (e) {
@@ -544,6 +546,8 @@
         $("#btnEditContinue").click(function (e) {
             let row = $("#tblTranAdjustment tbody tr").length;
             if (row < 1) return;
+            $("#modalRemarkTitle").text("Add Remark");
+            $("#lblRemark").text("Enter a Note");
             $('#btnEditRemarkOk').val($(this).val());
             $('#modalRemark').modal('show');
         });
@@ -585,33 +589,7 @@
             });
         });
         $("#btnEditCancel").click(function (e) {
-            showLoadingIcon();
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("EditCancelAction", "Adjustment")',
-                data: {"userId":userId},
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    hideLoadingIcon();
-                    clearProductControl();
-                    $('#lblUserVoucherNo').text(response.UserVoucherNo);
-                    $('#inputDate').val(getTodayDate());
-                    $('#inputVoucherID').val("");
-                    $("#tblTranAdjustment").find("tbody").empty();
-                    showHideMainButton(false);
-                    showHideTranAdjustmentAddEdit(false);
-                    createDefaultAdjustType();
-                },
-                failure: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                }
-            });
+            window.location.href = '@Url.Action("ListAdjustment", "Adjustment")?userId=' + userId;
         });
 
     });

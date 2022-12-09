@@ -465,19 +465,7 @@ namespace Inventory.Controllers
         {
             Session["TranCustomerConsignData"] = null;
             return Json("", JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpGet]
-        public JsonResult EditCancelAction(int userId)
-        {
-            string UserVoucherNo = getUserVoucherNo(userId);
-            Session["TranCustomerConsignData"] = null;
-            var jsonResult = new
-            {
-                UserVoucherNo = UserVoucherNo
-            };
-            return Json(jsonResult, JsonRequestBehavior.AllowGet);
-        }
+        }      
 
         #endregion
 
