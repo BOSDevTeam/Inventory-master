@@ -18,7 +18,7 @@
 
 <script type="text/javascript">
 
-    document.getElementById('subMenuPurchase').className = 'active';
+    document.getElementById('subMenuPurchaseList').className = 'active';
     let listActionValue, selectedRowIndex;
     $(function () {
         $('#btnAdd').click(function () {
@@ -26,6 +26,7 @@
         });
     })
     $(document).ready(function () {
+        setModuleTitle('@Resource.Purchase', '@Resource.ListPurchase');
         initializeControl();
         createMasterPurchaseData('', false);
         createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');

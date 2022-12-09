@@ -83,17 +83,15 @@
             </div>
             <div style="bottom:0px;position:absolute;width:100%;">
                 
-                <div class="row soft-gray-background" style="margin-top:10px;padding-right:25px;padding-top:10px;padding-bottom:10px;">
-                    <div class="col-md-4 col-lg-4">
-                        <button id="btnCancel" class="btn btn-white-outline-third ml-10">@Resource.Reset</button>
-                        <button id="btnEditCancel" class="btn btn-white-outline-third m-t-0 ml-10">@Resource.Reset</button>
+                <div class="row soft-gray-background pt-1">
+                    <div class="col-md-6 col-lg-6">
+                        <button id="btnCancel" class="btn btn-third">@Resource.Reset</button>
+                        <button id="btnEditCancel" class="btn btn-third m-t-0">@Resource.Cancel</button>
                     </div>
-                    <div class="col-md-4 col-lg-4">
-                        
-                    </div>
-                    <div class="col-md-4 col-lg-4 aligh-right">
-                        <button id="btnContinue" class="btn btn-first mr-10">@Resource.Continue</button>
-                        <button id="btnEditContinue" class="btn btn-first m-t-0 mr-10">@Resource.Continue</button>
+                    
+                    <div class="col-md-6 col-lg-6 aligh-right">
+                        <button id="btnContinue" class="btn btn-first plr-30">@Resource.Continue</button>
+                        <button id="btnEditContinue" class="btn btn-first plr-30 m-t-0">@Resource.Edit</button>
                     </div>
                 </div>
             </div>
@@ -120,16 +118,16 @@
 
 
 <script type="text/javascript">
-    noBack();
-    let tranAdjustmentAction, defaultLocationId,defaultAdjustTypeId;
+    
+    let tranAdjustmentAction, defaultLocationId, defaultAdjustTypeId;
+    $('body').addClass("hideVerticalScrollbar");
+    calcMenuHeight(155);
     calcAdjustmentHeight();
-    function noBack() {
-        window.history.forward();
-    }
+    
     function calcAdjustmentHeight() {
         let windowHeight = window.innerHeight;
         let thingsHeight = 100; // average other component height
-        let extraHeight = 20;
+        let extraHeight = 11;
         let adjustmentAreaHeight = windowHeight - (thingsHeight + extraHeight);
         let adjustmentChildHeight = adjustmentAreaHeight - 100;  // 100 is top component
         let adjustmentTranHeight = adjustmentChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra
@@ -138,6 +136,7 @@
         document.getElementById('divAdjustmentTran').setAttribute("style", "height:" + adjustmentTranHeight + "px");
     }
     $(document).ready(function () {
+        setModuleTitle('@Resource.Adjustment', '@Resource.AddAdjustment');
         if ('@ViewBag.IsEdit' == 'True') fillEditData();
         else
         initializeControl();

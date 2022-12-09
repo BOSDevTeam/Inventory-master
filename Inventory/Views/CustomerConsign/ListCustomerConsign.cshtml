@@ -93,6 +93,7 @@
         });
     })
     $(document).ready(function () {
+        setModuleTitle('@Resource.Consignment', '@Resource.ListCustomerConsign');
         initializeControl();
         createMasterCustomerConsignData('', false);
         createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');

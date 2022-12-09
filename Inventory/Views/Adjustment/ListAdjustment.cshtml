@@ -86,6 +86,7 @@
         });
     })
     $(document).ready(function () {
+        setModuleTitle('@Resource.Adjustment', '@Resource.ListAdjustment');
         initializeControl();
         createMasterAdjustmentData('', false);
         createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');

@@ -93,17 +93,15 @@
             </div>
             <div style="bottom:0px;position:absolute;width:100%;">
 
-                <div class="row soft-gray-background" style="margin-top:10px;padding-right:25px;padding-top:10px;padding-bottom:10px;">
-                    <div class="col-md-4 col-lg-4">
-                        <button id="btnCancel" class="btn btn-white-outline-third ml-10">@Resource.Reset</button>
-                        <button id="btnEditCancel" class="btn btn-white-outline-third m-t-0 ml-10">@Resource.Reset</button>
+                <div class="row soft-gray-background pt-1">
+                    <div class="col-md-6 col-lg-6">
+                        <button id="btnCancel" class="btn btn-third">@Resource.Reset</button>
+                        <button id="btnEditCancel" class="btn btn-third m-t-0">@Resource.Cancel</button>
                     </div>
-                    <div class="col-md-4 col-lg-4">
-
-                    </div>
-                    <div class="col-md-4 col-lg-4 aligh-right">
-                        <button id="btnContinue" class="btn btn-first mr-10">@Resource.Continue</button>
-                        <button id="btnEditContinue" class="btn btn-first m-t-0 mr-10">@Resource.Continue</button>
+                    
+                    <div class="col-md-6 col-lg-6 aligh-right">
+                        <button id="btnContinue" class="btn btn-first plr-30">@Resource.Continue</button>
+                        <button id="btnEditContinue" class="btn btn-first plr-30 m-t-0">@Resource.Edit</button>
                     </div>
                 </div>
             </div>
@@ -130,15 +128,15 @@
 
 
 <script type="text/javascript">
-    noBack();
+    
     let tranCustomerConsignAction, defaultCustomerId, defaultLocationId, defaultSalePersonId, defaultDivisionId;
+    $('body').addClass("hideVerticalScrollbar");
+    calcMenuHeight(210);
     calcCustomerConsignHeight();
-    function noBack() {
-        window.history.forward();
-    }
+    
     function calcCustomerConsignHeight() {
         let windowHeight = window.innerHeight;
-        let thingsHeight = 100; // average other component height
+        let thingsHeight = 145; // average other component height
         let extraHeight = 20;
         let customerConsignAreaHeight = windowHeight - (thingsHeight + extraHeight);
         let customerConsignChildHeight = customerConsignAreaHeight - 100;  // 100 is top component
@@ -148,6 +146,7 @@
         document.getElementById('divCustomerConsignTran').setAttribute("style", "height:" + customerConsignTranHeight + "px");
     }
     $(document).ready(function () {
+        setModuleTitle('@Resource.Consignment', '@Resource.AddCustomerConsign');
         if ('@ViewBag.IsEdit' == 'True')
         {
             getDefaultSelectedId();
@@ -166,7 +165,7 @@
             defaultLocationId = $('#ddlLocation option:selected').val();
             defaultSalePersonId = $('#ddlSalePerson option:selected').val();
             defaultDivisionId = $('#ddlDivision option:selected').val();
-            defaultCustomerId = $('#ddlCustomer option:selected').val();           
+            defaultCustomerId = $('#ddlCustomer option:selected').val();
         }
         function AssignDefaultSelectedId()
         {
@@ -538,7 +537,7 @@
                     $("#tblTranCustomerConsign").find("tbody").empty();
                     $("#lblUserVoucherNo").text(response.UserVoucherNo);
                     $('#inputDate').val(getTodayDate());
-                    AssignDefaultSelectedId();                 
+                    AssignDefaultSelectedId();
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -627,7 +626,7 @@
                     clearProductControl();
                     $('#lblUserVoucherNo').text(response.UserVoucherNo);
                     $('#inputDate').val(getTodayDate());
-                    AssignDefaultSelectedId();                   
+                    AssignDefaultSelectedId();
                     $("#tblTranCustomerConsign").find("tbody").empty();
                     showHideMainButton(false);
                     showHideTranCustomerConsignAddEdit(false);
