@@ -102,13 +102,13 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (!response.IsRequestSuccess)
-                            redirectToLogin();
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            responseUnSuccessful(response);                       
                         else {
                             if (selectedRowIndex != null) {
                                 document.getElementById("tblSaleList").deleteRow(selectedRowIndex);
                                 createPaging(response.TotalPage, "");
-                                showToast(1, 'Deleted Successfully!');
+                                showToast(1, response.ResultDefaultData.Message);
                             }
                         }
                     },
@@ -197,8 +197,8 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (!response.IsRequestSuccess)
-                            redirectToLogin();
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            responseUnSuccessful(response);
                         else {
                             createMasterSaleData(response.LstMasterSale, true);
                             createPaging(response.TotalPage, currentPage);

@@ -11,6 +11,7 @@ namespace Inventory.Controllers
     public class HomeController : MyController
     {
         DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
+
         public ActionResult Dashboard()
         {
             return View();

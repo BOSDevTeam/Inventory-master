@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="~/assets/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/select2.min.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
     <link href="~/Content/Site.css" rel="stylesheet" />
     <!--[if lt IE 9]>
         <script src="assets/js/html5shiv.min.js"></script>
@@ -295,6 +296,17 @@
         function setModuleTitle(module, subModule) {
             $("#spnModule").text(module);
             $("#spnSubModule").text(subModule);
+        }
+
+        function responseUnSuccessful(response) {
+            if (response.ResultDefaultData.UnSuccessfulReason == '@Inventory.Common.AppConstants.RequestUnSuccessful.SessionExpired') {
+                alert('@Resource.SessionExpired');
+                redirectToLogin();
+            } else if (response.ResultDefaultData.UnSuccessfulReason == '@Inventory.Common.AppConstants.RequestUnSuccessful.InCompletedData') {
+                showToast(0, response.ResultDefaultData.Message);
+            } else if (response.ResultDefaultData.UnSuccessfulReason == '@Inventory.Common.AppConstants.RequestUnSuccessful.UnExpectedError') {
+                showToast(0, response.ResultDefaultData.Message);
+            }
         }
 
     </script>

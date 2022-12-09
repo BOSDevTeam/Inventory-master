@@ -437,10 +437,10 @@
                 success: function (response) {
                     hideLoadingIcon();
                     $('#modalRemark').modal('hide');
-                    if (!response.IsRequestSuccess)
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
                     else {
-                        showToast(1, 'Saved Successfully to Opened Bills!');
+                        showToast(1, response.ResultDefaultData.Message);
                         $('#txtRemarkNote').val("");
                         $("#lblUserVoucherNo").text(response.UserVoucherNo);
                         $('#inputDate').val(getTodayDate());
@@ -569,10 +569,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        alert("Session Expired!");
-                        redirectToLogin();
-                    }
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
                     else window.location.href = '@Url.Action("ListSale", "Sale")?userId=' + userId;
                 },
                 failure: function (response) {
@@ -610,8 +608,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess)
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
                     else {
                         createTranSaleData(response.LstTranSale);
                         createAmount(response);
@@ -657,8 +655,8 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (!response.IsRequestSuccess)
-                            redirectToLogin();
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            responseUnSuccessful(response);
                         else {
                             createTranSaleData(response.LstTranSale);
                             createAmount(response);
@@ -819,13 +817,10 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        alert("Session Expired!");
-                        redirectToLogin();
-                    }
-                    else {
-                        window.location.href = '@Url.Action("SaleVoucher", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
-                    }
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else
+                       window.location.href = '@Url.Action("SaleVoucher", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -862,8 +857,8 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (!response.IsRequestSuccess)
-                            redirectToLogin();
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            responseUnSuccessful(response);
                         else {
                             fillSelectedProductData(response, productId);
                             $('#modalSearchProduct').modal('hide');
@@ -891,8 +886,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess)
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
                     else {
                         $("#inputNumber").val(number);
                         $("#inputProductID").val(response.ProductID);

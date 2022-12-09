@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using Inventory.ViewModels;
 using System.Runtime.InteropServices;
+using Inventory.Filters;
 
 namespace Inventory.Controllers
 {
@@ -22,6 +23,7 @@ namespace Inventory.Controllers
 
         #region Page
 
+        [SessionTimeoutAttribute]
         public ActionResult POS(int userId, int? saleId, int? openBillId, int? clSaleOrderId)
         {
             if (checkConnection())
@@ -107,10 +109,11 @@ namespace Inventory.Controllers
             return RedirectToAction("Login", "User");
         }
 
+        [SessionTimeoutAttribute]
         public ActionResult ListSale(int userId)
         {
             if (checkConnection())
-            {               
+            {
                 getCustomer(true);
                 List<SaleViewModel.MasterSaleViewModel> tempList = selectMasterSale(userId,false);
                 PagingViewModel pagingViewModel = calcMasterSalePaging(tempList);
@@ -123,6 +126,7 @@ namespace Inventory.Controllers
             return RedirectToAction("Login", "User");
         }
 
+        [SessionTimeoutAttribute]
         public ActionResult ListOpenBill(int userId)
         {
             if (checkConnection())
@@ -139,6 +143,7 @@ namespace Inventory.Controllers
             return RedirectToAction("Login", "User");
         }
 
+        [SessionTimeoutAttribute]
         public ActionResult SaleVoucher(string systemVoucherNo,int locationId)
         {
             VoucherSettingModels voucherSettingModel = appData.selectVoucherSettingByLocation(getConnection(), locationId);
@@ -156,12 +161,12 @@ namespace Inventory.Controllers
         #region SaleAction     
 
         [HttpGet]
-        public JsonResult TranSaleAddEditAction(int productId, string productCode, string productName, int quantity, int price, int disPercent, int? unitId, string unitKeyword, int? currencyId, string currencyKeyword, bool isEdit,int? number, bool isItemFOC)
+        public JsonResult TranSaleAddEditAction(int productId, string productCode, string productName, int quantity, int price, int disPercent, int? unitId, string unitKeyword, int? currencyId, string currencyKeyword, bool isEdit, int? number, bool isItemFOC)
         {
             List<TranSaleModels> lstTranSale = new List<TranSaleModels>();
             TranSaleModels data = new TranSaleModels();
             int subtotal = 0, totalQuantity = 0, discount;
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
 
             data.Number = number;
             data.ProductID = productId;
@@ -185,20 +190,30 @@ namespace Inventory.Controllers
             {
                 if (Session["TranSaleData"] != null)
                 {
-                    lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;                 
+                    lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;
                     lstTranSale.Add(data);
                 }
-                else lstTranSale.Add(data);                
+                else lstTranSale.Add(data);
+                resultDefaultData.IsRequestSuccess = true;
             }
             else
             {
                 if (Session["TranSaleData"] != null)
                 {
-                    lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;                  
-                    int index = (int) number - 1;
-                    lstTranSale[index] = data;
+                    try
+                    {
+                        lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;
+                        int index = (int)number - 1;
+                        lstTranSale[index] = data;
+                        resultDefaultData.IsRequestSuccess = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                        resultDefaultData.Message = ex.Message;
+                    }
                 }
-                else isRequestSuccess = false;
+                else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             }
 
             for (int i = 0; i < lstTranSale.Count(); i++)
@@ -214,7 +229,7 @@ namespace Inventory.Controllers
                 LstTranSale = lstTranSale,
                 SubTotal = subtotal,
                 TotalQuantity = totalQuantity,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -225,14 +240,23 @@ namespace Inventory.Controllers
         {
             List<TranSaleModels> lstTranSale = new List<TranSaleModels>();
             int subtotal = 0, totalQuantity = 0;
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
 
             if (Session["TranSaleData"] != null)
             {
-                lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;               
-                lstTranSale.RemoveAt(number - 1);
+                try
+                {
+                    lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;
+                    lstTranSale.RemoveAt(number - 1);
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             for (int i = 0; i < lstTranSale.Count(); i++)
             {
@@ -247,7 +271,7 @@ namespace Inventory.Controllers
                 LstTranSale = lstTranSale,
                 SubTotal = subtotal,
                 TotalQuantity = totalQuantity,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -264,38 +288,48 @@ namespace Inventory.Controllers
         public JsonResult PrepareToEditTranSaleAction(int number, bool isMultiUnit, bool isMultiCurrency)
         {
             List<TranSaleModels> lstTranSale = new List<TranSaleModels>();
-            TranSaleModels data = new TranSaleModels();         
+            TranSaleModels data = new TranSaleModels();
             string productCode = "", productName = "";
             int productId = 0, quantity = 0, price = 0, disPercent = 0;
             int? unitId = 0, currencyId = 0;
             List<UnitModels> lstUnit = new List<UnitModels>();
             List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
-            bool isRequestSuccess = false, isFOC = false;
+            bool isFOC = false;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
 
             if (Session["TranSaleData"] != null)
             {
-                lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;
-
-                if (lstTranSale.Count() != 0)
+                try
                 {
-                    data = lstTranSale[number - 1];                   
-                    if (data != null)
+                    lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;
+
+                    if (lstTranSale.Count() != 0)
                     {
-                        productId = data.ProductID;
-                        productCode = data.ProductCode;
-                        productName = data.ProductName;
-                        quantity = data.Quantity;
-                        price = data.SalePrice;
-                        unitId = data.UnitID;
-                        currencyId = data.CurrencyID;
-                        disPercent = data.DiscountPercent;
-                        if (isMultiUnit) lstUnit = getUnit();
-                        if (isMultiCurrency) lstCurrency = getCurrency();
-                        isFOC = data.IsFOC;
-                        isRequestSuccess = true;
+                        data = lstTranSale[number - 1];
+                        if (data != null)
+                        {
+                            productId = data.ProductID;
+                            productCode = data.ProductCode;
+                            productName = data.ProductName;
+                            quantity = data.Quantity;
+                            price = data.SalePrice;
+                            unitId = data.UnitID;
+                            currencyId = data.CurrencyID;
+                            disPercent = data.DiscountPercent;
+                            if (isMultiUnit) lstUnit = getUnit();
+                            if (isMultiCurrency) lstCurrency = getCurrency();
+                            isFOC = data.IsFOC;
+                        }
                     }
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
                 }
             }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
@@ -310,7 +344,7 @@ namespace Inventory.Controllers
                 LstUnit = lstUnit,
                 LstCurrency = lstCurrency,
                 IsFOC = isFOC,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -368,24 +402,33 @@ namespace Inventory.Controllers
             int salePrice = 0;
             short? disPercent = 0;
             List<UnitModels> lstUnit = new List<UnitModels>();
-            List<CurrencyModels> lstCurrency = new List<CurrencyModels>();           
-            bool isRequestSuccess = false;
+            List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
 
             if (Session["SearchProductData"] != null)
             {
-                List<ProductModels.ProductModel> list = Session["SearchProductData"] as List<ProductModels.ProductModel>;
-                var result = list.Where(c => c.ProductID == productId).SingleOrDefault();
-                if (result != null)
+                try
                 {
-                    productName = result.ProductName;
-                    code = result.Code;
-                    salePrice = result.SalePrice;
-                    disPercent = result.DisPercent;
-                    if (isMultiUnit) lstUnit = getUnit();
-                    if (isMultiCurrency) lstCurrency = getCurrency();
-                    isRequestSuccess = true;
+                    List<ProductModels.ProductModel> list = Session["SearchProductData"] as List<ProductModels.ProductModel>;
+                    var result = list.Where(c => c.ProductID == productId).SingleOrDefault();
+                    if (result != null)
+                    {
+                        productName = result.ProductName;
+                        code = result.Code;
+                        salePrice = result.SalePrice;
+                        disPercent = result.DisPercent;
+                        if (isMultiUnit) lstUnit = getUnit();
+                        if (isMultiCurrency) lstCurrency = getCurrency();
+                    }
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
                 }
             }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
@@ -395,7 +438,7 @@ namespace Inventory.Controllers
                 DisPercent = disPercent,
                 LstUnit = lstUnit,
                 LstCurrency = lstCurrency,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -404,48 +447,57 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult PaymentEditAction(int saleId, string date, string voucherId, int customerId, int locationId, int taxAmt, int chargesAmt, int subtotal, int total)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
 
             if (Session["TranSaleData"] != null)
             {
-                List<TranSaleModels> list = Session["TranSaleData"] as List<TranSaleModels>;
-                DataTable dt = new DataTable();
-                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-                dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
-                dt.Columns.Add(new DataColumn("SalePrice", typeof(int)));
-                dt.Columns.Add(new DataColumn("CurrencyID", typeof(int)));
-                dt.Columns.Add(new DataColumn("DiscountPercent", typeof(int)));
-                dt.Columns.Add(new DataColumn("Discount", typeof(int)));
-                dt.Columns.Add(new DataColumn("Amount", typeof(int)));
-                dt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
-                for (int i = 0; i < list.Count; i++)
+                try
                 {
-                    dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
-                }
+                    List<TranSaleModels> list = Session["TranSaleData"] as List<TranSaleModels>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                    dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("SalePrice", typeof(int)));
+                    dt.Columns.Add(new DataColumn("CurrencyID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("DiscountPercent", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Discount", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Amount", typeof(int)));
+                    dt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
+                    }
 
-                DateTime saleDateTime = DateTime.Parse(date);
-                SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateSale, dataConnectorSQL.Connect());
-                cmd.Parameters.AddWithValue("@SaleID", saleId);
-                cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
-                cmd.Parameters.AddWithValue("@CustomerID", customerId);
-                cmd.Parameters.AddWithValue("@LocationID", locationId);
-                cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
-                cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
-                cmd.Parameters.AddWithValue("@Subtotal", subtotal);
-                cmd.Parameters.AddWithValue("@Total", total);                            
-                cmd.Parameters.AddWithValue("@temptbl", dt);
-                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.ExecuteNonQuery();
-                dataConnectorSQL.Close();
-                clearTranSale();
+                    DateTime saleDateTime = DateTime.Parse(date);
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateSale, dataConnectorSQL.Connect());
+                    cmd.Parameters.AddWithValue("@SaleID", saleId);
+                    cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
+                    cmd.Parameters.AddWithValue("@CustomerID", customerId);
+                    cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
+                    cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
+                    cmd.Parameters.AddWithValue("@Subtotal", subtotal);
+                    cmd.Parameters.AddWithValue("@Total", total);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                    dataConnectorSQL.Close();
+                    clearTranSale();
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
@@ -454,87 +506,96 @@ namespace Inventory.Controllers
         public JsonResult PaymentSubmitAction(string userVoucherNo, string date, string voucherId, int customerId, int locationId,
                 int paymentId, int? payMethodId, int? limitedDayId, int? bankPaymentId, string remark, int? advancedPay,
                 int? payPercent, int? payPercentAmt, int? vouDisPercent, int? vouDisAmount, int? voucherDiscount,
-                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId,int? openBillId,int? clSaleOrderId,bool isVoucherFOC)
+                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId, int? openBillId, int? clSaleOrderId, bool isVoucherFOC)
         {
             string systemVoucherNo = "";
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
 
             if (Session["TranSaleData"] != null)
             {
-                List<TranSaleModels> list = Session["TranSaleData"] as List<TranSaleModels>;
-                DataTable dt = new DataTable();
-                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-                dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
-                dt.Columns.Add(new DataColumn("SalePrice", typeof(int)));
-                dt.Columns.Add(new DataColumn("CurrencyID", typeof(int)));
-                dt.Columns.Add(new DataColumn("DiscountPercent", typeof(int)));
-                dt.Columns.Add(new DataColumn("Discount", typeof(int)));
-                dt.Columns.Add(new DataColumn("Amount", typeof(int)));
-                dt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
-                for (int i = 0; i < list.Count; i++)
+                try
                 {
-                    dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
+                    List<TranSaleModels> list = Session["TranSaleData"] as List<TranSaleModels>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                    dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("SalePrice", typeof(int)));
+                    dt.Columns.Add(new DataColumn("CurrencyID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("DiscountPercent", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Discount", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Amount", typeof(int)));
+                    dt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
+                    }
+
+                    DateTime saleDateTime = DateTime.Parse(date);
+                    if (payMethodId == null) payMethodId = 0;
+                    if (limitedDayId == null) limitedDayId = 0;
+                    if (bankPaymentId == null) bankPaymentId = 0;
+                    if (advancedPay == null) advancedPay = 0;
+                    if (payPercent == null) payPercent = 0;
+                    if (payPercentAmt == null) payPercentAmt = 0;
+                    if (vouDisPercent == null) vouDisPercent = 0;
+                    if (vouDisAmount == null) vouDisAmount = 0;
+                    if (voucherDiscount == null) voucherDiscount = 0;
+                    if (openBillId == null) openBillId = 0;
+                    if (clSaleOrderId == null) clSaleOrderId = 0;
+
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcInsertSale, dataConnectorSQL.Connect());
+                    cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
+                    cmd.Parameters.AddWithValue("@CustomerID", customerId);
+                    cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@PaymentID", paymentId);
+                    cmd.Parameters.AddWithValue("@VoucherDiscount", voucherDiscount);
+                    cmd.Parameters.AddWithValue("@AdvancedPay", advancedPay);
+                    cmd.Parameters.AddWithValue("@Tax", tax);
+                    cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
+                    cmd.Parameters.AddWithValue("@Charges", charges);
+                    cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
+                    cmd.Parameters.AddWithValue("@Subtotal", subtotal);
+                    cmd.Parameters.AddWithValue("@Total", total);
+                    cmd.Parameters.AddWithValue("@Grandtotal", grandtotal);
+                    cmd.Parameters.AddWithValue("@VouDisPercent", vouDisPercent);
+                    cmd.Parameters.AddWithValue("@VouDisAmount", vouDisAmount);
+                    cmd.Parameters.AddWithValue("@PayMethodID", payMethodId);
+                    cmd.Parameters.AddWithValue("@BankPaymentID", bankPaymentId);
+                    cmd.Parameters.AddWithValue("@PaymentPercent", payPercent);
+                    cmd.Parameters.AddWithValue("@IsClientSale", 0);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@LimitedDayID", limitedDayId);
+                    cmd.Parameters.AddWithValue("@PayPercentAmt", payPercentAmt);
+                    cmd.Parameters.AddWithValue("@Remark", remark);
+                    cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.SaleModule);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.Parameters.AddWithValue("@OpenBillID", openBillId);
+                    cmd.Parameters.AddWithValue("@CLSaleOrderID", clSaleOrderId);
+                    cmd.Parameters.AddWithValue("@IsVoucherFOC", isVoucherFOC);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read()) systemVoucherNo = Convert.ToString(reader[0]);
+                    reader.Close();
+                    dataConnectorSQL.Close();
+                    clearTranSale();
+                    resultDefaultData.IsRequestSuccess = true;
                 }
-
-                DateTime saleDateTime = DateTime.Parse(date);
-                if (payMethodId == null) payMethodId = 0;
-                if (limitedDayId == null) limitedDayId = 0;
-                if (bankPaymentId == null) bankPaymentId = 0;
-                if (advancedPay == null) advancedPay = 0;
-                if (payPercent == null) payPercent = 0;
-                if (payPercentAmt == null) payPercentAmt = 0;
-                if (vouDisPercent == null) vouDisPercent = 0;
-                if (vouDisAmount == null) vouDisAmount = 0;
-                if (voucherDiscount == null) voucherDiscount = 0;
-                if (openBillId == null) openBillId = 0;
-                if (clSaleOrderId == null) clSaleOrderId = 0;
-
-                SqlCommand cmd = new SqlCommand(Procedure.PrcInsertSale, dataConnectorSQL.Connect());
-                cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
-                cmd.Parameters.AddWithValue("@CustomerID", customerId);
-                cmd.Parameters.AddWithValue("@LocationID", locationId);
-                cmd.Parameters.AddWithValue("@PaymentID", paymentId);
-                cmd.Parameters.AddWithValue("@VoucherDiscount", voucherDiscount);
-                cmd.Parameters.AddWithValue("@AdvancedPay", advancedPay);
-                cmd.Parameters.AddWithValue("@Tax", tax);
-                cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
-                cmd.Parameters.AddWithValue("@Charges", charges);
-                cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
-                cmd.Parameters.AddWithValue("@Subtotal", subtotal);
-                cmd.Parameters.AddWithValue("@Total", total);
-                cmd.Parameters.AddWithValue("@Grandtotal", grandtotal);
-                cmd.Parameters.AddWithValue("@VouDisPercent", vouDisPercent);
-                cmd.Parameters.AddWithValue("@VouDisAmount", vouDisAmount);
-                cmd.Parameters.AddWithValue("@PayMethodID", payMethodId);
-                cmd.Parameters.AddWithValue("@BankPaymentID", bankPaymentId);
-                cmd.Parameters.AddWithValue("@PaymentPercent", payPercent);
-                cmd.Parameters.AddWithValue("@IsClientSale", 0);
-                cmd.Parameters.AddWithValue("@UserID", userId);
-                cmd.Parameters.AddWithValue("@LimitedDayID", limitedDayId);
-                cmd.Parameters.AddWithValue("@PayPercentAmt", payPercentAmt);
-                cmd.Parameters.AddWithValue("@Remark", remark);
-                cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.SaleModule);
-                cmd.Parameters.AddWithValue("@temptbl", dt);
-                cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
-                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
-                cmd.Parameters.AddWithValue("@OpenBillID", openBillId);
-                cmd.Parameters.AddWithValue("@CLSaleOrderID", clSaleOrderId);
-                cmd.Parameters.AddWithValue("@IsVoucherFOC", isVoucherFOC);
-                cmd.CommandType = CommandType.StoredProcedure;
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read()) systemVoucherNo = Convert.ToString(reader[0]);
-                reader.Close();
-                dataConnectorSQL.Close();
-                clearTranSale();
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 SystemVoucherNo = systemVoucherNo,
                 LocationID = locationId,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -613,33 +674,43 @@ namespace Inventory.Controllers
 
         [HttpGet]
         public JsonResult DeleteAction(int saleId)
-        {
-            bool isRequestSuccess = true;
-            int totalPageNum = 0;
+        {           
+            int totalPageNum = 0;          
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
 
             if (Session["MasterSaleData"] != null)
             {
-                SqlCommand cmd = new SqlCommand(textQuery.deleteSaleQuery(saleId), (SqlConnection)getConnection());
-                cmd.CommandType = CommandType.Text;
-                cmd.ExecuteNonQuery();
-
-                List<SaleViewModel.MasterSaleViewModel> lstMasterSale = Session["MasterSaleData"] as List<SaleViewModel.MasterSaleViewModel>;
-                int index = lstMasterSale.FindIndex(x => x.SaleID == saleId);
-                lstMasterSale.RemoveAt(index);
-
-                if (lstMasterSale.Count > paging.eachItemCount)
+                try
                 {
-                    totalPageNum = lstMasterSale.Count / paging.eachItemCount;
-                    paging.lastItemCount = lstMasterSale.Count % paging.eachItemCount;
-                    if (paging.lastItemCount != 0) totalPageNum += 1;
+                    SqlCommand cmd = new SqlCommand(textQuery.deleteSaleQuery(saleId), (SqlConnection)getConnection());
+                    cmd.CommandType = CommandType.Text;
+                    cmd.ExecuteNonQuery();
+
+                    List<SaleViewModel.MasterSaleViewModel> lstMasterSale = Session["MasterSaleData"] as List<SaleViewModel.MasterSaleViewModel>;
+                    int index = lstMasterSale.FindIndex(x => x.SaleID == saleId);
+                    lstMasterSale.RemoveAt(index);
+
+                    if (lstMasterSale.Count > paging.eachItemCount)
+                    {
+                        totalPageNum = lstMasterSale.Count / paging.eachItemCount;
+                        paging.lastItemCount = lstMasterSale.Count % paging.eachItemCount;
+                        if (paging.lastItemCount != 0) totalPageNum += 1;
+                    }
+                    resultDefaultData.IsRequestSuccess = true;
+                    resultDefaultData.Message = AppConstants.Message.DeleteSuccess;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
                 }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 TotalPage = totalPageNum,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -648,57 +719,67 @@ namespace Inventory.Controllers
         [HttpPost]
         public JsonResult HoldAction(string userVoucherNo, string date, string voucherId, int customerId, int locationId,
                 string remark, int taxAmt, int chargesAmt, int subtotal, int total, int userId)
-        {           
-            bool isRequestSuccess = true;
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
 
             if (Session["TranSaleData"] != null)
             {
-                List<TranSaleModels> list = Session["TranSaleData"] as List<TranSaleModels>;
-                DataTable dt = new DataTable();
-                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-                dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
-                dt.Columns.Add(new DataColumn("SalePrice", typeof(int)));
-                dt.Columns.Add(new DataColumn("CurrencyID", typeof(int)));
-                dt.Columns.Add(new DataColumn("DiscountPercent", typeof(int)));
-                dt.Columns.Add(new DataColumn("Discount", typeof(int)));
-                dt.Columns.Add(new DataColumn("Amount", typeof(int)));
-                dt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
-                for (int i = 0; i < list.Count; i++)
+                try
                 {
-                    dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
+                    List<TranSaleModels> list = Session["TranSaleData"] as List<TranSaleModels>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                    dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("SalePrice", typeof(int)));
+                    dt.Columns.Add(new DataColumn("CurrencyID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("DiscountPercent", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Discount", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Amount", typeof(int)));
+                    dt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
+                    }
+
+                    DateTime openDateTime = DateTime.Parse(date);
+
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcInsertOpenBill, dataConnectorSQL.Connect());
+                    cmd.Parameters.AddWithValue("@OpenDateTime", openDateTime);
+                    cmd.Parameters.AddWithValue("@CustomerID", customerId);
+                    cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
+                    cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
+                    cmd.Parameters.AddWithValue("@Subtotal", subtotal);
+                    cmd.Parameters.AddWithValue("@Total", total);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@Remark", remark);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.Parameters.AddWithValue("@IsClientSale", 0);
+                    cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.SaleModule);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read()) userVoucherNo = Convert.ToString(reader[0]);
+                    reader.Close();
+                    dataConnectorSQL.Close();
+                    clearTranSale();
+                    resultDefaultData.IsRequestSuccess = true;
+                    resultDefaultData.Message = AppConstants.Message.SaveSuccessOpenBill;
                 }
-
-                DateTime openDateTime = DateTime.Parse(date);              
-
-                SqlCommand cmd = new SqlCommand(Procedure.PrcInsertOpenBill, dataConnectorSQL.Connect());
-                cmd.Parameters.AddWithValue("@OpenDateTime", openDateTime);
-                cmd.Parameters.AddWithValue("@CustomerID", customerId);
-                cmd.Parameters.AddWithValue("@LocationID", locationId);             
-                cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);              
-                cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
-                cmd.Parameters.AddWithValue("@Subtotal", subtotal);
-                cmd.Parameters.AddWithValue("@Total", total);                          
-                cmd.Parameters.AddWithValue("@UserID", userId);              
-                cmd.Parameters.AddWithValue("@Remark", remark);              
-                cmd.Parameters.AddWithValue("@temptbl", dt);
-                cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
-                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
-                cmd.Parameters.AddWithValue("@IsClientSale", 0);
-                cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.SaleModule);
-                cmd.CommandType = CommandType.StoredProcedure;
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read()) userVoucherNo = Convert.ToString(reader[0]);
-                reader.Close();
-                dataConnectorSQL.Close();
-                clearTranSale();
+                catch(Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 UserVoucherNo = userVoucherNo,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -707,23 +788,32 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult SalePagingAction(int currentPage)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             List<SaleViewModel.MasterSaleViewModel> lstMasterSale = new List<SaleViewModel.MasterSaleViewModel>();
             PagingViewModel pagingViewModel = new PagingViewModel();
 
             if (Session["MasterSaleData"] != null)
             {
-                List<SaleViewModel.MasterSaleViewModel> tempList = Session["MasterSaleData"] as List<SaleViewModel.MasterSaleViewModel>;
-                pagingViewModel = calcMasterSalePaging(tempList, currentPage);
-                lstMasterSale = getMasterSaleByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+                try
+                {
+                    List<SaleViewModel.MasterSaleViewModel> tempList = Session["MasterSaleData"] as List<SaleViewModel.MasterSaleViewModel>;
+                    pagingViewModel = calcMasterSalePaging(tempList, currentPage);
+                    lstMasterSale = getMasterSaleByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 LstMasterSale = lstMasterSale,
                 TotalPage = pagingViewModel.TotalPageNum,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -773,32 +863,42 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult DeleteOpenBillAction(int openBillId)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             int totalPageNum = 0;
 
             if (Session["MasterOpenBillData"] != null)
             {
-                SqlCommand cmd = new SqlCommand(textQuery.deleteOpenBillQuery(openBillId), (SqlConnection)getConnection());
-                cmd.CommandType = CommandType.Text;
-                cmd.ExecuteNonQuery();
-
-                List<SaleViewModel.MasterOpenBillViewModel> lstMasterOpenBill = Session["MasterOpenBillData"] as List<SaleViewModel.MasterOpenBillViewModel>;
-                int index = lstMasterOpenBill.FindIndex(x => x.OpenBillID == openBillId);
-                lstMasterOpenBill.RemoveAt(index);
-
-                if (lstMasterOpenBill.Count > paging.eachItemCount)
+                try
                 {
-                    totalPageNum = lstMasterOpenBill.Count / paging.eachItemCount;
-                    paging.lastItemCount = lstMasterOpenBill.Count % paging.eachItemCount;
-                    if (paging.lastItemCount != 0) totalPageNum += 1;
+                    SqlCommand cmd = new SqlCommand(textQuery.deleteOpenBillQuery(openBillId), (SqlConnection)getConnection());
+                    cmd.CommandType = CommandType.Text;
+                    cmd.ExecuteNonQuery();
+
+                    List<SaleViewModel.MasterOpenBillViewModel> lstMasterOpenBill = Session["MasterOpenBillData"] as List<SaleViewModel.MasterOpenBillViewModel>;
+                    int index = lstMasterOpenBill.FindIndex(x => x.OpenBillID == openBillId);
+                    lstMasterOpenBill.RemoveAt(index);
+
+                    if (lstMasterOpenBill.Count > paging.eachItemCount)
+                    {
+                        totalPageNum = lstMasterOpenBill.Count / paging.eachItemCount;
+                        paging.lastItemCount = lstMasterOpenBill.Count % paging.eachItemCount;
+                        if (paging.lastItemCount != 0) totalPageNum += 1;
+                    }
+                    resultDefaultData.IsRequestSuccess = true;
+                    resultDefaultData.Message = AppConstants.Message.DeleteSuccess;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
                 }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 TotalPage = totalPageNum,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
@@ -806,23 +906,32 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult OpenBillPagingAction(int currentPage)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             List<SaleViewModel.MasterOpenBillViewModel> lstMasterOpenBill = new List<SaleViewModel.MasterOpenBillViewModel>();
             PagingViewModel pagingViewModel = new PagingViewModel();
 
             if (Session["MasterOpenBillData"] != null)
             {
-                List<SaleViewModel.MasterOpenBillViewModel> tempList = Session["MasterOpenBillData"] as List<SaleViewModel.MasterOpenBillViewModel>;
-                pagingViewModel = calcMasterOpenBillPaging(tempList, currentPage);
-                lstMasterOpenBill = getMasterOpenBillByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+                try
+                {
+                    List<SaleViewModel.MasterOpenBillViewModel> tempList = Session["MasterOpenBillData"] as List<SaleViewModel.MasterOpenBillViewModel>;
+                    pagingViewModel = calcMasterOpenBillPaging(tempList, currentPage);
+                    lstMasterOpenBill = getMasterOpenBillByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 LstMasterOpenBill = lstMasterOpenBill,
                 TotalPage = pagingViewModel.TotalPageNum,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
