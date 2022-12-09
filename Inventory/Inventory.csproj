@@ -421,6 +421,7 @@
     <Compile Include="ViewModels\AdjustmentViewModel.cs" />
     <Compile Include="ViewModels\CustomerConsignViewModel.cs" />
     <Compile Include="ViewModels\MasterAdjustmentViewModel.cs" />
+    <Compile Include="ViewModels\MasterCustomerConsignViewModel.cs" />
     <Compile Include="ViewModels\MasterPurchaseViewModel.cs" />
     <Compile Include="ViewModels\MasterPurOrderViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleOrderViewModel.cs" />
@@ -621,6 +622,10 @@
     <Content Include="Views\Adjustment\_AdjustmentDetailDialog.cshtml" />
     <Content Include="Views\Transfer\_TransferDetailDialog.cshtml" />
     <Content Include="Views\Transfer\_TransferDetailChild.cshtml" />
+    <Content Include="Views\Adjustment\_AdjustmentRemarkDialog.cshtml" />
+    <Content Include="Views\CustomerConsign\_CustomerConsignDetailChild.cshtml" />
+    <Content Include="Views\CustomerConsign\_CustomerConsignDetailDialog.cshtml" />
+    <Content Include="Views\CustomerConsign\_CustomerConsignRemarkDialog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

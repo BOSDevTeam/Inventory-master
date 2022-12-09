@@ -123,17 +123,15 @@
                         <td class="table-border value-right"><input id="inputHdnTotal" type="hidden" /><label id="lblTotal" class="total-amount-value mb-0">0</label></td>
                     </tr>
                 </table>
-                <div class="row mr-0">
-                    <div class="col-md-3 col-lg-3">
-                                              
-                    </div>
-                    <div class="col-md-3 col-lg-3">
-                        <button id="btnCancel" class="btn btn-block btn-white-outline-third">@Resource.Cancel</button>
-                        <button id="btnEditCancel" class="btn btn-block btn-white-outline-third m-t-0">@Resource.Cancel</button> 
-                    </div>
+                <div class="row mr-0 soft-gray-background pt-1">
                     <div class="col-md-6 col-lg-6">
-                        <button id="btnPayment" class="btn btn-block btn-first">@Resource.Payment</button>
-                        <button id="btnEditPayment" class="btn btn-block btn-first m-t-0">@Resource.Edit</button>
+                        <button id="btnCancel" class="btn btn-third">@Resource.Reset</button>
+                        <button id="btnEditCancel" class="btn btn-third m-t-0">@Resource.Cancel</button>                    
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-6 aligh-right">
+                        <button id="btnPayment" class="btn btn-first plr-30">@Resource.Payment</button>
+                        <button id="btnEditPayment" class="btn btn-first plr-30 m-t-0">@Resource.Edit</button>
                     </div>
                 </div>
             </div>
@@ -161,16 +159,15 @@
 
 
 <script type="text/javascript">
-    noBack();
     let tranPurchaseAction, defaultSupplierId, defaultLocationId;
+    $('body').addClass("hideVerticalScrollbar");
+    calcMenuHeight(155);
     calcPurchaseHeight();
-    function noBack() {
-        window.history.forward();
-    }
+
     function calcPurchaseHeight() {
         let windowHeight = window.innerHeight;
         let thingsHeight = 100; // average other component height
-        let extraHeight = 20;
+        let extraHeight = 11;
         let purchaseAreaHeight = windowHeight - (thingsHeight + extraHeight);
         let purchaseChildHeight = purchaseAreaHeight - 100;  // 100 is top component
         let purchaseTranHeight = purchaseChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra
@@ -180,6 +177,8 @@
     }
 
     $(document).ready(function () {
+
+        setModuleTitle('@Resource.Purchase', '@Resource.AddPurchase');
         if ('@ViewBag.IsEdit' == 'True') fillEditData();
         else initializeControl();
         function initializeControl() {
@@ -803,6 +802,9 @@
                     alert(response.responseText);
                 }
             });
+        });
+        $("#btnEditCancel").click(function (e) {
+            window.location.href = '@Url.Action("ListPurchase", "Purchase")?userId=' + userId;
         });
 
     });

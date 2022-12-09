@@ -9,6 +9,7 @@ using Inventory.Models;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
+using Inventory.Filters;
 
 namespace Inventory.Controllers
 {
@@ -21,6 +22,7 @@ namespace Inventory.Controllers
         AppSetting setting = new AppSetting();
         AppSetting.Paging paging = new AppSetting.Paging();
 
+        [SessionTimeoutAttribute]
         public ActionResult OpeningStock(int userId, int? openingStockId)
         {
             if (checkConnection())
@@ -49,6 +51,7 @@ namespace Inventory.Controllers
             return RedirectToAction("Login", "User");
         }
 
+        [SessionTimeoutAttribute]
         public ActionResult ListOpeningStock(int userId)
         {
             if (checkConnection())
@@ -67,23 +70,32 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult AddQuantityAction(int productId, int quantity)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
 
             if (Session["TranOpeningStockData"] != null)
             {
-                List<ProductModels.ProductModel> lstTranOpeningStock = Session["TranOpeningStockData"] as List<ProductModels.ProductModel>;
-                ProductModels.ProductModel product = lstTranOpeningStock.Where(x => x.ProductID == productId).SingleOrDefault();
-                int index = lstTranOpeningStock.IndexOf(product);
-                product.Quantity = quantity;
-                lstTranOpeningStock.RemoveAt(index);
-                lstTranOpeningStock.Insert(index, product);
-                Session["TranOpeningStockData"] = lstTranOpeningStock;
+                try
+                {
+                    List<ProductModels.ProductModel> lstTranOpeningStock = Session["TranOpeningStockData"] as List<ProductModels.ProductModel>;
+                    ProductModels.ProductModel product = lstTranOpeningStock.Where(x => x.ProductID == productId).SingleOrDefault();
+                    int index = lstTranOpeningStock.IndexOf(product);
+                    product.Quantity = quantity;
+                    lstTranOpeningStock.RemoveAt(index);
+                    lstTranOpeningStock.Insert(index, product);
+                    Session["TranOpeningStockData"] = lstTranOpeningStock;
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);

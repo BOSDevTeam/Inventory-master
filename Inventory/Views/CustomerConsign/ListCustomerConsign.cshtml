@@ -20,4 +20,278 @@
     </script>
 </head>
 
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">@Resource.ListCustomerConsign</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right">ADD</button>
+        </div>
+    </div>
+
+    <div class="row setup-title-layout search-div">
+        <table class="width-100-percent">
+            <tr>
+                <td class="control-label" style="text-align:center;">From Date</td>
+                <td><input id="inputFromDate" type="date" class="form-control control-input" /></td>
+                <td class="control-label" style="text-align:center;">To Date</td>
+                <td><input id="inputToDate" type="date" class="form-control control-input" /></td>
+                <td><input id="inputUserVoucherNo" type="text" class="form-control control-input" placeholder="Voucher No." /></td>
+                <td>@Html.DropDownList("Customer", Model.Customers, new { @id = "ddlCustomer", @class = "form-control control-input" })</td>
+                <td>
+                    <div class="btn-group" style="float:right">
+                        <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                        <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblCustomerConsignList" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-3 col-lg-3">Date</th>
+                        <th class="col-md-3 col-lg-3">Voucher No.</th>
+                        <th class="col-md-4 col-lg-4">Customer</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="divPaging" class="row paging">
+        <div class="col-md-1 col-lg-1"><label id="lblPageNumber" class="page-num"></label></div>
+        <div id="divPagingItem" class="col-md-11 col-lg-11 paging-item"></div>
+    </div>
+</div>
+
+<div>
+    @{
+        Html.RenderPartial("_CustomerConsignDetailDialog");
+    }
+</div>
+
+<div>
+    @{
+        Html.RenderPartial("_ConfirmDialog");
+    }
+</div>
+
+
+
+<script type="text/javascript">
+    let listActionValue, selectedRowIndex;
+    $(function () {
+        $('#btnAdd').click(function () {
+            window.location.href = '@Url.Action("CustomerConsign", "CustomerConsign")?userId=' + userId;
+        });
+    })
+    $(document).ready(function () {
+        setModuleTitle('@Resource.Consignment', '@Resource.ListCustomerConsign');
+        initializeControl();
+        createMasterCustomerConsignData('', false);
+        createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');
+        function initializeControl() {
+            $('#inputFromDate').val(getTodayDate());
+            $('#inputToDate').val(getTodayDate());
+        }
+        function clearControl() {
+            $('#inputFromDate').val(getTodayDate());
+            $('#inputToDate').val(getTodayDate());
+            $('#inputUserVoucherNo').val('');
+            $("#ddlCustomer").val(0);
+        }
+        $("#btnSearch").click(function (e) {
+            let fromDate = $('#inputFromDate').val();
+            let toDate = $('#inputToDate').val();
+            let userVoucherNo = $('#inputUserVoucherNo').val();
+            let customerId = $('#ddlCustomer').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SearchAction", "CustomerConsign")',
+                data: { "userId": userId, "fromDate": fromDate, "toDate": toDate, "userVoucherNo": userVoucherNo,"customerId":customerId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterCustomerConsignData(response.LstMasterCustomerConsign, true);
+                    createPaging(response.TotalPage, response.CurrentPage);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnRefresh").click(function (e) {
+            clearControl();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("RefreshAction", "CustomerConsign")',
+                data: { "userId": userId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterCustomerConsignData(response.LstMasterCustomerConsign, true);
+                    createPaging(response.TotalPage, response.CurrentPage);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        function createMasterCustomerConsignData(response, isFromJson) {
+            $("#tblCustomerConsignList").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterCustomerConsign"]))');
+            $.each(response, function (index, item) {
+                var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
+                        + '<td class="col-md-3 col-lg-3 text-overflow">' + item.ConsignDateTime + '</td>'
+                        + '<td class="col-md-3 col-lg-3">' + item.UserVoucherNo + '</td>'
+                        + '<td class="col-md-4 col-lg-4 text-overflow">' + item.CustomerName + '</td>'
+                        + '<td class="col-md-2 col-lg-2 btn-group">'
+                            + '<button title="View" class="btn btn-sm btn-dark" onclick="listTableAction(1)"><i class="fa fa-list"></i></button>'
+                            + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
+                            + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
+                        + '</td>'
+                        + '<td style="display:none">' + item.CustomerConsignID + '</td>'
+                    + '</tr>'
+                $('#tblCustomerConsignList tbody').append(row);
+            });
+        }
+
+        $("#tblCustomerConsignList").on("click", "tbody tr", function (event) {
+            $(this).find("td:last").each(function () {
+                let customerConsignId = $(this).text();
+                if (listActionValue == 1) {   // view
+                    clearTableAction();
+                    viewDetail(customerConsignId);
+                } else if (listActionValue == 2) {  // edit
+                    clearTableAction();
+                    window.location.href = '@Url.Action("CustomerConsign", "CustomerConsign")?userId=' + userId + '&customerConsignId=' + customerConsignId;
+                } else if (listActionValue == 3) {  // delete
+                    clearTableAction();
+                    $('#modalConfirm').modal('show');
+                    $("#btnDelOk").val(customerConsignId);
+                }
+            });
+        });
+
+        function viewDetail(customerConsignId) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("ViewAction", "CustomerConsign")',
+                data: { "customerConsignId": customerConsignId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterCustomerConsignDetail(response);
+                    createTranCustomerConsignDetail(response);
+                    $('#modalCustomerConsignDetail').modal('show');
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        }
+
+        $("#btnDelOk").click(function () {
+            let customerConsignId = $("#btnDelOk").val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DeleteAction", "CustomerConsign")',
+                data: { "customerConsignId": customerConsignId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess)
+                        redirectToLogin();
+                    else {
+                        if (selectedRowIndex != null) {
+                            document.getElementById("tblCustomerConsignList").deleteRow(selectedRowIndex);
+                            createPaging(response.TotalPage, "");
+                            showToast(1, 'Deleted Successfully!');
+                        }
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+        $(document).on('click', '.btnPage', function (e) {
+            let currentPage = $(this).text();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CustomerConsignPagingAction", "CustomerConsign")',
+                data: { "currentPage": currentPage },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess)
+                        redirectToLogin();
+                    else {
+                        createMasterCustomerConsignData(response.LstMasterCustomerConsign, true);
+                        createPaging(response.TotalPage, currentPage);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+
+    });
+    function listTableAction(value) {
+        listActionValue = value;
+    }
+    function findRowIndex(x) {
+        selectedRowIndex = x.rowIndex;
+    }
+    function clearTableAction() {
+        listActionValue = 0;
+    }
+
+</script>
+
 

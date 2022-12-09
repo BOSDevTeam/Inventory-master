@@ -39,6 +39,7 @@ namespace Inventory.Controllers
             short? disPercent = 0;
             List<UnitModels> lstUnit = new List<UnitModels>();
             List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
+            List<AdjustTypeModels> lstAdjustType = new List<AdjustTypeModels>();
             bool isRequestSuccess = false;
 
             if (Session["ProductData"] != null)
@@ -54,6 +55,7 @@ namespace Inventory.Controllers
                     disPercent = result.DisPercent;
                     if (isMultiUnit) lstUnit = getUnit();
                     if (isMultiCurrency) lstCurrency = getCurrency();
+                    lstAdjustType = getAdjustType();
                     isRequestSuccess = true;
                 }
             }
@@ -67,6 +69,7 @@ namespace Inventory.Controllers
                 DisPercent = disPercent,
                 LstUnit = lstUnit,
                 LstCurrency = lstCurrency,
+                LstAdjustType = lstAdjustType,
                 IsRequestSuccess = isRequestSuccess
             };
 
@@ -119,6 +122,18 @@ namespace Inventory.Controllers
                 Session["CurrencyData"] = list;
             }
             else list = Session["CurrencyData"] as List<CurrencyModels>;
+            return list;
+        }
+
+        private List<AdjustTypeModels> getAdjustType()
+        {
+            List<AdjustTypeModels> list = new List<AdjustTypeModels>();
+            if (Session["AdjustTypeData"] == null)
+            {
+                list = appData.selectAdjustType(getConnection());
+                Session["AdjustTypeData"] = list;
+            }
+            else list = Session["AdjustTypeData"] as List<AdjustTypeModels>;
             return list;
         }
 

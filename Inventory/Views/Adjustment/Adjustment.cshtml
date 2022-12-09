@@ -19,13 +19,13 @@
     document.getElementById('subMenuAdjustment').className = 'active';
 </script>
 <div class="row m-t-5 m-b-5 m-l-5">
-    <div class="col-md-2 col-lg-2 note align-justify-center">
+    <div class="col-md-3 col-lg-3 note align-justify-center">
         <label id="lblUserVoucherNo" class="control-label mb-0"></label>
     </div>
     <div class="col-md-3 col-lg-3">
         <input id="inputDate" type="date" class="form-control control-input" />
     </div>
-    <div class="col-md-4 col-lg-4">
+    <div class="col-md-3 col-lg-3">
         <input id="inputVoucherID" type="text" class="form-control control-input" placeholder="@Resource.VoucherID" />
     </div>
     <div class="col-md-3 col-lg-3">
@@ -82,23 +82,16 @@
                 </table>
             </div>
             <div style="bottom:0px;position:absolute;width:100%;">
-                <div class="row" style="padding-right:25px;">
-                    <div class="col-md-12 col-lg-12">
-                        <textarea id="txtRemark" class="form-control" style="border:1px solid gray;"></textarea>
-                    </div>
-                </div>
                 
-                <div class="row" style="margin-top:10px;padding-right:25px;">
-                    <div class="col-md-4 col-lg-4">
-
+                <div class="row soft-gray-background pt-1">
+                    <div class="col-md-6 col-lg-6">
+                        <button id="btnCancel" class="btn btn-third">@Resource.Reset</button>
+                        <button id="btnEditCancel" class="btn btn-third m-t-0">@Resource.Cancel</button>
                     </div>
-                    <div class="col-md-3 col-lg-3">
-                        <button id="btnCancel" class="btn btn-block btn-white-outline-third">@Resource.Cancel</button>
-                        <button id="btnEditCancel" class="btn btn-block btn-white-outline-third m-t-0">@Resource.Cancel</button>
-                    </div>
-                    <div class="col-md-5 col-lg-5">
-                        <button id="btnSave" class="btn btn-block btn-first">@Resource.Save</button>
-                        <button id="btnEditAdjustment" class="btn btn-block btn-first m-t-0">@Resource.Edit</button>
+                    
+                    <div class="col-md-6 col-lg-6 aligh-right">
+                        <button id="btnContinue" class="btn btn-first plr-30">@Resource.Continue</button>
+                        <button id="btnEditContinue" class="btn btn-first plr-30 m-t-0">@Resource.Edit</button>
                     </div>
                 </div>
             </div>
@@ -116,19 +109,25 @@
         Html.RenderPartial("_SearchProductDialog");
     }
 </div>
+<div>
+    @{
+        Html.RenderPartial("_RemarkDialog");
+    }
+</div>
+
 
 
 <script type="text/javascript">
-    noBack();
-    let tranAdjustmentAction, defaultLocationId,defaultAdjustTypeId;
+
+    let tranAdjustmentAction, defaultLocationId, defaultAdjustTypeId;
+    $('body').addClass("hideVerticalScrollbar");
+    calcMenuHeight(155);
     calcAdjustmentHeight();
-    function noBack() {
-        window.history.forward();
-    }
+
     function calcAdjustmentHeight() {
         let windowHeight = window.innerHeight;
         let thingsHeight = 100; // average other component height
-        let extraHeight = 20;
+        let extraHeight = 11;
         let adjustmentAreaHeight = windowHeight - (thingsHeight + extraHeight);
         let adjustmentChildHeight = adjustmentAreaHeight - 100;  // 100 is top component
         let adjustmentTranHeight = adjustmentChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra
@@ -137,6 +136,7 @@
         document.getElementById('divAdjustmentTran').setAttribute("style", "height:" + adjustmentTranHeight + "px");
     }
     $(document).ready(function () {
+        setModuleTitle('@Resource.Adjustment', '@Resource.AddAdjustment');
         if ('@ViewBag.IsEdit' == 'True') fillEditData();
         else
         initializeControl();
@@ -144,6 +144,7 @@
             $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
             $('#inputDate').val(getTodayDate());
             showHideUnit();
+            createDefaultAdjustType();
             showHideTranAdjustmentAddEdit(false);
             showHideMainButton(false);
             defaultLocationId = $('#ddlLocation option:selected').val();
@@ -154,22 +155,28 @@
             unit = '<option value="0">Unit</option>';
             $("#ddlUnit").append(unit);
         }
-
+        function createDefaultAdjustType() {
+            let adjustType;
+            $("#ddlAdjustType").html("");
+            adjustType = '<option value="0">Adjust Type</option>';
+            $("#ddlAdjustType").append(adjustType);
+        }
         function showHideUnit() {
             if (isMultiUnit == "True") {
                 createDefaultUnit();
                 $("#divUnit").show();
             } else $('#divUnit').css("display", "none");
         }
+
         function clearProductControl() {
             $("#inputNumber").val("");
             $("#inputProductID").val("");
             $("#inputCode").val("");
             $("#inputProductName").val("");
             $("#inputQuantity").val("");
-            $("#ddlAdjustType").val(defaultAdjustTypeId);
             showHideUnit();
             showHideTranAdjustmentAddEdit(false);
+            createDefaultAdjustType();
         }
         function validateProductControl() {
             if ($("#inputProductID").val().length == 0 || $("#inputProductID").val() == 0) return false;
@@ -302,6 +309,7 @@
                         $("#inputProductName").val(response.ProductName);
                         $("#inputQuantity").val(response.Quantity);
                         createUnitData(response);
+                        createAdjustmentData(response);
                         $("#ddlUnit").val(response.UnitID);
                         $("#ddlAdjustType").val(response.AdjustTypeID);
                         showHideTranAdjustmentAddEdit(true);
@@ -343,8 +351,6 @@
         });
 
 
-
-
         $('#inputCode').keydown(function (event) {
             if (event.which === 13) {
                 let productCode = $("#inputCode").val();
@@ -363,7 +369,7 @@
                             $("#inputProductID").val(response.ProductID);
                             $("#inputProductName").val(response.ProductName);
                             $("#inputQuantity").val('1');
-
+                            createAdjustmentData(response);
                             createUnitData(response);
                             showHideTranAdjustmentAddEdit(false);
                         }
@@ -474,15 +480,37 @@
                     }
                 });
             })
-        });     
+        });
 
+        function fillEditData() {
+            $('#btnEditContinue').val('@ViewBag.AdjustmentID');
+            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputDate').val('@ViewBag.Date');
+            $('#inputVoucherID').val('@ViewBag.VoucherID');
+            $("#ddlLocation").val('@ViewBag.LocationID');
+            $("#txtRemarkNote").val('@ViewBag.Remark');
+            showHideUnit();
+            createDefaultAdjustType();
+            showHideTranAdjustmentAddEdit(false);
+            showHideMainButton(true, false, false);
+            let tranAdjustmentList = JSON.parse('@Html.Raw(Json.Encode(Session["TranAdjustmentData"]))');
+            createTranAdjustmentData(tranAdjustmentList);
+        }
 
-        $("#btnSave").click(function (e) {
+        $("#btnContinue").click(function (e) {
+            let row = $("#tblTranAdjustment tbody tr").length;
+            if (row < 1) return;
+            $("#modalRemarkTitle").text("Add Remark");
+            $("#lblRemark").text("Enter a Note");
+            $('#modalRemark').modal('show');
+        });
+        $("#btnRemarkOk").click(function (e) {
+            let No = $('#lblUserVoucherNo').text();
             let userVoucherNo = $('#lblUserVoucherNo').text();
             let date = $('#inputDate').val();
             let voucherId = $('#inputVoucherID').val();
             let locationId = $('#ddlLocation option:selected').val();
-            let remark = $('#txtRemark').val();
+            let remark = $('#txtRemarkNote').val();
             let userId = localStorage.getItem("UserID");
             showLoadingIcon();
             $.ajax({
@@ -490,20 +518,20 @@
                 url: '@Url.Action("AdjustmentSubmitAction", "Adjustment")',
                 data: JSON.stringify({
                     "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "locationId": locationId,
-                    "remark": remark,"userId": userId
+                    "remark": remark, "userId": userId
                 }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
                     showToast(1, 'Adjustment Successful!');
+                    $('#modalRemark').modal('hide');
                     clearProductControl();
                     $("#tblTranAdjustment").find("tbody").empty();
                     $("#lblUserVoucherNo").text(response.UserVoucherNo);
                     $('#inputDate').val(getTodayDate());
                     $('#inputVoucherID').val("");
                     $("#ddlLocation").val(defaultLocationId);
-                    $("#txtRemark").val("");
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -515,34 +543,28 @@
                 }
             });
         });
-
-        function fillEditData() {
-            $('#btnEditAdjustment').val('@ViewBag.AdjustmentID');
-            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
-            $('#inputDate').val('@ViewBag.Date');
-            $('#inputVoucherID').val('@ViewBag.VoucherID');
-            $("#ddlLocation").val('@ViewBag.LocationID');
-            $("#txtRemark").val('@ViewBag.Remark');
-            showHideUnit();
-            showHideTranAdjustmentAddEdit(false);
-            showHideMainButton(true, false, false);
-            let tranAdjustmentList = JSON.parse('@Html.Raw(Json.Encode(Session["TranAdjustmentData"]))');
-            createTranAdjustmentData(tranAdjustmentList);
-        }
-        $("#btnEditAdjustment").click(function (e) {
+        $("#btnEditContinue").click(function (e) {
+            let row = $("#tblTranAdjustment tbody tr").length;
+            if (row < 1) return;
+            $("#modalRemarkTitle").text("Add Remark");
+            $("#lblRemark").text("Enter a Note");
+            $('#btnEditRemarkOk').val($(this).val());
+            $('#modalRemark').modal('show');
+        });
+        $("#btnEditRemarkOk").click(function (e) {
             let row = $("#tblTranAdjustment tbody tr").length;
             if (row < 1) return;
             let adjustmentId = $(this).val();
             let date = $('#inputDate').val();
             let voucherId = $('#inputVoucherID').val();
             let locationId = $('#ddlLocation option:selected').val();
-            let remark = $('#txtRemark').val();
+            let remark = $('#txtRemarkNote').val();
             showLoadingIcon();
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("AdjustmentEditAction", "Adjustment")',
                 data: {
-                    "adjustmentId": adjustmentId, "date": date, "voucherId": voucherId, "locationId": locationId,"remark":remark
+                    "adjustmentId": adjustmentId, "date": date, "voucherId": voucherId, "locationId": locationId, "remark": remark
                 },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -566,7 +588,9 @@
                 }
             });
         });
-
+        $("#btnEditCancel").click(function (e) {
+            window.location.href = '@Url.Action("ListAdjustment", "Adjustment")?userId=' + userId;
+        });
 
     });
     function fillSelectedProductData(response, productId) {
@@ -575,6 +599,7 @@
         $("#inputProductName").val(response.ProductName);
         $("#inputQuantity").val('1');
         createUnitData(response);
+        createAdjustmentData(response);
         showHideTranAdjustmentAddEdit(false);
     }
     function showHideTranAdjustmentAddEdit(isEdit) {
@@ -589,10 +614,15 @@
     function showHideMainButton(isEdit) {
         if (isEdit) {
             $('#btnCancel').css("display", "none");
-            $('#btnSave').css("display", "none");
+            $('#btnContinue').css("display", "none");
+            $('#btnRemarkOk').css("display", "none");
         } else {
             $("#btnEditCancel").css("display", "none");
-            $('#btnEditAdjustment').css("display", "none");
+            $('#btnEditContinue').css("display", "none");
+            $('#btnEditRemarkOk').css("display", "none");
+            $('#btnCancel').show();
+            $('#btnContinue').show();
+            $('#btnRemarkOk').show();
         }
     }
     function createUnitData(response) {
@@ -606,8 +636,8 @@
     function createAdjustmentData(response) {
         let adjust;
         $("#ddlAdjustType").html("");
-        for (var i = 0; i < response.LstAdjustment.length; i++) {
-            adjust += '<option value="' + response.LstAdjustment[i].AdjustTypeID + '">' + response.LstAdjustment[i].AdjustTypeName + '</option>';
+        for (var i = 0; i < response.LstAdjustType.length; i++) {
+            adjust += '<option value="' + response.LstAdjustType[i].AdjustTypeID + '">' + response.LstAdjustType[i].ShortName + '</option>';
         }
         $("#ddlAdjustType").append(adjust);
     }

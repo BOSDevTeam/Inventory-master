@@ -1,0 +1,96 @@
+﻿
+<div class="modal fade" id="modalCustomerConsignDetail" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:700px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="width-100-percent m-b-10 light-background">
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Voucher No.</label></td>
+                        <td class="aligh-right padding-5"><label id="lblUserVoucherNo" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">VoucherID</label></td>
+                        <td class="aligh-right padding-5"><label id="lblVoucherID" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Date</label></td>
+                        <td class="aligh-right padding-5"><label id="lblConsignDateTime" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">User</label></td>
+                        <td class="aligh-right padding-5"><label id="lblUserName" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Customer</label></td>
+                        <td class="aligh-right padding-5"><label id="lblCustomer" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">Location</label></td>
+                        <td class="aligh-right padding-5"><label id="lblLocation" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Division</label></td>
+                        <td class="aligh-right padding-5"><label id="lblDivision" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">Sale Person</label></td>
+                        <td class="aligh-right padding-5"><label id="lblSalePerson" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Due Date</label></td>
+                        <td class="aligh-right padding-5"><label id="lblDueDate" class="control-input mb-0"></label></td>
+                        <td class="padding-5"></td>
+                        <td class="aligh-right padding-5"></td>
+                    </tr>
+
+                </table>
+
+                @{
+                    Html.RenderPartial("_CustomerConsignDetailChild");
+                }
+
+                <div id="divRemark" class="light-background padding-5" style="text-align:center;">
+                    <label id="lblRemark" class="control-label mb-0"></label>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function createTranCustomerConsignDetail(response) {
+        $("#tblTranCustomerConsign").find("tbody").empty();
+        $.each(response.LstTranCustomerConsign, function (index, item) {
+            let row = '<tr class="row voucher-table-item">'
+            row += '<td class="col-md-11 col-lg-11 text-overflow">' + item.ProductName + '</td>'
+            row += '<td class="col-md-1 col-lg-1">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'           
+               + "</tr>";
+            $('#tblTranCustomerConsign tbody').append(row);
+        });
+    }
+
+    function createMasterCustomerConsignDetail(response) {
+        $('#lblUserVoucherNo').text(response.UserVoucherNo);
+        if (response.VoucherID.length != 0) $('#lblVoucherID').text(response.VoucherID);
+        else $('#lblVoucherID').text('-');
+        $('#lblConsignDateTime').text(response.ConsignDateTime);
+        if (response.DueDateTime.length != 0) $('#lblDueDate').text(response.DueDateTime);
+        else $('#lblDueDate').text('-');
+        $('#lblUserName').text(response.UserName);
+        $('#lblCustomer').text(response.CustomerName);
+        $('#lblLocation').text(response.LocationName);
+        if (response.DivisionName.length != 0) $('#lblDivision').text(response.DivisionName);      
+        else $('#lblDivision').text('-');
+        if (response.SalePersonName.length != 0) $('#lblSalePerson').text(response.SalePersonName);
+        else $('#lblSalePerson').text('-');
+        if (response.Remark.length != 0) {
+            $('#lblRemark').text(response.Remark);
+            $('#divRemark').show();
+        } else $('#divRemark').css('display', 'none');
+    }
+
+</script>
+
+
+
+

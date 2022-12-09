@@ -26,11 +26,11 @@ namespace Inventory.Controllers
             if (checkConnection())
             {
                 getLocation();
-                getAdjustType(true);
+                //getAdjustType(true);
                 getMainMenu();
                 getSubMenu(getFirstMainMenuID());
                 getProduct(getFirstSubMenuID());
-
+                clearTranAdjustment();
                 if (adjustmentId != null)   //edit mode
                 {
                     ViewBag.IsEdit = true;
@@ -79,7 +79,7 @@ namespace Inventory.Controllers
             string productName = "";
             int productId = 0;
             List<UnitModels> lstUnit = new List<UnitModels>();
-            List<AdjustTypeModels> lstAdjustment = new List<AdjustTypeModels>();
+            List<AdjustTypeModels> lstAdjustType = new List<AdjustTypeModels>();
             bool isExistProduct = true;
 
             data = appData.selectProductByCode(getConnection(), productCode);
@@ -88,6 +88,7 @@ namespace Inventory.Controllers
                 productId = data.ProductID;
                 productName = data.ProductName;
                 if (isMultiUnit) lstUnit = getUnit();
+                lstAdjustType = getAdjustType();
             }
             else isExistProduct = false;
 
@@ -96,6 +97,7 @@ namespace Inventory.Controllers
                 ProductID = productId,
                 ProductName = productName,
                 LstUnit = lstUnit,
+                LstAdjustType = lstAdjustType,
                 IsExistProduct = isExistProduct
             };
 
@@ -114,6 +116,7 @@ namespace Inventory.Controllers
         {
             string productName = "", code = "";
             List<UnitModels> lstUnit = new List<UnitModels>();
+            List<AdjustTypeModels> lstAdjustType = new List<AdjustTypeModels>();
             bool isRequestSuccess = false;
 
             if (Session["SearchProductData"] != null)
@@ -125,6 +128,7 @@ namespace Inventory.Controllers
                     productName = result.ProductName;
                     code = result.Code;
                     if (isMultiUnit) lstUnit = getUnit();
+                    lstAdjustType = getAdjustType();
                     isRequestSuccess = true;
                 }
             }
@@ -134,6 +138,7 @@ namespace Inventory.Controllers
                 ProductName = productName,
                 Code = code,
                 LstUnit = lstUnit,
+                LstAdjustType=lstAdjustType,
                 IsRequestSuccess = isRequestSuccess
             };
 
@@ -216,6 +221,7 @@ namespace Inventory.Controllers
             int productId = 0, quantity = 0;
             int? unitId = 0, adjustTypeId = 0;
             List<UnitModels> lstUnit = new List<UnitModels>();
+            List<AdjustTypeModels> lstAdjustType = new List<AdjustTypeModels>();
             bool isRequestSuccess = false;
 
             if (Session["TranAdjustmentData"] != null)
@@ -235,6 +241,7 @@ namespace Inventory.Controllers
                         adjustTypeId = data.AdjustTypeID;
                      
                         if (isMultiUnit) lstUnit = getUnit();
+                        lstAdjustType = getAdjustType();
                         isRequestSuccess = true;
                     }
                 }
@@ -249,6 +256,7 @@ namespace Inventory.Controllers
                 UnitID = unitId,
                 AdjustTypeID = adjustTypeId,
                 LstUnit = lstUnit,
+                LstAdjustType=lstAdjustType,
                 IsRequestSuccess = isRequestSuccess
             };
 
@@ -261,6 +269,7 @@ namespace Inventory.Controllers
             Session["TranAdjustmentData"] = null;
             return Json("", JsonRequestBehavior.AllowGet);
         }
+        
         [HttpPost]
         public JsonResult AdjustmentSubmitAction(string userVoucherNo, string date, string voucherId, int locationId,
                 string remark, int userId)
@@ -467,16 +476,7 @@ namespace Inventory.Controllers
                 adjustmentViewModel.Locations.Add(new SelectListItem { Text = list[i].ShortName, Value = Convert.ToString(list[i].LocationID) });
             }
         }
-        private void getAdjustType(bool isIncludeDefault)
-        {
-            if (isIncludeDefault) adjustmentViewModel.AdjustmentsType.Add(new SelectListItem { Text = "Adjust Type", Value = "0" });
-
-            List<AdjustTypeModels> list = appData.selectAdjustType(getConnection());
-            for(int i=0;i<list.Count;i++)
-            {
-                adjustmentViewModel.AdjustmentsType.Add(new SelectListItem { Text = list[i].ShortName, Value = Convert.ToString(list[i].AdjustTypeID) });
-            }
-        }
+        
         private object getConnection()
         {
             object connection;
@@ -540,6 +540,18 @@ namespace Inventory.Controllers
             else list = Session["UnitData"] as List<UnitModels>;
             return list;
         }
+        private List<AdjustTypeModels> getAdjustType()
+        {
+            List<AdjustTypeModels> list = new List<AdjustTypeModels>();
+            if (Session["AdjustTypeData"] == null)
+            {
+                list = appData.selectAdjustType(getConnection());
+                Session["AdjustTypeData"] = list;
+            }
+            else list = Session["AdjustTypeData"] as List<AdjustTypeModels>;
+            return list;
+        }
+
         private void clearTranAdjustment()
         {
             Session["TranAdjustmentData"] = null;

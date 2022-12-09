@@ -31,7 +31,7 @@ namespace Inventory.Controllers
                 getMainMenu();
                 getSubMenu(getFirstMainMenuID());
                 getProduct(getFirstSubMenuID());
-
+                clearTranPurchase();
                 if(purchaseId!=null)    //edit mode
                 {
                     ViewBag.IsEdit = true;

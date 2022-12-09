@@ -263,8 +263,8 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (!response.IsRequestSuccess)
-                            redirectToLogin();
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            responseUnSuccessful(response);
                         else {
                             $('#tblTranOpeningStock tr').removeClass("selected");
                             $('#tblTranOpeningStock #' + nextTrId + '').addClass("selected");
