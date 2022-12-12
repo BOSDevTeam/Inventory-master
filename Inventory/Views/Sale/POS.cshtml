@@ -688,7 +688,7 @@
                     success: function (response) {
                         hideLoadingIcon();
                         if (!response.IsExistProduct)
-                            showToast(0, 'Not found product with this code!');
+                            showToast(0, '@Inventory.Common.AppConstants.Message.NoProductByCode');
                         else {
                             $("#inputProductID").val(response.ProductID);
                             $("#inputProductName").val(response.ProductName);
@@ -726,7 +726,7 @@
                     success: function (response) {
                         hideLoadingIcon();
                         if (response.length == 0)
-                            showToast(0, 'Not found product!');
+                            showToast(0, '@Inventory.Common.AppConstants.Message.NoProduct');
                         else {
                             createSearchProductData(response);
                             $('#modalSearchProduct').modal('show');

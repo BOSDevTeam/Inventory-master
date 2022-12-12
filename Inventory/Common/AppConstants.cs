@@ -38,6 +38,10 @@ namespace Inventory.Common
         {
             public const string SaveSuccessOpenBill = "Saved Successfully to Opened Bills!";
             public const string DeleteSuccess = "Deleted Successfully!";
+            public const string SaveSuccess = "Saved Successfully!";
+            public const string NoProductByCode = "Not found product with this code!";
+            public const string NoProduct = "Not found product!";
+            public const string NoTransferSameLocation = "Not allow to transfer by same location!";
         }
     }
 }

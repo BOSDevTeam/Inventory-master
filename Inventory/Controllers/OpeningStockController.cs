@@ -104,15 +104,18 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult SubMenuClickAction(int subMenuId)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             getProduct(subMenuId);
-            if (!checkIsExistInTran(openingStockViewModel.ProductMenus.Products)) setOSSession();
-            else isRequestSuccess = false;
+            if (!checkIsExistInTran(openingStockViewModel.ProductMenus.Products))
+            {
+                resultDefaultData.IsRequestSuccess = true;
+                setOSSession();
+            }
 
             var jsonResult = new
             {
                 Products = openingStockViewModel.ProductMenus.Products,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -128,52 +131,63 @@ namespace Inventory.Controllers
         [HttpPost]
         public JsonResult SaveAction(string userVoucherNo, string date, string voucherId, int locationId, int userId)
         {
-            bool isRequestSuccess = false;
-            string message = "";
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
 
             if (Session["TranOpeningStockData"] != null)
             {
-                List<ProductModels.ProductModel> list = Session["TranOpeningStockData"] as List<ProductModels.ProductModel>;
-                DataTable dt = new DataTable();
-                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-                for (int i = 0; i < list.Count; i++)
+                try
                 {
-                    dt.Rows.Add(list[i].ProductID, list[i].Quantity);
-                }
-
-                DateTime openingDateTime = DateTime.Parse(date);
-                SqlCommand cmd = new SqlCommand(Procedure.PrcInsertOpeningStock, dataConnectorSQL.Connect());
-                cmd.Parameters.AddWithValue("@OpeningDateTime", openingDateTime);
-                cmd.Parameters.AddWithValue("@LocationID", locationId);
-                cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.OpeningStockModule);
-                cmd.Parameters.AddWithValue("@temptbl", dt);
-                cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
-                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
-                cmd.Parameters.AddWithValue("@UserID", userId);
-                cmd.CommandType = CommandType.StoredProcedure;
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
-                {
-                    string val = Convert.ToString(reader[0]);
-                    if (val.Length == 1)  // duplicate location
-                        message = "Already have opening stock with this location!";
-                    else
+                    List<ProductModels.ProductModel> list = Session["TranOpeningStockData"] as List<ProductModels.ProductModel>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                    for (int i = 0; i < list.Count; i++)
                     {
-                        userVoucherNo = val;
-                        clearOSSession();
-                        isRequestSuccess = true;
+                        dt.Rows.Add(list[i].ProductID, list[i].Quantity);
                     }
+
+                    DateTime openingDateTime = DateTime.Parse(date);
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcInsertOpeningStock, dataConnectorSQL.Connect());
+                    cmd.Parameters.AddWithValue("@OpeningDateTime", openingDateTime);
+                    cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.OpeningStockModule);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        string val = Convert.ToString(reader[0]);
+                        if (val.Length == 1) // duplicate location
+                        {
+                            resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.InCompletedData.ToString();
+                            resultDefaultData.Message = "Already have opening stock with this location!";
+                        }
+                        else
+                        {
+                            userVoucherNo = val;
+                            clearOSSession();
+                            resultDefaultData.IsRequestSuccess = true;
+                            resultDefaultData.Message = AppConstants.Message.SaveSuccess;
+                        }
+                    }
+                    reader.Close();
+                    dataConnectorSQL.Close();
                 }
-                reader.Close();
-                dataConnectorSQL.Close();
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 UserVoucherNo = userVoucherNo,
-                IsRequestSuccess = isRequestSuccess,
-                Message = message
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -182,31 +196,40 @@ namespace Inventory.Controllers
         [HttpPost]
         public JsonResult EditAction(int openingStockId)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
 
             if (Session["TranOpeningStockData"] != null)
             {
-                List<ProductModels.ProductModel> list = Session["TranOpeningStockData"] as List<ProductModels.ProductModel>;
-                DataTable dt = new DataTable();
-                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-                for (int i = 0; i < list.Count; i++)
+                try
                 {
-                    dt.Rows.Add(list[i].ProductID, list[i].Quantity);
-                }
+                    List<ProductModels.ProductModel> list = Session["TranOpeningStockData"] as List<ProductModels.ProductModel>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        dt.Rows.Add(list[i].ProductID, list[i].Quantity);
+                    }
 
-                SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateOpeningStock, dataConnectorSQL.Connect());
-                cmd.Parameters.AddWithValue("@OpeningStockID", openingStockId);
-                cmd.Parameters.AddWithValue("@temptbl", dt);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.ExecuteNonQuery();
-                dataConnectorSQL.Close();
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateOpeningStock, dataConnectorSQL.Connect());
+                    cmd.Parameters.AddWithValue("@OpeningStockID", openingStockId);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                    dataConnectorSQL.Close();
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
-                IsRequestSuccess = isRequestSuccess,
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -215,32 +238,42 @@ namespace Inventory.Controllers
         [HttpPost]
         public JsonResult DeleteAction(int openingStockId)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             int totalPageNum = 0;
 
             if (Session["MasterOpeningStockData"] != null)
             {
-                SqlCommand cmd = new SqlCommand(textQuery.deleteOpeningStockQuery(openingStockId), (SqlConnection)getConnection());
-                cmd.CommandType = CommandType.Text;
-                cmd.ExecuteNonQuery();
-
-                List<OpeningStockViewModel.MasterOpeningStockViewModel> lstMasterOpeningStock = Session["MasterOpeningStockData"] as List<OpeningStockViewModel.MasterOpeningStockViewModel>;
-                int index = lstMasterOpeningStock.FindIndex(x => x.OpeningStockID == openingStockId);
-                lstMasterOpeningStock.RemoveAt(index);
-
-                if (lstMasterOpeningStock.Count > paging.eachItemCount)
+                try
                 {
-                    totalPageNum = lstMasterOpeningStock.Count / paging.eachItemCount;
-                    paging.lastItemCount = lstMasterOpeningStock.Count % paging.eachItemCount;
-                    if (paging.lastItemCount != 0) totalPageNum += 1;
+                    SqlCommand cmd = new SqlCommand(textQuery.deleteOpeningStockQuery(openingStockId), (SqlConnection)getConnection());
+                    cmd.CommandType = CommandType.Text;
+                    cmd.ExecuteNonQuery();
+
+                    List<OpeningStockViewModel.MasterOpeningStockViewModel> lstMasterOpeningStock = Session["MasterOpeningStockData"] as List<OpeningStockViewModel.MasterOpeningStockViewModel>;
+                    int index = lstMasterOpeningStock.FindIndex(x => x.OpeningStockID == openingStockId);
+                    lstMasterOpeningStock.RemoveAt(index);
+
+                    if (lstMasterOpeningStock.Count > paging.eachItemCount)
+                    {
+                        totalPageNum = lstMasterOpeningStock.Count / paging.eachItemCount;
+                        paging.lastItemCount = lstMasterOpeningStock.Count % paging.eachItemCount;
+                        if (paging.lastItemCount != 0) totalPageNum += 1;
+                    }
+                    resultDefaultData.IsRequestSuccess = true;
+                    resultDefaultData.Message = AppConstants.Message.DeleteSuccess;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
                 }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 TotalPage = totalPageNum,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -249,23 +282,32 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult OpeningStockPagingAction(int currentPage)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             List<OpeningStockViewModel.MasterOpeningStockViewModel> lstMasterOpeningStock = new List<OpeningStockViewModel.MasterOpeningStockViewModel>();
             PagingViewModel pagingViewModel = new PagingViewModel();
 
             if (Session["MasterOpeningStockData"] != null)
             {
-                List<OpeningStockViewModel.MasterOpeningStockViewModel> tempList = Session["MasterOpeningStockData"] as List<OpeningStockViewModel.MasterOpeningStockViewModel>;
-                pagingViewModel = calcMasterOpeningStockPaging(tempList, currentPage);
-                lstMasterOpeningStock = getMasterOpeningStockByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+                try
+                {
+                    List<OpeningStockViewModel.MasterOpeningStockViewModel> tempList = Session["MasterOpeningStockData"] as List<OpeningStockViewModel.MasterOpeningStockViewModel>;
+                    pagingViewModel = calcMasterOpeningStockPaging(tempList, currentPage);
+                    lstMasterOpeningStock = getMasterOpeningStockByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 LstMasterOpeningStock = lstMasterOpeningStock,
                 TotalPage = pagingViewModel.TotalPageNum,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);

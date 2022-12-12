@@ -138,7 +138,7 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess)
+                    if (!response.ResultDefaultData.IsRequestSuccess)
                         showToast(0, 'Already added products for this submenu!');
                     else createTranOpeningStockData(response.Products);
                     $("#btnSubMenu" + subMenuId).prop("disabled", true);
@@ -178,6 +178,8 @@
         });
 
         $("#btnSave").click(function (e) {
+            let row = $("#tblTranOpeningStock tbody tr").length;
+            if (row < 1) return;
             let userVoucherNo = $('#lblUserVoucherNo').text();
             let date = $('#inputDate').val();
             let voucherId = $('#inputVoucherID').val();
@@ -191,11 +193,10 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        if (response.Message != "") showToast(0, response.Message);
-                    }
+                    if (!response.ResultDefaultData.IsRequestSuccess) 
+                        responseUnSuccessful(response);                   
                     else {
-                        showToast(1, 'Saved Successfully!');
+                        showToast(1, response.ResultDefaultData.Message);
                         $("#lblUserVoucherNo").text(response.UserVoucherNo);
                         $('#inputDate').val(getTodayDate());
                         $('#inputVoucherID').val("");
@@ -215,6 +216,8 @@
         });
 
         $("#btnEdit").click(function (e) {
+            let row = $("#tblTranOpeningStock tbody tr").length;
+            if (row < 1) return;
             let openingStockId = $(this).val();
             showLoadingIcon();
             $.ajax({
@@ -225,8 +228,9 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (response.IsRequestSuccess)
-                        window.location.href = '@Url.Action("ListOpeningStock", "OpeningStock")?userId=' + userId;
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else window.location.href = '@Url.Action("ListOpeningStock", "OpeningStock")?userId=' + userId;
                 },
                 failure: function (response) {
                     hideLoadingIcon();
