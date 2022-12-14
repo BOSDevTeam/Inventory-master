@@ -51,17 +51,17 @@
                 
             </div>
             <div class="row m-t-5 align-center">
-                <div class="col-md-2 col-lg-2">
+                <div class="col-md-4 col-lg-4">
                     <input id="inputQuantity" type="text" class="form-control control-input numberonly" placeholder="@Resource.Qty" />
                 </div>
-                <div id="divUnit" class="col-md-4 col-lg-4">
+                <div id="divUnit" class="col-md-2 col-lg-2">
                     @Html.DropDownList("Unit", Model.Units, new { @id = "ddlUnit", @class = "form-control control-input" })
                 </div>
                
                 <div id="divAdjustType" class="col-md-4 col-lg-4">
                     @Html.DropDownList("AdjustmentType", Model.AdjustmentsType, new { @id = "ddlAdjustType", @class = "form-control control-input" })
                 </div>              
-                <div class="col-md-2 col-lg-2">
+                <div id="divTranBtn" class="col-md-2 col-lg-2 aligh-right">
                     <button id="btnAdd" class="btn btn-second">@Resource.Add</button>
                     <button id="btnEdit" class="btn btn-third">@Resource.Edit</button>
                 </div>
@@ -130,7 +130,7 @@
         let extraHeight = 11;
         let adjustmentAreaHeight = windowHeight - (thingsHeight + extraHeight);
         let adjustmentChildHeight = adjustmentAreaHeight - 100;  // 100 is top component
-        let adjustmentTranHeight = adjustmentChildHeight - 35 - 40;  // 135 is bottom component and 40 is extra
+        let adjustmentTranHeight = adjustmentChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra
         document.getElementById('divAdjustment').setAttribute("style", "height:" + adjustmentAreaHeight + "px");
         document.getElementById('divAdjustmentChild').setAttribute("style", "height:" + adjustmentChildHeight + "px");
         document.getElementById('divAdjustmentTran').setAttribute("style", "height:" + adjustmentTranHeight + "px");
@@ -165,7 +165,10 @@
             if (isMultiUnit == "True") {
                 createDefaultUnit();
                 $("#divUnit").show();
-            } else $('#divUnit').css("display", "none");
+            } else {
+                $('#divUnit').css("display", "none");
+                $('#divTranBtn').addClass("col-md-4 col-lg-4");
+            }
         }
 
         function clearProductControl() {
@@ -300,8 +303,9 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess)
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
+                    }
                     else {
                         $("#inputNumber").val(number);
                         $("#inputProductID").val(response.ProductID);
@@ -363,15 +367,21 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (!response.IsExistProduct)
-                            showToast(0, 'Not found product with this code!');
-                        else {
-                            $("#inputProductID").val(response.ProductID);
-                            $("#inputProductName").val(response.ProductName);
-                            $("#inputQuantity").val('1');
-                            createAdjustmentData(response);
-                            createUnitData(response);
-                            showHideTranAdjustmentAddEdit(false);
+                        if (!response.ResultDefaultData.IsRequestSuccess) {
+                            responseUnSuccessful(response);
+                        }
+                        else
+                        {
+                            if (!response.IsExistProduct)
+                                showToast(0, '@Inventory.Common.AppConstants.Message.NoProductByCode');
+                            else {
+                                $("#inputProductID").val(response.ProductID);
+                                $("#inputProductName").val(response.ProductName);
+                                $("#inputQuantity").val('1');
+                                createAdjustmentData(response);
+                                createUnitData(response);
+                                showHideTranAdjustmentAddEdit(false);
+                            }
                         }
                     },
                     failure: function (response) {
@@ -398,7 +408,7 @@
                     success: function (response) {
                         hideLoadingIcon();
                         if (response.length == 0)
-                            showToast(0, 'Not found product!');
+                            showToast(0, '@Inventory.Common.AppConstants.Message.NoProduct');
                         else {
                             createSearchProductData(response);
                             $('#modalSearchProduct').modal('show');
@@ -426,8 +436,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess)
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
                     else fillSelectedProductData(response, productId);
                 },
                 failure: function (response) {
@@ -492,7 +502,7 @@
             showHideUnit();
             createDefaultAdjustType();
             showHideTranAdjustmentAddEdit(false);
-            showHideMainButton(true, false, false);
+            showHideMainButton(true);
             let tranAdjustmentList = JSON.parse('@Html.Raw(Json.Encode(Session["TranAdjustmentData"]))');
             createTranAdjustmentData(tranAdjustmentList);
         }
@@ -524,14 +534,20 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    showToast(1, 'Adjustment Successful!');
                     $('#modalRemark').modal('hide');
-                    clearProductControl();
-                    $("#tblTranAdjustment").find("tbody").empty();
-                    $("#lblUserVoucherNo").text(response.UserVoucherNo);
-                    $('#inputDate').val(getTodayDate());
-                    $('#inputVoucherID').val("");
-                    $("#ddlLocation").val(defaultLocationId);
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                    {
+                        responseUnSuccessful(response);
+                    }
+                    else {
+                        clearProductControl();
+                        $("#tblTranAdjustment").find("tbody").empty();
+                        $("#lblUserVoucherNo").text(response.UserVoucherNo);
+                        $('#inputDate').val(getTodayDate());
+                        $('#inputVoucherID').val("");
+                        $("#ddlLocation").val(defaultLocationId);
+                        showToast(1, response.ResultDefaultData.Message);
+                    }
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -548,10 +564,10 @@
             if (row < 1) return;
             $("#modalRemarkTitle").text("Add Remark");
             $("#lblRemark").text("Enter a Note");
-            $('#btnEditRemarkOk').val($(this).val());
+            $('#btnRemarkEdit').val($(this).val());
             $('#modalRemark').modal('show');
         });
-        $("#btnEditRemarkOk").click(function (e) {
+        $("#btnRemarkEdit").click(function (e) {
             let row = $("#tblTranAdjustment tbody tr").length;
             if (row < 1) return;
             let adjustmentId = $(this).val();
@@ -570,9 +586,9 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        alert("Session Expired!");
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        $('#modalRemark').modal('hide');
+                        responseUnSuccessful(response);
                     }
                     else {
                         window.location.href = '@Url.Action("ListAdjustment", "Adjustment")?userId=' + userId;
@@ -589,7 +605,7 @@
             });
         });
         $("#btnEditCancel").click(function (e) {
-            window.location.href = '@Url.Action("ListAdjustment", "Adjustment")?userId=' + userId;
+            window.location.href = '@Url.Action("Adjustment", "Adjustment")?userId=' + userId;
         });
 
     });
@@ -616,10 +632,11 @@
             $('#btnCancel').css("display", "none");
             $('#btnContinue').css("display", "none");
             $('#btnRemarkOk').css("display", "none");
+            $('#btnRemarkEdit').css("display", "block");
         } else {
             $("#btnEditCancel").css("display", "none");
             $('#btnEditContinue').css("display", "none");
-            $('#btnEditRemarkOk').css("display", "none");
+            $('#btnRemarkEdit').css("display", "none");
             $('#btnCancel').show();
             $('#btnContinue').show();
             $('#btnRemarkOk').show();

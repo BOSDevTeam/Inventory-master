@@ -14,8 +14,63 @@
     </style>
 </head>  
 
+<div>
+
+    <div class="row setup-title-layout">
+        <div class="col-md-12 col-lg-12">
+            <label class="page-title">@Resource.StockStatusByLocation</label>
+        </div>
+    </div>
+
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblStockStatus" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    @*<tr class="row table-header">
+                        <th class="col-md-2 col-lg-2">Date</th>
+                        <th class="col-md-3 col-lg-3">Voucher No.</th>
+                        <th class="col-md-3 col-lg-3">Customer</th>
+                        <th class="col-md-1 col-lg-1">Pay Type</th>
+                        <th class="col-md-2 col-lg-2 aligh-right">Grand Total</th>
+                        <th class="col-md-1 col-lg-1">Action</th>
+                    </tr>*@
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
 <script type="text/javascript">
     document.getElementById('subMenuStockStatusByLocation').className = 'active';
+
+    $(document).ready(function () {
+
+        setModuleTitle('@Resource.StockStatus', '@Resource.StockStatusByLocation');
+
+        function createHeader(response, isFromJson) {
+            $("#tblSaleList").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterSale"]))');
+            $.each(response, function (index, item) {
+                var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
+                        + '<td class="col-md-2 col-lg-2 text-overflow">' + item.SaleDateTime + '</td>'
+                        + '<td class="col-md-3 col-lg-3">' + item.UserVoucherNo + '</td>'
+                        + '<td class="col-md-3 col-lg-3 text-overflow">' + item.CustomerName + '</td>'
+                        + '<td class="col-md-1 col-lg-1">' + item.PaymentKeyword + '</td>'
+                        + '<td class="col-md-2 col-lg-2 value-right">' + separatedComma(item.Grandtotal) + '</td>'
+                        + '<td class="col-md-1 col-lg-1 btn-group">'
+                            + '<button title="View" class="btn btn-sm btn-dark" onclick="listTableAction(1)"><i class="fa fa-list"></i></button>'
+                            + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
+                            + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
+                        + '</td>'
+                        + '<td style="display:none">' + item.SaleID + '</td>'
+                    + '</tr>'
+                $('#tblSaleList tbody').append(row);
+            });
+        }
+
+    });
 </script>
 
 

@@ -30,10 +30,13 @@
                     <tr>
                         <td class="padding-5"><label class="control-label mb-0">Pay Type</label></td>
                         <td class="aligh-right padding-5"><label id="lblPayment" class="control-input mb-0"></label></td>
-                        <td class="padding-5"><label class="control-label mb-0">Pay Method</label></td>
-                        <td class="aligh-right padding-5"><label id="lblPayMethod" class="control-input mb-0"></label></td>
+                        <td id="tdPayMethod" class="padding-5"><label class="control-label mb-0">Pay Method</label></td>
+                        <td id="tdPayMethodValue" class="aligh-right padding-5"><label id="lblPayMethod" class="control-input mb-0"></label></td>
                     </tr>
-                    
+                    <tr id="trBankPayment">
+                        <td class="padding-5"><label class="control-label mb-0">Bank Payment</label></td>
+                        <td class="aligh-right padding-5"><label id="lblBankPayment" class="control-input mb-0"></label></td>
+                    </tr>
                 </table>
 
                 @{
@@ -87,15 +90,11 @@
             $('#tdPayMethod').css('display', 'none');
             $('#tdPayMethodValue').css('display', 'none');
         }
-        //if (response.BankPayment.length != 0) {
-        //    $('#lblBankPayment').text(response.BankPayment);
-        //    $('#tdBankPayment').show();
-        //    $('#tdBankPaymentValue').show();
-        //}
-        //else {
-        //    $('#tdBankPayment').css('display', 'none');
-        //    $('#tdBankPaymentValue').css('display', 'none');
-        //}        
+        if (response.BankPayment.length != 0) {
+            $('#lblBankPayment').text(response.BankPayment);
+            $('#trBankPayment').show();           
+        }
+        else $('#trBankPayment').css('display', 'none');        
 
         $('#lblSubtotal').text(separatedComma(response.Subtotal));
         $('#lblTaxValue').text(separatedComma(response.TaxAmt));

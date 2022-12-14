@@ -40,25 +40,34 @@ namespace Inventory.Controllers
             List<UnitModels> lstUnit = new List<UnitModels>();
             List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
             List<AdjustTypeModels> lstAdjustType = new List<AdjustTypeModels>();
-            bool isRequestSuccess = false;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
 
             if (Session["ProductData"] != null)
             {
-                List<ProductModels.ProductModel> list = Session["ProductData"] as List<ProductModels.ProductModel>;
-                var result = list.Where(c => c.ProductID == productId).SingleOrDefault();
-                if (result != null)
+                try
                 {
-                    productName = result.ProductName;
-                    code = result.Code;
-                    salePrice = result.SalePrice;
-                    purPrice = result.PurchasePrice;
-                    disPercent = result.DisPercent;
-                    if (isMultiUnit) lstUnit = getUnit();
-                    if (isMultiCurrency) lstCurrency = getCurrency();
-                    lstAdjustType = getAdjustType();
-                    isRequestSuccess = true;
+                    List<ProductModels.ProductModel> list = Session["ProductData"] as List<ProductModels.ProductModel>;
+                    var result = list.Where(c => c.ProductID == productId).SingleOrDefault();
+                    if (result != null)
+                    {
+                        productName = result.ProductName;
+                        code = result.Code;
+                        salePrice = result.SalePrice;
+                        purPrice = result.PurchasePrice;
+                        disPercent = result.DisPercent;
+                        if (isMultiUnit) lstUnit = getUnit();
+                        if (isMultiCurrency) lstCurrency = getCurrency();
+                        lstAdjustType = getAdjustType();
+                        resultDefaultData.IsRequestSuccess = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
                 }
             }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
@@ -70,7 +79,7 @@ namespace Inventory.Controllers
                 LstUnit = lstUnit,
                 LstCurrency = lstCurrency,
                 LstAdjustType = lstAdjustType,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Data;
 using System.Data.SqlClient;
@@ -9,6 +8,7 @@ using Inventory.Models;
 using Inventory.Common;
 using Inventory.ViewModels;
 using System.Runtime.InteropServices;
+using Inventory.Filters;
 
 namespace Inventory.Controllers
 {
@@ -21,6 +21,7 @@ namespace Inventory.Controllers
         AppSetting.Paging paging = new AppSetting.Paging();
         TextQuery textQuery = new TextQuery();
 
+        [SessionTimeoutAttribute]
         public ActionResult Adjustment(int userId,int? adjustmentId)
         {
             if (checkConnection())
@@ -57,6 +58,7 @@ namespace Inventory.Controllers
             return RedirectToAction("Login", "User");
         }
 
+        [SessionTimeoutAttribute]
         public ActionResult ListAdjustment(int userId)
         {
             if(checkConnection())
@@ -75,6 +77,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult GetProductByCodeAction(string productCode, bool isMultiUnit)
         {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             ProductModels.ProductModel data = new ProductModels.ProductModel();
             string productName = "";
             int productId = 0;
@@ -82,23 +85,33 @@ namespace Inventory.Controllers
             List<AdjustTypeModels> lstAdjustType = new List<AdjustTypeModels>();
             bool isExistProduct = true;
 
-            data = appData.selectProductByCode(getConnection(), productCode);
-            if (data.ProductID != 0)
+            try
             {
-                productId = data.ProductID;
-                productName = data.ProductName;
-                if (isMultiUnit) lstUnit = getUnit();
-                lstAdjustType = getAdjustType();
+                data = appData.selectProductByCode(getConnection(), productCode);
+                if (data.ProductID != 0)
+                {
+                    productId = data.ProductID;
+                    productName = data.ProductName;
+                    if (isMultiUnit) lstUnit = getUnit();
+                    lstAdjustType = getAdjustType();
+                }
+                else isExistProduct = false;
+                resultDefaultData.IsRequestSuccess = true;
             }
-            else isExistProduct = false;
-
+            catch (Exception ex)
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                resultDefaultData.Message = ex.Message;
+            }
+            
             var jsonResult = new
             {
                 ProductID = productId,
                 ProductName = productName,
                 LstUnit = lstUnit,
                 LstAdjustType = lstAdjustType,
-                IsExistProduct = isExistProduct
+                IsExistProduct = isExistProduct,
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -215,14 +228,14 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult PrepareToEditTranAdjustmentAction(int number, bool isMultiUnit)
         {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             List<TranAdjustmentModels> lstTranAdjustment = new List<TranAdjustmentModels>();
             TranAdjustmentModels data = new TranAdjustmentModels();
             string productCode = "", productName = "";
             int productId = 0, quantity = 0;
             int? unitId = 0, adjustTypeId = 0;
             List<UnitModels> lstUnit = new List<UnitModels>();
-            List<AdjustTypeModels> lstAdjustType = new List<AdjustTypeModels>();
-            bool isRequestSuccess = false;
+            List<AdjustTypeModels> lstAdjustType = new List<AdjustTypeModels>();           
 
             if (Session["TranAdjustmentData"] != null)
             {
@@ -242,10 +255,11 @@ namespace Inventory.Controllers
                      
                         if (isMultiUnit) lstUnit = getUnit();
                         lstAdjustType = getAdjustType();
-                        isRequestSuccess = true;
+                        resultDefaultData.IsRequestSuccess = true;
                     }
                 }
             }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
@@ -257,7 +271,7 @@ namespace Inventory.Controllers
                 AdjustTypeID = adjustTypeId,
                 LstUnit = lstUnit,
                 LstAdjustType=lstAdjustType,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -274,48 +288,54 @@ namespace Inventory.Controllers
         public JsonResult AdjustmentSubmitAction(string userVoucherNo, string date, string voucherId, int locationId,
                 string remark, int userId)
         {
-            bool isRequestSuccess = true;
-
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["TranAdjustmentData"] != null)
             {
-                List<TranAdjustmentModels> list = Session["TranAdjustmentData"] as List<TranAdjustmentModels>;
-                DataTable dt = new DataTable();
-                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-                dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
-                dt.Columns.Add(new DataColumn("AdjustTypeID", typeof(int)));
-                
-                for (int i = 0; i < list.Count; i++)
+                try
                 {
-                    dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].AdjustTypeID);
+                    List<TranAdjustmentModels> list = Session["TranAdjustmentData"] as List<TranAdjustmentModels>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                    dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("AdjustTypeID", typeof(int)));
+
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].AdjustTypeID);
+                    }
+                    DateTime adjustDateTime = DateTime.Parse(date);
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcInsertAdjustment, dataConnectorSQL.Connect());
+                    cmd.Parameters.AddWithValue("@AdjustDateTime", adjustDateTime);
+                    cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@Remark", remark);
+                    cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.AdjustmentModule);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read()) userVoucherNo = Convert.ToString(reader[0]);
+                    reader.Close();
+                    dataConnectorSQL.Close();
+                    clearTranAdjustment();
+                    resultDefaultData.IsRequestSuccess = true;
+                    resultDefaultData.Message = AppConstants.Message.SaveSuccess;
                 }
-
-                DateTime adjustDateTime = DateTime.Parse(date);            
-
-                SqlCommand cmd = new SqlCommand(Procedure.PrcInsertAdjustment, dataConnectorSQL.Connect());
-                cmd.Parameters.AddWithValue("@AdjustDateTime", adjustDateTime);
-                cmd.Parameters.AddWithValue("@LocationID", locationId);               
-                cmd.Parameters.AddWithValue("@UserID", userId);                
-                cmd.Parameters.AddWithValue("@Remark", remark);
-                cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.AdjustmentModule);
-                cmd.Parameters.AddWithValue("@temptbl", dt);
-                cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
-                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
-                cmd.CommandType = CommandType.StoredProcedure;
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read()) userVoucherNo = Convert.ToString(reader[0]);
-                reader.Close();
-                dataConnectorSQL.Close();
-                clearTranAdjustment();
+                catch(Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }                              
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 UserVoucherNo = userVoucherNo,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
-
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
@@ -346,32 +366,40 @@ namespace Inventory.Controllers
 
         public JsonResult DeleteAction(int adjustmentId)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             int totalPageNum = 0;
 
             if (Session["MasterAdjustmentData"] != null)
             {
-                SqlCommand cmd = new SqlCommand(textQuery.deleteAdjustmentQuery(adjustmentId), (SqlConnection)getConnection());
-                cmd.CommandType = CommandType.Text;
-                cmd.ExecuteNonQuery();
-
-                List<AdjustmentViewModel.MasterAdjustmentViewModel> lstMasterAdjustment = Session["MasterAdjustmentData"] as List<AdjustmentViewModel.MasterAdjustmentViewModel>;
-                int index = lstMasterAdjustment.FindIndex(x => x.AdjustmentID == adjustmentId);
-                lstMasterAdjustment.RemoveAt(index);
-
-                if (lstMasterAdjustment.Count > paging.eachItemCount)
+                try
                 {
-                    totalPageNum = lstMasterAdjustment.Count / paging.eachItemCount;
-                    paging.lastItemCount = lstMasterAdjustment.Count % paging.eachItemCount;
-                    if (paging.lastItemCount != 0) totalPageNum += 1;
+                    SqlCommand cmd = new SqlCommand(textQuery.deleteAdjustmentQuery(adjustmentId), (SqlConnection)getConnection());
+                    cmd.CommandType = CommandType.Text;
+                    cmd.ExecuteNonQuery();
+                    List<AdjustmentViewModel.MasterAdjustmentViewModel> lstMasterAdjustment = Session["MasterAdjustmentData"] as List<AdjustmentViewModel.MasterAdjustmentViewModel>;
+                    int index = lstMasterAdjustment.FindIndex(x => x.AdjustmentID == adjustmentId);
+                    lstMasterAdjustment.RemoveAt(index);
+                    if (lstMasterAdjustment.Count > paging.eachItemCount)
+                    {
+                        totalPageNum = lstMasterAdjustment.Count / paging.eachItemCount;
+                        paging.lastItemCount = lstMasterAdjustment.Count % paging.eachItemCount;
+                        if (paging.lastItemCount != 0) totalPageNum += 1;
+                    }
+                    resultDefaultData.IsRequestSuccess = true;
+                    resultDefaultData.Message = AppConstants.Message.DeleteSuccess;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
                 }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 TotalPage = totalPageNum,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -379,10 +407,20 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult ViewAction(int adjustmentId)
         {
-            MasterAdjustmentViewModel item = selectMasterAdjustment(adjustmentId);
-            List<TranAdjustmentModels> lstTranAdjustment = selectTranAdjustmentByAdjustmentID(adjustmentId);
-
-            
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            MasterAdjustmentViewModel item = new MasterAdjustmentViewModel();
+            List<TranAdjustmentModels> lstTranAdjustment = new List<TranAdjustmentModels>();
+            try
+            {
+                item = selectMasterAdjustment(adjustmentId);
+                lstTranAdjustment = selectTranAdjustmentByAdjustmentID(adjustmentId);
+                resultDefaultData.IsRequestSuccess = true;
+            }
+            catch(Exception ex)
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                resultDefaultData.Message = ex.Message;
+            }
             var jsonResult = new
             {
                 LstTranAdjustment = lstTranAdjustment,
@@ -391,9 +429,10 @@ namespace Inventory.Controllers
                 Remark = item.MasterAdjustmentModel.Remark,
                 LocationName = item.LocationName,
                 AdjustDateTime = item.MasterAdjustmentModel.AdjustDateTime,
-                UserName = item.UserName,               
+                UserName = item.UserName,
+                ResultDefaultData = resultDefaultData
             };
-            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);          
         }
         [HttpGet]
         public JsonResult SearchAction(int userId, DateTime fromDate, DateTime toDate, string userVoucherNo)
@@ -426,40 +465,49 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult AdjustmentEditAction(int adjustmentId, string date, string voucherId, int locationId,string remark)
         {
-            bool isRequestSuccess = true;
-
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["TranAdjustmentData"] != null)
             {
-                List<TranAdjustmentModels> list = Session["TranAdjustmentData"] as List<TranAdjustmentModels>;
-                DataTable dt = new DataTable();
-                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-                dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
-                dt.Columns.Add(new DataColumn("AdjustTypeID", typeof(int)));
-                
-                for (int i = 0; i < list.Count; i++)
+                try
                 {
-                    dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].AdjustTypeID);
-                }
+                    List<TranAdjustmentModels> list = Session["TranAdjustmentData"] as List<TranAdjustmentModels>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                    dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("AdjustTypeID", typeof(int)));
 
-                DateTime adjustDateTime = DateTime.Parse(date);
-                SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateAdjustment, dataConnectorSQL.Connect());
-                cmd.Parameters.AddWithValue("@AdjustmentID", adjustmentId);
-                cmd.Parameters.AddWithValue("@AdjustDateTime", adjustDateTime);
-                cmd.Parameters.AddWithValue("@LocationID", locationId);
-                cmd.Parameters.AddWithValue("@temptbl", dt);
-                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
-                cmd.Parameters.AddWithValue("@Remark", remark);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.ExecuteNonQuery();
-                dataConnectorSQL.Close();
-                clearTranAdjustment();
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].AdjustTypeID);
+                    }
+                    DateTime adjustDateTime = DateTime.Parse(date);
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateAdjustment, dataConnectorSQL.Connect());
+                    cmd.Parameters.AddWithValue("@AdjustmentID", adjustmentId);
+                    cmd.Parameters.AddWithValue("@AdjustDateTime", adjustDateTime);
+                    cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.Parameters.AddWithValue("@Remark", remark);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                    dataConnectorSQL.Close();
+                    clearTranAdjustment();
+                    resultDefaultData.IsRequestSuccess = true;
+                    resultDefaultData.Message = AppConstants.Message.SaveSuccess;
+
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }

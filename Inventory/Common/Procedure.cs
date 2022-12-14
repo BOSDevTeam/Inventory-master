@@ -90,5 +90,6 @@ namespace Inventory.Common
         public const string PrcGetMasterCustomerConsignByCustomerConsignID = "PrcGetMasterCustomerConsignByCustomerConsignID";
         public const string PrcGetTranCustomerConsignByCustomerConsignID = "PrcGetTranCustomerConsignByCustomerConsignID";
         public const string PrcUpdateCustomerConsign = "PrcUpdateCustomerConsign";
+        public const string PrcGetStockStatusByLocation = "PrcGetStockStatusByLocation";
     }
 }

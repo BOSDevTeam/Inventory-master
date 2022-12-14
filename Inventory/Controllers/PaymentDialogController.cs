@@ -17,28 +17,33 @@ namespace Inventory.Controllers
         #region events
 
         [HttpGet]
-        public JsonResult PaymentAction(bool isBankPayment,int moduleCode)
+        public JsonResult PaymentAction(bool isBankPayment, int moduleCode)
         {
             List<PaymentModels> lstPayment = new List<PaymentModels>();
             List<PayMethodModels> lstPayMethod = new List<PayMethodModels>();
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
 
-            if (moduleCode == AppConstants.SaleModule && Session["TranSaleData"] != null)
+            if ((moduleCode == AppConstants.SaleModule && Session["TranSaleData"] != null) || (moduleCode == AppConstants.PurchaseModule && Session["TranPurchaseData"] != null))
             {
-                lstPayment = getPayment();
-                if (isBankPayment) lstPayMethod = getPayMethod();
-            }else if(moduleCode == AppConstants.PurchaseModule && Session["TranPurchaseData"] != null)
-            {
-                lstPayment = getPayment();
-                if (isBankPayment) lstPayMethod = getPayMethod();
+                try
+                {
+                    lstPayment = getPayment();
+                    if (isBankPayment) lstPayMethod = getPayMethod();
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 LstPayment = lstPayment,
                 LstPayMethod = lstPayMethod,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);

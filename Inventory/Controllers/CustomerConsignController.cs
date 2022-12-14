@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Data;
 using System.Data.SqlClient;
@@ -9,6 +8,7 @@ using Inventory.Models;
 using Inventory.Common;
 using Inventory.ViewModels;
 using System.Runtime.InteropServices;
+using Inventory.Filters;
 
 namespace Inventory.Controllers
 {
@@ -20,6 +20,7 @@ namespace Inventory.Controllers
         AppSetting setting = new AppSetting();
         AppSetting.Paging paging = new AppSetting.Paging();
         TextQuery textQuery = new TextQuery();
+        [SessionTimeoutAttribute]
         public ActionResult CustomerConsign(int userId,int? customerConsignId)
         {
             if (checkConnection())
@@ -65,7 +66,7 @@ namespace Inventory.Controllers
             }           
             return RedirectToAction("Login", "User");
         }
-
+        [SessionTimeoutAttribute]
         public ActionResult ListCustomerConsign(int userId)
         {
             if (checkConnection())
@@ -85,27 +86,38 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult GetProductByCodeAction(string productCode, bool isMultiUnit)
         {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             ProductModels.ProductModel data = new ProductModels.ProductModel();
             string productName = "";
             int productId = 0;
             List<UnitModels> lstUnit = new List<UnitModels>();
             bool isExistProduct = true;
-
-            data = appData.selectProductByCode(getConnection(), productCode);
-            if (data.ProductID != 0)
+            try
             {
-                productId = data.ProductID;
-                productName = data.ProductName;
-                if (isMultiUnit) lstUnit = getUnit();
-            }
-            else isExistProduct = false;
+                data = appData.selectProductByCode(getConnection(), productCode);
+                if (data.ProductID != 0)
+                {
+                    productId = data.ProductID;
+                    productName = data.ProductName;
+                    if (isMultiUnit) lstUnit = getUnit();
+                }
+                else isExistProduct = false;
 
+                resultDefaultData.IsRequestSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                resultDefaultData.Message = ex.Message;
+            }
+            
             var jsonResult = new
             {
                 ProductID = productId,
                 ProductName = productName,
                 LstUnit = lstUnit,
-                IsExistProduct = isExistProduct
+                IsExistProduct = isExistProduct,
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -216,14 +228,14 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult PrepareToEditTranCustomerConsignAction(int number, bool isMultiUnit)
         {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             List<TranCustomerConsignModels> lstTranCustomerConsign = new List<TranCustomerConsignModels>();
             TranCustomerConsignModels data = new TranCustomerConsignModels();
             string productCode = "", productName = "";
             int productId = 0, quantity = 0;
             int? unitId = 0;
             List<UnitModels> lstUnit = new List<UnitModels>();
-            bool isRequestSuccess = false;
-
+            
             if (Session["TranCustomerConsignData"] != null)
             {
                 lstTranCustomerConsign = Session["TranCustomerConsignData"] as List<TranCustomerConsignModels>;
@@ -239,10 +251,11 @@ namespace Inventory.Controllers
                         quantity = data.Quantity;
                         unitId = data.UnitID;
                         if (isMultiUnit) lstUnit = getUnit();
-                        isRequestSuccess = true;
+                        resultDefaultData.IsRequestSuccess = true;
                     }
                 }
             }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
@@ -252,7 +265,7 @@ namespace Inventory.Controllers
                 Quantity = quantity,
                 UnitID = unitId,
                 LstUnit = lstUnit,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -261,51 +274,58 @@ namespace Inventory.Controllers
         public JsonResult CustomerConsignSubmitAction(string userVoucherNo, string date, string voucherId, int locationId,int customerId,
               int divisionId, int salePersonId, string dueDate , string remark, int userId)
         {
-            bool isRequestSuccess = true;
-
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["TranCustomerConsignData"] != null)
             {
-                List<TranCustomerConsignModels> list = Session["TranCustomerConsignData"] as List<TranCustomerConsignModels>;
-                DataTable dt = new DataTable();
-                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-                dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
-
-                for (int i = 0; i < list.Count; i++)
+                try
                 {
-                    dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID);
+                    List<TranCustomerConsignModels> list = Session["TranCustomerConsignData"] as List<TranCustomerConsignModels>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                    dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
+
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID);
+                    }
+                    DateTime consignDateTime = DateTime.Parse(date);
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcInsertCustomerConsign, dataConnectorSQL.Connect());
+                    cmd.Parameters.AddWithValue("@ConsignDateTime", consignDateTime);
+                    cmd.Parameters.AddWithValue("@DueDateTime", dueDate);
+                    cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@CustomerID", customerId);
+                    cmd.Parameters.AddWithValue("@DivisionID", divisionId);
+                    cmd.Parameters.AddWithValue("@ClientID", salePersonId);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@Remark", remark);
+                    cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.CustomerConsignModule);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read()) userVoucherNo = Convert.ToString(reader[0]);
+                    reader.Close();
+                    dataConnectorSQL.Close();
+                    clearTranCustomerConsign();
+                    resultDefaultData.IsRequestSuccess = true;
+                    resultDefaultData.Message = AppConstants.Message.SaveSuccess;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
                 }
 
-                DateTime consignDateTime = DateTime.Parse(date);
-
-                SqlCommand cmd = new SqlCommand(Procedure.PrcInsertCustomerConsign, dataConnectorSQL.Connect());
-                cmd.Parameters.AddWithValue("@ConsignDateTime", consignDateTime);
-                cmd.Parameters.AddWithValue("@DueDateTime", dueDate);
-                cmd.Parameters.AddWithValue("@LocationID", locationId);
-                cmd.Parameters.AddWithValue("@CustomerID", customerId);
-                cmd.Parameters.AddWithValue("@DivisionID", divisionId);
-                cmd.Parameters.AddWithValue("@ClientID", salePersonId);
-                cmd.Parameters.AddWithValue("@UserID", userId);
-                cmd.Parameters.AddWithValue("@Remark", remark);
-                cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.CustomerConsignModule);
-                cmd.Parameters.AddWithValue("@temptbl", dt);
-                cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
-                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
-                cmd.CommandType = CommandType.StoredProcedure;
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read()) userVoucherNo = Convert.ToString(reader[0]);
-                reader.Close();
-                dataConnectorSQL.Close();
-                clearTranCustomerConsign();
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 UserVoucherNo = userVoucherNo,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData=resultDefaultData
             };
-
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
@@ -341,9 +361,22 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult ViewAction(int customerConsignId)
         {
-            MasterCustomerConsignViewModel item = selectMasterCustomerConsign(customerConsignId);
-            List<TranCustomerConsignModels> lstTranCustomerConsign = selectTranCustomerConsignByCustomerConsignID(customerConsignId);
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            MasterCustomerConsignViewModel item = new MasterCustomerConsignViewModel();
+            List<TranCustomerConsignModels> lstTranCustomerConsign = new List<TranCustomerConsignModels>();
+            try
+            {
+                item = selectMasterCustomerConsign(customerConsignId);
+                lstTranCustomerConsign = selectTranCustomerConsignByCustomerConsignID(customerConsignId);
 
+                resultDefaultData.IsRequestSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                resultDefaultData.Message = ex.Message;
+            }
+            
             var jsonResult = new
             {
                 LstTranCustomerConsign = lstTranCustomerConsign,
@@ -356,38 +389,48 @@ namespace Inventory.Controllers
                 LocationName = item.LocationName,
                 CustomerName=item.CustomerName,
                 DivisionName=item.DivisionName,
-                SalePersonName=item.SalePersonName
+                SalePersonName=item.SalePersonName,
+                ResultDefaultData = resultDefaultData
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
         public JsonResult DeleteAction(int customerConsignId)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             int totalPageNum = 0;
 
             if (Session["MasterCustomerConsignData"] != null)
             {
-                SqlCommand cmd = new SqlCommand(textQuery.deleteCustomerConsignQuery(customerConsignId), (SqlConnection)getConnection());
-                cmd.CommandType = CommandType.Text;
-                cmd.ExecuteNonQuery();
-
-                List<CustomerConsignViewModel.MasterCustomerConsignViewModel> lstMasterCustomerConsign = Session["MasterCustomerConsignData"] as List<CustomerConsignViewModel.MasterCustomerConsignViewModel>;
-                int index = lstMasterCustomerConsign.FindIndex(x => x.CustomerConsignID == customerConsignId);
-                lstMasterCustomerConsign.RemoveAt(index);
-
-                if (lstMasterCustomerConsign.Count > paging.eachItemCount)
+                try
                 {
-                    totalPageNum = lstMasterCustomerConsign.Count / paging.eachItemCount;
-                    paging.lastItemCount = lstMasterCustomerConsign.Count % paging.eachItemCount;
-                    if (paging.lastItemCount != 0) totalPageNum += 1;
+                    SqlCommand cmd = new SqlCommand(textQuery.deleteCustomerConsignQuery(customerConsignId), (SqlConnection)getConnection());
+                    cmd.CommandType = CommandType.Text;
+                    cmd.ExecuteNonQuery();
+                    List<CustomerConsignViewModel.MasterCustomerConsignViewModel> lstMasterCustomerConsign = Session["MasterCustomerConsignData"] as List<CustomerConsignViewModel.MasterCustomerConsignViewModel>;
+                    int index = lstMasterCustomerConsign.FindIndex(x => x.CustomerConsignID == customerConsignId);
+                    lstMasterCustomerConsign.RemoveAt(index);
+
+                    if (lstMasterCustomerConsign.Count > paging.eachItemCount)
+                    {
+                        totalPageNum = lstMasterCustomerConsign.Count / paging.eachItemCount;
+                        paging.lastItemCount = lstMasterCustomerConsign.Count % paging.eachItemCount;
+                        if (paging.lastItemCount != 0) totalPageNum += 1;
+                    }
+                    resultDefaultData.IsRequestSuccess = true;
+                    resultDefaultData.Message = AppConstants.Message.DeleteSuccess;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
                 }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 TotalPage = totalPageNum,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -420,42 +463,51 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult CustomerConsignEditAction(int customerConsignId, string date,string dueDate ,string voucherId, int locationId,int customerId,int divisionId,int salepersonId ,string remark)
         {
-            bool isRequestSuccess = true;
-
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["TranCustomerConsignData"] != null)
             {
-                List<TranCustomerConsignModels> list = Session["TranCustomerConsignData"] as List<TranCustomerConsignModels>;
-                DataTable dt = new DataTable();
-                dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-                dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-                dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
-                
-                for (int i = 0; i < list.Count; i++)
+                try
                 {
-                    dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID);
+                    List<TranCustomerConsignModels> list = Session["TranCustomerConsignData"] as List<TranCustomerConsignModels>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                    dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
+
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID);
+                    }
+                    DateTime consignDateTime = DateTime.Parse(date);
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateCustomerConsign, dataConnectorSQL.Connect());
+                    cmd.Parameters.AddWithValue("@CustomerConsignID", customerConsignId);
+                    cmd.Parameters.AddWithValue("@ConsignDateTime", consignDateTime);
+                    cmd.Parameters.AddWithValue("@DueDateTime", dueDate);
+                    cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@CustomerID", customerId);
+                    cmd.Parameters.AddWithValue("@DivisionID", divisionId);
+                    cmd.Parameters.AddWithValue("@ClientID", salepersonId);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.Parameters.AddWithValue("@Remark", remark);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                    dataConnectorSQL.Close();
+                    clearTranCustomerConsign();
+                    resultDefaultData.IsRequestSuccess = true;
+                    resultDefaultData.Message = AppConstants.Message.SaveSuccess;
                 }
-                DateTime consignDateTime = DateTime.Parse(date);               
-                SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateCustomerConsign, dataConnectorSQL.Connect());
-                cmd.Parameters.AddWithValue("@CustomerConsignID", customerConsignId);
-                cmd.Parameters.AddWithValue("@ConsignDateTime", consignDateTime);
-                cmd.Parameters.AddWithValue("@DueDateTime", dueDate);
-                cmd.Parameters.AddWithValue("@LocationID", locationId);
-                cmd.Parameters.AddWithValue("@CustomerID", customerId);
-                cmd.Parameters.AddWithValue("@DivisionID", divisionId);
-                cmd.Parameters.AddWithValue("@ClientID", salepersonId);
-                cmd.Parameters.AddWithValue("@temptbl", dt);
-                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
-                cmd.Parameters.AddWithValue("@Remark", remark);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.ExecuteNonQuery();
-                dataConnectorSQL.Close();
-                clearTranCustomerConsign();
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }

@@ -178,13 +178,15 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess)
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                    {
+                        responseUnSuccessful(response);
+                    }                    
                     else {
                         if (selectedRowIndex != null) {
                             document.getElementById("tblAdjustmentList").deleteRow(selectedRowIndex);
                             createPaging(response.TotalPage, "");
-                            showToast(1, 'Deleted Successfully!');
+                            showToast(1, response.ResultDefaultData.Message);
                         }
                     }
                 },
@@ -209,9 +211,14 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    createMasterAdjustmentDetail(response);
-                    createTranAdjustmentDetail(response);
-                    $('#modalAdjustmentDetail').modal('show');
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
+                    }
+                    else {
+                        createMasterAdjustmentDetail(response);
+                        createTranAdjustmentDetail(response);
+                        $('#modalAdjustmentDetail').modal('show');
+                    }                   
                 },
                 failure: function (response) {
                     hideLoadingIcon();
