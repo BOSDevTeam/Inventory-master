@@ -183,8 +183,11 @@
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\PurchaseController.cs" />
     <Compile Include="Controllers\PurchaseOrderController.cs" />
+    <Compile Include="Controllers\PurchaseReturnController.cs" />
     <Compile Include="Controllers\SaleController.cs" />
     <Compile Include="Controllers\SaleOrderController.cs" />
+    <Compile Include="Controllers\SaleReturnController.cs" />
+    <Compile Include="Controllers\StockStatusController.cs" />
     <Compile Include="Controllers\SubMenuController.cs" />
     <Compile Include="Controllers\SupplierController.cs" />
     <Compile Include="Controllers\TechnicianController.cs" />
@@ -625,6 +628,12 @@
     <Content Include="Views\CustomerConsign\_CustomerConsignDetailChild.cshtml" />
     <Content Include="Views\CustomerConsign\_CustomerConsignDetailDialog.cshtml" />
     <Content Include="Views\CustomerConsign\_CustomerConsignRemarkDialog.cshtml" />
+    <Content Include="Views\StockStatus\StockStatusLocation.cshtml" />
+    <Content Include="Views\StockStatus\StockStatusModule.cshtml" />
+    <Content Include="Views\SaleReturn\SaleReturn.cshtml" />
+    <Content Include="Views\SaleReturn\ListSaleReturn.cshtml" />
+    <Content Include="Views\PurchaseReturn\PurchaseReturn.cshtml" />
+    <Content Include="Views\PurchaseReturn\ListPurchaseReturn.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

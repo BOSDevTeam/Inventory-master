@@ -163,7 +163,7 @@ namespace Inventory.Controllers
                         if (val.Length == 1) // duplicate location
                         {
                             resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.InCompletedData.ToString();
-                            resultDefaultData.Message = "Already have opening stock with this location!";
+                            resultDefaultData.Message = AppConstants.Message.NoOpeningStockSameLocation;
                         }
                         else
                         {

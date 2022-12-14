@@ -42,6 +42,8 @@ namespace Inventory.Common
             public const string NoProductByCode = "Not found product with this code!";
             public const string NoProduct = "Not found product!";
             public const string NoTransferSameLocation = "Not allow to transfer by same location!";
+            public const string NoOpeningStockSameLocation = "Already have opening stock with this location!";
+            public const string NoOpeningStockSameSubMenu = "Already added products for this submenu!";
         }
     }
 }

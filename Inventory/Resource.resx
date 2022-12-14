@@ -435,4 +435,46 @@
   <data name="SessionExpired" xml:space="preserve">
     <value>Session Expired</value>
   </data>
+  <data name="StockStatus" xml:space="preserve">
+    <value>Stock Status</value>
+  </data>
+  <data name="StockStatusByLocation" xml:space="preserve">
+    <value>Stock Status By Location</value>
+  </data>
+  <data name="AddPurchaseReturn" xml:space="preserve">
+    <value>Add Purchase Return</value>
+  </data>
+  <data name="AddSaleReturn" xml:space="preserve">
+    <value>Add Sale Return</value>
+  </data>
+  <data name="EnterPurchaseVoucherNo" xml:space="preserve">
+    <value>Enter Purchase Voucher No.</value>
+  </data>
+  <data name="EnterSaleVoucherNo" xml:space="preserve">
+    <value>Enter Sale Voucher No.</value>
+  </data>
+  <data name="ListPurchaseReturn" xml:space="preserve">
+    <value>List Purchase Return</value>
+  </data>
+  <data name="ListSaleReturn" xml:space="preserve">
+    <value>List Sale Return</value>
+  </data>
+  <data name="PurchaseReturnList" xml:space="preserve">
+    <value>Purchase Return List</value>
+  </data>
+  <data name="ReturnQty" xml:space="preserve">
+    <value>Return Qty</value>
+  </data>
+  <data name="ReturnVoucherNo" xml:space="preserve">
+    <value>Return Voucher No.</value>
+  </data>
+  <data name="SaleReturnList" xml:space="preserve">
+    <value>Sale Return List</value>
+  </data>
+  <data name="TotalPurchaseItems" xml:space="preserve">
+    <value>Total Purchase Items</value>
+  </data>
+  <data name="TotalSaleItems" xml:space="preserve">
+    <value>Total Sale Items</value>
+  </data>
 </root>

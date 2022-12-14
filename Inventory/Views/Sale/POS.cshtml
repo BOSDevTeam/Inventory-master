@@ -48,7 +48,7 @@
                 <div class="col-md-5 col-lg-5">
                     <input id="inputProductName" type="text" class="form-control control-input" placeholder="@Resource.ProductName" disabled />
                 </div>
-                <div class="col-md-2 col-lg-2">
+                <div id="divQuantity" class="col-md-2 col-lg-2">
                     <input id="inputQuantity" type="text" class="form-control control-input numberonly" placeholder="@Resource.Qty" />                   
                 </div>
                 <div id="divUnit" class="col-md-2 col-lg-2">                   
@@ -68,7 +68,7 @@
                 <div class="col-md-2 col-lg-2">                    
                     <input id="chkItemFOC" type="checkbox" /><span>&nbsp;&nbsp;@Resource.FOC</span>                                  
                 </div>
-                <div class="col-md-2 col-lg-2">
+                <div id="divTranBtn" class="col-md-2 col-lg-2 aligh-right">
                     <button id="btnAdd" class="btn btn-second">@Resource.Add</button>
                     <button id="btnEdit" class="btn btn-third">@Resource.Edit</button>
                 </div>                  
@@ -283,7 +283,10 @@
             if (isMultiUnit == "True") {
                 createDefaultUnit();
                 $("#divUnit").show();
-            } else $('#divUnit').css("display", "none");
+            } else {
+                $('#divUnit').css("display", "none");
+                $('#divQuantity').addClass("col-md-4 col-lg-4");
+            }
         }
 
         function createDefaultUnit() {
@@ -297,7 +300,10 @@
             if (isMultiCurrency == "True") {
                 createDefaultCurrency();
                 $("#divCurrency").show();
-            } else $('#divCurrency').css("display", "none");
+            } else {
+                $('#divCurrency').css("display", "none");
+                $('#divTranBtn').addClass("col-md-5 col-lg-5");
+            }
         }
 
         function createDefaultCurrency() {

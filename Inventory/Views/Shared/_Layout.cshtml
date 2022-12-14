@@ -94,6 +94,8 @@
                                 <li id="subMenuClientSaleOrder"><a href="~/CLSaleOrder/CLMasterSaleOrderList">@Resource.ClientSaleOrder</a></li>                               
                                 <li id="subMenuSaleOrderList"><a href="#">@Resource.ListSaleOrder</a></li>
                                 <li id="subMenuSaleOrder"><a href="#">@Resource.AddSaleOrder</a></li>
+                                <li id="subMenuSaleReturnList"><a href="#">@Resource.ListSaleReturn</a></li>
+                                <li id="subMenuSaleReturn"><a href="#">@Resource.AddSaleReturn</a></li>
                             </ul>
                         </li>  
                         <li class="submenu">
@@ -102,7 +104,9 @@
                                 <li id="subMenuPurchaseList"><a href="#">@Resource.ListPurchase</a></li>  
                                 <li id="subMenuPurchase"><a href="#">@Resource.AddPurchase</a></li>   
                                 <li id="subMenuPurchaseOrderList"><a href="#">@Resource.ListPurchaseOrder</a></li>
-                                <li id="subMenuPurchaseOrder"><a href="#">@Resource.AddPurchaseOrder</a></li>                            
+                                <li id="subMenuPurchaseOrder"><a href="#">@Resource.AddPurchaseOrder</a></li>    
+                                <li id="subMenuPurchaseReturnList"><a href="#">@Resource.ListPurchaseReturn</a></li>
+                                <li id="subMenuPurchaseReturn"><a href="#">@Resource.AddPurchaseReturn</a></li>                            
                             </ul>
                         </li>  
                         <li class="submenu">
@@ -132,7 +136,13 @@
                                 <li id="subMenuOpeningStockList"><a href="#">@Resource.ListOpeningStock</a></li>
                                 <li id="subMenuOpeningStock"><a href="#">@Resource.AddOpeningStock</a></li>
                             </ul>
-                        </li>          
+                        </li> 
+                        <li class="submenu">
+                            <a href=""><i class="fa fa-bars"></i> <span> @Resource.StockStatus </span> <span class="menu-arrow"></span></a>
+                            <ul id="subMenuStockStatusGp">
+                                <li id="subMenuStockStatusByLocation"><a href="#">@Resource.StockStatusByLocation</a></li>
+                            </ul>
+                        </li>              
                         <li>
                             <a href="~/CompanySetting/CompanySettingEntry"><i class="fa fa-cog"></i> <span>@Resource.Settings</span></a>
                         </li>                                            
@@ -198,6 +208,18 @@
             $('#subMenuSaleOrderList').click(function () {
                 window.location.href = '@Url.Action("ListSaleOrder", "SaleOrder")?userId=' + userId;
             });
+            $('#subMenuSaleReturn').click(function () {
+                window.location.href = '@Url.Action("SaleReturn", "SaleReturn")?userId=' + userId;
+            });
+            $('#subMenuSaleReturnList').click(function () {
+                window.location.href = '@Url.Action("ListSaleReturn", "SaleReturn")?userId=' + userId;
+            });
+            $('#subMenuPurchaseReturn').click(function () {
+                window.location.href = '@Url.Action("PurchaseReturn", "PurchaseReturn")?userId=' + userId;
+            });
+            $('#subMenuPurchaseReturnList').click(function () {
+                window.location.href = '@Url.Action("ListPurchaseReturn", "PurchaseReturn")?userId=' + userId;
+            });
             $('#subMenuPurchaseOrder').click(function () {
                 window.location.href = '@Url.Action("PurchaseOrder", "PurchaseOrder")?userId=' + userId;
             });
@@ -227,6 +249,9 @@
             });
             $('#subMenuOpeningStock').click(function () {
                 window.location.href = '@Url.Action("OpeningStock", "OpeningStock")?userId=' + userId;
+            });
+            $('#subMenuStockStatusByLocation').click(function () {
+                window.location.href = '@Url.Action("StockStatusLocation", "StockStatus")?userId=' + userId;
             });
             $('.toast').toast({
                 delay: 3000

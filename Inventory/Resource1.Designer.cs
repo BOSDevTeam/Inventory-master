@@ -124,6 +124,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Purchase Return.
+        /// </summary>
+        public static string AddPurchaseReturn {
+            get {
+                return ResourceManager.GetString("AddPurchaseReturn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Remark.
         /// </summary>
         public static string AddRemark {
@@ -138,6 +147,15 @@ namespace Inventory {
         public static string AddSaleOrder {
             get {
                 return ResourceManager.GetString("AddSaleOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Sale Return.
+        /// </summary>
+        public static string AddSaleReturn {
+            get {
+                return ResourceManager.GetString("AddSaleReturn", resourceCulture);
             }
         }
         
@@ -385,6 +403,24 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter Purchase Voucher No..
+        /// </summary>
+        public static string EnterPurchaseVoucherNo {
+            get {
+                return ResourceManager.GetString("EnterPurchaseVoucherNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter Sale Voucher No..
+        /// </summary>
+        public static string EnterSaleVoucherNo {
+            get {
+                return ResourceManager.GetString("EnterSaleVoucherNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FOC.
         /// </summary>
         public static string FOC {
@@ -493,6 +529,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to List Purchase Return.
+        /// </summary>
+        public static string ListPurchaseReturn {
+            get {
+                return ResourceManager.GetString("ListPurchaseReturn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to List Sale.
         /// </summary>
         public static string ListSale {
@@ -507,6 +552,15 @@ namespace Inventory {
         public static string ListSaleOrder {
             get {
                 return ResourceManager.GetString("ListSaleOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List Sale Return.
+        /// </summary>
+        public static string ListSaleReturn {
+            get {
+                return ResourceManager.GetString("ListSaleReturn", resourceCulture);
             }
         }
         
@@ -745,6 +799,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Purchase Return List.
+        /// </summary>
+        public static string PurchaseReturnList {
+            get {
+                return ResourceManager.GetString("PurchaseReturnList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Qty.
         /// </summary>
         public static string Qty {
@@ -786,6 +849,24 @@ namespace Inventory {
         public static string ReturnChange {
             get {
                 return ResourceManager.GetString("ReturnChange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Return Qty.
+        /// </summary>
+        public static string ReturnQty {
+            get {
+                return ResourceManager.GetString("ReturnQty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Return Voucher No..
+        /// </summary>
+        public static string ReturnVoucherNo {
+            get {
+                return ResourceManager.GetString("ReturnVoucherNo", resourceCulture);
             }
         }
         
@@ -835,6 +916,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sale Return List.
+        /// </summary>
+        public static string SaleReturnList {
+            get {
+                return ResourceManager.GetString("SaleReturnList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string Save {
@@ -867,6 +957,24 @@ namespace Inventory {
         public static string Settings {
             get {
                 return ResourceManager.GetString("Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stock Status.
+        /// </summary>
+        public static string StockStatus {
+            get {
+                return ResourceManager.GetString("StockStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stock Status By Location.
+        /// </summary>
+        public static string StockStatusByLocation {
+            get {
+                return ResourceManager.GetString("StockStatusByLocation", resourceCulture);
             }
         }
         
@@ -948,6 +1056,24 @@ namespace Inventory {
         public static string TotalPay {
             get {
                 return ResourceManager.GetString("TotalPay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total Purchase Items.
+        /// </summary>
+        public static string TotalPurchaseItems {
+            get {
+                return ResourceManager.GetString("TotalPurchaseItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total Sale Items.
+        /// </summary>
+        public static string TotalSaleItems {
+            get {
+                return ResourceManager.GetString("TotalSaleItems", resourceCulture);
             }
         }
         
