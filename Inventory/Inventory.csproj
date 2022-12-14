@@ -440,6 +440,7 @@
     <Compile Include="ViewModels\PurchaseViewModel.cs" />
     <Compile Include="ViewModels\SaleOrderViewModel.cs" />
     <Compile Include="ViewModels\SaleViewModel.cs" />
+    <Compile Include="ViewModels\StockStatusViewModel.cs" />
     <Compile Include="ViewModels\TransferViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -631,7 +632,6 @@
     <Content Include="Views\CustomerConsign\_CustomerConsignDetailDialog.cshtml" />
     <Content Include="Views\CustomerConsign\_CustomerConsignRemarkDialog.cshtml" />
     <Content Include="Views\StockStatus\StockStatusLocation.cshtml" />
-    <Content Include="Views\StockStatus\StockStatusModule.cshtml" />
     <Content Include="Views\SaleReturn\SaleReturn.cshtml" />
     <Content Include="Views\SaleReturn\ListSaleReturn.cshtml" />
     <Content Include="Views\PurchaseReturn\PurchaseReturn.cshtml" />

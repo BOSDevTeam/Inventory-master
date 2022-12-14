@@ -271,7 +271,7 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) responseUnSuccessful(response);
                     else fillSelectedProductData(response, productId);
                 },
                 failure: function (response) {

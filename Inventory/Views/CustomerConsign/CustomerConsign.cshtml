@@ -72,7 +72,7 @@
                     @Html.DropDownList("Unit", Model.Units, new { @id = "ddlUnit", @class = "form-control control-input" })
                 </div>
                 <div class="col-md-2 col-lg-2"></div>
-                <div class="col-md-2 col-lg-2">
+                <div id="divTranBtn" class="col-md-2 col-lg-2 aligh-right">
                     <button id="btnAdd" class="btn btn-second">@Resource.Add</button>
                     <button id="btnEdit" class="btn btn-third">@Resource.Edit</button>
                 </div>
@@ -140,7 +140,7 @@
         let extraHeight = 20;
         let customerConsignAreaHeight = windowHeight - (thingsHeight + extraHeight);
         let customerConsignChildHeight = customerConsignAreaHeight - 100;  // 100 is top component
-        let customerConsignTranHeight = customerConsignChildHeight - 35 - 40;  // 135 is bottom component and 40 is extra
+        let customerConsignTranHeight = customerConsignChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra
         document.getElementById('divCustomerConsign').setAttribute("style", "height:" + customerConsignAreaHeight + "px");
         document.getElementById('divCustomerConsignChild').setAttribute("style", "height:" + customerConsignChildHeight + "px");
         document.getElementById('divCustomerConsignTran').setAttribute("style", "height:" + customerConsignTranHeight + "px");
@@ -174,14 +174,17 @@
             $("#ddlDivision").val(defaultDivisionId);
             $("#ddlSalePerson").val(defaultSalePersonId);
             $('#inputVoucherID').val("");
-            $("#dDueDate").val("");
-            $("#txtRemarkNote").val("");
+            
         }
         function showHideUnit() {
             if (isMultiUnit == "True") {
                 createDefaultUnit();
                 $("#divUnit").show();
-            } else $('#divUnit').css("display", "none");
+            } else
+            {
+                $('#divUnit').css("display", "none");
+                $('#divTranBtn').addClass("col-md-6 col-lg-6");
+            }
         }
         function createDefaultUnit() {
             let unit;
@@ -201,14 +204,22 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (!response.IsExistProduct)
-                            showToast(0, 'Not found product with this code!');
-                        else {
-                            $("#inputProductID").val(response.ProductID);
-                            $("#inputProductName").val(response.ProductName);
-                            $("#inputQuantity").val('1');
-                            createUnitData(response);
-                            showHideTranCustomerConsignAddEdit(false);
+                        if (!response.ResultDefaultData.IsRequestSuccess) {
+                            responseUnSuccessful(response);
+                        }
+                        else
+                        {
+                            if (!response.IsExistProduct)
+                            {
+                                showToast(0, '@Inventory.Common.AppConstants.Message.NoProductByCode');
+                            }
+                            else {
+                                $("#inputProductID").val(response.ProductID);
+                                $("#inputProductName").val(response.ProductName);
+                                $("#inputQuantity").val('1');
+                                createUnitData(response);
+                                showHideTranCustomerConsignAddEdit(false);
+                            }
                         }
                     },
                     failure: function (response) {
@@ -235,7 +246,9 @@
                     success: function (response) {
                         hideLoadingIcon();
                         if (response.length == 0)
-                            showToast(0, 'Not found product!');
+                        {
+                            showToast(0, '@Inventory.Common.AppConstants.Message.NoProduct');
+                        }                           
                         else {
                             createSearchProductData(response);
                             $('#modalSearchProduct').modal('show');
@@ -304,8 +317,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess)
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
                     else fillSelectedProductData(response, productId);
                 },
                 failure: function (response) {
@@ -446,8 +459,9 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess)
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
+                    }
                     else {
                         $("#inputNumber").val(number);
                         $("#inputProductID").val(response.ProductID);
@@ -481,7 +495,8 @@
                 success: function (response) {
                     hideLoadingIcon();
                     clearProductControl();
-                    AssignDefaultSelectedId();
+                    $("#dDueDate").val("");
+                    $("#txtRemarkNote").val("");
                     $("#tblTranCustomerConsign").find("tbody").empty();
                 },
                 failure: function (response) {
@@ -494,7 +509,6 @@
                 }
             });
         });
-
         $("#btnContinue").click(function (e) {
             let row = $("#tblTranCustomerConsign tbody tr").length;
             if (row < 1) return;
@@ -527,13 +541,19 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    showToast(1, 'Customer Consign Successful!');
                     $('#modalRemark').modal('hide');
-                    clearProductControl();
-                    $("#tblTranCustomerConsign").find("tbody").empty();
-                    $("#lblUserVoucherNo").text(response.UserVoucherNo);
-                    $('#inputDate').val(getTodayDate());
-                    AssignDefaultSelectedId();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                    {
+                        responseUnSuccessful(response);
+                    }
+                    else {
+                        showToast(1, response.ResultDefaultData.Message);
+                        clearProductControl();
+                        $("#tblTranCustomerConsign").find("tbody").empty();
+                        $("#lblUserVoucherNo").text(response.UserVoucherNo);
+                        $('#inputDate').val(getTodayDate());
+                        AssignDefaultSelectedId();
+                    }
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -594,9 +614,9 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        alert("Session Expired!");
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        $('#modalRemark').modal('hide');
+                        responseUnSuccessful(response);
                     }
                     else {
                         window.location.href = '@Url.Action("ListCustomerConsign", "CustomerConsign")?userId=' + userId;
