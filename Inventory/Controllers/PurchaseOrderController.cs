@@ -9,6 +9,7 @@ using Inventory.Common;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
+using Inventory.Filters;
 
 namespace Inventory.Controllers
 {
@@ -23,12 +24,14 @@ namespace Inventory.Controllers
         AppSetting.Paging paging = new AppSetting.Paging();
 
         #region page
+        [SessionTimeoutAttribute]
         public ActionResult PurchaseOrder(int userId, int? purOrderId)
         {
             if (checkConnection())
             {
                 getSupplier(false);
                 getLocation();
+                getUnit();
                 getMainMenu();
                 getSubMenu(getFirstMainMenuID());
                 getProduct(getFirstSubMenuID());
@@ -64,6 +67,7 @@ namespace Inventory.Controllers
             return RedirectToAction("Login", "User");
         }
 
+        [SessionTimeoutAttribute]
         public ActionResult ListPurchaseOrder(int userId)
         {
             getSupplier(true);
@@ -84,55 +88,62 @@ namespace Inventory.Controllers
         public JsonResult SaveAction(string userVoucherNo, string date, string voucherId, int userId, int supplierId, int locationId,
             int subtotal, int tax, int taxAmt, int charges, int chargesAmt, int total)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["TranPurchaseOrderData"] != null)
             {
-                List<TranPurchaseOrderModels> list = Session["TranPurchaseOrderData"] as List<TranPurchaseOrderModels>;
-                DataTable dt = new DataTable();
-                dt.Columns.Add("ProductID", typeof(int));
-                dt.Columns.Add("Quantity", typeof(int));
-                dt.Columns.Add("UnitID", typeof(int));
-                dt.Columns.Add("PurPrice", typeof(int));
-                dt.Columns.Add("CurrencyID", typeof(int));
-                dt.Columns.Add("Amount", typeof(int));
-                dt.Columns.Add("IsFOC", typeof(bool));
-                for (int i = 0; i < list.Count(); i++)
+                try
                 {
-                    dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurPrice, list[i].CurrencyID, list[i].Amount, list[i].IsFOC);
+                    resultDefaultData.IsRequestSuccess = true;
+                    List<TranPurchaseOrderModels> list = Session["TranPurchaseOrderData"] as List<TranPurchaseOrderModels>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add("ProductID", typeof(int));
+                    dt.Columns.Add("Quantity", typeof(int));
+                    dt.Columns.Add("UnitID", typeof(int));
+                    dt.Columns.Add("PurPrice", typeof(int));
+                    dt.Columns.Add("CurrencyID", typeof(int));
+                    dt.Columns.Add("Amount", typeof(int));
+                    dt.Columns.Add("IsFOC", typeof(bool));
+                    for (int i = 0; i < list.Count(); i++)
+                    {
+                        dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurPrice, list[i].CurrencyID, list[i].Amount, list[i].IsFOC);
+                    }
+
+                    DateTime purOrderDateTime = DateTime.Parse(date);
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcInsertPurchaseOrder, dataConnectorSQL.Connect());
+                    cmd.Parameters.AddWithValue("@OrderDateTime", purOrderDateTime);
+                    cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@SupplierID", supplierId);
+                    cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@Subtotal", subtotal);
+                    cmd.Parameters.AddWithValue("@Tax", tax);
+                    cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
+                    cmd.Parameters.AddWithValue("@Charges", charges);
+                    cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
+                    cmd.Parameters.AddWithValue("@Total", total);
+                    cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.PurchaseOrderModule);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read()) userVoucherNo = Convert.ToString(reader[0]);
+                    reader.Close();
+                    dataConnectorSQL.Close();
+                    clearTranPurchaseOrder();
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
                 }
 
-                DateTime purOrderDateTime = DateTime.Parse(date);
-                SqlCommand cmd = new SqlCommand(Procedure.PrcInsertPurchaseOrder, dataConnectorSQL.Connect());
-                cmd.Parameters.AddWithValue("@OrderDateTime", purOrderDateTime);
-                cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
-                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
-                cmd.Parameters.AddWithValue("@UserID", userId);
-                cmd.Parameters.AddWithValue("@SupplierID", supplierId);
-                cmd.Parameters.AddWithValue("@LocationID", locationId);
-                cmd.Parameters.AddWithValue("@Subtotal", subtotal);
-                cmd.Parameters.AddWithValue("@Tax", tax);
-                cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
-                cmd.Parameters.AddWithValue("@Charges", charges);
-                cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
-                cmd.Parameters.AddWithValue("@Total", total);
-                cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.PurchaseOrderModule);
-                cmd.Parameters.AddWithValue("@temptbl", dt);
-                cmd.CommandType = CommandType.StoredProcedure;
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read()) userVoucherNo = Convert.ToString(reader[0]);
-                reader.Close();
-                dataConnectorSQL.Close();
-                clearTranPurchaseOrder();
             }
-            else
-            {
-                isRequestSuccess = false;
-            }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 UserVoucherNo = userVoucherNo,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -141,44 +152,54 @@ namespace Inventory.Controllers
         public JsonResult EditAction(int purOrderId, string date, string voucherId, int supplierId, int locationId,
             int subtotal, int taxAmt, int chargesAmt, int total)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["TranPurchaseOrderData"] != null)
             {
-                List<TranPurchaseOrderModels> list = Session["TranPurchaseOrderData"] as List<TranPurchaseOrderModels>;
-                DataTable dt = new DataTable();
-                dt.Columns.Add("ProductID", typeof(int));
-                dt.Columns.Add("Quantity", typeof(int));
-                dt.Columns.Add("UnitID", typeof(int));
-                dt.Columns.Add("PurPrice", typeof(int));
-                dt.Columns.Add("CurrencyID", typeof(int));
-                dt.Columns.Add("Amount", typeof(int));
-                dt.Columns.Add("IsFOC", typeof(int));
-                for (int i = 0; i < list.Count(); i++)
+                try
                 {
-                    dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurPrice, list[i].CurrencyID, list[i].Amount, list[i].IsFOC);
+                    resultDefaultData.IsRequestSuccess = true;
+                    List<TranPurchaseOrderModels> list = Session["TranPurchaseOrderData"] as List<TranPurchaseOrderModels>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add("ProductID", typeof(int));
+                    dt.Columns.Add("Quantity", typeof(int));
+                    dt.Columns.Add("UnitID", typeof(int));
+                    dt.Columns.Add("PurPrice", typeof(int));
+                    dt.Columns.Add("CurrencyID", typeof(int));
+                    dt.Columns.Add("Amount", typeof(int));
+                    dt.Columns.Add("IsFOC", typeof(int));
+                    for (int i = 0; i < list.Count(); i++)
+                    {
+                        dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurPrice, list[i].CurrencyID, list[i].Amount, list[i].IsFOC);
+                    }
+
+                    DateTime purOrderDateTime = DateTime.Parse(date);
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcUpdatePurchaseOrder, (SqlConnection)dataConnectorSQL.Connect());
+                    cmd.Parameters.AddWithValue("@PurchaseOrderID", purOrderId);
+                    cmd.Parameters.AddWithValue("@OrderDateTime", purOrderDateTime);
+                    cmd.Parameters.AddWithValue("@SupplierID", supplierId);
+                    cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
+                    cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
+                    cmd.Parameters.AddWithValue("@Subtotal", subtotal);
+                    cmd.Parameters.AddWithValue("@Total", total);
+                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                    dataConnectorSQL.Close();
+                    clearTranPurchaseOrder();
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
                 }
 
-                DateTime purOrderDateTime = DateTime.Parse(date);
-                SqlCommand cmd = new SqlCommand(Procedure.PrcUpdatePurchaseOrder, (SqlConnection)dataConnectorSQL.Connect());
-                cmd.Parameters.AddWithValue("@PurchaseOrderID", purOrderId);
-                cmd.Parameters.AddWithValue("@OrderDateTime", purOrderDateTime);
-                cmd.Parameters.AddWithValue("@SupplierID", supplierId);
-                cmd.Parameters.AddWithValue("@LocationID", locationId);
-                cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
-                cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
-                cmd.Parameters.AddWithValue("@Subtotal", subtotal);
-                cmd.Parameters.AddWithValue("@Total", total);
-                cmd.Parameters.AddWithValue("@VoucherID", voucherId);
-                cmd.Parameters.AddWithValue("@temptbl", dt);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.ExecuteNonQuery();
-                dataConnectorSQL.Close();
-                clearTranPurchaseOrder();
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             var jsonResult = new
             {
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -189,7 +210,8 @@ namespace Inventory.Controllers
         {
             List<TranPurchaseOrderModels> lstTranPurchaseOrder = new List<TranPurchaseOrderModels>();
             TranPurchaseOrderModels data = new TranPurchaseOrderModels();
-            int subtotal = 0, totalQuantity = 0; bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            int subtotal = 0, totalQuantity = 0;
             data.ProductID = productId;
             data.ProductName = productName;
             data.ProductCode = productCode;
@@ -207,22 +229,32 @@ namespace Inventory.Controllers
             {
                 if (Session["TranPurchaseOrderData"] != null)
                 {
+
                     lstTranPurchaseOrder = Session["TranPurchaseOrderData"] as List<TranPurchaseOrderModels>;
                     lstTranPurchaseOrder.Add(data);
                 }
-                else
-                {
-                    lstTranPurchaseOrder.Add(data);
-                }
+                else lstTranPurchaseOrder.Add(data);
+                resultDefaultData.IsRequestSuccess = true;
+
             }
             else {
                 if (Session["TranPurchaseOrderData"] != null)
                 {
-                    lstTranPurchaseOrder = Session["TranPurchaseOrderData"] as List<TranPurchaseOrderModels>;
-                    int index = (int)number - 1;
-                    lstTranPurchaseOrder[index] = data;
+                    try
+                    {
+                        resultDefaultData.IsRequestSuccess = true;
+                        lstTranPurchaseOrder = Session["TranPurchaseOrderData"] as List<TranPurchaseOrderModels>;
+                        int index = (int)number - 1;
+                        lstTranPurchaseOrder[index] = data;
+                    }
+                    catch (Exception ex)
+                    {
+                        resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                        resultDefaultData.Message = ex.Message;
+                    }
+
                 }
-                else isRequestSuccess = false;
+                else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             }
             for (int i = 0; i< lstTranPurchaseOrder.Count(); i++)
@@ -235,7 +267,7 @@ namespace Inventory.Controllers
             {
                 SubTotal = subtotal,
                 TotalQuantity = totalQuantity,
-                IsRequestSuccess = isRequestSuccess,
+                ResultDefaultData = resultDefaultData,
                 LstTranPurchaseOrder = lstTranPurchaseOrder
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -245,34 +277,45 @@ namespace Inventory.Controllers
         {
             List<TranPurchaseOrderModels> lstTranPurchaseOrder = new List<TranPurchaseOrderModels>();
             TranPurchaseOrderModels data = new TranPurchaseOrderModels();
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             string productCode = "", productName = "";
             int productId = 0, quantity = 0, price = 0;
             int? unitId = 0, currencyId = 0;
             List<UnitModels> lstUnit = new List<UnitModels>();
             List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
-            bool isRequestSuccess = false, isFOC = false;
+            bool isFOC = false;
             if (Session["TranPurchaseOrderData"] != null)
             {
-                lstTranPurchaseOrder = Session["TranPurchaseOrderData"] as List<TranPurchaseOrderModels>;
-                if (lstTranPurchaseOrder.Count() != 0)
+                try
                 {
-                    data = lstTranPurchaseOrder[number - 1];
-                    if (data !=null)
+                    lstTranPurchaseOrder = Session["TranPurchaseOrderData"] as List<TranPurchaseOrderModels>;
+                    if (lstTranPurchaseOrder.Count() != 0)
                     {
-                        productId = data.ProductID;
-                        productCode = data.ProductCode;
-                        productName = data.ProductName;
-                        quantity = data.Quantity;
-                        price = data.PurPrice;
-                        unitId = data.UnitID;
-                        currencyId = data.CurrencyID;
-                        if (isMultiUnit) lstUnit = getUnit();
-                        if (isMultiCurrency) lstCurrency = getCurrency();
-                        isFOC = data.IsFOC;
-                        isRequestSuccess = true;
+                        data = lstTranPurchaseOrder[number - 1];
+                        if (data != null)
+                        {
+                            productId = data.ProductID;
+                            productCode = data.ProductCode;
+                            productName = data.ProductName;
+                            quantity = data.Quantity;
+                            price = data.PurPrice;
+                            unitId = data.UnitID;
+                            currencyId = data.CurrencyID;
+                            if (isMultiUnit) lstUnit = getUnit();
+                            if (isMultiCurrency) lstCurrency = getCurrency();
+                            isFOC = data.IsFOC;
+                            resultDefaultData.IsRequestSuccess = true;
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+
             }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
@@ -286,7 +329,7 @@ namespace Inventory.Controllers
                 LstUnit = lstUnit,
                 LstCurrency = lstCurrency,
                 IsFOC = isFOC,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
@@ -310,18 +353,27 @@ namespace Inventory.Controllers
             int purchasePrice = 0;
             List<UnitModels> lstUnit = new List<UnitModels>();
             List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
-            bool isRequestSuccess = false;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["SearchProductData"] != null)
             {
-                List<ProductModels.ProductModel> list = Session["SearchProductData"] as List<ProductModels.ProductModel>;
-                var result = list.Where(p => p.ProductID == productId).SingleOrDefault();
-                productName = result.ProductName;
-                code = result.Code;
-                purchasePrice = result.PurchasePrice;
-                if (isMultiUnit) lstUnit = getUnit();
-                if (isMultiCurrency) lstCurrency = getCurrency();
-                isRequestSuccess = true;
+                try
+                {
+                    List<ProductModels.ProductModel> list = Session["SearchProductData"] as List<ProductModels.ProductModel>;
+                    var result = list.Where(p => p.ProductID == productId).SingleOrDefault();
+                    productName = result.ProductName;
+                    code = result.Code;
+                    purchasePrice = result.PurchasePrice;
+                    if (isMultiUnit) lstUnit = getUnit();
+                    if (isMultiCurrency) lstCurrency = getCurrency();
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             var jsonResult = new
             {
                 ProductName = productName,
@@ -329,7 +381,7 @@ namespace Inventory.Controllers
                 PurPrice = purchasePrice,
                 LstUnit = lstUnit,
                 LstCurrency = lstCurrency,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -371,17 +423,24 @@ namespace Inventory.Controllers
         public JsonResult TranPurOrderDeleteAction(int number)
         {
             List<TranPurchaseOrderModels> lstTranPurOrder = new List<TranPurchaseOrderModels>();
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             int subtotal = 0, totalQuantity = 0;
-            bool isRequestSuccess = true;
             if (Session["TranPurchaseOrderData"] != null)
             {
-                lstTranPurOrder = Session["TranPurchaseOrderData"] as List<TranPurchaseOrderModels>;
-                lstTranPurOrder.RemoveAt(number - 1);
+                try
+                {
+                    resultDefaultData.IsRequestSuccess = true;
+                    lstTranPurOrder = Session["TranPurchaseOrderData"] as List<TranPurchaseOrderModels>;
+                    lstTranPurOrder.RemoveAt(number - 1);
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+
             }
-            else
-            {
-                isRequestSuccess = false;
-            }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             for (int i = 0; i < lstTranPurOrder.Count(); i++)
             {
                 subtotal += lstTranPurOrder[i].Amount;
@@ -393,7 +452,7 @@ namespace Inventory.Controllers
                 LstTranPurchaseOrder = lstTranPurOrder,
                 SubTotal = subtotal,
                 TotalQuantity = totalQuantity,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -440,13 +499,24 @@ namespace Inventory.Controllers
             bool isRequestSuccess = true;
             List<PurchaseOrderViewModel.MasterPurchaseOrderModels> lstMasterPurOrder = new List<PurchaseOrderViewModel.MasterPurchaseOrderModels>();
             PagingViewModel pagingViewModel = new PagingViewModel();
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["MasterPurOrderData"] != null)
             {
-                List<PurchaseOrderViewModel.MasterPurchaseOrderModels> tempList = Session["MasterPurOrderData"] as List<PurchaseOrderViewModel.MasterPurchaseOrderModels>;
-                pagingViewModel = calcMasterPurOrderPaging(tempList, currentPage);
-                lstMasterPurOrder = getMasterPurOrderByPaging(tempList, paging.startItemIndex, paging.endItemIndex);
+                try
+                {
+                    resultDefaultData.IsRequestSuccess = true;
+                    List<PurchaseOrderViewModel.MasterPurchaseOrderModels> tempList = Session["MasterPurOrderData"] as List<PurchaseOrderViewModel.MasterPurchaseOrderModels>;
+                    pagingViewModel = calcMasterPurOrderPaging(tempList, currentPage);
+                    lstMasterPurOrder = getMasterPurOrderByPaging(tempList, paging.startItemIndex, paging.endItemIndex);
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
@@ -481,20 +551,30 @@ namespace Inventory.Controllers
 
         public JsonResult DeleteAction(int purOrderId)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["MasterPurOrderData"] != null)
             {
-                SqlCommand cmd = new SqlCommand(textQuery.deletePurchaseOrderQuery(purOrderId), (SqlConnection)getConnection());
-                cmd.CommandType = CommandType.Text;
-                cmd.ExecuteNonQuery();
-                List<PurchaseOrderViewModel.MasterPurchaseOrderModels> lstMasterPurOrder = Session["MasterPurOrderData"] as List<PurchaseOrderViewModel.MasterPurchaseOrderModels>;
-                int index = lstMasterPurOrder.FindIndex(p => p.PurchaseOrderID == purOrderId);
-                lstMasterPurOrder.RemoveAt(index);
+                try
+                {
+                    resultDefaultData.IsRequestSuccess = true;
+                    SqlCommand cmd = new SqlCommand(textQuery.deletePurchaseOrderQuery(purOrderId), (SqlConnection)getConnection());
+                    cmd.CommandType = CommandType.Text;
+                    cmd.ExecuteNonQuery();
+                    List<PurchaseOrderViewModel.MasterPurchaseOrderModels> lstMasterPurOrder = Session["MasterPurOrderData"] as List<PurchaseOrderViewModel.MasterPurchaseOrderModels>;
+                    int index = lstMasterPurOrder.FindIndex(p => p.PurchaseOrderID == purOrderId);
+                    lstMasterPurOrder.RemoveAt(index);
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             var jsonResult = new
             {
-                IsRequestSuccess = isRequestSuccess,
+                ResultDefaultData = resultDefaultData,
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }

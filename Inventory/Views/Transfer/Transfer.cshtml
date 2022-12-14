@@ -79,7 +79,7 @@
                 </div>
                 <div class="col-md-3 col-lg-3">
                 </div>
-                <div class="col-md-2 col-lg-2">
+                <div id ="divTranBtn" class="col-md-2 col-lg-2 aligh-right">
                     <button id="btnAdd" class="btn btn-second">@Resource.Add</button>
                     <button id="btnEdit" class="btn btn-third">@Resource.Edit</button>
                 </div>
@@ -200,7 +200,11 @@
                 createDefaultUnit();
                 $("#divUnit").show();
             }
-            else $('#divUnit').css("display", "none");
+            else {
+                $('#divUnit').css("display", "none");
+                $('#divTranBtn').addClass("col-md-5 col-lg-5");
+            }
+
         }
 
         function createDefaultUnit() {
@@ -248,7 +252,7 @@
                     success: function (response) {
                         hideLoadingIcon();
                         if (response.length == 0) {
-                            showToast(0, 'Not found product!');
+                            showToast(0, '@Inventory.Common.AppConstants.Message.NoProduct');
                         }
                         else {
                             createSearchProductData(response);
@@ -280,9 +284,8 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (!response.IsRequestSuccess) {
-                            redirectToLogin();
-                        }
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            responseUnSuccessful(response);
                         else {
                             fillSelectedProductData(response, productId);
                             $('#modalSearchProduct').modal('hide');
@@ -313,7 +316,7 @@
                     success: function (response) {
                         hideLoadingIcon();
                         if (!response.IsExistProduct) {
-                            showToast(0, 'Not found product!');
+                            showToast(0, '@Inventory.Common.AppConstants.Message.NoProductByCode');
                         }
                         else {
                             $("#inputProductID").val(response.ProductID);
@@ -368,9 +371,9 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (!response.IsRequestSuccess) {
-                            redirectToLogin();
-                        } else {
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            responseUnSuccessful(response);
+                        else {
                             createTranTransferData(response.LstTranTransfer);
                             createQty(response);
                             clearTransferControl();
@@ -439,7 +442,7 @@
             $("#modalRemarkTitle").text('@Resource.AddRemark');
             $("#lblRemark").text('@Resource.EnterNote');
             $('#modalRemark').modal('show');
-            
+
             $('#btnRemarkEdit').css("display", "none");
             $('#btnRemarkOk').show();
         })
@@ -466,11 +469,15 @@
                     hideLoadingIcon();
                     if (!response.IsRequestSuccess) {
                         $('#modalRemark').modal('hide');
-                        showToast(0, 'Not transfer same Location!');
+                        showToast(0, '@Inventory.Common.AppConstants.Message.NoTransferSameLocation');
+                    }
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        $('#modalRemark').modal('hide');
+                        responseUnSuccessful(response);
                     }
                     else {
                         $('#modalRemark').modal('hide');
-                        showToast(1, 'Saved Successfully!');
+                        showToast(1, '@Inventory.Common.AppConstants.Message.SaveSuccess');
                         $("#lblUserVoucherNo").text(response.UserVoucherNo);
                         $('#inputDate').val(getTodayDate());
                         $('#inputVoucherID').val("");
@@ -479,8 +486,7 @@
                         clearTransferControl();
                         $('#tblTranTransfer').find("tbody").empty();
                         $('#lblTotalQty').text('0');
-
-                    }
+                   }
 
                 },
                 failure: function (response) {
@@ -525,18 +531,16 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.Message) {
+                    if (!response.IsRequestSuccess) {
                         $('#modalRemark').modal('hide');
-                        showToast(0, 'Not transfer same Location!');
+                        showToast(0, '@Inventory.Common.AppConstants.Message.NoTransferSameLocation');
+                    }
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        $('#modalRemark').modal('hide');
+                        responseUnSuccessful(response);
                     }
                     else {
-                        if (!response.IsRequestSuccess) {
-                            alert("Session Expired!");
-                            redirectToLogin();
-                        }
-                        else {
-                            window.location.href = '@Url.Action("ListTransfer", "Transfer")?userId=' + userId;
-                        }
+                        window.location.href = '@Url.Action("ListTransfer", "Transfer")?userId=' + userId;
                     }
 
                 },
@@ -561,15 +565,18 @@
             showHideUnit();
             showHideTranTransferAddEdit(false);
         }
+
+        function fillSelectedProductData(response, productId) {
+            $("#inputProductID").val(productId);
+            $('#inputCode').val(response.Code);
+            $('#inputProductName').val(response.ProductName);
+            $('#inputQuantity').val('1');
+            createUnitData(response);
+            showHideTranTransferAddEdit(false);
+        }
     })
 
-    function fillSelectedProductData(response, productId) {
-        $("#inputProductID").val(productId);
-        $('#inputCode').val(response.Code);
-        $('#inputProductName').val(response.ProductName);
-        $('#inputQuantity').val('1');
-        createUnitData(response);
-    }
+
 
     function createUnitData(response) {
         let unit;
@@ -625,6 +632,7 @@
         $('#tblTranTransfer').find("tbody").empty();
         $.each(LstTranTransfer, function (i, item) {
             num += 1;
+            if (item.UnitKeyword == null) item.UnitKeyword = '';
             let row = '<tr class="row tran-table-item-row">'
                    + '<td style="display:none;">' + item.ProductID + '</td>'
                    + '<td class="col-md-5 col-lg-5"><label class="control-label mb-0 text-link text-overflow">' + item.ProductName + '</label></td>'
@@ -652,9 +660,8 @@
             dataType: "json",
             success: function (response) {
                 hideLoadingIcon();
-                if (!response.IsRequestSuccess) {
-                    redirectToLogin();
-                }
+                if (!response.ResultDefaultData.IsRequestSuccess)
+                    responseUnSuccessful(response);
                 else {
                     $("#inputNumber").val(number);
                     $("#inputProductID").val(response.ProductID);
@@ -687,7 +694,8 @@
             dataType: "json",
             success: function (response) {
                 hideLoadingIcon();
-                if (!response.IsRequestSuccess) redirectToLogin();
+                if (!response.ResultDefaultData.IsRequestSuccess)
+                    responseUnSuccessful(response);
                 else {
                     createTranTransferData(response.LstTranTransfer);
                     createQty(response);

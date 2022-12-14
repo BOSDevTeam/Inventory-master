@@ -144,9 +144,8 @@
                 dataType: "Json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        redirectToLogin();
-                    }
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
                     else {
                         createMasterSaleOrderData(response.LstMasterSaleOrder, true);
                         createPaging(response.TotalPage, currentPage);
@@ -200,8 +199,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
                     }
                     else {
                         if (selectedRowIndex != null) {

@@ -9,6 +9,7 @@ using Inventory.ViewModels;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
+using Inventory.Filters;
 
 namespace Inventory.Controllers
 {
@@ -22,6 +23,7 @@ namespace Inventory.Controllers
         AppSetting.Paging paging = new AppSetting.Paging();
         TextQuery textQuery = new TextQuery();
 
+        [SessionTimeoutAttribute]
         public ActionResult Transfer(int userId, int? transferId)
         {
             if (checkConnection()) {
@@ -62,6 +64,7 @@ namespace Inventory.Controllers
 
         }
 
+        [SessionTimeoutAttribute]
         public ActionResult ListTransfer(int userId)
         {
             List<TransferViewModel.MasterTransferModels> templist = selectMasterTransfer(userId,false);
@@ -110,20 +113,30 @@ namespace Inventory.Controllers
         {
             List<TransferViewModel.MasterTransferModels> lstMaterTransfer = new List<TransferViewModel.MasterTransferModels>();
             PagingViewModel pagingViewModel = new PagingViewModel();
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["MasterTransferData"] != null)
             {
-                List<TransferViewModel.MasterTransferModels> templist = Session["MasterTransferData"] as List<TransferViewModel.MasterTransferModels>;
-                pagingViewModel = calcMasterTransferPaging(templist, currentPage);
-                lstMaterTransfer = getMasterTransferByPaging(templist, paging.startItemIndex, paging.endItemIndex);
+                try
+                {
+                    resultDefaultData.IsRequestSuccess = true;
+                    List<TransferViewModel.MasterTransferModels> templist = Session["MasterTransferData"] as List<TransferViewModel.MasterTransferModels>;
+                    pagingViewModel = calcMasterTransferPaging(templist, currentPage);
+                    lstMaterTransfer = getMasterTransferByPaging(templist, paging.startItemIndex, paging.endItemIndex);
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
                 LstMasterTransfer = lstMaterTransfer,
                 TotalPage = pagingViewModel.TotalPageNum,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
@@ -150,20 +163,30 @@ namespace Inventory.Controllers
 
         public JsonResult DeleteAction(int transferId)
         {
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["MasterTransferData"] != null)
             {
-                SqlCommand cmd = new SqlCommand(textQuery.deleteTransferQuery(transferId), (SqlConnection)getConnection());
-                cmd.CommandType = CommandType.Text;
-                cmd.ExecuteNonQuery();
-                List<TransferViewModel.MasterTransferModels> lstMaterTransfer = Session["MasterTransferData"] as List<TransferViewModel.MasterTransferModels>;
-                int index = lstMaterTransfer.FindIndex(p => p.TransferID == transferId);
-                lstMaterTransfer.RemoveAt(index);
+                try
+                {
+                    resultDefaultData.IsRequestSuccess = true;
+                    SqlCommand cmd = new SqlCommand(textQuery.deleteTransferQuery(transferId), (SqlConnection)getConnection());
+                    cmd.CommandType = CommandType.Text;
+                    cmd.ExecuteNonQuery();
+                    List<TransferViewModel.MasterTransferModels> lstMaterTransfer = Session["MasterTransferData"] as List<TransferViewModel.MasterTransferModels>;
+                    int index = lstMaterTransfer.FindIndex(p => p.TransferID == transferId);
+                    lstMaterTransfer.RemoveAt(index);
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             var jsonResult = new
             {
-                IsRequestSuccess = isRequestSuccess,
+                ResultDefaultData = resultDefaultData,
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
@@ -177,22 +200,32 @@ namespace Inventory.Controllers
             List<TranTransferModels> list = new List<TranTransferModels>();
             TranTransferModels data = new TranTransferModels();
             List<UnitModels> lstUnit = new List<UnitModels>();
-            bool isRequestSuccess = false;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["TranTransferData"] != null)
             {
-                list = Session["TranTransferData"] as List<TranTransferModels>;
-                if (list.Count != 0)
+                try
                 {
-                    data = list[number - 1];
-                    productId = data.ProductID;
-                    productName = data.ProductName;
-                    productCode = data.ProductCode;
-                    quantity = data.Quantity;
-                    unitId = data.UnitID;
-                    if (isMultiUnit) lstUnit = getUnit();
-                    isRequestSuccess = true;
+                    list = Session["TranTransferData"] as List<TranTransferModels>;
+                    if (list.Count != 0)
+                    {
+                        data = list[number - 1];
+                        productId = data.ProductID;
+                        productName = data.ProductName;
+                        productCode = data.ProductCode;
+                        quantity = data.Quantity;
+                        unitId = data.UnitID;
+                        if (isMultiUnit) lstUnit = getUnit();
+                        resultDefaultData.IsRequestSuccess = true;
+                    }
                 }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+
             }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
@@ -202,7 +235,7 @@ namespace Inventory.Controllers
                 Quantity = quantity,
                 UnitID = unitId,
                 LstUnit = lstUnit,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
@@ -211,7 +244,8 @@ namespace Inventory.Controllers
         {
             List<TranTransferModels> list = new List<TranTransferModels>();
             TranTransferModels data = new TranTransferModels();
-            int totalQuantity = 0; bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            int totalQuantity = 0;
             data.ProductID = productId;
             data.ProductCode = productCode;
             data.ProductName = productName;
@@ -222,26 +256,40 @@ namespace Inventory.Controllers
             {
                 if (Session["TranTransferData"] != null)
                 {
-                    list = Session["TranTransferData"] as List<TranTransferModels>;
-                    list.Add(data);
+                    try
+                    {
+                        list = Session["TranTransferData"] as List<TranTransferModels>;
+                        list.Add(data);
+                    }
+                    catch (Exception ex)
+                    {
+                        resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                        resultDefaultData.Message = ex.Message;
+                    }
+
                 }
-                else
-                {
-                    list.Add(data);
-                }
+                else list.Add(data);
+                resultDefaultData.IsRequestSuccess = true;
             }
             else
             {
                 if (Session["TranTransferData"] != null)
                 {
-                    list = Session["TranTransferData"] as List<TranTransferModels>;
-                    int index = (int)number - 1;
-                    list[index] = data;
+                    try
+                    {
+                        resultDefaultData.IsRequestSuccess = true;
+                        list = Session["TranTransferData"] as List<TranTransferModels>;
+                        int index = (int)number - 1;
+                        list[index] = data;
+                    }
+                    catch (Exception ex)
+                    {
+                        resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                        resultDefaultData.Message = ex.Message;
+                    }
+
                 }
-                else
-                {
-                    isRequestSuccess = false;
-                }
+                else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             }
 
             for (int i=0; i<list.Count; i++)
@@ -254,7 +302,7 @@ namespace Inventory.Controllers
             {
                 TotalQuantity = totalQuantity,
                 LstTranTransfer = list,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
 
             };
 
@@ -264,14 +312,24 @@ namespace Inventory.Controllers
         public JsonResult TransferDeleteAction(int number)
         {
             List<TranTransferModels> list = new List<TranTransferModels>();
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             int totalQuantity = 0;
-            bool isRequestSuccess = true;
             if (Session["TranTransferData"] != null)
             {
-                list = Session["TranTransferData"] as List<TranTransferModels>;
-                list.RemoveAt(number -1);
+                try
+                {
+                    resultDefaultData.IsRequestSuccess = true;
+                    list = Session["TranTransferData"] as List<TranTransferModels>;
+                    list.RemoveAt(number - 1);
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             for (int i = 0; i < list.Count; i++)
             {
                 totalQuantity += list[i].Quantity;
@@ -282,7 +340,7 @@ namespace Inventory.Controllers
             var JsonResult = new
             {
                 TotalQuantity = totalQuantity,
-                IsRequestSuccess = isRequestSuccess,
+                ResultDefaultData = resultDefaultData,
                 LstTranTransfer = list
 
             };
@@ -293,44 +351,55 @@ namespace Inventory.Controllers
             int userId, int totalQty, string remark)
         {
             bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (formLocation != toLocation)
             {
+
                 if (Session["TranTransferData"] != null)
                 {
-                    List<TranTransferModels> list = Session["TranTransferData"] as List<TranTransferModels>;
-                    DataTable dt = new DataTable();
-                    dt.Columns.Add("TransferID", typeof(int));
-                    dt.Columns.Add("ProductID", typeof(int));
-                    dt.Columns.Add("Quantity", typeof(int));
-                    dt.Columns.Add("UnitID", typeof(int));
-                    for (int i = 0; i<list.Count; i++)
+                    try
                     {
-                        dt.Rows.Add(list[i].TransferID, list[i].ProductID, list[i].Quantity, list[i].UnitID);
-                    }
+                        resultDefaultData.IsRequestSuccess = true;
+                        List<TranTransferModels> list = Session["TranTransferData"] as List<TranTransferModels>;
+                        DataTable dt = new DataTable();
+                        dt.Columns.Add("TransferID", typeof(int));
+                        dt.Columns.Add("ProductID", typeof(int));
+                        dt.Columns.Add("Quantity", typeof(int));
+                        dt.Columns.Add("UnitID", typeof(int));
+                        for (int i = 0; i < list.Count; i++)
+                        {
+                            dt.Rows.Add(list[i].TransferID, list[i].ProductID, list[i].Quantity, list[i].UnitID);
+                        }
 
-                    DateTime transferDateTime = DateTime.Parse(date);
-                    SqlCommand cmd = new SqlCommand(Procedure.PrcInsertTransfer, (SqlConnection)dataConnectorSQL.Connect());
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@FromLocationID", formLocation);
-                    cmd.Parameters.AddWithValue("@ToLocationID", toLocation);
-                    cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
-                    cmd.Parameters.AddWithValue("@TransferDateTime", date);
-                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
-                    cmd.Parameters.AddWithValue("@UserID", userId);
-                    cmd.Parameters.AddWithValue("@TotalQuantity", totalQty);
-                    cmd.Parameters.AddWithValue("@Remark", remark);
-                    cmd.Parameters.AddWithValue("@temptbl", dt);
-                    cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.TransferModule);
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    if (reader.Read())
-                    {
-                        userVoucherNo = Convert.ToString(reader[0]);
-                        reader.Close();
+                        DateTime transferDateTime = DateTime.Parse(date);
+                        SqlCommand cmd = new SqlCommand(Procedure.PrcInsertTransfer, (SqlConnection)dataConnectorSQL.Connect());
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@FromLocationID", formLocation);
+                        cmd.Parameters.AddWithValue("@ToLocationID", toLocation);
+                        cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+                        cmd.Parameters.AddWithValue("@TransferDateTime", date);
+                        cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                        cmd.Parameters.AddWithValue("@UserID", userId);
+                        cmd.Parameters.AddWithValue("@TotalQuantity", totalQty);
+                        cmd.Parameters.AddWithValue("@Remark", remark);
+                        cmd.Parameters.AddWithValue("@temptbl", dt);
+                        cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.TransferModule);
+                        SqlDataReader reader = cmd.ExecuteReader();
+                        if (reader.Read())
+                        {
+                            userVoucherNo = Convert.ToString(reader[0]);
+                            reader.Close();
+                        }
+                        dataConnectorSQL.Close();
+                        clearTranTransfer();
                     }
-                    dataConnectorSQL.Close();
-                    clearTranTransfer();
-                    
+                    catch (Exception ex)
+                    {
+                        resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                        resultDefaultData.Message = ex.Message;
+                    }
                 }
+                else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             }
             else
@@ -341,6 +410,7 @@ namespace Inventory.Controllers
             var jsonResult = new
             {
                 UserVoucherNo = userVoucherNo,
+                ResultDefaultData = resultDefaultData,
                 IsRequestSuccess = isRequestSuccess
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -348,48 +418,55 @@ namespace Inventory.Controllers
 
         public JsonResult EditAction(int transferId, string date, string voucherId, int formLocation, int toLocation, int totalQty, string remark)
         {
-            bool message = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             bool isRequestSuccess = true;
             if (formLocation != toLocation)
             {
                 if (Session["TranTransferData"] != null)
                 {
-                    List<TranTransferModels> list = Session["TranTransferData"] as List<TranTransferModels>;
-                    DataTable dt = new DataTable();
-                    dt.Columns.Add("TransferID", typeof(int));
-                    dt.Columns.Add("ProductID", typeof(int));
-                    dt.Columns.Add("Quantity", typeof(int));
-                    dt.Columns.Add("UnitID", typeof(int));
-                    for (int i = 0; i < list.Count; i++)
+                    try
                     {
-                        dt.Rows.Add(list[i].TransferID, list[i].ProductID, list[i].Quantity, list[i].UnitID);
+                        resultDefaultData.IsRequestSuccess = true;
+                        List<TranTransferModels> list = Session["TranTransferData"] as List<TranTransferModels>;
+                        DataTable dt = new DataTable();
+                        dt.Columns.Add("TransferID", typeof(int));
+                        dt.Columns.Add("ProductID", typeof(int));
+                        dt.Columns.Add("Quantity", typeof(int));
+                        dt.Columns.Add("UnitID", typeof(int));
+                        for (int i = 0; i < list.Count; i++)
+                        {
+                            dt.Rows.Add(list[i].TransferID, list[i].ProductID, list[i].Quantity, list[i].UnitID);
+                        }
+
+                        DateTime transferDateTime = DateTime.Parse(date);
+                        SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateTransfer, (SqlConnection)dataConnectorSQL.Connect());
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@TransferID", transferId);
+                        cmd.Parameters.AddWithValue("@FromLocationID", formLocation);
+                        cmd.Parameters.AddWithValue("@ToLocationID", toLocation);
+                        cmd.Parameters.AddWithValue("@TransferDateTime", date);
+                        cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                        cmd.Parameters.AddWithValue("@TotalQuantity", totalQty);
+                        cmd.Parameters.AddWithValue("@Remark", remark);
+                        cmd.Parameters.AddWithValue("@temptbl", dt);
+                        cmd.ExecuteNonQuery();
+                        dataConnectorSQL.Close();
+                        clearTranTransfer();
+                    }
+                    catch (Exception ex)
+                    {
+                        resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                        resultDefaultData.Message = ex.Message;
                     }
 
-                    DateTime transferDateTime = DateTime.Parse(date);
-                    SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateTransfer, (SqlConnection)dataConnectorSQL.Connect());
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@TransferID", transferId);
-                    cmd.Parameters.AddWithValue("@FromLocationID", formLocation);
-                    cmd.Parameters.AddWithValue("@ToLocationID", toLocation);
-                    cmd.Parameters.AddWithValue("@TransferDateTime", date);
-                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
-                    cmd.Parameters.AddWithValue("@TotalQuantity", totalQty);
-                    cmd.Parameters.AddWithValue("@Remark", remark);
-                    cmd.Parameters.AddWithValue("@temptbl", dt);
-                    cmd.ExecuteNonQuery();
-                    dataConnectorSQL.Close();
-                    clearTranTransfer();
                 }
-                else isRequestSuccess = false;
+                else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             }
-            else
-            {
-                message = false;
-            }
+            else isRequestSuccess = false;
 
             var jsonResult = new
             {
-                Message = message,
+                ResultDefaultData = resultDefaultData,
                 IsRequestSuccess = isRequestSuccess
             };
 
@@ -437,19 +514,29 @@ namespace Inventory.Controllers
         {
             string productName = "", code = "";
             List<UnitModels> lstUnit = new List<UnitModels>();
-            bool isRequestSuccess = false;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["SearchProductData"] != null)
             {
-                List<ProductModels.ProductModel> list = Session["SearchProductData"] as List<ProductModels.ProductModel>;
-                var result = list.Where(p => p.ProductID == productId).SingleOrDefault();
-                productName = result.ProductName;
-                code = result.Code;
-                if (isMultiUnit) lstUnit = getUnit();
-                isRequestSuccess = true;
+                try
+                {
+                    resultDefaultData.IsRequestSuccess = true;
+                    List<ProductModels.ProductModel> list = Session["SearchProductData"] as List<ProductModels.ProductModel>;
+                    var result = list.Where(p => p.ProductID == productId).SingleOrDefault();
+                    productName = result.ProductName;
+                    code = result.Code;
+                    if (isMultiUnit) lstUnit = getUnit();
+
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             var jsonResult = new
             {
-                IsRequestSuccess = isRequestSuccess,
+                ResultDefaultData = resultDefaultData,
                 ProductName = productName,
                 Code = code,
                 LstUnit = lstUnit

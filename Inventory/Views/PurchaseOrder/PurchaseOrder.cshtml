@@ -49,8 +49,8 @@
                 <div class="col-md-5 col-lg-5">
                     <input id="inputProductName" type="text" class="form-control control-input" placeholder="@Resource.ProductName" disabled />
                 </div>
-                <div class="col-md-2 col-lg-2">
-                    <input id="inputQuantity" type="text" class="form-control control-input input-field numberonly" placeholder="@Resource.Qty" />
+                <div id="divQuantity" class="col-md-2 col-lg-2">
+                    <input id="inputQuantity" type="text" class="form-control control-input numberonly" placeholder="@Resource.Qty" />
                 </div>
                 <div id="divUnit" class="col-md-2 col-lg-2">
                     @Html.DropDownList("Unit", Model.Units, new { @id = "ddlUnit", @class = "form-control control-input" })
@@ -67,7 +67,7 @@
                 <div class="col-md-2 col-lg-2" style="display:none;">
                     <input id="chkItemFOC" type="checkbox" /> <span>&nbsp;&nbsp;@Resource.FOC</span>
                 </div>
-                <div class="col-md-2 col-lg-2">
+                <div id="divTranBtn" class="col-md-2 col-lg-2 aligh-right">
                     <button id="btnAdd" class="btn btn-second">@Resource.Add</button>
                     <button id="btnEdit" class="btn btn-third">@Resource.Edit</button>
                 </div>
@@ -279,7 +279,9 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (!response.IsRequestSuccess) redirectToLogin();
+                        if (!response.ResultDefaultData.IsRequestSuccess) {
+                            responseUnSuccessful(response);
+                        }
                         else {
                             createTranPurchaseOrderData(response.LstTranPurchaseOrder);
                             createAmount(response);
@@ -422,7 +424,7 @@
                     success: function (response) {
                         hideLoadingIcon();
                         if (!response.IsExistProduct) {
-                            showToast(0, 'Not found product with this code!');
+                            showToast(0, '@Inventory.Common.AppConstants.Message.NoProductByCode');
                         }
                         else {
                             $('#inputProductID').val(response.ProductID);
@@ -462,7 +464,7 @@
                     success: function (response) {
                         hideLoadingIcon();
                         if (response.length == 0) {
-                            showToast(0, 'Not found product!');
+                            showToast(0, '@Inventory.Common.AppConstants.Message.NoProduct');
                         }
                         else {
                             createSearchProductData(response);
@@ -505,8 +507,8 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (!response.IsRequestSuccess) {
-                            redirectToLogin();
+                        if (!response.ResultDefaultData.IsRequestSuccess) {
+                            responseUnSuccessful(response);
                         }
                         else {
                             fillSelectedProductData(response, productId);
@@ -552,8 +554,9 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess)
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
+                    }
                     else {
                         createTranPurchaseOrderData(response.LstTranPurchaseOrder);
                         createAmount(response);
@@ -580,7 +583,9 @@
                 dataTye: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
+                    }
                     else {
                         $("#inputNumber").val(number);
                         $("#inputProductID").val(response.ProductID);
@@ -635,9 +640,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        alert("Session Expired!");
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
                     }
                     else {
                         showToast(1, 'Saved Successfully!');
@@ -686,9 +690,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        alert("Session Expired!");
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
                     }
                     else {
                         window.location.href = '@Url.Action("ListPurchaseOrder", "PurchaseOrder")?userId=' + userId;
@@ -707,118 +710,125 @@
 
         })
 
+        function showHideUnit() {
+            if (isMultiUnit == "True") {
+                createDefaultUnit();
+                $("#divUnit").show();
+            } else {
+                $('#divUnit').css("display", "none");
+                $('#divQuantity').addClass('col-md-4 col-lg-4');
+
+            }
+
+        }
+
+
+        function createDefaultUnit() {
+            let unit;
+            $("#ddlUnit").html("");
+            unit = '<option value="0">Unit</option>';
+            $("#ddlUnit").append(unit);
+        }
+
+        function createUnitData(response) {
+            let unit;
+            $("#ddlUnit").html("");
+            for (var i = 0; i < response.LstUnit.length; i++) {
+                unit += '<option value="' + response.LstUnit[i].UnitID + '">' + response.LstUnit[i].Keyword + '</option>'
+            }
+            $('#ddlUnit').append(unit);
+        }
+
+        function showHideCurrency() {
+            if (isMultiCurrency == "True") {
+                createDefaultCurrency();
+                $('#divCurrency').show();
+            }
+            else {
+                $('#divCurrency').css("display", "none");
+                $('#divTranBtn').addClass('col-md-5 col-lg-5');
+
+            }
+        }
+
+        function createDefaultCurrency() {
+            let currency;
+            currency = '<option value="0">Currency</option>';
+            $('#ddlCurrency').append(currency);
+        }
+
+        function createCurrencyData(response) {
+            let currency;
+            $("#ddlCurrency").html("");
+            for (var i = 0; i < response.LstCurrency.length; i++) {
+                currency += '<option value="' + response.LstCurrency[i].CurrencyID + '">' + response.LstCurrency[i].Keyword + '</option>'
+            }
+            $('#ddlCurrency').append(currency);
+        }
+
+        function fillSelectedProductData(response, productId) {
+            $('#inputProductID').val(productId);
+            $('#inputCode').val(response.Code);
+            $('#inputProductName').val(response.ProductName);
+            $('#inputQuantity').val('1');
+            $('#inputPrice').val(response.PurPrice);
+            createUnitData(response);
+            createCurrencyData(response);
+            showHideTranPurchaseOrderAddEdit(false);
+        }
+
+
+        function clearProductControl() {
+            $('#inputNumber').val("");
+            $('#inputProductID').val("");
+            $('#inputCode').val("");
+            $('#inputProductName').val("");
+            $('#inputQuantity').val("");
+            $('#inputPrice').val("");
+            $('#chkItemFOC').prop('checked', false);
+            showHideUnit();
+            showHideCurrency();
+            showHideTranPurchaseOrderAddEdit(false);
+        }
+
+        function showHideTranPurchaseOrderAddEdit(isEdit) {
+            if (isEdit) {
+                $('#btnAdd').css("display", "none");
+                $('#btnEdit').show();
+            }
+            else {
+                $('#btnAdd').show();
+                $('#btnEdit').css("display", "none");
+            }
+        }
+
+        function showHideMainButton(isEdit) {
+            if (isEdit) {
+                $('#btnSave').css("display", "none");
+                $('#btnCancel').show();
+                $('#btnReset').css("display", "none");
+            }
+            else {
+                $('#btnEditPayment').css("display", "none");
+                $('#btnCancel').css("display", "none");
+                $('#btnReset').show();
+            }
+        }
+
+        function clearAmount() {
+            $('#lblSubtotal').text('0');
+            $('#lblTax').text('0');
+            $('#lblCharges').text('0');
+            $('#lblTotal').text('0');
+            $('#inputHdnSubtotal').val("");
+            $('#inputHdnTax').val("");
+            $('#inputHdnCharges').val("");
+            $('#inputHdnTotal').val("");
+            $('#lblTotalItem').text('0');
+        }
+
     }) // jquery
 
-    function fillSelectedProductData(response, productId) {
-        $('#inputProductID').val(productId);
-        $('#inputCode').val(response.Code);
-        $('#inputProductName').val(response.ProductName);
-        $('#inputQuantity').val('1');
-        $('#inputPrice').val(response.PurPrice);
-        createUnitData(response);
-        createCurrencyData(response);
-    }
-
-    function showHideUnit() {
-        if (isMultiUnit == "True") {
-            createDefaultUnit();
-            $("#divUnit").show();
-        }
-        else {
-            $("#divUnit").class("display", "none");
-        }
-    }
-
-    function createDefaultUnit() {
-        let unit;
-        $('#ddlUnit').html("");
-        unit = '<option value="0">Unit</option>'
-        $('#ddlUnit').append(unit);
-    }
-
-    function createUnitData(response) {
-        let unit;
-        $("#ddlUnit").html("");
-        for (var i = 0; i < response.LstUnit.length; i++) {
-            unit += '<option value="' + response.LstUnit[i].UnitID + '">' + response.LstUnit[i].Keyword + '</option>'
-        }
-        $('#ddlUnit').append(unit);
-    }
-
-    function showHideCurrency() {
-        if (isMultiCurrency == "True") {
-            createDefaultCurrency();
-            $('#divCurrency').show();
-        }
-        else {
-            $('#divCurrency').css("display", "none");
-        }
-    }
-
-    function createDefaultCurrency() {
-        let currency;
-        $('#ddlCurrency').html("");
-        currency = '<option value="0">Currency</option>'
-        $('#ddlCurrency').append(currency);
-    }
-
-    function createCurrencyData(response) {
-        let currency;
-        $("#ddlCurrency").html("");
-        for (var i = 0; i < response.LstCurrency.length; i++) {
-            currency += '<option value="' + response.LstCurrency[i].CurrencyID + '">' + response.LstCurrency[i].Keyword + '</option>'
-        }
-        $('#ddlCurrency').append(currency);
-    }
-
-    function showHideTranPurchaseOrderAddEdit(isEdit) {
-        if (isEdit) {
-            $('#btnAdd').css("display", "none");
-            $('#btnEdit').show();
-        }
-        else {
-            $('#btnAdd').show();
-            $('#btnEdit').css("display", "none");
-        }
-    }
-
-    function showHideMainButton(isEdit) {
-        if (isEdit) {
-            $('#btnSave').css("display", "none");
-            $('#btnCancel').show();
-            $('#btnReset').css("display", "none");
-        }
-        else {
-            $('#btnEditPayment').css("display", "none");
-            $('#btnCancel').css("display", "none");
-            $('#btnReset').show();
-        }
-    }
-
-    function clearProductControl() {
-        $('#inputNumber').val("");
-        $('#inputProductID').val("");
-        $('#inputCode').val("");
-        $('#inputProductName').val("");
-        $('#inputQuantity').val("");
-        $('#inputPrice').val("");
-        $('#chkItemFOC').prop('checked', false);
-        showHideUnit();
-        showHideCurrency();
-        showHideTranPurchaseOrderAddEdit(false);
-    }
-
-    function clearAmount() {
-        $('#lblSubtotal').text('0');
-        $('#lblTax').text('0');
-        $('#lblCharges').text('0');
-        $('#lblTotal').text('0');
-        $('#inputHdnSubtotal').val("");
-        $('#inputHdnTax').val("");
-        $('#inputHdnCharges').val("");
-        $('#inputHdnTotal').val("");
-        $('#lblTotalItem').text('0');
-    }
 
     function tranPurchaseOrderTableAction(value) {
         tranPurOrderValue = value;

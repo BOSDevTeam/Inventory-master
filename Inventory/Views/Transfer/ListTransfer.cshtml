@@ -163,9 +163,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        redirectToLogin();
-                    }
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
                     else {
                         createMasterTransferData(response.LstMasterTransfer, true);
                         createPaging(response.TotalPage, currentPage);

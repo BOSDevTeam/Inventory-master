@@ -50,8 +50,8 @@
                 <div class="col-md-5 col-lg-5">
                     <input id="inputProductName" type="text" class="form-control control-input" placeholder="@Resource.ProductName" disabled />
                 </div>
-                <div class="col-md-2 col-lg-2">
-                    <input id="inputQuantity" type="text" class="form-control control-input input-field numberonly" placeholder="@Resource.Qty" />
+                <div id="divQuantity" class="col-md-2 col-lg-2">
+                    <input id="inputQuantity" type="text" class="form-control control-input numberonly" placeholder="@Resource.Qty" />
                 </div>
                 <div id="divUnit" class="col-md-2 col-lg-2">
                     @Html.DropDownList("Unit", Model.Units, new { @id = "ddlUnit", @class = "form-control control-input" })
@@ -69,7 +69,7 @@
                 <div class="col-md-2 col-lg-2" style="display:none;">
                     <input id="chkItemFOC" type="checkbox"/> <span>&nbsp;&nbsp;@Resource.FOC</span>
                 </div>
-                <div class="col-md-2 col-lg-2">
+                <div id="divTranBtn" class="col-md-2 col-lg-2 aligh-right">
                     <button id="btnAdd" class="btn btn-second">@Resource.Add</button>
                     <button id="btnEdit" class="btn btn-third">@Resource.Edit</button>
                 </div>
@@ -215,7 +215,11 @@
             if (isMultiUnit == "True") {
                 createDefaultUnit();
                 $("#divUnit").show();
-            } else $('#divUnit').css("display", "none");
+            } else {
+                $('#divUnit').css("display", "none");
+                $('#divQuantity').addClass('col-md-4 col-lg-4');
+            }
+
         }
 
         function createDefaultUnit() {
@@ -231,7 +235,8 @@
                 $('#divCurrency').show();
             }
             else {
-                $('#divCurrency').css("display", "none")
+                $('#divCurrency').css("display", "none");
+                $('#divTranBtn').addClass('col-md-5 col-lg-5');
             }
         }
 
@@ -356,8 +361,8 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (!response.IsRequestSuccess) {
-                            redirectToLogin();
+                        if (!response.ResultDefaultData.IsRequestSuccess) {
+                            responseUnSuccessful(response);
                         } else {
                             createTranSaleOrderData(response.LstTranSaleOrder);
                             createAmount(response);
@@ -468,8 +473,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess)
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
                     else {
                         createTranSaleOrderData(response.LstTranSaleOrder);
                         createAmount(response);
@@ -542,9 +547,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        alert("Session Expired!");
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
                     }
                     else {
                         showToast(1, 'Saved Successfully!');
@@ -593,9 +597,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        alert("Session Expired!");
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
                     }
                     else {
                         window.location.href = '@Url.Action("ListSaleOrder", "SaleOrder")?userId=' + userId;
@@ -634,8 +637,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
                     }
                     else {
                         $("#inputNumber").val(number);
@@ -678,7 +681,7 @@
                     success: function (response) {
                         hideLoadingIcon();
                         if (!response.IsExistProduct) {
-                            showToast(0, 'Not found product with this code!');
+                            showToast(0, '@Inventory.Common.AppConstants.Message.NoProductByCode');
                         }
                         else {
                             $("#inputProductID").val(response.ProductID);
@@ -716,7 +719,7 @@
                     success: function (response) {
                         hideLoadingIcon();
                         if (response.length == 0) {
-                            showToast(0, 'Not found product!');
+                            showToast(0, '@Inventory.Common.AppConstants.Message.NoProduct');
                         }
                         else {
                             createSearchProductData(response);
@@ -760,8 +763,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.IsRequestSuccess) {
-                        redirectToLogin();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
                     }
                     else {
                         fillSelectedProductData(response, productId);
