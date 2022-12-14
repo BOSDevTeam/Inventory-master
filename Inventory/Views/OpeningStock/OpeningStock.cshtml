@@ -139,7 +139,7 @@
                 success: function (response) {
                     hideLoadingIcon();
                     if (!response.ResultDefaultData.IsRequestSuccess)
-                        showToast(0, 'Already added products for this submenu!');
+                        showToast(0, '@Inventory.Common.AppConstants.Message.NoOpeningStockSameSubMenu');
                     else createTranOpeningStockData(response.Products);
                     $("#btnSubMenu" + subMenuId).prop("disabled", true);
                 },
