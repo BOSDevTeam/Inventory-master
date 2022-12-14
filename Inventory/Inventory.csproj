@@ -237,6 +237,7 @@
     <Compile Include="Models\MasterSaleModels.cs" />
     <Compile Include="Models\LimitedDayModels.cs" />
     <Compile Include="Models\MasterSaleOrderModels.cs" />
+    <Compile Include="Models\MasterSaleReturnModels.cs" />
     <Compile Include="Models\MasterTransferModels.cs" />
     <Compile Include="Models\PaymentModels.cs" />
     <Compile Include="Models\PayMethodModels.cs" />
@@ -253,6 +254,7 @@
     <Compile Include="Models\TranPurchaseOrderModels.cs" />
     <Compile Include="Models\TranSaleModels.cs" />
     <Compile Include="Models\TranSaleOrderModels.cs" />
+    <Compile Include="Models\TranSaleReturnModels.cs" />
     <Compile Include="Models\TranTransferModels.cs" />
     <Compile Include="Models\UnitModels.cs" />
     <Compile Include="Models\UserModels.cs" />

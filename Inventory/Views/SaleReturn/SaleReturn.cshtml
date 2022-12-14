@@ -14,8 +14,134 @@
     </style>
 </head>
 
+<div class="row m-t-5 m-b-5 m-l-5">
+    <div class="col-md-4 col-lg-4 note align-justify-center">
+        <label id="lblUserVoucherNo" class="control-label mb-0"></label>
+    </div>
+    <div class="col-md-4 col-lg-4">
+        <input id="inputDate" type="date" class="form-control control-input" />
+    </div>
+    <div class="col-md-4 col-lg-4">
+        <input id="inputVoucherID" type="text" placeholder="@Resource.VoucherID" class="form-control control-input"/>
+    </div>
+</div>
+
+<div class="row m-t-5 m-b-5 m-l-5" style="margin-top:10px;">
+    <div class="col-md-6 col-lg-6"></div>
+    <div class="col-md-6 col-lg-6">
+        <div class="input-icons">
+            <input id="inputSearch" class="form-control control-input" style="border-color:black" placeholder="@Resource.EnterSaleVoucherNo" />
+        </div>
+
+        <div class="tran-table" style="margin-top:5px">
+            <table id="tblTranSale" class="width-100-percent">
+                <thead>
+                    <tr class="row tran-table-header-row">
+                        <td class="col-md-4 col-lg-4"><span>@Resource.ProductName</span></td>
+                        <td class="col-md-2 col-lg-2"><span>@Resource.Qty</span></td>
+                        <td class="col-md-2 col-lg-2"><span>@Resource.Price</span></td>
+                        <td class="col-md-2 col-lg-2"><span>@Resource.Dis</span></td>
+                        <td class="col-md-2 col-lg-2"><span>@Resource.Amount</span></td>                     
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
 <script type="text/javascript">
     document.getElementById('subMenuSaleReturn').className = 'active';
+
+
+    $(document).ready(function () {
+        initializeControl();
+
+        function initializeControl() {
+            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputDate').val(getTodayDate());
+        }
+
+        $('#inputSearch').keydown(function (e) {
+            if (e.which == 13) {
+                let keyword = $('#inputSearch').val();
+                let paymentId = 1;
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url:'@Url.Action("SearchActionByPaymentID", "SaleReturn")',
+                    data: { "keyword": keyword, "paymentId": paymentId },
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        createTranSaleData(response);
+
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                });
+            }
+
+
+        })
+
+
+        function createTranSaleData(response) {
+            let num = 0;
+            $('#tblTranSale').find("tbody").empty();
+            $.each(response.List, function (i, item) {
+                num += 1;
+                var row = '<tr class="row tran-table-item-row">'
+                        + '<td style="display:none;">' + item.ProductID + '</td>'
+                        + '<td class="col-md-4 col-lg-4"><label class="control-label mb-0 text-link text-overflow">' + item.ProductName + '</label></td>'
+                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + item.Quantity + '</label></td>'
+                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + item.SalePrice + '</label></td>'
+                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + item.Discount + '</label></td>'
+                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + item.Amount + '</label></td>'
+                        + '<td style="display:none">' + num + '</td>'
+                $('#tblTranSale tbody').append(row);
+            });
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }) // Jquery
+
+
+
+
+
+
+
 </script>
 
 
