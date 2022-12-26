@@ -9,7 +9,10 @@ namespace Inventory.Models
     {
         public int ID { get; set; }
         public int SaleReturnID { get; set; }
+        public int SaleID { get; set; }
+        public string ReturnVoucherNo { get; set; }
         public int ProductID { get; set; }
+        public int PaymentID { get; set; }
         public string ProductName { get; set; }
         public string ProductCode { get; set; }
         public int SysProductID { get; set; }
@@ -23,6 +26,7 @@ namespace Inventory.Models
         public int Discount { get; set; }
         public int Amount { get; set; }
         public bool IsFOC { get; set; }
+        public int LocationID { get; set; }
 
 
     }

@@ -27,10 +27,99 @@
 </div>
 
 <div class="row m-t-5 m-b-5 m-l-5" style="margin-top:10px;">
-    <div class="col-md-6 col-lg-6"></div>
-    <div class="col-md-6 col-lg-6">
+    <div id="divSaleReturn" class="col-md-6 col-lg-6">
+        <div class="m-t-5 padding-5 search-div">
+            <div class="row">
+                <input id="inputNumber" type="hidden" />
+                <input id="lblSaleID" type="hidden" />
+                <input id="inputReturnVoucherNo" type="hidden"/>
+                <input id="inputProductID" type="hidden" />
+                <input id="inputUnitID" type="hidden"/>
+                <input id="inputUnitKeyword" type="hidden" />
+                <input id="inputCurrencyID" type="hidden" />
+                <input id="inputCurrencyKeyword" type="hidden" />
+                <input id="inputLocationID" type="hidden" />
+                <input id="originalQuantity" type="hidden" />
+                <div class="col-md-8 col-lg-8">
+                    <input type="text" id="inputProductName" class="form-control control-input" placeholder="@Resource.ProductName" disabled />
+                </div>
+                <div class="col-md-2 col-lg-2">
+                    <input type="text" id="inputQuantity" class="form-control control-input numberonly" placeholder="@Resource.Qty"/>
+                </div>
+                <div class="col-md-2 col-lg-2 align-center">
+                   <label><span id="lblUnitName"></span></label>
+                </div>
+            </div>
+
+            <div class="row m-t-5">
+                <div class="col-md-4 col-lg-4">
+                    <input type="text" id="inputPrice" class="form-control control-input" placeholder="@Resource.Price" disabled/>
+                </div>
+                <div class="col-md-2 col-lg-2">
+                    <input type="text" id="inputDisPercent" class="form-control control-input" placeholder="@Resource.Dis (@Resource.PercentSign)" disabled/>
+                </div>
+                <div class="col-md-4 col-lg-4">
+
+                </div>
+                <div class="col-md-2 col-lg-2 aligh-right">
+                    <button id="btnAdd" class="btn btn-second">@Resource.Add</button>
+                    <button id="btnEdit" class="btn btn-third">@Resource.Edit</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="divTranSaleReturnChild">
+            <div id="divTranSaleReturn" class="tran-table" style="margin-top:5px">
+                <table id="tblTranSaleReturn" class="width-100-percent">
+                    <thead>
+                        <tr class="row tran-table-header-row">
+                            <td class="col-md-4 col-lg-4"><span>@Resource.ProductName</span></td>
+                            <td class="col-md-2 col-lg-2"><span>@Resource.Qty</span></td>
+                            <td class="col-md-2 col-lg-2"><span>@Resource.Price</span></td>
+                            <td class="col-md-1 col-lg-1"><span>@Resource.Dis</span></td>
+                            <td class="col-md-2 col-lg-2"><span>@Resource.Amount</span></td>
+                            <td class="col-md-1 col-lg-1"></td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div style="bottom:0px;position:absolute;width:100%;">
+                <table class="width-100-percent">
+                    <tr>
+                        <td class="col-md-5 col-lg-5 text-overflow table-border"><span>@Resource.Total</span></td>
+                        <td class="col-md-3 col-lg-3 table-border"></td>
+                        <td class="col-md-4 col-lg-4 table-border value-right"><input id="inputHdnTotal" type="hidden" /><span id="lblTotalAmount">0</span></td>
+                    </tr>
+                </table>
+                <div class="row mr-0 soft-gray-background pt-1">
+                    <div class="col-md-6 col-lg-6">
+                        <button id="btnReset" class="btn btn-third">@Resource.Reset</button>
+                        <button id="btnCancel" class="btn btn-third">@Resource.Cancel</button>
+                    </div>
+                    <div class="col-md-6 col-lg-6 aligh-right">
+                        <button id="btnContinue" class="btn btn-first plr-30">@Resource.Continue</button>
+                        <button id="btnCEdit" class="btn btn-first plr-30 m-t-0">@Resource.Edit</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+    </div>
+
+    <div class="col-md-6 col-lg-6 m-t-5">
         <div class="input-icons">
             <input id="inputSearch" class="form-control control-input" style="border-color:black" placeholder="@Resource.EnterSaleVoucherNo" />
+            <div style="display:none" id="PaymentID"></div>
+        </div>
+
+        <div style="margin-top:10px">
+            <label>@Resource.TotalSaleItems:&nbsp;&nbsp;&nbsp;<span id="lblTotalItem" style="background-color:#ffffcc;padding:5px;">0</span></label>
         </div>
 
         <div class="tran-table" style="margin-top:5px">
@@ -48,7 +137,15 @@
             </table>
         </div>
 
+
+
     </div>
+</div>
+
+<div>
+    @{ 
+        Html.RenderPartial("_RemarkDialog");
+    }
 </div>
 
 
@@ -57,15 +154,36 @@
 
 
 <script type="text/javascript">
+
+    let tranSaleReturnAction;
     document.getElementById('subMenuSaleReturn').className = 'active';
+    $('body').addClass("hideVerticalScrollbar");
+
+    calcTranSaleReturnHeight();
+
+    function calcTranSaleReturnHeight() {
+        let windowHeight = window.innerHeight;
+        let thingsHeight = 98; // average other component height
+        let extraHeight = 20;
+        let saleAreaHeight = windowHeight - (thingsHeight + extraHeight);
+        let saleChildHeight = saleAreaHeight - 100;  // 100 is top component
+        let saleTranHeight = saleChildHeight - 70 - 40;  // 135 is bottom component and 40 is extra
+        document.getElementById('divSaleReturn').setAttribute("style", "height:" + saleAreaHeight + "px");
+        document.getElementById('divTranSaleReturnChild').setAttribute("style", "height:" + saleChildHeight + "px");
+        document.getElementById('divTranSaleReturn').setAttribute("style", "height:" + saleTranHeight + "px");
+    }
 
 
     $(document).ready(function () {
-        initializeControl();
+        setModuleTitle('@Resource.Sale', '@Resource.AddSaleReturn');
+        if ('@ViewBag.IsEdit' == 'True') fillEditData();
+        else initializeControl();
 
         function initializeControl() {
             $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
             $('#inputDate').val(getTodayDate());
+            showHideTranSaleReturnAddEdit(false);
+            showHideMainButton(false);
         }
 
         $('#inputSearch').keydown(function (e) {
@@ -81,6 +199,8 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
+                        let totalItem = response.List.length;
+                        $('#lblTotalItem').text(totalItem + '@Resource.OpenParenthesis' + response.TotalQuantity + '@Resource.CloseParenthesis');
                         createTranSaleData(response);
 
                     },
@@ -98,7 +218,6 @@
 
         })
 
-
         function createTranSaleData(response) {
             let num = 0;
             $('#tblTranSale').find("tbody").empty();
@@ -107,13 +226,395 @@
                 var row = '<tr class="row tran-table-item-row">'
                         + '<td style="display:none;">' + item.ProductID + '</td>'
                         + '<td class="col-md-4 col-lg-4"><label class="control-label mb-0 text-link text-overflow">' + item.ProductName + '</label></td>'
-                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + item.Quantity + '</label></td>'
-                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + item.SalePrice + '</label></td>'
-                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + item.Discount + '</label></td>'
-                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + item.Amount + '</label></td>'
+                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + item.Quantity + '<span class="control-span-sm">&nbsp;' + item.UnitKeyword + '</span></label></td>'
+                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + separatedComma(item.SalePrice) + '<span class="control-span-sm">&nbsp;' + item.CurrencyKeyword + '</span></label></td>'
+                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + separatedComma(item.Discount) + '</label></td>'
+                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + separatedComma(item.Amount) + '</label></td>'
                         + '<td style="display:none">' + num + '</td>'
                 $('#tblTranSale tbody').append(row);
             });
+        }
+
+        $('#tblTranSale').on("click","tbody tr", function () {
+            $('#tblTranSale tr').removeClass("selected");
+            $(this).addClass("selected");
+            $(this).find("td:last").each(function () {
+                let number = $(this).text();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url:'@Url.Action("SaleClickAction", "SaleReturn")',
+                    data: { "number": number },
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            responseUnSuccessful(response);
+                        else {
+
+                            fillSelectedSaleData(response);
+                            showHideTranSaleReturnAddEdit(false);
+
+                        }
+
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                });
+            })
+        });
+
+        function fillSelectedSaleData(response) {
+            $('#lblSaleID').val(response.SaleID);
+            $('#inputProductID').val(response.ProductID);
+            $('#inputLocationID').val(response.LocationID);
+            $('#inputProductName').val(response.ProductName);
+            $('#inputQuantity').val(response.Quantity);
+            $('#originalQuantity').val(response.Quantity);
+            $('#lblUnitName').text(response.UnitName);
+            $('#inputUnitID').val(response.UnitID);
+            $('#inputPrice').val(response.SalePrice);
+            if (response.DisPercent != 0) $("#inputDisPercent").val(response.DisPercent);
+            else $("#inputDisPercent").val("");
+            $('#inputCurrencyID').val(response.CurrencyID);
+            $('#inputCurrencyKeyword').val(response.CurrencyKeyword);
+        }
+
+        $('#btnAdd').click(function () {
+            addOrEditTranSaleReturn(false);
+        });
+
+        $('#btnEdit').click(function () {
+            addOrEditTranSaleReturn(true);
+
+        });
+
+        function validateTranSaleReturnControl() {
+            if ($('#inputProductID').val().length == 0 || $('#inputProductID').val() == 0) return false;
+            else return true;
+        }
+
+        function addOrEditTranSaleReturn(isEdit) {
+            if (validateTranSaleReturnControl()) {
+                let productId = $('#inputProductID').val();
+                let locationId = $('#inputLocationID').val();
+                let productName = $('#inputProductName').val();
+                let quantity = $('#inputQuantity').val();
+                let oquantity = $('#originalQuantity').val();
+                let unitId = $('#inputUnitID').val();
+                let unitKeyword = $('#lblUnitName').text();
+                let currencyId = $('#inputCurrencyID').val();
+                let currencyKeyword = $('#inputCurrencyKeyword').val();
+                let price = $('#inputPrice').val();
+                let number = $('#inputNumber').val();
+                if (quantity <= oquantity) {
+                    showLoadingIcon();
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("TranSaleReturnAddEditAction", "SaleReturn")',
+                        data: { "productId": productId, "locationId": locationId, "productName": productName, "quantity": quantity, "price": price, "unitId": unitId, "unitKeyword": unitKeyword, "currencyId": currencyId, "currencyKeyword": currencyKeyword, "number": number, "isEdit": isEdit },
+                        contentType: "application/json;charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            hideLoadingIcon();
+                            if (!response.ResultDefaultData.IsRequestSuccess) {
+                                responseUnSuccessful(response);
+                            }
+                            else {
+                                createTranSaleReturnData(response.List);
+                                $('#lblTotalAmount').text(separatedComma(response.TotalAmount));
+                                $('#inputHdnTotal').val(response.TotalAmount);
+                                clearTranSaleReturnControl();
+                                showHideTranSaleReturnAddEdit(false);
+                            }
+
+                        },
+                        failure: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        },
+                    });
+                }
+                else {
+                    showToast(0, 'InputQty is greater than orginal Qty Value!');
+                }
+
+            }
+
+        }
+
+        function createTranSaleReturnData(List) {
+            let num = 0;
+            $('#tblTranSaleReturn').find("tbody").empty();
+            $.each(List, function (i, item) {
+                num += 1;
+                if (item.UnitKeyword == null) item.UnitKeyword = "";
+                if (item.CurrencyKeyword == null) item.CurrencyKeyword = "";
+                var row = '<tr class="row tran-table-item-row">'
+                        + '<td style="display:none;">' + item.ProductID + '</td>'
+                        + '<td class="col-md-4 col-lg-4"><label class="control-label mb-0 text-link text-overflow">' + item.ProductName + '</label></td>'
+                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + item.Quantity + '<span class="control-span-sm">&nbsp;' + item.UnitKeyword + '</span></label></td>'
+                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + separatedComma(item.SalePrice) + '<span class="control-span-sm">&nbsp;' + item.CurrencyKeyword + '</span></label></td>'
+                        + '<td class="col-md-1 col-lg-1"><label class="control-label mb-0 text-link text-overflow">' + separatedComma(item.Discount) + '</label></td>'
+                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + separatedComma(item.Amount) + '</label></td>'
+                        + '<td class="col-md-1 col-lg-1 value-right"><button class="btn-icon gray" title="Delete" onclick="tranSaleReturnTableAction(3)"><i class="fa fa-remove"></i></button></td>'
+                        + '<td style="display:none">' + num + '</td>'
+
+                $('#inputLocationID').val(item.LocationID);
+                $('#inputUnitID').val(item.UnitID);
+                $('#inputCurrencyID').val(item.CurrencyID);
+                $('#tblTranSaleReturn tbody').append(row);
+            });
+        }
+
+        $('#tblTranSaleReturn').on("click", "tbody tr", function () {
+            $('#tblTranSaleReturn tr').removeClass("selected");
+            $(this).addClass("selected");
+            $(this).find("td:last").each(function () {
+                let number = $(this).text();
+                if (tranSaleReturnAction == 3)
+                {
+                    tranSaleReturnAction = 0;
+                    deleteTranSaleReturn(number);
+                }
+                else prepareToEditTranSaleReturn(number);
+
+            })
+
+        })
+
+        function prepareToEditTranSaleReturn(number) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url:'@Url.Action("PrepareToEditTranSaleReturnAction", "SaleReturn")',
+                data: { "number": number },
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    $('#inputNumber').val(number);
+                    $('#inputProductID').val(response.ProductID);
+                    $('#inputLocationID').val(response.LocationID);
+                    $('#inputProductName').val(response.ProductName);
+                    $('#inputQuantity').val(response.Quantity);
+                    $('#lblUnitName').text(response.UnitKeyword);
+                    $('#inputPrice').val(response.SalePrice);
+                    if (response.DisPercent != 0) $("#inputDisPercent").val(response.DisPercent);
+                    else $("#inputDisPercent").val("");
+                    $('#inputCurrencyKeyword').val(response.CurrencyKeyword);
+                    showHideTranSaleReturnAddEdit(true);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+            });
+        }
+
+        function deleteTranSaleReturn(number) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("TranSaleReturnDeleteAction", "SaleReturn")',
+                data: { "number": number },
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
+                    }
+                    else {
+                        createTranSaleReturnData(response.List);
+                        $('#lblTotalAmount').text(separatedComma(response.TotalAmount));
+                        $('#inputHdnTotal').val(response.TotalAmount);
+                    }
+
+
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+            });
+
+
+        }
+
+        $('#btnReset').click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url:'@Url.Action("CancelAction", "SaleReturn")',
+                data: {},
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    clearTranSaleReturnControl();
+                    $('#tblTranSaleReturn').find("tbody").empty();
+                    $('#inputVoucherID').val("");
+                    $('#lblTotalAmount').text('0');
+                    $('#inputHdnTotal').val("");
+                    showHideTranSaleReturnAddEdit(false);
+
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+            });
+        });
+
+
+        $('#btnContinue').click(function () {
+            let row = $('#tblTranSaleReturn tbody tr').length;
+            if (row < 1) return;
+            $("#modalRemarkTitle").text('@Resource.AddRemark');
+            $("#lblRemark").text('@Resource.EnterNote');
+            $('#modalRemark').modal('show');
+
+            $('#btnRemarkEdit').css("display", "none");
+            $('#btnRemarkOk').show();
+        })
+
+
+        $('#btnRemarkOk').click(function () {
+            let row = $('#tblTranSaleReturn tbody tr').length;
+            if (row < 1) return;
+            let returnVoucherNo = $('#inputSearch').val();
+            alert(returnVoucherNo);
+            let userVoucherNo = $('#lblUserVoucherNo').text();
+            let date = $('#inputDate').val();
+            let voucherId = $('#inputVoucherID').val();
+            let userId = localStorage.getItem("UserID");
+            let totalAmount = $('#inputHdnTotal').val();
+            alert(totalAmount);
+            let remark = $('#txtRemarkNote').val();
+            let locationId = $('#inputLocationID').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveAction", "SaleReturn")',
+                data: JSON.stringify({ "returnVoucherNo": returnVoucherNo, "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "userId": userId, "locationId": locationId, "totalAmount": totalAmount, "remark": remark }),
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
+                    }
+                    else {
+                        showToast(1, '@Resource.Save');
+                        clearTranSaleReturnControl();
+                        $('#lblUserVoucherNo').text(response.UserVoucherNo);
+                        $('#tblTranSaleReturn').find("tbody").empty();
+                        $('#inputVoucherID').val("");
+                        $('#lblTotalAmount').text('0');
+                        $('#inputHdnTotal').val("");
+                        showHideTranSaleReturnAddEdit(false);
+                        $('#modalRemark').modal('hide');
+                    }
+
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+            });
+        })
+
+        function fillEditData() {
+            $('#btnCEdit').val('ViewBag.SaleReturnID');
+            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputDate').val('@ViewBag.Date');
+            $('#inputVoucherID').val('@ViewBag.VoucherID');
+            $("#inputLocationID").val('@ViewBag.LocationID');
+            $('#originalQuantity').val('@ViewBag.TotalQuantity');
+            $('#lblTotalAmount').text(separatedComma('@ViewBag.Total'));
+            $("#inputHdnTotal").val('@ViewBag.Total');
+            showHideTranSaleReturnAddEdit(false);
+            showHideMainButton(true);
+            let tranSaleReturnList = JSON.parse('@Html.Raw(Json.Encode(Session["TranSaleReturnData"]))');
+            createTranSaleReturnData(tranSaleReturnList);
+
+
+        }
+
+
+        $('#btnCancel').click(function () {
+            window.location.href = '@Url.Action("SaleReturn", "SaleReturn")?userId=' + userId;
+        })
+
+
+
+
+
+        function clearTranSaleReturnControl() {
+            $("#inputProductID").val("");
+            $('#inputProductName').val("");
+            $('#inputQuantity').val("");
+            $('#lblUnitName').text("");
+            $('#inputPrice').val("");
+            $("#inputDisPercent").val("");
+            $("#inputNumber").val("");
+        }
+
+
+        function showHideTranSaleReturnAddEdit(isEdit) {
+            if (isEdit) {
+                $('#btnAdd').css("display", "none");
+                $('#btnEdit').show();
+
+            }
+            else {
+                $('#btnAdd').show();
+                $('#btnEdit').css("display", "none");
+            }
+        }
+
+
+        function showHideMainButton(isEdit) {
+            if (isEdit) {
+                $('#btnReset').css("display", "none");
+                $('#btnCancel').show();
+                $('#btnContinue').css("display", "none");
+                $('#btnCEdit').show();
+            }
+            else {
+                $('#btnReset').show();
+                $('#btnCancel').css("display", "none");
+                $('#btnContinue').show();
+                $('#btnCEdit').css("display", "none");
+            }
         }
 
 
@@ -137,7 +638,9 @@
     }) // Jquery
 
 
-
+    function tranSaleReturnTableAction(value) {
+        tranSaleReturnAction = value;
+    }
 
 
 

@@ -8,6 +8,7 @@ namespace Inventory.Models
     public class MasterSaleReturnModels
     {
         public int SaleReturnID { get; set; }
+        public int PaymentID { get; set; }
         public string ReturnVoucherNo { get; set; }
         public string ReturnDateTime { get; set; }
         public string UserVoucherNo { get; set; }

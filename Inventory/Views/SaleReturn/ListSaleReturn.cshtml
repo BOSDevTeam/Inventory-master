@@ -14,8 +14,266 @@
     </style>
 </head>
 
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">@Resource.ListSaleReturn</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right" onclick="addAction('1')">ADD</button>
+        </div>
+    </div>
+
+    <div class="row setup-title-layout search-div">
+        <table class="width-100-percent">
+            <tr>
+                <td class="control-label" style="text-align:center;">From Date</td>
+                <td><input id="inputFromDate" type="date" class="form-control control-input" /></td>
+                <td class="control-label" style="text-align:center;">To Date</td>
+                <td><input id="inputToDate" type="date" class="form-control control-input" /></td>
+                <td><input id="inputUserVoucherNo" type="text" class="form-control control-input" placeholder="Voucher No." /></td>
+                <td>
+                    <div class="btn-group" style="float:right">
+                        <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                        <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblSaleReturnList" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-3 col-lg-3">Date</th>
+                        <th class="col-md-3 col-lg-3">Voucher No.</th>
+                        <th class="col-md-3 col-lg-3">Return Voucher No.</th>
+                        <th class="col-md-2 col-lg-2">Total</th>
+                        <th class="col-md-1 col-lg-1">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="divPaging" class="row paging">
+        <div class="col-md-1 col-lg-1"><label id="lblPageNumber" class="page-num"></label></div>
+        <div id="divPagingItem" class="col-md-11 col-lg-11 paging-item"></div>
+    </div>
+
+</div>
+<div>
+    @{
+        Html.RenderPartial("_ConfirmDialog");
+    }
+</div>
+<div>
+    @{ 
+        Html.RenderPartial("_SaleReturnDetailDialog");
+    }
+</div>
+
 <script type="text/javascript">
     document.getElementById('subMenuSaleReturnList').className = 'active';
+    let addValue, listTableValue;
+
+    $(document).ready(function () {
+
+        setModuleTitle('@Resource.Sale', '@Resource.ListSaleReturn');
+
+        $('#inputFromDate').val(getTodayDate());
+        $('#inputToDate').val(getTodayDate());
+        createMasterSaleReturnData('', false);
+
+        $('#btnSearch').click(function () {
+            let fromDate = $('#inputFromDate').val();
+            let toDate = $('#inputToDate').val();
+            let userVoucherNo = $('#inputUserVoucherNo').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url:'@Url.Action("SearchAction", "SaleReturn")',
+                data: { "userId": userId,"isSearch":true, "fromDate": fromDate, "toDate": toDate, "userVoucherNo": userVoucherNo },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterSaleReturnData(response.List, true);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+
+            });
+        });
+
+        $('#btnRefresh').click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("RefreshAction", "SaleReturn")',
+                data: { "userId": userId,"isSearch": false},
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createMasterSaleReturnData(response.List, false);
+                    clearControl();
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+
+            });
+        });
+
+        $('#tblSaleReturnList').on("click", "tbody tr", function (event) {
+            $(this).find("td:last").each(function () {
+                let saleReturnId = $(this).text();
+                if (listTableValue == 1) {
+                    viewDetail(saleReturnId);
+                    $('#modalSaleReturnDetail').modal('show');
+                }
+                else if (listTableValue == 2) {
+                    window.location.href = '@Url.Action("SaleReturn", "SaleReturn")?userId=' + userId + '&saleReturnId=' + saleReturnId;
+                }
+                else if (listTableValue == 3)
+                {
+                    $('#btnDelOk').val(saleReturnId);
+                    $('#modalConfirm').modal('show');
+                }
+
+            })
+        })
+
+
+        function viewDetail(saleReturnId) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("ViewAction", "SaleReturn")',
+                data: { "saleReturnId": saleReturnId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createTranSaleReturnDetail(response);
+                    createMasterSaleReturnDetail(response);
+                    $('#modalSaleOrderDetail').modal('show');
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+
+            });
+        }
+
+        $('#btnDelOk').click(function () {
+            let saleReturnId = $('#btnDelOk').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DeleteAction", "SaleReturn")',
+                data: { "saleReturnId": saleReturnId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
+                    }
+                    else {
+                        if (selectedRowIndex != null) {
+                            document.getElementById("tblSaleReturnList").deleteRow(selectedRowIndex);
+                            //createPaging(response.TotalPage, "");
+                            showToast(1, 'Deleted Successfully!');
+                        }
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+
+            });
+
+        });
+
+
+        function createMasterSaleReturnData(response, isFromJson) {
+            $('#tblSaleReturnList').find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterSaleReturn"]))');
+            $.each(response, function (index, item) {
+                var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
+                          + '<td class="col-md-3 col-lg-3 text-overflow">' + item.ReturnDateTime + '</td>'
+                          + '<td class="col-md-3 col-lg-3">' + item.UserVoucherNo + '</td>'
+                          + '<td class="col-md-3 col-lg-3 text-overflow">' + item.ReturnVoucherNo + '</td>'
+                          + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Total) + '</td>'
+                          + '<td class="col-md-1 col-lg-1 btn-group">'
+                              + '<button title="View" class="btn btn-sm btn-dark" onclick="listTableAction(1)"><i class="fa fa-list"></i></button>'
+                              + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
+                              + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
+                          + '</td>'
+                          + '<td style="display:none">' + item.SaleReturnID + '</td>'
+                      + '</tr>'
+
+                $('#tblSaleReturnList tbody').append(row);
+            })
+
+        }
+
+
+        function clearControl() {
+            $('#inputFromDate').val(getTodayDate());
+            $('#inputToDate').val(getTodayDate());
+            $('#inputUserVoucherNo').val('');
+        }
+
+
+
+
+    })
+
+    function findRowIndex(x) {
+        selectedRowIndex = x.rowIndex;
+        alert(selectedRowIndex);
+    }
+
+    function listTableAction(value) {
+        listTableValue = value;
+    }
+
+    function addAction(value) {
+        addValue = value;
+    }
+
+    $('#btnAdd').click(function () {
+        if (addValue == 1) {
+            window.location.href = '@Url.Action("SaleReturn", "SaleReturn")?userId=' + userId;
+        }
+    })
 </script>
 
 
