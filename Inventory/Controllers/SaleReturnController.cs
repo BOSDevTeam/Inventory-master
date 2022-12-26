@@ -37,7 +37,7 @@ namespace Inventory.Controllers
         {
             List<TranSaleReturnModels> list = new List<TranSaleReturnModels>();
             TranSaleReturnModels item = new TranSaleReturnModels();
-            SqlCommand cmd = new SqlCommand(Procedure.PrcGETMasterANDTranSaleByPaymentID, (SqlConnection) getConnection());
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterANDTranSaleByPaymentID, (SqlConnection) getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@keyword", keyword);
             cmd.Parameters.AddWithValue("@PaymentID", paymentId);

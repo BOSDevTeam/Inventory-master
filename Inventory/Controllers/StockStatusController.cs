@@ -15,7 +15,6 @@ namespace Inventory.Controllers
     public class StockStatusController : MyController
     {
         DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
-        StockStatusViewModel stockStatusViewModel = new StockStatusViewModel();
         AppData appData = new AppData();
         List<LocationModels.LocationModel> lstLocation = new List<LocationModels.LocationModel>();
 
@@ -26,49 +25,75 @@ namespace Inventory.Controllers
             {
                 getLocation();
                 createHeader();
-                return View(stockStatusViewModel);
+                selectStockStatus();
+                return View();
             }
             return RedirectToAction("Login", "User");
         }
 
-        private List<StockStatusViewModel> selectStockStatus()
+        private void selectStockStatus()
         {
-            List<StockStatusViewModel> list = new List<StockStatusViewModel>();
-            StockStatusViewModel item = new StockStatusViewModel();
+            int productId = 0;
+            List<StockStatusViewModel.ItemViewModel> list = new List<StockStatusViewModel.ItemViewModel>();
+            StockStatusViewModel.ItemViewModel item = new StockStatusViewModel.ItemViewModel();
 
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetStockStatusByLocation, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                item = new StockStatusViewModel();
-                item.LocationID = Convert.ToInt32(reader["LocationID"]);
-                item.ShortName = Convert.ToString(reader["ShortName"]);
-                item.ProductID = Convert.ToInt32(reader["ProductID"]);
-                item.ProductCode = Convert.ToString(reader["ProductCode"]);
-                item.ProductName = Convert.ToString(reader["ProductName"]);
-                item.Status = Convert.ToInt32(reader["Status"]);
-                list.Add(item);
+                if (productId != Convert.ToInt32(reader["ProductID"]))
+                {
+                    if (list.Count() != 0)
+                    {
+                        item = list.LastOrDefault();
+                        for (int i = 0; i < item.lstLocationBalance.Count(); i++)
+                        {
+                            item.Balance += item.lstLocationBalance[i];
+                        }
+                        list.LastIndexOf(item);
+                    }
+
+                    item = new StockStatusViewModel.ItemViewModel();
+                    item.ProductID = Convert.ToInt32(reader["ProductID"]);
+                    item.ProductCode = Convert.ToString(reader["ProductCode"]);
+                    item.ProductName = Convert.ToString(reader["ProductName"]);
+                    item.lstLocationBalance.Add(Convert.ToInt32(reader["LocationBalance"]));
+                    list.Add(item);
+                }
+                else
+                {
+                    item.lstLocationBalance.Add(Convert.ToInt32(reader["LocationBalance"]));
+                    list.LastIndexOf(item);
+                }
+                productId = item.ProductID;
             }
+
+            if (list.Count() != 0)
+            {
+                item = list.LastOrDefault();
+                for (int i = 0; i < item.lstLocationBalance.Count(); i++)
+                {
+                    item.Balance += item.lstLocationBalance[i];
+                }
+                list.LastIndexOf(item);
+            }
+
             reader.Close();
-
-            return list;
-        }
-
-        private void getStockStatus(List<StockStatusViewModel> list)
-        {
-
+            ViewData["StockStatusItem"] = list;
         }
 
         private void createHeader()
         {
             StockStatusViewModel.HeaderViewModel item = new StockStatusViewModel.HeaderViewModel();
-            item.ProductCode = "Product Code";
+            item.ProductCode = "Code";
             item.ProductName = "Product Name";
+            item.Balance = "Balance";
             for (int i = 0; i < lstLocation.Count(); i++)
             {
                 item.lstLocationName.Add(lstLocation[i].ShortName);
             }
+            ViewData["StockStatusHeader"] = item;
         }
 
         private void getLocation()

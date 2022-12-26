@@ -23,6 +23,7 @@ namespace Inventory.Controllers
         DataTable dtUnit = new DataTable();
         AppSetting.Paging paging = new AppSetting.Paging();
         AppSetting appSetting = new AppSetting();
+        AppData appData = new AppData();
 
         public ActionResult ProductEntry(int productId)
         {                     
@@ -138,9 +139,13 @@ namespace Inventory.Controllers
             }
             reader.Close();
             dataConnectorSQL.Close();
-
-            savePhoto(productId);           
-                          
+            
+            if (isSuccess)
+            {
+                savePhoto(productId);
+                appSetting.sendPushNotification(appData.selectClientToken(Session["SQLConnection"]), AppConstants.NewProductTitle, productName + AppConstants.NewProductBody, null);
+            }
+                                       
             var Result = new
             {
                 MESSAGE = message,
@@ -487,6 +492,6 @@ namespace Inventory.Controllers
                 lstProductList.Add(productModel);
             }
         }
-       
+
     }
 }

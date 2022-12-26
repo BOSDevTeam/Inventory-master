@@ -19,6 +19,14 @@ namespace Inventory.Common
         public const int TransferModule = 9;
         public const int CustomerConsignModule = 10;
 
+        //Firebase Notification
+        public const string CloudMessagingServerKey = "AAAAm-35J2M:APA91bG7cMqe-P2pkXZsNPn81sz9e0vwEWNKmiPPtblzfGhQYvqE8_JOBCm76cCI9lFyI0Gcglr104CfxkvKqdxs0vITi2sn759ytppjtNQOF3Kyy-A6RATXwmdgLvVEQIj3GSWWQ7PS";  //SysModule table value
+        public static Uri FirebasePushNotificationsURL = new Uri("https://fcm.googleapis.com/fcm/send");
+        public const string UpdateOrderTitle = "Updated";
+        public const string UpdateOrderBody = "Updated Your Order #";
+        public const string NewProductTitle = "New Product";
+        public const string NewProductBody = " Available Now";
+
         //Session Values
         public const string SQLConnection = "SQLConnection";
 
@@ -44,6 +52,9 @@ namespace Inventory.Common
             public const string NoTransferSameLocation = "Not allow to transfer by same location!";
             public const string NoOpeningStockSameLocation = "Already have opening stock with this location!";
             public const string NoOpeningStockSameSubMenu = "Already added products for this submenu!";
+            public const string PurReturnQtyCheck = "Return Quantity should not greater than Purchase Quantity";
+            public const string SaleReturnQtyCheck = "Return Quantity should not greater than Sale Quantity";
+            public const string NoReturnFOCVoucher = "Cannot return FOC Voucher!";
         }
     }
 }

@@ -162,6 +162,7 @@
     <Compile Include="Common\AppData.cs" />
     <Compile Include="Common\Procedure.cs" />
     <Compile Include="Common\AppSetting.cs" />
+    <Compile Include="Common\NotificationData.cs" />
     <Compile Include="Common\ResultDefaultData.cs" />
     <Compile Include="Common\TextQuery.cs" />
     <Compile Include="Controllers\AdjustmentController.cs" />
@@ -234,6 +235,7 @@
     <Compile Include="Models\MasterOpeningStockModels.cs" />
     <Compile Include="Models\MasterPurchaseModels.cs" />
     <Compile Include="Models\MasterPurchaseOrderModels.cs" />
+    <Compile Include="Models\MasterPurchaseReturnModels.cs" />
     <Compile Include="Models\MasterSaleModels.cs" />
     <Compile Include="Models\LimitedDayModels.cs" />
     <Compile Include="Models\MasterSaleOrderModels.cs" />
@@ -252,6 +254,7 @@
     <Compile Include="Models\TranOpeningStockModels.cs" />
     <Compile Include="Models\TranPurchaseModels.cs" />
     <Compile Include="Models\TranPurchaseOrderModels.cs" />
+    <Compile Include="Models\TranPurchaseReturnModels.cs" />
     <Compile Include="Models\TranSaleModels.cs" />
     <Compile Include="Models\TranSaleOrderModels.cs" />
     <Compile Include="Models\TranSaleReturnModels.cs" />
@@ -427,6 +430,7 @@
     <Compile Include="ViewModels\CustomerConsignViewModel.cs" />
     <Compile Include="ViewModels\MasterAdjustmentViewModel.cs" />
     <Compile Include="ViewModels\MasterCustomerConsignViewModel.cs" />
+    <Compile Include="ViewModels\MasterPurchaseReturnViewModel.cs" />
     <Compile Include="ViewModels\MasterPurchaseViewModel.cs" />
     <Compile Include="ViewModels\MasterPurOrderViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleOrderViewModel.cs" />
@@ -437,6 +441,7 @@
     <Compile Include="ViewModels\PaymentViewModel.cs" />
     <Compile Include="ViewModels\ProductMenuViewModel.cs" />
     <Compile Include="ViewModels\PurchaseOrderViewModel.cs" />
+    <Compile Include="ViewModels\PurchaseReturnViewModel.cs" />
     <Compile Include="ViewModels\PurchaseViewModel.cs" />
     <Compile Include="ViewModels\SaleOrderViewModel.cs" />
     <Compile Include="ViewModels\SaleViewModel.cs" />
@@ -636,6 +641,8 @@
     <Content Include="Views\SaleReturn\ListSaleReturn.cshtml" />
     <Content Include="Views\PurchaseReturn\PurchaseReturn.cshtml" />
     <Content Include="Views\PurchaseReturn\ListPurchaseReturn.cshtml" />
+    <Content Include="Views\PurchaseReturn\_PurchaseReturnDetailChild.cshtml" />
+    <Content Include="Views\PurchaseReturn\_PurchaseReturnDetailDialog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
