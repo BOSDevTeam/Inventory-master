@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Inventory.Models
 {
-    public class TranPurchaseModels
+    public class TranPurchaseReturnModels
     {
         public int ID { get; set; }
         public int SaleID { get; set; }

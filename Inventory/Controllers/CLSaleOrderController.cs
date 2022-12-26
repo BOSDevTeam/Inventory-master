@@ -24,6 +24,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult SaveAction(int saleOrderID)
         {
+            string orderNumber = "", token = "";
             if (Session["TranSaleList"] != null)
             {
                 List<CLTranSaleOrderModels> list = Session["TranSaleList"] as List<CLTranSaleOrderModels>;
@@ -45,14 +46,22 @@ namespace Inventory.Controllers
                 cmd.Parameters.AddWithValue("@Total", Convert.ToInt32(Session["Total"]));
                 cmd.Parameters.AddWithValue("@temptbl", dt);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.ExecuteNonQuery();
-                dataConnectorSQL.Close();              
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    orderNumber = Convert.ToString(reader["OrderNumber"]);
+                    token = Convert.ToString(reader["Token"]);
+                }
+                reader.Close();
+                dataConnectorSQL.Close();
+
+                appSetting.sendPushNotification(token, AppConstants.UpdateOrderTitle, AppConstants.UpdateOrderBody + orderNumber, null);
             }
 
             List<CLMasterSaleOrderModels> List = Session["LstMSale"] as List<CLMasterSaleOrderModels>;
             if (List.Count != 0)
             {
-                int index = List.FindIndex(item => item.SaleOrderID == saleOrderID);             
+                int index = List.FindIndex(item => item.SaleOrderID == saleOrderID);
                 var result = List.Where(c => c.SaleOrderID == saleOrderID).SingleOrDefault();
                 CLMasterSaleOrderModels newItem = new CLMasterSaleOrderModels();
                 newItem.SaleOrderID = saleOrderID;
@@ -74,6 +83,7 @@ namespace Inventory.Controllers
             }
             return Json(List, JsonRequestBehavior.AllowGet);
         }
+
         public ActionResult CLMasterSaleOrderList()
         {           
             CLMasterSaleOrderModels mastersalemodel = new CLMasterSaleOrderModels();

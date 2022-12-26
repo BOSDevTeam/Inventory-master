@@ -107,9 +107,11 @@ div.note{background-color:#ffffcc;padding:5px;}
 .align-justify-center{display:flex;align-items:center;justify-content:center;}
 .table-border{border:1px solid #f4f6f8;}
 .text-overflow{text-overflow:ellipsis;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;}
-.tran-table-header-row{background-color:#DEE2E6;margin-bottom:1px;padding:0px 5px;position:sticky;top:0;z-index:999;}
-.tran-table-item-row{background-color:#d1d1d0;margin-bottom:1px;padding:2px 5px;}
-.tran-table-item-row:hover{background-color:#DEE2E6;cursor:pointer;}
+.tran-table-header-row{background-color:#DEE2E6;padding:2px 5px;position:sticky;top:0;z-index:999;border-bottom:1px solid #d7dadf;}
+.tran-table-item-row{background-color:#fff;margin-bottom:1px;padding:2px 5px;}
+.tran-table-item-row:hover{background-color:#ecedef;cursor:pointer;}
+.div-return{border:1px solid #f3f3f3;background-color:#fff;}
+.return-table-header-row{background-color:#27ae61;color:#fff;padding:5px;position:sticky;top:0;z-index:999;border-bottom:1px solid #d7dadf;}
 .text-link{color:#0582b3;}
 .text-link:hover{color:#36b4e5;cursor:pointer;}
 button.discount{padding:5px 10px;background-color:#DEE2E6;font-size:13px;font-family: 'Rubik',sans-serif;color:#666;border:none;}

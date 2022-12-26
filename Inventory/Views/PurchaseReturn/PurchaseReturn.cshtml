@@ -10,12 +10,640 @@
     <style type="text/css">
         #subMenuPurchaseGp {
             display: block;
-        }
+        }      
     </style>
 </head>
 
 <script type="text/javascript">
     document.getElementById('subMenuPurchaseReturn').className = 'active';
+</script>
+
+<div class="row m-t-5 m-b-5 m-l-5">
+    <div class="col-md-4 col-lg-4 note align-justify-center">
+        <label id="lblUserVoucherNo" class="control-label mb-0"></label>
+    </div>
+    <div class="col-md-4 col-lg-4">
+        <input id="inputDate" type="date" class="form-control control-input" />
+    </div>
+    <div class="col-md-4 col-lg-4">
+        <input id="inputVoucherID" type="text" class="form-control control-input" placeholder="@Resource.VoucherID" />
+    </div>   
+</div>
+<div class="row">
+    <div class="col-md-6 col-lg-6">
+        <div class="m-t-5 padding-5 search-div">
+            <div class="row">
+                <div class="col-md-8 col-lg-8">
+                    <input id="inputNumber" type="hidden" />
+                    <input id="inputID" type="hidden" />
+                    <input id="inputProductID" type="hidden" />
+                    <input id="inputUnitID" type="hidden" />
+                    <input id="inputCurrencyID" type="hidden" />
+                    <input id="inputCurrencyName" type="hidden" />
+                    <input id="inputMaxQty" type="hidden" />
+                    <input id="inputProductName" type="text" class="form-control control-input" placeholder="@Resource.ProductName" disabled />
+                </div>
+                <div id="divQuantity" class="col-md-3 col-lg-3">
+                    <input id="inputQuantity" type="text" class="form-control control-input numberonly" placeholder="@Resource.ReturnQty" />                    
+                </div>
+                <div id="divUnit" class="col-md-1 col-lg-1 note align-justify-center">
+                    <label id="lblUnit" class="control-label mb-0">UNIT</label>
+                </div>
+            </div>
+            <div class="row m-t-5 align-center">
+                <div class="col-md-4 col-lg-4">
+                    <input id="inputPrice" type="text" class="form-control control-input numberonly" placeholder="@Resource.Price" disabled />
+                </div>
+                <div class="col-md-4 col-lg-4">
+                    <input id="inputDisPercent" type="text" class="form-control control-input numberonly" placeholder="@Resource.PercentSign" disabled />
+                </div>               
+                <div id="divTranBtn" class="col-md-4 col-lg-4 aligh-right">
+                    <button id="btnAdd" class="btn btn-second">@Resource.Add</button>
+                    <button id="btnEdit" class="btn btn-third">@Resource.Edit</button>
+                </div>
+            </div>
+        </div>
+        <div id="divPurchaseReturnChild">
+            <div id="divPurchaseReturnTran" class="tran-table">
+                <table id="tblTranPurchaseReturn" class="width-100-percent">
+                    <thead>
+                        <tr class="row tran-table-header-row">
+                            <td class="col-md-4 col-lg-4 text-overflow"><span>@Resource.Product</span></td>
+                            <td class="col-md-2 col-lg-2 text-overflow"><span>@Resource.Qty</span></td>
+                            <td class="col-md-2 col-lg-2 text-overflow"><span>@Resource.Price</span></td>
+                            <td class="col-md-1 col-lg-1 text-overflow"><span>@Resource.Dis</span></td>
+                            <td class="col-md-2 col-lg-2 text-overflow"><span class="aligh-right">@Resource.Amount</span></td>
+                            <td class="col-md-1 col-lg-1"></td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div style="bottom:0px;position:absolute;width:100%;">
+                <div class="row">
+                    <div class="col-md-3 col-lg-3 padding-10">@Resource.Total</div>
+                    <div class="col-md-4 col-lg-4"></div>
+                    <div class="col-md-5 col-lg-5 aligh-right padding-10">
+                        <label id="lblTotal" class="total-amount-value mb-0">0</label>
+                    </div>
+                </div>
+                <div class="row mr-0 soft-gray-background pt-1">
+                    <div class="col-md-6 col-lg-6">
+                        <button id="btnCancel" class="btn btn-third">@Resource.Reset</button>
+                        <button id="btnEditCancel" class="btn btn-third m-t-0">@Resource.Cancel</button>
+                    </div>
+
+                    <div class="col-md-6 col-lg-6 aligh-right">
+                        <button id="btnContinue" class="btn btn-first plr-30">@Resource.Continue</button>
+                        <button id="btnEditContinue" class="btn btn-first plr-30 m-t-0">@Resource.Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div id="divPurchase" class="col-md-6 col-lg-6 div-return">
+        
+        <div class="row margin-5">              
+                <input id="inputSearch" type="text" class="form-control control-input" placeholder="@Resource.EnterPurchaseVoucherNo" />
+            </div>
+        <div>
+            <div class="row m-t-10">
+                <div class="col-md-6 col-lg-6">
+                    <label class="control-label">@Resource.TotalPurchaseItems</label><label id="lblTotalPurchaseItem" class="control-label ml-10" style="background-color:#ffffcc;padding-left:5px;padding-right:5px;"></label>
+                </div>
+            </div>
+            <div id="divPurchaseChild">
+                <div id="divPurchaseTran" class="tran-table">
+                    <table id="tblTranPurchase" class="width-100-percent">
+                        <thead>
+                            <tr class="row return-table-header-row">
+                                <td class="col-md-4 col-lg-4 text-overflow"><span>@Resource.Product</span></td>
+                                <td class="col-md-2 col-lg-2 text-overflow"><span>@Resource.Qty</span></td>
+                                <td class="col-md-2 col-lg-2 text-overflow"><span>@Resource.Price</span></td>
+                                <td class="col-md-2 col-lg-2 text-overflow"><span>@Resource.Dis</span></td>
+                                <td class="col-md-2 col-lg-2 text-overflow"><span class="aligh-right m-r-10">@Resource.Amount</span></td>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>        
+        
+    </div>
+</div>
+<div>
+    @{
+        Html.RenderPartial("_RemarkDialog");
+    }
+</div>
+
+
+<script type="text/javascript">
+    let tranPurchaseReturnAction;
+    $('body').addClass("hideVerticalScrollbar");
+    calcPurchaseHeight();
+    function calcPurchaseHeight() {
+        let windowHeight = window.innerHeight;
+        let thingsHeight = 100; // average other component height
+        let extraHeight = 11;
+        let purchaseAreaHeight = windowHeight - (thingsHeight + extraHeight);
+        let purchaseChildHeight = purchaseAreaHeight - 100;  // 100 is top component
+        let purchaseTranHeight = purchaseChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra
+        document.getElementById('divPurchase').setAttribute("style", "height:" + purchaseAreaHeight + "px");
+        document.getElementById('divPurchaseReturnChild').setAttribute("style", "height:" + purchaseChildHeight + "px");
+        document.getElementById('divPurchaseReturnTran').setAttribute("style", "height:" + purchaseTranHeight + "px");
+    }
+    $(document).ready(function () {
+        setModuleTitle('@Resource.Purchase', '@Resource.AddPurchaseReturn');
+        if ('@ViewBag.IsEdit' == 'True') fillEditData();
+        else initializeControl();
+        function initializeControl() {
+            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputDate').val(getTodayDate());
+            $("#inputSearch").prop("disabled", false);
+            showHideTranPurchaseReturnAddEdit(false);
+            showHideMainButton(false);
+            showHideUnit();
+        }
+        function showHideUnit() {
+            document.getElementById("inputDisPercent").placeholder = "@Resource.Dis" + "(" + "@Resource.PercentSign" + ")";
+            if (isMultiUnit == "True") {
+                $("#divUnit").show();
+            } else {
+                $('#divUnit').css("display", "none");
+                $('#divQuantity').addClass("col-md-4 col-lg-4");
+            }
+        }
+        $("#inputSearch").keydown(function (event) {
+            if (event.which === 13) {
+                let purchaseVoucherNo = $("#inputSearch").val();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("GetPurchaseItemsByPurchaseVoucherNoAction", "PurchaseReturn")',
+                    data: { "purchaseVoucherNo": purchaseVoucherNo },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess) {
+                            responseUnSuccessful(response);
+                        }
+                        else {
+                            if (!response.IsExistPurchase) {
+                                showToast(0, '@Inventory.Common.AppConstants.Message.NoProductByCode');
+                                $("#tblTranPurchase").find("tbody").empty();
+                                $('#lblTotalPurchaseItem').text("");
+                            }
+                            else {
+                                if (!response.IsVoucherFOC) {
+                                    $('#lblTotalPurchaseItem').text(response.TotalPurchaseItem + '(' + response.TotalPurchaseItemQty + ')');
+                                    createTranPurchaseData(response.LstTranPurchase);
+                                    $("#tblTranPurchaseReturn").find("tbody").empty();
+                                }
+                                else {
+                                    showToast(0, response.ResultDefaultData.Message);
+                                    $("#inputSearch").val("");
+                                }
+                            }
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        })
+
+        function createTranPurchaseData(lstTranPurchase) {
+
+            $("#tblTranPurchase").find("tbody").empty();
+            $.each(lstTranPurchase, function (i, item) {
+
+                if (item.UnitKeyword == null) item.UnitKeyword = '';
+                if (item.CurrencyKeyword == null) item.CurrencyKeyword = '';
+                let row = '<tr class="row tran-table-item-row pt-1">'
+                       + '<td style="display:none;">' + item.ProductID + '</td>'
+                       + '<td class="col-md-4 col-lg-4"><label class="control-label mb-0 text-link text-overflow">' + item.ProductName + '</label></td>'
+                       + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + item.Quantity + '<span class="control-span-sm">&nbsp;' + item.UnitKeyword + '</span></label></td>'
+                       + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + separatedComma(item.PurchasePrice) + '<span class="control-span-sm">&nbsp;' + item.CurrencyKeyword + '</span></label></td>'
+                       + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + separatedComma(item.Discount) + '</label></td>'
+                       + '<td class="col-md-2 col-lg-2 value-right"><label class="control-label mb-0">' + separatedComma(item.Amount) + '</label></td>'
+                       + '<td style="display:none;">' + item.ID + '</td>'
+                       + '</tr>';
+                $('#tblTranPurchase tbody').append(row);
+            })
+        }
+
+        $("#tblTranPurchase").on("click", "tbody tr", function (event) {
+            $('#tblTranPurchase tr').removeClass("selected");
+            $(this).addClass("selected");
+            $(this).find("td:last").each(function () {
+                let number = $(this).text();
+                prepareToEditTranPurchase(number);
+            })
+        });
+
+        function prepareToEditTranPurchase(number) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("PrepareToEditTranPurchaseAction", "PurchaseReturn")',
+                data: { "number": number },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
+                    }
+                    else {
+                        $("#inputNumber").val(number);
+                        $("#inputID").val(response.ID);
+                        $("#inputProductID").val(response.ProductID);
+                        $("#inputProductName").val(response.ProductName);
+                        $("#inputQuantity").val(response.Quantity);
+                        $("#inputMaxQty").val(response.MaxQuantity);
+                        $("#inputPrice").val(response.Price);
+                        $("#inputDisPercent").val(response.DisPercent + '@Resource.PercentSign');
+                        $("#inputUnitID").val(response.UnitID);
+                        $("#lblUnit").text(response.UnitKeyword);
+                        $("#inputCurrencyID").val(response.CurrencyID);
+                        $("#inputCurrencyName").val(response.CurrencyKeyword);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        }
+        function validateProductControl() {
+            let qty = $("#inputQuantity").val();
+            let maxQty = parseInt($("#inputMaxQty").val());
+            if (qty > maxQty) {
+                showToast(0, '@Inventory.Common.AppConstants.Message.PurReturnQtyCheck');
+                $("#inputQuantity").val("");
+                $("#inputQuantity").focus();
+                return false;
+            }
+            else if ($("#inputProductID").val().length == 0 || $("#inputProductID").val() == 0) return false;
+            else if ($("#inputQuantity").val().length == 0 || $("#inputQuantity").val() == 0) {
+                $("#inputQuantity").focus();
+                return false;
+            }
+            else if ($("#inputPrice").val().length == 0) {
+                $("#inputPrice").focus();
+                return false;
+            }
+            return true;
+        }
+
+        $("#btnAdd").click(function () {
+            if (validateProductControl()) {
+                addOrEditTranPurchaseReturn(false);
+            }
+        });
+        $("#btnEdit").click(function (e) {
+            if (validateProductControl()) {
+                addOrEditTranPurchaseReturn(true);
+            }
+        });
+
+        function addOrEditTranPurchaseReturn(isEdit) {
+            let number = $("#inputNumber").val();
+            let ID = $("#inputID").val();
+            let productId = $("#inputProductID").val();
+            let productName = $("#inputProductName").val();
+            let quantity = $("#inputQuantity").val();
+            let maxQty = $("#inputMaxQty").val();
+            let price = $("#inputPrice").val();
+            let disPercent = parseInt($("#inputDisPercent").val());
+            let unitId = $("#inputUnitID").val();
+            let unitKeyword = $("#lblUnit").text();
+            let currencyId = $("#inputCurrencyID").val();
+            let currencyKeyword = $("#inputCurrencyName").text();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("TranPurchaseReturnAddEditAction", "PurchaseReturn")',
+                data: { "ID": ID, "productId": productId, "productName": productName, "quantity": quantity, "maxQuantity": maxQty, "price": price, "disPercent": disPercent, "unitId": unitId, "unitKeyword": unitKeyword, "currencyId": currencyId, "currencyKeyword": currencyKeyword, "isEdit": isEdit, "number": number },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess)
+                        redirectToLogin();
+                    else {
+                        createTranPurchaseReturnData(response.LstTranPurchaseReturn);
+                        $("#lblTotal").text(response.SubTotal);
+                        clearProductControl();
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        }
+        function createTranPurchaseReturnData(lstTranPurchaseReturn) {
+            $("#tblTranPurchaseReturn").find("tbody").empty();
+            $.each(lstTranPurchaseReturn, function (i, item) {
+                if (item.UnitKeyword == null) item.UnitKeyword = '';
+                if (item.CurrencyKeyword == null) item.CurrencyKeyword = '';
+                let row = '<tr class="row tran-table-item-row">'
+                       + '<td style="display:none;">' + item.ProductID + '</td>'
+                       + '<td class="col-md-4 col-lg-4"><label class="control-label mb-0 text-link text-overflow">' + item.ProductName + '</label></td>'
+                       + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + item.Quantity + '<span class="control-span-sm">&nbsp;' + item.UnitKeyword + '</span></label></td>'
+                       + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + separatedComma(item.PurchasePrice) + '<span class="control-span-sm">&nbsp;' + item.CurrencyKeyword + '</span></label></td>'
+                       + '<td class="col-md-1 col-lg-1"><label class="control-label mb-0">' + separatedComma(item.Discount) + '</label></td>'
+                       + '<td class="col-md-2 col-lg-2 value-right"><label class="control-label mb-0">' + separatedComma(item.Amount) + '</label></td>'
+                       + '<td class="col-md-1 col-lg-1 value-right"><button class="btn-icon gray" title="Delete" onclick="tranPurchaseReturnTableAction(3)"><i class="fa fa-remove"></i></button></td>'
+                       + '<td style="display:none;">' + item.Number + '</td>'
+                       + '</tr>';
+                $('#tblTranPurchaseReturn tbody').append(row);
+            })
+        }
+        function clearProductControl() {
+            $("#inputNumber").val("");
+            $("#inputProductID").val("");
+            $("#inputProductName").val("");
+            $("#inputQuantity").val("");
+            $("#inputPrice").val("");
+            $("#inputDisPercent").val("");
+            showHideTranPurchaseReturnAddEdit(false);
+        }
+        $("#tblTranPurchaseReturn").on("click", "tbody tr", function (event) {
+            $('#tblTranPurchaseReturn tr').removeClass("selected");
+            $(this).addClass("selected");
+            $(this).find("td:last").each(function () {
+                let number = $(this).text();
+                if (tranPurchaseReturnAction == 3) {
+                    tranPurchaseReturnAction = 0;
+                    deleteTranPurchaseReturn(number);
+                } else {
+                    prepareToEditTranPurchaseReturn(number);
+                }
+            })
+        });
+        function deleteTranPurchaseReturn(number) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("TranPurchaseReturnDeleteAction", "PurchaseReturn")',
+                data: { "number": number },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.IsRequestSuccess)
+                        redirectToLogin();
+                    else {
+                        createTranPurchaseReturnData(response.LstTranPurchaseReturn);
+                        $("#lblTotal").text(response.SubTotal);
+                        //createTranPurchaseData(response.LstTranPurchase);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        }
+        function prepareToEditTranPurchaseReturn(number) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("PrepareToEditTranPurchaseReturnAction", "PurchaseReturn")',
+                data: { "number": number },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
+                    }
+                    else {
+                        $("#inputNumber").val(number);
+                        $("#inputID").val(response.ID);
+                        $("#inputProductID").val(response.ProductID);
+                        $("#inputProductName").val(response.ProductName);
+                        $("#inputQuantity").val(response.Quantity);
+                        $("#inputMaxQty").val(response.MaxQuantity);
+                        $("#inputPrice").val(response.Price);
+                        $("#inputDisPercent").val(response.DisPercent + '@Resource.PercentSign');
+                        $("#inputUnitID").val(response.UnitID);
+                        $("#lblUnit").text(response.UnitKeyword);
+                        $("#inputCurrencyID").val(response.CurrencyID);
+                        $("#inputCurrencyName").val(response.CurrencyKeyword);
+                        showHideTranPurchaseReturnAddEdit(true);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        }
+        $("#btnCancel").click(function () {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CancelAction", "PurchaseReturn")',
+                data: {},
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    clearProductControl();
+                    $("#tblTranPurchaseReturn").find("tbody").empty();
+                    $("#lblTotal").text("0");
+                    createTranPurchaseData(response.LstTranPurchase);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+        $("#btnContinue").click(function (e) {
+            let row = $("#tblTranPurchaseReturn tbody tr").length;
+            if (row < 1) return;
+            $("#modalRemarkTitle").text("Add Remark");
+            $("#lblRemark").text("Enter a Note");
+            $('#modalRemark').modal('show');
+        });
+        $("#btnRemarkOk").click(function () {
+            let userVoucherNo = $('#lblUserVoucherNo').text();
+            let date = $('#inputDate').val();
+            let voucherId = $('#inputVoucherID').val();
+            let remark = $('#txtRemarkNote').val();
+            let total = $("#lblTotal").text();
+            let userId = localStorage.getItem("UserID");
+            showLoadingIcon();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("PurchaseReturnSubmitAction", "PurchaseReturn")',
+                data: JSON.stringify({
+                    "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId,
+                    "remark": remark, "total": total, "userId": userId
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    $('#modalRemark').modal('hide');
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        responseUnSuccessful(response);
+                    }
+                    else {
+                        showToast(1, response.ResultDefaultData.Message);
+                        clearProductControl();
+                        $("#tblTranPurchase").find("tbody").empty();
+                        $("#tblTranPurchaseReturn").find("tbody").empty();
+                        $("#lblUserVoucherNo").text(response.UserVoucherNo);
+                        $('#inputDate').val(getTodayDate());
+                        $('#inputVoucherID').val("");
+                        $("#inputSearch").val("");
+                        $("#lblTotal").text("0");
+                        $('#lblTotalPurchaseItem').text("");
+                        $('#txtRemarkNote').val("");
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        })
+        function fillEditData() {
+            $('#btnEditContinue').val('@ViewBag.PurchaseReturnID');
+            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputDate').val('@ViewBag.Date');
+            $('#inputVoucherID').val('@ViewBag.VoucherID');
+            $('#lblTotal').text(separatedComma('@ViewBag.Total'));
+            $('#inputSearch').val('@ViewBag.ReturnVoucherNo');
+            $('#lblTotalPurchaseItem').text('@ViewBag.TotalItem' + '(' + '@ViewBag.TotalQuantity' + ')');
+            $('#txtRemarkNote').val('@ViewBag.Remark');
+            $("#inputSearch").prop("disabled", true);
+            showHideTranPurchaseReturnAddEdit(false);
+            showHideMainButton(true);
+            showHideUnit();
+            let tranPurchaseReturnList = JSON.parse('@Html.Raw(Json.Encode(Session["TranPurchaseReturnData"]))');
+            createTranPurchaseReturnData(tranPurchaseReturnList);
+            let tranPurchaseList = JSON.parse('@Html.Raw(Json.Encode(Session["TranPurchaseData"]))');
+            createTranPurchaseData(tranPurchaseList);
+
+        }
+        $("#btnEditCancel").click(function (e) {
+            window.location.href = '@Url.Action("PurchaseReturn", "PurchaseReturn")?userId=' + userId;
+        });
+        $("#btnEditContinue").click(function () {
+            let row = $("#tblTranPurchaseReturn tbody tr").length;
+            if (row < 1) return;
+            $('#btnRemarkEdit').val($("#btnEditContinue").val());
+            $('#modalRemark').modal('show');
+            showHideMainButton(true);
+            $("#lblRemark").text("Enter a Note");
+            $("#modalRemarkTitle").text("Add Remark");
+            $('#btnRemarkEdit').css("display", "block");
+        });
+        $("#btnRemarkEdit").click(function () {
+            let purchaseReturnId = $(this).val();
+            let date = $('#inputDate').val();
+            let voucherId = $('#inputVoucherID').val();
+            let remark = $('#txtRemarkNote').val();
+            let total = $("#lblTotal").text();
+            let returnVoucherNo = $("#inputSearch").val();
+            let userId = localStorage.getItem("UserID");
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("PurchaseReturnEditAction", "PurchaseReturn")',
+                data: {
+                    "purchaseReturnId": purchaseReturnId, "date": date, "voucherId": voucherId,
+                    "total": total, "returnVoucherNo": returnVoucherNo, "remark": remark
+                },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        $('#modalRemark').modal('hide');
+                        responseUnSuccessful(response);
+                    }
+                    else {
+                        window.location.href = '@Url.Action("ListPurchaseReturn", "PurchaseReturn")?userId=' + userId;
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+
+        })
+    });
+
+    function showHideTranPurchaseReturnAddEdit(isEdit) {
+        if (isEdit) {
+            $('#btnAdd').css("display", "none");
+            $("#btnEdit").show();
+        } else {
+            $("#btnAdd").show();
+            $('#btnEdit').css("display", "none");
+        }
+    }
+    function showHideMainButton(isEdit) {
+        if (isEdit) {
+            $('#btnCancel').css("display", "none");
+            $('#btnContinue').css("display", "none");
+            $('#btnRemarkOk').css("display", "none");
+        } else {
+            $("#btnEditCancel").css("display", "none");
+            $('#btnEditContinue').css("display", "none");
+            $('#btnRemarkEdit').css("display", "none");
+        }
+    }
+    function tranPurchaseReturnTableAction(value) {
+        tranPurchaseReturnAction = value;
+    }
+
 </script>
 
 

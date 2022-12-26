@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Inventory.ViewModels
+@model StockStatusViewModel
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,6 +12,10 @@
     <style type="text/css">
         #subMenuStockStatusGp {
             display: block;
+        }     
+        table tbody{
+            overflow-y:scroll;
+            display:block;
         }
     </style>
 </head>  
@@ -22,20 +28,15 @@
         </div>
     </div>
 
-    <div class="row padding-10">
+    <div class="row">
         <div class="col-md-12 col-lg-12">
-            <table id="tblStockStatus" class="col-md-12 col-lg-12" role="grid">
+            <table id="tblStockStatus" style="width:100%">
                 <thead>
-                    @*<tr class="row table-header">
-                        <th class="col-md-2 col-lg-2">Date</th>
-                        <th class="col-md-3 col-lg-3">Voucher No.</th>
-                        <th class="col-md-3 col-lg-3">Customer</th>
-                        <th class="col-md-1 col-lg-1">Pay Type</th>
-                        <th class="col-md-2 col-lg-2 aligh-right">Grand Total</th>
-                        <th class="col-md-1 col-lg-1">Action</th>
-                    </tr>*@
+                    <tr>
+                        <th><div></div></th>
+                    </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody id="tableBody"></tbody>
             </table>
         </div>
     </div>
@@ -44,31 +45,83 @@
 
 <script type="text/javascript">
     document.getElementById('subMenuStockStatusByLocation').className = 'active';
+    $('body').addClass("hideVerticalScrollbar");
+    calcTableBodyHeight();
+
+    function calcTableBodyHeight() {
+        let windowHeight = window.innerHeight;
+        let title = 50.5; 
+        let bodyPadding = 10;
+        let tableHeader = 42.5;
+        let extra = 50;
+        let tableBody = windowHeight - (title + bodyPadding + tableHeader + extra);
+        document.getElementById('tableBody').setAttribute("style", "height:" + tableBody + "px");
+    }
 
     $(document).ready(function () {
 
         setModuleTitle('@Resource.StockStatus', '@Resource.StockStatusByLocation');
+        createHeader();
+        createItem();
 
-        function createHeader(response, isFromJson) {
-            $("#tblSaleList").find("tbody").empty();
-            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterSale"]))');
-            $.each(response, function (index, item) {
-                var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
-                        + '<td class="col-md-2 col-lg-2 text-overflow">' + item.SaleDateTime + '</td>'
-                        + '<td class="col-md-3 col-lg-3">' + item.UserVoucherNo + '</td>'
-                        + '<td class="col-md-3 col-lg-3 text-overflow">' + item.CustomerName + '</td>'
-                        + '<td class="col-md-1 col-lg-1">' + item.PaymentKeyword + '</td>'
-                        + '<td class="col-md-2 col-lg-2 value-right">' + separatedComma(item.Grandtotal) + '</td>'
-                        + '<td class="col-md-1 col-lg-1 btn-group">'
-                            + '<button title="View" class="btn btn-sm btn-dark" onclick="listTableAction(1)"><i class="fa fa-list"></i></button>'
-                            + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
-                            + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
-                        + '</td>'
-                        + '<td style="display:none">' + item.SaleID + '</td>'
-                    + '</tr>'
-                $('#tblSaleList tbody').append(row);
-            });
+        function createHeader() {
+            $("#tblStockStatus").find("thead").empty();
+            var header = JSON.parse('@Html.Raw(Json.Encode(ViewData["StockStatusHeader"]))');
+
+            var row = '<tr class="row table-header">'
+                        + '<th class="col-md-1 col-lg-1">' + header.ProductCode + '</th>'
+                        + '<th class="col-md-2 col-lg-2">' + header.ProductName + '</th>'
+                        + '<th class="col-md-8 col-lg-8">'
+                        + '<div class="row">'
+                    
+            if (header.lstLocationName.length <= 6) {
+                $.each(header.lstLocationName, function (index, item) {
+                    row += '<label class="col-md-2 col-lg-2 aligh-right mb-0">' + item + '</label>'
+                });
+            } else {
+                $.each(header.lstLocationName, function (index, item) {
+                    row += '<label class="col-md-1 col-lg-1 aligh-right mb-0">' + item + '</label>'
+                });
+            }
+            
+            row += '</div></th>'
+                + '<th class="col-md-1 col-lg-1 aligh-right">' + header.Balance + '</th>'
+                + '</tr>'
+            $('#tblStockStatus thead').append(row);
         }
+
+        function createItem() {
+            $("#tblStockStatus").find("tbody").empty();
+            var response = JSON.parse('@Html.Raw(Json.Encode(ViewData["StockStatusItem"]))');
+
+            $.each(response, function (index, item) {
+                var row = '<tr class="row table-item">'
+                         + '<td class="col-md-1 col-lg-1">' + item.ProductCode + '</td>'
+                         + '<td class="col-md-2 col-lg-2">' + item.ProductName + '</td>'
+                         + '<td class="col-md-8 col-lg-8">'
+                         + '<div class="row">'
+
+                if (item.lstLocationBalance.length <= 6) {
+                    $.each(item.lstLocationBalance, function (index, balance) {
+                        row += '<label class="col-md-2 col-lg-2 aligh-right mb-0">' + balance + '</label>'
+                    });
+                } else {
+                    $.each(item.lstLocationBalance, function (index, balance) {
+                        row += '<label class="col-md-1 col-lg-1 aligh-right mb-0">' + balance + '</label>'
+                    });
+                }
+              
+                row += '</div></td>'
+                    + '<td class="col-md-1 col-lg-1 aligh-right">' + item.Balance + '</td>'
+                    + '</tr>'
+                $('#tblStockStatus tbody').append(row);
+            });           
+        }
+
+        $("#tblStockStatus").on("click", "tbody tr", function (event) {
+            $('#tblStockStatus tr').removeClass("selected");
+            $(this).addClass("selected");
+        });
 
     });
 </script>

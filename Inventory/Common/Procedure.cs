@@ -91,5 +91,13 @@ namespace Inventory.Common
         public const string PrcGetTranCustomerConsignByCustomerConsignID = "PrcGetTranCustomerConsignByCustomerConsignID";
         public const string PrcUpdateCustomerConsign = "PrcUpdateCustomerConsign";
         public const string PrcGetStockStatusByLocation = "PrcGetStockStatusByLocation";
+        public const string PrcGetMasterANDTranSaleByPaymentID = "PrcGetMasterANDTranSaleByPaymentID";
+        public const string PrcGetMasterPurchaseByPurchaseVoucherNo = "PrcGetMasterPurchaseByPurchaseVoucherNo";
+        public const string PrcInsertPurchaseReturn = "PrcInsertPurchaseReturn";
+        public const string PrcGetMasterPurchaseReturnList = "PrcGetMasterPurchaseReturnList";
+        public const string PrcGetMasterPurchaseReturnByPurchaseReturnID = "PrcGetMasterPurchaseReturnByPurchaseReturnID";
+        public const string PrcGetTranPurchaseReturnByPurchaseReturnID = "PrcGetTranPurchaseReturnByPurchaseReturnID";
+        public const string PrcDeletePurchaseReturn = "PrcDeletePurchaseReturn";
+        public const string PrcUpdatePurchaseReturn = "PrcUpdatePurchaseReturn";
     }
 }

@@ -426,5 +426,21 @@ namespace Inventory.Common
 
             return list;
         }
+
+        public List<string> selectClientToken(object connection)
+        {
+            List<string> list = new List<string>();
+
+            SqlCommand cmd = new SqlCommand(TextQuery.clientTokenQuery, (SqlConnection)connection);
+            cmd.CommandType = CommandType.Text;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(Convert.ToString(reader["Token"]));
+            }
+            reader.Close();
+
+            return list;
+        }
     }
 }

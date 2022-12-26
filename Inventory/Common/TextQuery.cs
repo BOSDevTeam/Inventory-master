@@ -9,7 +9,7 @@ namespace Inventory.Common
     {
         public const string customerQuery = "Select CustomerID,CustomerName From SCustomer Order By IsDefault DESC";
         public const string supplierQuery = "Select SupplierID,SupplierName From SSupplier Order By IsDefault DESC";
-        public const string locationQuery = "Select LocationID,ShortName From SLocation";
+        public const string locationQuery = "Select LocationID,ShortName From SLocation Order By LocationID";
         public const string mainMenuQuery = "Select MainMenuID,MainMenuName From SMainMenu Order By SortCode";
         public const string unitQuery = "Select UnitID,Keyword From SUnit Order By ULID";
         public const string currencyQuery = "Select CurrencyID,Keyword From SysCurrency Order By IsDefault DESC";
@@ -20,6 +20,7 @@ namespace Inventory.Common
         public const string adjustTypeQuery = "Select AdjustTypeID,ShortName From SAdjustType";
         public const string divisionQuery = "Select DivisionID,DivisionName From SDivision";
         public const string clientSalePersonQuery = "Select ClientID,ClientName From SClient Where IsSalePerson=1";
+        public const string clientTokenQuery = "Select Token From SClient";
 
         public string getSubMenuQuery(int mainMenuId)
         {
