@@ -24,14 +24,30 @@ namespace Inventory.Controllers
             if (checkConnection())
             {
                 getLocation();
-                createHeader();
-                selectStockStatus();
+                ViewData["StockStatusHeader"] = createHeader(true);
+                ViewData["StockStatusItem"] = selectStockStatus(true);
                 return View();
             }
             return RedirectToAction("Login", "User");
         }
 
-        private void selectStockStatus()
+        [HttpGet]
+        public JsonResult PriceTypeChangeAction(bool isRequestValue)
+        {
+            getLocation();
+            StockStatusViewModel.HeaderViewModel header = createHeader(isRequestValue);
+            List<StockStatusViewModel.ItemViewModel> lstItem = selectStockStatus(isRequestValue);
+
+            var jsonResult = new
+            {
+                Header = header,
+                LstItem = lstItem
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        private List<StockStatusViewModel.ItemViewModel> selectStockStatus(bool isWithSalePrice)
         {
             int productId = 0;
             List<StockStatusViewModel.ItemViewModel> list = new List<StockStatusViewModel.ItemViewModel>();
@@ -39,6 +55,7 @@ namespace Inventory.Controllers
 
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetStockStatusByLocation, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("IsWithSalePrice", isWithSalePrice);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -51,6 +68,7 @@ namespace Inventory.Controllers
                         {
                             item.Balance += item.lstLocationBalance[i];
                         }
+                        item.Amount = item.Balance * item.Price;
                         list.LastIndexOf(item);
                     }
 
@@ -58,6 +76,7 @@ namespace Inventory.Controllers
                     item.ProductID = Convert.ToInt32(reader["ProductID"]);
                     item.ProductCode = Convert.ToString(reader["ProductCode"]);
                     item.ProductName = Convert.ToString(reader["ProductName"]);
+                    item.Price = Convert.ToInt32(reader["Price"]);
                     item.lstLocationBalance.Add(Convert.ToInt32(reader["LocationBalance"]));
                     list.Add(item);
                 }
@@ -76,24 +95,27 @@ namespace Inventory.Controllers
                 {
                     item.Balance += item.lstLocationBalance[i];
                 }
+                item.Amount = item.Balance * item.Price;
                 list.LastIndexOf(item);
             }
 
             reader.Close();
-            ViewData["StockStatusItem"] = list;
+            return list;
         }
 
-        private void createHeader()
+        private StockStatusViewModel.HeaderViewModel createHeader(bool isWithSalePrice)
         {
             StockStatusViewModel.HeaderViewModel item = new StockStatusViewModel.HeaderViewModel();
-            item.ProductCode = "Code";
-            item.ProductName = "Product Name";
-            item.Balance = "Balance";
+            item.ProductCode = Resource.Code;
+            item.ProductName = Resource.ProductName;
+            item.Balance = Resource.Balance;
             for (int i = 0; i < lstLocation.Count(); i++)
             {
                 item.lstLocationName.Add(lstLocation[i].ShortName);
             }
-            ViewData["StockStatusHeader"] = item;
+            item.Price = Resource.Price;
+            item.Amount = Resource.Amount;
+            return item;
         }
 
         private void getLocation()

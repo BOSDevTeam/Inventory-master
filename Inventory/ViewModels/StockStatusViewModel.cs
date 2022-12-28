@@ -7,6 +7,8 @@ namespace Inventory.ViewModels
 {
     public class StockStatusViewModel
     {
+        public int PriceType { get; set; }
+
         public class ItemViewModel
         {
             public ItemViewModel()
@@ -18,6 +20,8 @@ namespace Inventory.ViewModels
             public string ProductName { get; set; }
             public int Balance { get; set; }
             public List<int> lstLocationBalance { get; set; }
+            public int Price { get; set; }
+            public int Amount { get; set; }
         }
         
         public class HeaderViewModel
@@ -30,6 +34,8 @@ namespace Inventory.ViewModels
             public string ProductName { get; set; }
             public List<string> lstLocationName { get; set; }
             public string Balance { get; set; }
+            public string Price { get; set; }
+            public string Amount { get; set; }
         }
     }
 }

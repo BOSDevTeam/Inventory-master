@@ -43,11 +43,8 @@ namespace Inventory.Controllers
                         if(purchase!=null)
                         {
                             lstTranPurchaseReturn[i].Number = purchase.ID;
-                            lstTranPurchaseReturn[i].MaxQuantity =lstTranPurchaseReturn[i].Quantity + purchase.Quantity;
-                            foreach(var model in lstTranPurchase.Where(m=>m.ID==purchase.ID))
-                            {
-                                model.MaxQuantity = model.Quantity + lstTranPurchaseReturn[i].Quantity;
-                            }
+                            lstTranPurchaseReturn[i].MaxQuantity =purchase.Quantity;
+                            
                         }
                         else
                         {
@@ -210,8 +207,8 @@ namespace Inventory.Controllers
 
         public JsonResult TranPurchaseReturnAddEditAction(int ID,int productId, string productName, int quantity,int maxQuantity ,int price, int disPercent, int? unitId, string unitKeyword, int? currencyId, string currencyKeyword, bool isEdit, int? number)
         {
-            List<TranPurchaseReturnModels> lstTranPurchaseReturn = new List<TranPurchaseReturnModels>();
-            List<TranPurchaseModels> lstTranPurchase = new List<TranPurchaseModels>();
+            //List<TranPurchaseModels> lstTranPurchase = new List<TranPurchaseModels>();
+            List<TranPurchaseReturnModels> lstTranPurchaseReturn = new List<TranPurchaseReturnModels>();           
             TranPurchaseReturnModels data = new TranPurchaseReturnModels();            
             int subtotal = 0, discount;
             bool isRequestSuccess = true;
@@ -228,7 +225,7 @@ namespace Inventory.Controllers
             data.CurrencyID = currencyId;           
             if (unitKeyword != null) data.UnitKeyword = unitKeyword;
             else data.UnitKeyword = "";
-            if (currencyKeyword != null) data.CurrencyKeyword = currencyKeyword;
+            if (currencyKeyword != null) data.CurrencyKeyword = currencyKeyword;        
             else data.CurrencyKeyword = "";
             discount = ((price * quantity) * disPercent) / 100;
             data.Discount = discount;
@@ -237,9 +234,7 @@ namespace Inventory.Controllers
             {
                 data.IsFOC = true;
             }
-
-            //lstTranPurchase = Session["TranPurchaseData"] as List<TranPurchaseModels>;
-            
+                        
             if (!isEdit)
             {
                 if (Session["TranPurchaseReturnData"] != null)
@@ -283,8 +278,7 @@ namespace Inventory.Controllers
                 subtotal += lstTranPurchaseReturn[i].Amount;                
             }
 
-            Session["TranPurchaseReturnData"] = lstTranPurchaseReturn;            
-            //Session["TranPurchaseData"] = lstTranPurchase;
+            Session["TranPurchaseReturnData"] = lstTranPurchaseReturn;                       
 
             var jsonResult = new
             {
@@ -299,44 +293,46 @@ namespace Inventory.Controllers
         public JsonResult TranPurchaseReturnDeleteAction(int number)
         {
             List<TranPurchaseReturnModels> lstTranPurchaseReturn = new List<TranPurchaseReturnModels>();
-            List<TranPurchaseModels> lstTranPurchase = new List<TranPurchaseModels>();
+            //List<TranPurchaseModels> lstTranPurchase = new List<TranPurchaseModels>();
             int subtotal = 0;
             bool isRequestSuccess = true;
-            lstTranPurchase = Session["TranPurchaseData"] as List<TranPurchaseModels>;
+            //lstTranPurchase = Session["TranPurchaseData"] as List<TranPurchaseModels>;
             if (Session["TranPurchaseReturnData"] != null)
             {
                 lstTranPurchaseReturn = Session["TranPurchaseReturnData"] as List<TranPurchaseReturnModels>;
                 
-                if (lstTranPurchase.Where(m => m.ID == number).Count() > 0)
-                {
-                    foreach(var item in lstTranPurchase.Where(m => m.ID == number))
-                    {
-                        var data=lstTranPurchaseReturn.Where(m => m.Number == item.ID).FirstOrDefault();
-                        item.Quantity += data.Quantity;
-                        item.Discount += data.Discount;
-                        item.Amount += data.Amount;
-                        item.MaxQuantity += data.MaxQuantity;
-                    }
-                }
-                else
-                {
-                    TranPurchaseModels item = new TranPurchaseModels();
-                    var purchaseReturn = lstTranPurchaseReturn.Where(m => m.Number == number).FirstOrDefault();
-                    item.ID = Convert.ToInt32(purchaseReturn.Number);
-                    item.ProductID = purchaseReturn.ProductID;
-                    item.ProductName = purchaseReturn.ProductName;
-                    item.PurchasePrice = purchaseReturn.PurchasePrice;
-                    item.Quantity = purchaseReturn.Quantity;
-                    item.MaxQuantity = purchaseReturn.MaxQuantity;
-                    item.Discount = purchaseReturn.Discount;
-                    item.CurrencyID = purchaseReturn.CurrencyID;
-                    item.CurrencyKeyword = purchaseReturn.CurrencyKeyword;
-                    item.UnitID = purchaseReturn.UnitID;
-                    item.UnitKeyword = purchaseReturn.UnitKeyword;
-                    item.IsFOC = purchaseReturn.IsFOC;
-                    item.DiscountPercent = purchaseReturn.DiscountPercent;
-                    lstTranPurchase.Add(item);
-                }
+                //if (lstTranPurchase.Where(m => m.ID == number).Count() > 0)
+                //{
+                //    if(isUpdate)
+                //    {
+                //        foreach (var item in lstTranPurchase.Where(m => m.ID == number))
+                //        {
+                //            var data = lstTranPurchaseReturn.Where(m => m.Number == item.ID).FirstOrDefault();
+                //            item.Quantity = data.MaxQuantity;
+                //            item.Discount = (data.PurchasePrice*data.MaxQuantity*data.DiscountPercent)/100;
+                //            item.Amount = (data.PurchasePrice*data.MaxQuantity)-item.Discount;                          
+                //        }
+                //    }
+                //}
+                //else
+                //{
+                //    TranPurchaseModels item = new TranPurchaseModels();
+                //    var purchaseReturn = lstTranPurchaseReturn.Where(m => m.Number == number).FirstOrDefault();
+                //    item.ID = Convert.ToInt32(purchaseReturn.Number);
+                //    item.ProductID = purchaseReturn.ProductID;
+                //    item.ProductName = purchaseReturn.ProductName;
+                //    item.PurchasePrice = purchaseReturn.PurchasePrice;
+                //    item.Quantity = purchaseReturn.Quantity;
+                //    item.MaxQuantity = purchaseReturn.MaxQuantity;
+                //    item.Discount = purchaseReturn.Discount;
+                //    item.CurrencyID = purchaseReturn.CurrencyID;
+                //    item.CurrencyKeyword = purchaseReturn.CurrencyKeyword;
+                //    item.UnitID = purchaseReturn.UnitID;
+                //    item.UnitKeyword = purchaseReturn.UnitKeyword;
+                //    item.IsFOC = purchaseReturn.IsFOC;
+                //    item.DiscountPercent = purchaseReturn.DiscountPercent;
+                //    lstTranPurchase.Add(item);
+                //}
 
                 lstTranPurchaseReturn.Remove(lstTranPurchaseReturn.Where(m=>m.Number==number).First());
                 for (int i = 0; i < lstTranPurchaseReturn.Count(); i++)
@@ -347,7 +343,7 @@ namespace Inventory.Controllers
             }
             else isRequestSuccess = false;
                        
-            Session["TranPurchaseData"] = lstTranPurchase;
+            //Session["TranPurchaseData"] = lstTranPurchase;
             var jsonResult = new
             {
                 LstTranPurchaseReturn = lstTranPurchaseReturn,
@@ -414,72 +410,23 @@ namespace Inventory.Controllers
 
         [HttpGet]
         public JsonResult CancelAction()
-        {
-            List<TranPurchaseReturnModels> lstTranPurchaseReturn = new List<TranPurchaseReturnModels>();
-            lstTranPurchaseReturn = Session["TranPurchaseReturnData"] as List<TranPurchaseReturnModels>;
-            List<TranPurchaseModels> lstTranPurchase = new List<TranPurchaseModels>();
-            lstTranPurchase = Session["TranPurchaseData"] as List<TranPurchaseModels>;
-            if(lstTranPurchaseReturn!=null)
-            {
-                foreach (var purchaseReturn in lstTranPurchaseReturn)
-                {
-                    foreach (var purchase in lstTranPurchase.Where(m => m.ID == purchaseReturn.ID))
-                    {
-                        purchase.Quantity = purchase.Quantity + purchaseReturn.Quantity;
-                        purchase.Discount = purchase.Discount + purchaseReturn.Discount;
-                        purchase.Amount = purchase.Amount + purchaseReturn.Amount;
-                    }
-                }
-            }
-            
-            Session["TranPurchaseData"] = lstTranPurchase;
+        {           
             Session["TranPurchaseReturnData"] = null;
             var jsonResult = new
             {
-                LstTranPurchase = lstTranPurchase,
-                TotalPurchaseItem = lstTranPurchase.Count,
-                TotalPurchaseItemQty = lstTranPurchase.Sum(m => m.Quantity)
+                data="",              
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
-        public JsonResult PurchaseReturnSubmitAction(string userVoucherNo, string date, string voucherId,
-                string remark,int total, int userId)
+        public JsonResult PurchaseReturnSubmitAction(string userVoucherNo, string date, string voucherId, string remark,int total, int userId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["TranPurchaseReturnData"] != null)
             {
                 try
                 {
-                    List<TranPurchaseReturnModels> list = Session["TranPurchaseReturnData"] as List<TranPurchaseReturnModels>;
-                    List<TranPurchaseModels> purchaseList = Session["TranPurchaseData"] as List<TranPurchaseModels>;                   
-                    List<TranPurchaseModels> purchaseRemainQtyList = new List<TranPurchaseModels>();                                   
-
-                    for(int i = 0; i < list.Count; i++)
-                    {
-                        foreach(var purchase in purchaseList.Where(m=>m.ID==list[i].ID))
-                        {
-                            purchase.Quantity -= list[i].Quantity;
-                            purchase.Discount -= list[i].Discount;
-                            purchase.Amount -= list[i].Amount;
-                        }
-                    }
-
-                    purchaseRemainQtyList = purchaseList.Where(m => m.Quantity != 0).ToList();
-                    DataTable remainDt = new DataTable();
-                    remainDt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("UnitID", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("PurchasePrice", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("CurrencyID", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("DiscountPercent", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("Discount", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("Amount", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
-                    for (int i = 0; i < purchaseRemainQtyList.Count; i++)
-                    {
-                        remainDt.Rows.Add(purchaseRemainQtyList[i].ProductID, purchaseRemainQtyList[i].Quantity, purchaseRemainQtyList[i].UnitID, purchaseRemainQtyList[i].PurchasePrice, purchaseRemainQtyList[i].CurrencyID, purchaseRemainQtyList[i].DiscountPercent, purchaseRemainQtyList[i].Discount, purchaseRemainQtyList[i].Amount, purchaseRemainQtyList[i].IsFOC);
-                    }
+                    List<TranPurchaseReturnModels> list = Session["TranPurchaseReturnData"] as List<TranPurchaseReturnModels>;                    
 
                     DataTable dt = new DataTable();
                     dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
@@ -498,23 +445,9 @@ namespace Inventory.Controllers
                     }
 
                     MasterPurchaseViewModel item = Session["MasterPurchaseData"] as MasterPurchaseViewModel;
-                    DateTime purchaseReturnDateTime = DateTime.Parse(date);
-                    
+                    DateTime purchaseReturnDateTime = DateTime.Parse(date);                   
                     SqlCommand cmd = new SqlCommand(Procedure.PrcInsertPurchaseReturn, dataConnectorSQL.Connect());
-
-                    int SubtTotal = item.MasterPurchaseModel.Subtotal - total;
-                    int TaxAmt = (SubtTotal * item.MasterPurchaseModel.Tax) / 100;
-                    int ChargesAmt = (SubtTotal * item.MasterPurchaseModel.Charges) / 100;
-                    int PurchaseTotal = SubtTotal + TaxAmt + ChargesAmt;
                     
-                    cmd.Parameters.AddWithValue("@Subtotal", SubtTotal);
-                    cmd.Parameters.AddWithValue("@Tax", item.MasterPurchaseModel.Tax);
-                    cmd.Parameters.AddWithValue("@TaxAmt", TaxAmt);
-                    cmd.Parameters.AddWithValue("@Charges", item.MasterPurchaseModel.Charges);
-                    cmd.Parameters.AddWithValue("@ChargesAmt", ChargesAmt);
-                    cmd.Parameters.AddWithValue("@PurchaseTotal", PurchaseTotal);
-                    
-                    cmd.Parameters.AddWithValue("@PurchaseID", item.MasterPurchaseModel.PurchaseID);
                     cmd.Parameters.AddWithValue("@ReturnVoucherNo", item.MasterPurchaseModel.UserVoucherNo);
                     cmd.Parameters.AddWithValue("@PurchaseReturnDateTime", purchaseReturnDateTime);
                     cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
@@ -524,8 +457,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@Remark", remark);
                     cmd.Parameters.AddWithValue("@Total", total);
                     cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.PurchaseReturnModule);
-                    cmd.Parameters.AddWithValue("@temptbl", dt);
-                    cmd.Parameters.AddWithValue("@temptblPurchaseRemain", remainDt);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);                  
                     
                     cmd.CommandType = CommandType.StoredProcedure;
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -648,34 +580,10 @@ namespace Inventory.Controllers
             if (Session["MasterPurchaseReturnData"] != null)
             {
                 try
-                {
-                    MasterPurchaseReturnViewModel item = new MasterPurchaseReturnViewModel();
-                    List<TranPurchaseReturnModels> lstTranPurchaseReturn = new List<TranPurchaseReturnModels>();
-                    item = selectMasterPurchaseReturn(purchaseReturnId);
-                    lstTranPurchaseReturn = selectTranPurchaseReturnByPurchaseReturnID(purchaseReturnId);
-                    //adding to purchase datalist
-                    DataTable dt = new DataTable();
-                    dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-                    dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-                    dt.Columns.Add(new DataColumn("UnitID", typeof(int)));
-                    dt.Columns.Add(new DataColumn("PurchasePrice", typeof(int)));
-                    dt.Columns.Add(new DataColumn("CurrencyID", typeof(int)));
-                    dt.Columns.Add(new DataColumn("DiscountPercent", typeof(int)));
-                    dt.Columns.Add(new DataColumn("Discount", typeof(int)));
-                    dt.Columns.Add(new DataColumn("Amount", typeof(int)));
-                    dt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
-                    for (int i = 0; i < lstTranPurchaseReturn.Count; i++)
-                    {
-                        dt.Rows.Add(lstTranPurchaseReturn[i].ProductID, lstTranPurchaseReturn[i].Quantity, lstTranPurchaseReturn[i].UnitID, lstTranPurchaseReturn[i].PurchasePrice, lstTranPurchaseReturn[i].CurrencyID, lstTranPurchaseReturn[i].DiscountPercent, lstTranPurchaseReturn[i].Discount, lstTranPurchaseReturn[i].Amount, lstTranPurchaseReturn[i].IsFOC);
-                    }
-                    SqlCommand cmd = new SqlCommand(Procedure.PrcDeletePurchaseReturn, dataConnectorSQL.Connect());
-                    cmd.Parameters.AddWithValue("@PurchaseReturnID", purchaseReturnId);
-                    cmd.Parameters.AddWithValue("@ReturnVoucherNo", item.MasterPurchaseReturnModel.ReturnVoucherNo);
-                    cmd.Parameters.AddWithValue("@SubTotal", item.MasterPurchaseReturnModel.Total);
-                    cmd.Parameters.AddWithValue("@temptbl", dt);
-                    cmd.CommandType = CommandType.StoredProcedure;
+                {                   
+                    SqlCommand cmd = new SqlCommand(textQuery.deletePurchaseReturnQuery(purchaseReturnId), (SqlConnection)getConnection());
+                    cmd.CommandType = CommandType.Text;
                     cmd.ExecuteNonQuery();
-                    dataConnectorSQL.Close();                   
 
                     List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel> lstMasterPurchaseReturn = Session["MasterPurchaseReturnData"] as List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel>;
                     int index = lstMasterPurchaseReturn.FindIndex(x => x.PurchaseReturnID == purchaseReturnId);
@@ -716,37 +624,7 @@ namespace Inventory.Controllers
                 try
                 {
                     List<TranPurchaseReturnModels> list = Session["TranPurchaseReturnData"] as List<TranPurchaseReturnModels>;
-                    MasterPurchaseViewModel item = Session["MasterPurchaseData"] as MasterPurchaseViewModel;
-                    List<TranPurchaseModels> purchaseList = Session["TranPurchaseData"] as List<TranPurchaseModels>;
-                    List<TranPurchaseModels> purchaseRemainQtyList = new List<TranPurchaseModels>();                               
-
-                    for(int i = 0; i < list.Count; i++)
-                    {
-                        foreach (var purchase in purchaseList.Where(m => m.ID == list[i].Number))
-                        {
-                            purchase.Quantity = list[i].MaxQuantity-list[i].Quantity;
-                            purchase.Discount = (purchase.PurchasePrice*purchase.Quantity*purchase.DiscountPercent)/100;
-                            purchase.Amount = (purchase.PurchasePrice*purchase.Quantity)-purchase.Discount;
-                        }
-                    }
-                    purchaseRemainQtyList = purchaseList.Where(m => m.Quantity != 0).ToList();
-
-                    DataTable remainDt = new DataTable();
-                    remainDt.Columns.Add(new DataColumn("ProductID", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("Quantity", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("UnitID", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("PurchasePrice", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("CurrencyID", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("DiscountPercent", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("Discount", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("Amount", typeof(int)));
-                    remainDt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
-                    for (int i = 0; i < purchaseRemainQtyList.Count; i++)
-                    {
-                        remainDt.Rows.Add(purchaseRemainQtyList[i].ProductID, purchaseRemainQtyList[i].Quantity, purchaseRemainQtyList[i].UnitID, purchaseRemainQtyList[i].PurchasePrice, purchaseRemainQtyList[i].CurrencyID, purchaseRemainQtyList[i].DiscountPercent, purchaseRemainQtyList[i].Discount, purchaseRemainQtyList[i].Amount, purchaseRemainQtyList[i].IsFOC);
-                    }
-
-                    
+                                        
                     DataTable dt = new DataTable();
                     dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
                     dt.Columns.Add(new DataColumn("Quantity", typeof(int)));
@@ -760,24 +638,11 @@ namespace Inventory.Controllers
                     for (int i = 0; i < list.Count; i++)
                     {
                         dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurchasePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
-                    }
+                    }                   
                     
-                    int SubTotal = list.Sum(m=>m.Amount)+purchaseRemainQtyList.Sum(m=>m.Amount) - total;
-                    int TaxAmt = (SubTotal * item.MasterPurchaseModel.Tax) / 100;
-                    int ChargesAmt = (SubTotal * item.MasterPurchaseModel.Charges) / 100;
-                    int PurchaseTotal = SubTotal + TaxAmt + ChargesAmt;
-
                     DateTime purchaseReturnDateTime = DateTime.Parse(date);
                     SqlCommand cmd = new SqlCommand(Procedure.PrcUpdatePurchaseReturn, dataConnectorSQL.Connect());
-                    cmd.Parameters.AddWithValue("@PurchaseID", item.MasterPurchaseModel.PurchaseID);
-                    cmd.Parameters.AddWithValue("@Subtotal", SubTotal);
-                    cmd.Parameters.AddWithValue("@Tax", item.MasterPurchaseModel.Tax);
-                    cmd.Parameters.AddWithValue("@TaxAmt", TaxAmt);
-                    cmd.Parameters.AddWithValue("@Charges", item.MasterPurchaseModel.Charges);
-                    cmd.Parameters.AddWithValue("@ChargesAmt", ChargesAmt);
-                    cmd.Parameters.AddWithValue("@PurchaseTotal", PurchaseTotal);
-                    cmd.Parameters.AddWithValue("@temptblPurchaseRemain", remainDt);
-
+                    
                     cmd.Parameters.AddWithValue("@PurchaseReturnID", purchaseReturnId);
                     cmd.Parameters.AddWithValue("@PurchaseReturnDateTime", purchaseReturnDateTime);
                     cmd.Parameters.AddWithValue("@Total", total);
