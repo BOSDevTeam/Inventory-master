@@ -434,6 +434,7 @@
     <Compile Include="ViewModels\MasterPurchaseViewModel.cs" />
     <Compile Include="ViewModels\MasterPurOrderViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleOrderViewModel.cs" />
+    <Compile Include="ViewModels\MasterSaleReturnViewModel.cs" />
     <Compile Include="ViewModels\MasterSaleVoucherViewModel.cs" />
     <Compile Include="ViewModels\MasterTransferViewModel.cs" />
     <Compile Include="ViewModels\OpeningStockViewModel.cs" />
@@ -643,6 +644,8 @@
     <Content Include="Views\PurchaseReturn\ListPurchaseReturn.cshtml" />
     <Content Include="Views\PurchaseReturn\_PurchaseReturnDetailChild.cshtml" />
     <Content Include="Views\PurchaseReturn\_PurchaseReturnDetailDialog.cshtml" />
+    <Content Include="Views\SaleReturn\_SaleReturnDetailChild.cshtml" />
+    <Content Include="Views\SaleReturn\_SaleReturnDetailDialog.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

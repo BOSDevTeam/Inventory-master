@@ -11,6 +11,21 @@
         #subMenuSaleGp {
             display: block;
         }
+
+         .changecursor tbody tr{
+            cursor:not-allowed;   
+            background-color:#e9ecef;       
+        }
+        .changecursor tbody tr:hover{
+            cursor:not-allowed;
+        }
+        .changecursor label{
+            cursor:not-allowed;
+        }
+        .changecursor label:hover{
+            cursor:not-allowed;
+        }
+
     </style>
 </head>
 
@@ -31,7 +46,9 @@
         <div class="m-t-5 padding-5 search-div">
             <div class="row">
                 <input id="inputNumber" type="hidden" />
+                <input id="lblID" type="hidden" />
                 <input id="lblSaleID" type="hidden" />
+                <input id="lblDisPercent" type="hidden" />
                 <input id="inputReturnVoucherNo" type="hidden"/>
                 <input id="inputProductID" type="hidden" />
                 <input id="inputUnitID" type="hidden"/>
@@ -43,11 +60,11 @@
                 <div class="col-md-8 col-lg-8">
                     <input type="text" id="inputProductName" class="form-control control-input" placeholder="@Resource.ProductName" disabled />
                 </div>
-                <div class="col-md-2 col-lg-2">
-                    <input type="text" id="inputQuantity" class="form-control control-input numberonly" placeholder="@Resource.Qty"/>
+                <div class="col-md-3 col-lg-3">
+                    <input type="text" id="inputQuantity" class="form-control control-input numberonly" placeholder="@Resource.ReturnQty"/>
                 </div>
-                <div class="col-md-2 col-lg-2 align-center">
-                   <label><span id="lblUnitName"></span></label>
+                <div id="" class="col-md-1 col-lg-1 note align-justify-center">
+                    <label id="lblUnitName" class="control-label mb-0">UNIT</label>
                 </div>
             </div>
 
@@ -55,13 +72,10 @@
                 <div class="col-md-4 col-lg-4">
                     <input type="text" id="inputPrice" class="form-control control-input" placeholder="@Resource.Price" disabled/>
                 </div>
-                <div class="col-md-2 col-lg-2">
+                <div class="col-md-4 col-lg-4">
                     <input type="text" id="inputDisPercent" class="form-control control-input" placeholder="@Resource.Dis (@Resource.PercentSign)" disabled/>
                 </div>
-                <div class="col-md-4 col-lg-4">
-
-                </div>
-                <div class="col-md-2 col-lg-2 aligh-right">
+                <div class="col-md-4 col-lg-4 aligh-right">
                     <button id="btnAdd" class="btn btn-second">@Resource.Add</button>
                     <button id="btnEdit" class="btn btn-third">@Resource.Edit</button>
                 </div>
@@ -103,18 +117,13 @@
                         <button id="btnCEdit" class="btn btn-first plr-30 m-t-0">@Resource.Edit</button>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
-
-
     </div>
 
-    <div class="col-md-6 col-lg-6 m-t-5">
+    <div  id="divSale" class="col-md-6 col-lg-6 m-t-5 divSale">
         <div class="input-icons">
-            <input id="inputSearch" class="form-control control-input" style="border-color:black" placeholder="@Resource.EnterSaleVoucherNo" />
+            <input id="inputSearch" type="text" class="form-control control-input" placeholder="@Resource.EnterSaleVoucherNo" />
             <div style="display:none" id="PaymentID"></div>
         </div>
 
@@ -122,23 +131,22 @@
             <label>@Resource.TotalSaleItems:&nbsp;&nbsp;&nbsp;<span id="lblTotalItem" style="background-color:#ffffcc;padding:5px;">0</span></label>
         </div>
 
-        <div class="tran-table" style="margin-top:5px">
-            <table id="tblTranSale" class="width-100-percent">
-                <thead>
-                    <tr class="row tran-table-header-row">
-                        <td class="col-md-4 col-lg-4"><span>@Resource.ProductName</span></td>
-                        <td class="col-md-2 col-lg-2"><span>@Resource.Qty</span></td>
-                        <td class="col-md-2 col-lg-2"><span>@Resource.Price</span></td>
-                        <td class="col-md-2 col-lg-2"><span>@Resource.Dis</span></td>
-                        <td class="col-md-2 col-lg-2"><span>@Resource.Amount</span></td>                     
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <div id="divTranChild">
+            <div id="divTranSale" class="tran-table " style="margin-top:5px">
+                <table id="tblTranSale" class="width-100-percent">
+                    <thead>
+                        <tr class="row return-table-header-row">
+                            <td class="col-md-4 col-lg-4"><span>@Resource.ProductName</span></td>
+                            <td class="col-md-2 col-lg-2"><span>@Resource.Qty</span></td>
+                            <td class="col-md-2 col-lg-2"><span>@Resource.Price</span></td>
+                            <td class="col-md-2 col-lg-2"><span>@Resource.Dis</span></td>
+                            <td class="col-md-2 col-lg-2"><span>@Resource.Amount</span></td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
-
-
-
     </div>
 </div>
 
@@ -148,11 +156,6 @@
     }
 </div>
 
-
-
-
-
-
 <script type="text/javascript">
 
     let tranSaleReturnAction;
@@ -160,19 +163,31 @@
     $('body').addClass("hideVerticalScrollbar");
 
     calcTranSaleReturnHeight();
+    calcTranSaleHeight();
 
     function calcTranSaleReturnHeight() {
         let windowHeight = window.innerHeight;
         let thingsHeight = 98; // average other component height
         let extraHeight = 20;
-        let saleAreaHeight = windowHeight - (thingsHeight + extraHeight);
-        let saleChildHeight = saleAreaHeight - 100;  // 100 is top component
-        let saleTranHeight = saleChildHeight - 70 - 40;  // 135 is bottom component and 40 is extra
-        document.getElementById('divSaleReturn').setAttribute("style", "height:" + saleAreaHeight + "px");
-        document.getElementById('divTranSaleReturnChild').setAttribute("style", "height:" + saleChildHeight + "px");
-        document.getElementById('divTranSaleReturn').setAttribute("style", "height:" + saleTranHeight + "px");
+        let saleReturnAreaHeight = windowHeight - (thingsHeight + extraHeight);
+        let saleReturnChildHeight = saleReturnAreaHeight - 100;  // 100 is top component
+        let saleReturnTranHeight = saleReturnChildHeight - 30 - 40;  // 135 is bottom component and 40 is extra
+        document.getElementById('divSaleReturn').setAttribute("style", "height:" + saleReturnAreaHeight + "px");
+        document.getElementById('divTranSaleReturnChild').setAttribute("style", "height:" + saleReturnChildHeight + "px");
+        document.getElementById('divTranSaleReturn').setAttribute("style", "height:" + saleReturnTranHeight + "px");
     }
 
+    function calcTranSaleHeight() {
+        let windowHeight = window.innerHeight;
+        let thingsHeight = 50; // average other component height
+        let extraHeight = 10;
+        let saleAreaHeight = windowHeight - (thingsHeight + extraHeight);
+        let saleChildHeight = saleAreaHeight - 100;  // 100 is top component
+        let saleTranHeight = saleChildHeight - 20 - 40;  // 135 is bottom component and 40 is extra
+        document.getElementById('divSale').setAttribute("style", "height:" + saleAreaHeight + "px");
+        document.getElementById('divTranChild').setAttribute("style", "height:" + saleChildHeight + "px");
+        document.getElementById('divTranSale').setAttribute("style", "height:" + saleTranHeight + "px");
+    }
 
     $(document).ready(function () {
         setModuleTitle('@Resource.Sale', '@Resource.AddSaleReturn');
@@ -193,16 +208,25 @@
                 showLoadingIcon();
                 $.ajax({
                     type: "GET",
-                    url:'@Url.Action("SearchActionByPaymentID", "SaleReturn")',
+                    url: '@Url.Action("SearchActionByPaymentID", "SaleReturn")',
                     data: { "keyword": keyword, "paymentId": paymentId },
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        let totalItem = response.List.length;
-                        $('#lblTotalItem').text(totalItem + '@Resource.OpenParenthesis' + response.TotalQuantity + '@Resource.CloseParenthesis');
-                        createTranSaleData(response);
-
+                        if (!response.IsExistPurchase) {
+                            showToast(0, '@Inventory.Common.AppConstants.Message.NoReturnFOCVoucher');
+                        }
+                        else {
+                            if (!response.IsVoucherFOC) {
+                                let totalItem = response.List.length;
+                                $('#lblTotalItem').text(totalItem + '@Resource.OpenParenthesis' + response.TotalQuantity + '@Resource.CloseParenthesis');
+                                createTranSaleData(response.List);
+                            }
+                            else {
+                                showToast(0, response.ResultDefaultData.Message);
+                            }
+                        }
                     },
                     failure: function (response) {
                         hideLoadingIcon();
@@ -214,14 +238,12 @@
                     },
                 });
             }
-
-
         })
 
-        function createTranSaleData(response) {
+        function createTranSaleData(List) {
             let num = 0;
             $('#tblTranSale').find("tbody").empty();
-            $.each(response.List, function (i, item) {
+            $.each(List, function (i, item) {
                 num += 1;
                 var row = '<tr class="row tran-table-item-row">'
                         + '<td style="display:none;">' + item.ProductID + '</td>'
@@ -235,7 +257,7 @@
             });
         }
 
-        $('#tblTranSale').on("click","tbody tr", function () {
+        $('#tblTranSale').on("click", "tbody tr", function () {
             $('#tblTranSale tr').removeClass("selected");
             $(this).addClass("selected");
             $(this).find("td:last").each(function () {
@@ -243,7 +265,7 @@
                 showLoadingIcon();
                 $.ajax({
                     type: "GET",
-                    url:'@Url.Action("SaleClickAction", "SaleReturn")',
+                    url: '@Url.Action("SaleClickAction", "SaleReturn")',
                     data: { "number": number },
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",
@@ -255,9 +277,7 @@
 
                             fillSelectedSaleData(response);
                             showHideTranSaleReturnAddEdit(false);
-
                         }
-
                     },
                     failure: function (response) {
                         hideLoadingIcon();
@@ -272,17 +292,19 @@
         });
 
         function fillSelectedSaleData(response) {
+            $('#lblID').val(response.ID);
             $('#lblSaleID').val(response.SaleID);
             $('#inputProductID').val(response.ProductID);
             $('#inputLocationID').val(response.LocationID);
             $('#inputProductName').val(response.ProductName);
             $('#inputQuantity').val(response.Quantity);
-            $('#originalQuantity').val(response.Quantity);
+            $('#originalQuantity').val(response.InputQuantity);
             $('#lblUnitName').text(response.UnitName);
             $('#inputUnitID').val(response.UnitID);
             $('#inputPrice').val(response.SalePrice);
-            if (response.DisPercent != 0) $("#inputDisPercent").val(response.DisPercent);
-            else $("#inputDisPercent").val("");
+            $('#lblDisPercent').val(response.DisPercent);
+            if (response.DisPercent != 0) $("#inputDisPercent").val(response.DisPercent + '@Resource.PercentSign');
+            else $("#inputDisPercent").val(0 + '@Resource.PercentSign');
             $('#inputCurrencyID').val(response.CurrencyID);
             $('#inputCurrencyKeyword').val(response.CurrencyKeyword);
         }
@@ -303,23 +325,27 @@
 
         function addOrEditTranSaleReturn(isEdit) {
             if (validateTranSaleReturnControl()) {
+                let id = $("#lblID").val();
+                let saleId = $('#lblSaleID').val();
                 let productId = $('#inputProductID').val();
                 let locationId = $('#inputLocationID').val();
                 let productName = $('#inputProductName').val();
-                let quantity = $('#inputQuantity').val();
+                let inputQuantity = parseInt($('#inputQuantity').val());
                 let oquantity = $('#originalQuantity').val();
                 let unitId = $('#inputUnitID').val();
                 let unitKeyword = $('#lblUnitName').text();
                 let currencyId = $('#inputCurrencyID').val();
                 let currencyKeyword = $('#inputCurrencyKeyword').val();
                 let price = $('#inputPrice').val();
+                let disPercent = $('#lblDisPercent').val();
                 let number = $('#inputNumber').val();
-                if (quantity <= oquantity) {
+                if (isNaN(inputQuantity) || inputQuantity == 0) return false;
+                if (inputQuantity <= oquantity) {
                     showLoadingIcon();
                     $.ajax({
                         type: "GET",
                         url: '@Url.Action("TranSaleReturnAddEditAction", "SaleReturn")',
-                        data: { "productId": productId, "locationId": locationId, "productName": productName, "quantity": quantity, "price": price, "unitId": unitId, "unitKeyword": unitKeyword, "currencyId": currencyId, "currencyKeyword": currencyKeyword, "number": number, "isEdit": isEdit },
+                        data: { "saleId": saleId, "productId": productId, "locationId": locationId, "productName": productName, "inputQuantity": inputQuantity, "oquantity": oquantity, "price": price, "disPercent": disPercent, "unitId": unitId, "unitKeyword": unitKeyword, "currencyId": currencyId, "currencyKeyword": currencyKeyword, "number": number, "isEdit": isEdit },
                         contentType: "application/json;charset=utf-8",
                         dataType: "json",
                         success: function (response) {
@@ -347,7 +373,7 @@
                     });
                 }
                 else {
-                    showToast(0, 'InputQty is greater than orginal Qty Value!');
+                    showToast(0, '@Inventory.Common.AppConstants.Message.SaleReturnQtyCheck');
                 }
 
             }
@@ -383,22 +409,19 @@
             $(this).addClass("selected");
             $(this).find("td:last").each(function () {
                 let number = $(this).text();
-                if (tranSaleReturnAction == 3)
-                {
+                if (tranSaleReturnAction == 3) {
                     tranSaleReturnAction = 0;
                     deleteTranSaleReturn(number);
                 }
                 else prepareToEditTranSaleReturn(number);
-
             })
-
         })
 
         function prepareToEditTranSaleReturn(number) {
             showLoadingIcon();
             $.ajax({
                 type: "GET",
-                url:'@Url.Action("PrepareToEditTranSaleReturnAction", "SaleReturn")',
+                url: '@Url.Action("PrepareToEditTranSaleReturnAction", "SaleReturn")',
                 data: { "number": number },
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -408,11 +431,12 @@
                     $('#inputProductID').val(response.ProductID);
                     $('#inputLocationID').val(response.LocationID);
                     $('#inputProductName').val(response.ProductName);
+                    $('#originalQuantity').val(response.InputQuantity);
                     $('#inputQuantity').val(response.Quantity);
                     $('#lblUnitName').text(response.UnitKeyword);
                     $('#inputPrice').val(response.SalePrice);
-                    if (response.DisPercent != 0) $("#inputDisPercent").val(response.DisPercent);
-                    else $("#inputDisPercent").val("");
+                    if (response.DisPercent != 0) $("#inputDisPercent").val(response.DisPercent + '@Resource.PercentSign');
+                    else $("#inputDisPercent").val(0 + '@Resource.PercentSign');
                     $('#inputCurrencyKeyword').val(response.CurrencyKeyword);
                     showHideTranSaleReturnAddEdit(true);
                 },
@@ -446,7 +470,6 @@
                         $('#inputHdnTotal').val(response.TotalAmount);
                     }
 
-
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -457,15 +480,13 @@
                     alert(response.responseText);
                 },
             });
-
-
         }
 
         $('#btnReset').click(function () {
             showLoadingIcon();
             $.ajax({
                 type: "GET",
-                url:'@Url.Action("CancelAction", "SaleReturn")',
+                url: '@Url.Action("CancelAction", "SaleReturn")',
                 data: {},
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -490,7 +511,6 @@
             });
         });
 
-
         $('#btnContinue').click(function () {
             let row = $('#tblTranSaleReturn tbody tr').length;
             if (row < 1) return;
@@ -502,25 +522,23 @@
             $('#btnRemarkOk').show();
         })
 
-
         $('#btnRemarkOk').click(function () {
             let row = $('#tblTranSaleReturn tbody tr').length;
             if (row < 1) return;
+            let saleId = $('#lblSaleID').val();
             let returnVoucherNo = $('#inputSearch').val();
-            alert(returnVoucherNo);
             let userVoucherNo = $('#lblUserVoucherNo').text();
             let date = $('#inputDate').val();
             let voucherId = $('#inputVoucherID').val();
             let userId = localStorage.getItem("UserID");
             let totalAmount = $('#inputHdnTotal').val();
-            alert(totalAmount);
             let remark = $('#txtRemarkNote').val();
             let locationId = $('#inputLocationID').val();
             showLoadingIcon();
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("SaveAction", "SaleReturn")',
-                data: JSON.stringify({ "returnVoucherNo": returnVoucherNo, "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "userId": userId, "locationId": locationId, "totalAmount": totalAmount, "remark": remark }),
+                data: JSON.stringify({ "saleId": saleId, "returnVoucherNo": returnVoucherNo, "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "userId": userId, "locationId": locationId, "totalAmount": totalAmount, "remark": remark }),
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -529,7 +547,7 @@
                         responseUnSuccessful(response);
                     }
                     else {
-                        showToast(1, '@Resource.Save');
+                        showToast(1, 'Saved Successfully!');
                         clearTranSaleReturnControl();
                         $('#lblUserVoucherNo').text(response.UserVoucherNo);
                         $('#tblTranSaleReturn').find("tbody").empty();
@@ -538,6 +556,9 @@
                         $('#inputHdnTotal').val("");
                         showHideTranSaleReturnAddEdit(false);
                         $('#modalRemark').modal('hide');
+                        $('#inputSearch').val("");
+                        $('#lblTotalItem').text('0');
+                        $('#tblTranSale').find("tbody").empty();
                     }
 
                 },
@@ -552,8 +573,56 @@
             });
         })
 
+        $('#btnCEdit').click(function () {
+            let row = $('#tblTranSaleReturn tbody tr').length;
+            if (row < 1) return;
+            $("#modalRemarkTitle").text('@Resource.AddRemark');
+            $("#lblRemark").text('@Resource.EnterNote');
+            $('#modalRemark').modal('show');
+            $('#btnRemarkEdit').show();
+            $('#btnRemarkOk').css("display", "none");
+        })
+
+        $('#btnRemarkEdit').click(function () {
+            let saleReturnId = $('#btnCEdit').val();
+            let date = $('#inputDate').val();
+            let voucherId = $('#inputVoucherID').val();
+            let totalAmount = $('#inputHdnTotal').val();
+            let remark = $('#txtRemarkNote').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("EditAction", "SaleReturn")',
+                data: JSON.stringify({
+                    "saleRetunrId": saleReturnId, "date": date, "voucherId": voucherId, "totalAmount": totalAmount, "remark": remark
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        $('#modalRemark').modal('hide');
+                        responseUnSuccessful(response);
+                    }
+                    else {
+                        window.location.href = '@Url.Action("ListSaleReturn", "SaleReturn")?userId=' + userId;
+                    }
+
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+
+            });
+        })
+
         function fillEditData() {
-            $('#btnCEdit').val('ViewBag.SaleReturnID');
+            $('#btnCEdit').val('@ViewBag.SaleReturnID');
             $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
             $('#inputDate').val('@ViewBag.Date');
             $('#inputVoucherID').val('@ViewBag.VoucherID');
@@ -561,46 +630,50 @@
             $('#originalQuantity').val('@ViewBag.TotalQuantity');
             $('#lblTotalAmount').text(separatedComma('@ViewBag.Total'));
             $("#inputHdnTotal").val('@ViewBag.Total');
+            $('#inputSearch').val('@ViewBag.ReturnVoucherNo');
+            $('#lblSaleID').val('@ViewBag.SaleID');
+            $('#txtRemarkNote').val('@ViewBag.Remark');
             showHideTranSaleReturnAddEdit(false);
             showHideMainButton(true);
             let tranSaleReturnList = JSON.parse('@Html.Raw(Json.Encode(Session["TranSaleReturnData"]))');
             createTranSaleReturnData(tranSaleReturnList);
-
+            let tranSaleList = JSON.parse('@Html.Raw(Json.Encode(Session["TranSaleData"]))');
+            let totalItem = tranSaleList.length;
+            $('#lblTotalItem').text(totalItem + '@Resource.OpenParenthesis' + '@ViewBag.TotalQuantity' + '@Resource.CloseParenthesis');
+            createTranSaleData(tranSaleList);
+            $("#inputSearch").attr("disabled", "disabled");
+            $('#tblTranSale').addClass("changecursor");
+            var nodes = document.getElementById("divSale").getElementsByTagName('*');
+            for (var i = 0; i < nodes.length; i++) {
+                nodes[i].disabled = true;
+            }
 
         }
-
 
         $('#btnCancel').click(function () {
             window.location.href = '@Url.Action("SaleReturn", "SaleReturn")?userId=' + userId;
         })
 
-
-
-
-
         function clearTranSaleReturnControl() {
             $("#inputProductID").val("");
             $('#inputProductName').val("");
             $('#inputQuantity').val("");
-            $('#lblUnitName').text("");
+            $('#lblUnitName').text("UNIT");
             $('#inputPrice').val("");
             $("#inputDisPercent").val("");
             $("#inputNumber").val("");
         }
 
-
         function showHideTranSaleReturnAddEdit(isEdit) {
             if (isEdit) {
                 $('#btnAdd').css("display", "none");
                 $('#btnEdit').show();
-
             }
             else {
                 $('#btnAdd').show();
                 $('#btnEdit').css("display", "none");
             }
         }
-
 
         function showHideMainButton(isEdit) {
             if (isEdit) {
@@ -617,33 +690,11 @@
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }) // Jquery
-
 
     function tranSaleReturnTableAction(value) {
         tranSaleReturnAction = value;
     }
-
-
-
 
 </script>
 
