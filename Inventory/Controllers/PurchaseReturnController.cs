@@ -158,7 +158,7 @@ namespace Inventory.Controllers
             List<TranPurchaseModels> lstTranPurchase = new List<TranPurchaseModels>();
             TranPurchaseModels data = new TranPurchaseModels();
             string productName = "",unitKeyword="",currencyKeyword="";
-            int id=0,productId = 0, quantity = 0,maxQuantity=0, price = 0, disPercent = 0;
+            int id=0,productId = 0, quantity = 0, price = 0, disPercent = 0;
             int? unitId = 0, currencyId = 0;                       
 
             if (Session["TranPurchaseData"] != null)
@@ -174,7 +174,7 @@ namespace Inventory.Controllers
                         productId = data.ProductID;                      
                         productName = data.ProductName;
                         quantity = data.Quantity;
-                        maxQuantity = data.MaxQuantity;                      
+                        //maxQuantity = data.Quantity;                      
                         price = data.PurchasePrice;
                         unitId = data.UnitID;
                         currencyId = data.CurrencyID;
@@ -193,7 +193,7 @@ namespace Inventory.Controllers
                 ProductID = productId,               
                 ProductName = productName,
                 Quantity = quantity,
-                MaxQuantity=maxQuantity,
+                //MaxQuantity=maxQuantity,
                 Price = price,
                 UnitID = unitId,
                 CurrencyID = currencyId,
@@ -751,7 +751,7 @@ namespace Inventory.Controllers
                 item.ID = Convert.ToInt32(reader["ID"]);
                 item.ProductName = Convert.ToString(reader["ProductName"]);
                 item.Quantity = Convert.ToInt32(reader["Quantity"]);
-                item.MaxQuantity = Convert.ToInt32(reader["Quantity"]);
+                //item.MaxQuantity = Convert.ToInt32(reader["Quantity"]);
                 item.PurchasePrice = Convert.ToInt32(reader["PurPrice"]);
                 item.Discount = Convert.ToInt32(reader["Discount"]);
                 item.Amount = Convert.ToInt32(reader["Amount"]);
@@ -763,7 +763,19 @@ namespace Inventory.Controllers
                 item.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
                 item.ProductCode = Convert.ToString(reader["Code"]);
                 item.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
-                list.Add(item);
+                bool isduplicate = false;
+                foreach(var row in list.Where(m=>m.ProductCode==item.ProductCode && m.ProductID==item.ProductID && m.PurchasePrice==item.PurchasePrice && m.DiscountPercent==item.DiscountPercent && m.UnitID==item.UnitID && m.CurrencyID==item.CurrencyID))
+                {
+                    row.Quantity += item.Quantity;
+                    //row.MaxQuantity += item.MaxQuantity;
+                    row.Discount += item.Discount;
+                    row.Amount += item.Amount;
+                    isduplicate = true;
+                }
+                if (!isduplicate)
+                {
+                    list.Add(item);
+                }               
             }
             reader.Close();
 

@@ -498,4 +498,7 @@
   <data name="SalePrice" xml:space="preserve">
     <value>Sale Price</value>
   </data>
+  <data name="SaleItemSimpleReport" xml:space="preserve">
+    <value>Sale Item Simple Report</value>
+  </data>
 </root>

@@ -11,6 +11,19 @@
         #subMenuPurchaseGp {
             display: block;
         }      
+        .changecursor tbody tr{
+            cursor:not-allowed;   
+            background-color:#e9ecef;       
+        }
+        .changecursor tbody tr:hover{
+            cursor:not-allowed;
+        }
+        .changecursor label{
+            cursor:not-allowed;
+        }
+        .changecursor label:hover{
+            cursor:not-allowed;
+        }
     </style>
 </head>
 
@@ -280,7 +293,7 @@
                         $("#inputProductID").val(response.ProductID);
                         $("#inputProductName").val(response.ProductName);
                         $("#inputQuantity").val(response.Quantity);
-                        $("#inputMaxQty").val(response.MaxQuantity);
+                        $("#inputMaxQty").val(response.Quantity);
                         $("#inputPrice").val(response.Price);
                         $("#inputDisPercent").val(response.DisPercent + '@Resource.PercentSign');
                         $("#inputUnitID").val(response.UnitID);
@@ -578,9 +591,10 @@
             let tranPurchaseList = JSON.parse('@Html.Raw(Json.Encode(Session["TranPurchaseData"]))');
             createTranPurchaseData(tranPurchaseList);            
             
+            $('#tblTranPurchase').addClass("changecursor");
             var nodes = document.getElementById("divPurchase").getElementsByTagName('*');
             for (var i = 0; i < nodes.length; i++) {
-                nodes[i].disabled = true;
+                nodes[i].disabled = true;             
             }
         }
         $("#btnEditCancel").click(function (e) {

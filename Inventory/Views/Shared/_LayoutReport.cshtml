@@ -78,6 +78,7 @@
                         <li class="submenu">
                             <a href=""><i class="fa fa-flag"></i> <span> @Resource.SaleReport </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuSaleRpGp">
+                                <li id="subMenuSaleItemSimpleRp"><a href="#">@Resource.SaleItemSimpleReport</a></li>
                                 <li id="subMenuSaleItemRp"><a href="#">@Resource.SaleItemReport</a></li>
                             </ul>
                         </li>                                                                    
@@ -115,6 +116,9 @@
         $("#loginUser").text(userName);
 
         $(function () {
+            $('#subMenuSaleItemSimpleRp').click(function () {
+                window.location.href = '@Url.Action("SaleItemSimpleReportFilter", "RpSaleItemSimple")';
+            });
             $('#subMenuSaleItemRp').click(function () {
                 window.location.href = '@Url.Action("SaleItemReportFilter", "RpSaleItem")';
             });
