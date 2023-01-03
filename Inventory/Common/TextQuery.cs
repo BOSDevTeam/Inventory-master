@@ -130,6 +130,6 @@ namespace Inventory.Common
         public string deleteSaleReturnQuery(int saleReturnId)
         {
             return "Delete From TTranSaleReturn Where SaleReturnID=" + saleReturnId + " Delete From TMasterSaleReturn Where SaleReturnID=" + saleReturnId;
-        }
+        } 
     }
 }

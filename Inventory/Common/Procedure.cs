@@ -104,6 +104,6 @@ namespace Inventory.Common
         public const string PrcGetTranSaleReturnBySaleReturnID = "PrcGetTranSaleReturnBySaleReturnID";
         public const string PrcGetMasterSaleReturnList = "PrcGetMasterSaleReturnList";
         public const string PrcGetRptSaleItemList = "PrcGetRptSaleItem";
-        public const string PrcUpdateSaleReturn = "PrcUpdateSaleReturn";
+        public const string PrcUpdateSaleReturn = "PrcUpdateSaleReturn"; 
     }
 }
