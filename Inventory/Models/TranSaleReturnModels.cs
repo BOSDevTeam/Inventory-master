@@ -16,6 +16,7 @@ namespace Inventory.Models
         public string ProductName { get; set; }
         public string ProductCode { get; set; }
         public int SysProductID { get; set; }
+        public int InputQuantity { get; set; }
         public int Quantity { get; set; }
         public int UnitID { get; set; }
         public string UnitKeyword { get; set; }

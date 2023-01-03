@@ -31,6 +31,13 @@
                     Html.RenderPartial("_SaleReturnDetailChild");
                 }
 
+                <br />
+                <div class="col-md-12 col-lg-12">
+                    <div id="remark" class="light-background padding-5" style="text-align:center; display:none">
+                        <label id="lblRemark" class="control-label mb-0"></label>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -60,6 +67,11 @@
         $('#lblSaleReturnDateTime').text(response.ReturnDateTime);
         $('#lblUserName').text(response.User);
         $('#lblTotal').text(separatedComma(response.Total));
+        if (response.Remark.length == 0) $('#remark').hide();
+        else {
+            $('#remark').show();
+            $('#lblRemark').text(response.Remark);
+        }
     }
 
 </script>

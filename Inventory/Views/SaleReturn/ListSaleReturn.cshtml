@@ -87,6 +87,7 @@
         $('#inputFromDate').val(getTodayDate());
         $('#inputToDate').val(getTodayDate());
         createMasterSaleReturnData('', false);
+        createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');
 
         $('#btnSearch').click(function () {
             let fromDate = $('#inputFromDate').val();
@@ -102,6 +103,7 @@
                 success: function (response) {
                     hideLoadingIcon();
                     createMasterSaleReturnData(response.List, true);
+                    createPaging(response.TotalPage, response.CurrentPage);
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -112,6 +114,35 @@
                     alert(response.responseText);
                 },
 
+            });
+        });
+
+        $(document).on("click", ".btnPage", function () {
+            let currentPage = $(this).text();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SaleReturnPagingAction", "SaleReturn")',
+                data: { "currentPage": currentPage },
+                contentType: "application/json, charset=utf-8",
+                dataType: "Json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else {
+                        createMasterSaleReturnData(response.LstMasterSaleReturn, true);
+                        createPaging(response.TotalPage, currentPage);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
             });
         });
 
@@ -126,6 +157,7 @@
                 success: function (response) {
                     hideLoadingIcon();
                     createMasterSaleReturnData(response.List, false);
+                    createPaging(response.TotalPage, response.CurrentPage);
                     clearControl();
                 },
                 failure: function (response) {
@@ -155,10 +187,8 @@
                     $('#btnDelOk').val(saleReturnId);
                     $('#modalConfirm').modal('show');
                 }
-
             })
         })
-
 
         function viewDetail(saleReturnId) {
             showLoadingIcon();
@@ -182,7 +212,6 @@
                     hideLoadingIcon();
                     alert(response.responseText);
                 },
-
             });
         }
 
@@ -216,11 +245,8 @@
                     hideLoadingIcon();
                     alert(response.responseText);
                 }
-
             });
-
         });
-
 
         function createMasterSaleReturnData(response, isFromJson) {
             $('#tblSaleReturnList').find("tbody").empty();
@@ -238,12 +264,10 @@
                           + '</td>'
                           + '<td style="display:none">' + item.SaleReturnID + '</td>'
                       + '</tr>'
-
                 $('#tblSaleReturnList tbody').append(row);
             })
 
         }
-
 
         function clearControl() {
             $('#inputFromDate').val(getTodayDate());
@@ -251,14 +275,10 @@
             $('#inputUserVoucherNo').val('');
         }
 
-
-
-
     })
 
     function findRowIndex(x) {
         selectedRowIndex = x.rowIndex;
-        alert(selectedRowIndex);
     }
 
     function listTableAction(value) {
