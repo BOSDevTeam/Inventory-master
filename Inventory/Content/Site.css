@@ -247,6 +247,30 @@ label1 {display:block; text-align:right;margin-right:20px}
 /** end client sale order **/
 
 
+/** to delete later*/
+/** report css **/
+.rpt-filter-label{
+    background-color:#ffffcc;
+    padding: 5px 20px 5px 20px;           
+}
+.rpt-product-header{
+    padding-top:5px;
+    padding-bottom:5px;
+    background-color:#FFFFEC;
+    color:#0066ff;       
+}
+.padding-tb-5{
+    padding-top:5px;
+    padding-bottom:5px;           
+}
+.rpt-total{
+    padding-top:5px;
+    padding-bottom:5px;
+    background-color:#e9ecef;           
+}   
+/**end report css**/
+
+
 
 
 

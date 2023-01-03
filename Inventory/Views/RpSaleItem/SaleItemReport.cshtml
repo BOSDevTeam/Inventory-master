@@ -1,0 +1,140 @@
+﻿@using Inventory.ViewModels;
+@model RpSaleItemViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutReport.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+
+    <style type="text/css">
+        #subMenuSaleRpGp {
+            display: block;
+        }
+        .rpt-filter-label{
+            background-color:#ffffcc;
+            padding: 5px 20px 5px 20px;           
+        }
+        .rpt-product-header{
+            padding-top:5px;
+            padding-bottom:5px;
+            background-color:#FFFFEC;
+            color:#0066ff;       
+        }
+        .padding-tb-5{
+            padding-top:5px;
+            padding-bottom:5px;           
+        }
+        .rpt-total{
+            padding-top:5px;
+            padding-bottom:5px;
+            background-color:#e9ecef;           
+        }
+
+        
+    </style>
+    <script type="text/javascript">
+        document.getElementById('subMenuSaleItemRp').className = 'active';
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            //return result;
+            document.write(result);
+        }
+    </script>
+</head>
+<body>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">@Resource.SaleItemReport</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            
+        </div>
+    </div>
+    <div class="row padding-10" style="background-color:#e9ecef;">       
+        <div class="col-md-3 col-lg-3">From Date : @Model.FromDate.ToShortDateString()</div>       
+        <div class="col-md-3 col-lg-3">To Date : @Model.ToDate.ToShortDateString()</div>
+        <div class="col-md-6 col-lg-6 aligh-right">
+            @if (Model.IsAll)
+            { <span class="rpt-filter-label">ALL</span>}
+            else if (Model.IsCash)
+            { <span class="rpt-filter-label">Cash</span>}
+            else
+            {
+                <span class="rpt-filter-label">Credit</span>
+            }
+        </div>
+    </div>
+    <div>
+        @foreach(var item in Model.lstMasterSaleRpt as List<RpSaleItemViewModel.MasterSaleViewModel>)
+        {
+            <div class="row border-gray rpt-product-header font-weight-500">
+                <div class="col-md-2 col-lg-2" style="padding-left:10px;">@item.Code</div>
+                <div class="col-md-10 col-lg-10">@item.ProductName @if(item.UnitKeyword!="") {<span>(@item.UnitKeyword )</span>}</div>                                                        
+            </div>
+            <div class="row">
+                <table class="col-md-12 col-lg-12 m-l-5" >  
+                                     
+                    @if (item.lstSaleItem.Where(m => m.PaymentID == 1).ToList().Count > 0)
+                    {
+                        foreach (var data in item.lstSaleItem.Where(m => m.PaymentID == 1).OrderBy(m=>m.PaymentName).ToList() as List<RpSaleItemViewModel.SaleItemViewModel>)
+                        {
+                            <tr class="row border-gray padding-tb-5">
+                                <td class="col-md-3 col-lg-3" style="padding-left:70px;">@data.PaymentName @if (data.DiscountPercent != 0)
+                                { <span>(@data.DiscountPercent %)</span> }</td>
+                                <td class="col-md-3 col-lg-3 aligh-right">@data.Quantity</td>
+                                <td class="col-md-3 col-lg-3 aligh-right">
+                                <script>separatedComma(@data.SalePrice);</script></td>
+                                <td class="col-md-3 col-lg-3 aligh-right plr-30">
+                                <script>separatedComma(@data.Amount);</script></td>
+                            </tr>
+                        }
+                        <tr class="row border-gray rpt-total font-weight-500">
+                            <td class="col-md-3 col-lg-3" style="padding-left:70px;">Total</td>
+                            <td class="col-md-3 col-lg-3 aligh-right">@item.lstSaleItem.Where(m=>m.PaymentID==1).Sum(m => m.Quantity)</td>
+                            <td class="col-md-3 col-lg-3"></td>
+                            <td class="col-md-3 col-lg-3 aligh-right plr-30">
+                            <script>separatedComma(@item.lstSaleItem.Where(m=>m.PaymentID==1).Sum(m => m.Amount));</script></td>
+                        </tr>
+                    }
+                    
+                    @if (item.lstSaleItem.Where(m => m.PaymentID == 2).ToList().Count > 0)
+                    {
+                        foreach (var data in item.lstSaleItem.Where(m => m.PaymentID == 2).OrderBy(m=>m.PaymentName).ToList() as List<RpSaleItemViewModel.SaleItemViewModel>)
+                        {
+                            <tr class="row border-gray padding-tb-5">
+                                <td class="col-md-3 col-lg-3" style="padding-left:70px;">
+                                    @data.PaymentName @if (data.DiscountPercent != 0)
+                                    { <span>(@data.DiscountPercent %)</span> }
+                                </td>
+                                <td class="col-md-3 col-lg-3 aligh-right">@data.Quantity</td>
+                                <td class="col-md-3 col-lg-3 aligh-right">
+                                    <script>separatedComma(@data.SalePrice);</script>
+                                </td>
+                                <td class="col-md-3 col-lg-3 aligh-right plr-30">
+                                    <script>separatedComma(@data.Amount);</script>
+                                </td>
+                            </tr>
+                        }
+                        <tr class="row border-gray rpt-total font-weight-500">
+                            <td class="col-md-3 col-lg-3" style="padding-left:70px;">Total</td>
+                            <td class="col-md-3 col-lg-3 aligh-right">@item.lstSaleItem.Where(m=>m.PaymentID==2).Sum(m => m.Quantity)</td>
+                            <td class="col-md-3 col-lg-3"></td>
+                            <td class="col-md-3 col-lg-3 aligh-right plr-30">
+                                <script>separatedComma(@item.lstSaleItem.Where(m=>m.PaymentID==2).Sum(m => m.Amount));</script>
+                            </td>
+                        </tr>
+
+                    }
+                    
+                </table>
+            </div>            
+        }
+
+    </div>
+</body>
+
+

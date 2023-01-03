@@ -477,4 +477,28 @@
   <data name="TotalSaleItems" xml:space="preserve">
     <value>Total Sale Items</value>
   </data>
+  <data name="BackToHome" xml:space="preserve">
+    <value>Back to Home</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="SaleItemReport" xml:space="preserve">
+    <value>Sale Item Report</value>
+  </data>
+  <data name="SaleReport" xml:space="preserve">
+    <value>Sale Report</value>
+  </data>
+  <data name="Balance" xml:space="preserve">
+    <value>Balance</value>
+  </data>
+  <data name="PurchasePrice" xml:space="preserve">
+    <value>Purchase Price</value>
+  </data>
+  <data name="SalePrice" xml:space="preserve">
+    <value>Sale Price</value>
+  </data>
+  <data name="SaleItemSimpleReport" xml:space="preserve">
+    <value>Sale Item Simple Report</value>
+  </data>
 </root>

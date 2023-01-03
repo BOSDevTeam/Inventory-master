@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<!-- settings23:07-->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="~/assets/img/favicon.ico">
+    <title>QuickInventory - POS & Inventory Management</title>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap-datetimepicker.min.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <!--[if lt IE 9]>
+        <script src="assets/js/html5shiv.min.js"></script>
+        <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+  
+    <div class="main-wrapper">        
+        <div class="header">
+            <div class="header-left">
+                <a href="#" class="logo">
+                    <img src="~/assets/img/logo.png" width="35" height="35" alt="">
+                </a>
+            </div>
+            <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
+            <div class="page-title-box float-left">
+                <h3>@Resource.QuickInventory</h3>
+            </div>
+            <div class="toast" data-autohide="true" style="position:absolute;right:0;">
+                <div class="toast-header">
+                    <strong id="lblToastHeader" class="mr-auto">header</strong>                    
+                </div>
+                <div class="toast-body">
+                    <label id="lblToastMessage">message</label>
+                </div>
+            </div>
+            <a id="mobile_btn" class="mobile_btn float-left" href="#sidebar"><i class="fa fa-bars"></i></a>
+            <ul class="nav user-menu float-right">               
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link user-link" data-toggle="dropdown">
+                        <span class="user-img">
+                            <img class="rounded-circle" src="~/assets/img/user.jpg" width="24" alt="Admin">
+                            <span class="status online"></span>
+                        </span>
+                        <span id="loginUser"></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">My Profile</a>
+                        <a class="dropdown-item" href="#">Edit Profile</a>
+                        <a class="dropdown-item" href="~/CompanySetting/CompanySettingEntry">@Resource.Settings</a>
+                        <a class="dropdown-item" href="~/User/Login">@Resource.Logout</a>
+                    </div>
+                </li>
+            </ul>
+            <div class="dropdown mobile-user-menu float-right">
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#">My Profile</a>
+                    <a class="dropdown-item" href="#">Edit Profile</a>
+                    <a class="dropdown-item" href="~/CompanySetting/CompanySettingEntry">@Resource.Settings</a>
+                    <a class="dropdown-item" href="~/User/Login">@Resource.Logout</a>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li>
+                            <a href="~/Home/Dashboard"><i class="fa fa-home back-icon"></i> <span>@Resource.BackToHome</span></a>
+                        </li>
+                        <li class="menu-title">@Resource.Reports</li>
+                        <li class="submenu">
+                            <a href=""><i class="fa fa-flag"></i> <span> @Resource.SaleReport </span> <span class="menu-arrow"></span></a>
+                            <ul id="subMenuSaleRpGp">
+                                <li id="subMenuSaleItemSimpleRp"><a href="#">@Resource.SaleItemSimpleReport</a></li>
+                                <li id="subMenuSaleItemRp"><a href="#">@Resource.SaleItemReport</a></li>
+                            </ul>
+                        </li>                                                                    
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-wrapper">
+            <div class="content">            
+                @RenderBody()
+            </div>        
+        </div>
+    </div>
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script src="~/assets/js/popper.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/jquery.slimscroll.js"></script>
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/assets/js/select2.min.js"></script>
+    <script src="~/assets/js/moment.min.js"></script>
+    <script src="~/assets/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/Site.js"></script>
+
+    <script>      
+        var userId = 0, userName, isMultiUnit = false, isMultiCurrency = false, isBankPayment = false;
+
+        userId = localStorage.getItem("UserID");
+        userName = localStorage.getItem("UserName");
+        isMultiUnit = localStorage.getItem("IsMultiUnit");
+        isMultiCurrency = localStorage.getItem("IsMultiCurrency");
+        isBankPayment = localStorage.getItem("IsBankPayment");
+
+        $("#loginUser").text(userName);
+
+        $(function () {
+            $('#subMenuSaleItemSimpleRp').click(function () {
+                window.location.href = '@Url.Action("SaleItemSimpleReportFilter", "RpSaleItemSimple")';
+            });
+            $('#subMenuSaleItemRp').click(function () {
+                window.location.href = '@Url.Action("SaleItemReportFilter", "RpSaleItem")';
+            });
+            $('.toast').toast({
+                delay: 3000
+            });
+        });
+
+        function showToast(type,message){
+            $('.toast').toast('show');
+            if (type == 1) {
+                $('#lblToastHeader').text("Success");
+                $('.toast-header').removeClass("toast-error");
+                $('.toast-header').addClass("toast-success");
+            } else if (type == 0) {
+                $('#lblToastHeader').text("Alert");
+                $('.toast-header').removeClass("toast-success");
+                $('.toast-header').addClass("toast-error");
+            }
+            $('#lblToastMessage').text(message);
+        }
+
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            return result;
+        }
+
+        function getTodayDate() {
+            let date = new Date();
+            let day = ("0" + date.getDate()).slice(-2);
+            let month = ("0" + (date.getMonth() + 1)).slice(-2);
+            let today = date.getFullYear() + "-" + (month) + "-" + (day);
+            return today;
+        }
+
+    </script>
+</body>
+
+<!-- settings23:11-->
+</html>

@@ -164,7 +164,7 @@
 
 <script type="text/javascript">
 
-    let tranSaleAction, defaultCustomerId, defaultLocationId;
+    let tranSaleAction, defaultCustomerId, defaultLocationId, isEditTranSale = false;
 
     document.getElementById('subMenuSale').className = 'active';
     $('body').addClass("hideVerticalScrollbar");
@@ -403,10 +403,29 @@
             showHideUnit();
             showHideCurrency();
             showHideTranSaleAddEdit(false);
+            isEditTranSale = false;
         }
 
         $("#btnAdd").click(function (e) {
-            addOrEditTranSale(false);
+            addOrEditTranSale(isEditTranSale);
+        });
+
+        $('#inputQuantity').keydown(function (event) {
+            if (event.which === 13) {
+                addOrEditTranSale(isEditTranSale);
+            }
+        });
+
+        $('#inputPrice').keydown(function (event) {
+            if (event.which === 13) {
+                addOrEditTranSale(isEditTranSale);
+            }
+        });
+
+        $('#inputDisPercent').keydown(function (event) {
+            if (event.which === 13) {
+                addOrEditTranSale(isEditTranSale);
+            }
         });
 
         $("#btnHold").click(function (e) {
@@ -470,7 +489,7 @@
         });
 
         $("#btnEdit").click(function (e) {
-            addOrEditTranSale(true);
+            addOrEditTranSale(isEditTranSale);
         });
 
         $("#btnEditCancel").click(function (e) {
@@ -910,6 +929,7 @@
                         if (response.IsFOC == true) $("#chkItemFOC").prop('checked', true);
                         else $("#chkItemFOC").prop('checked', false);
                         showHideTranSaleAddEdit(true);
+                        isEditTranSale = true;
                     }
                 },
                 failure: function (response) {
@@ -964,6 +984,7 @@
         createUnitData(response);
         createCurrencyData(response);
         showHideTranSaleAddEdit(false);
+        isEditTranSale = false;
     }
 
     function createUnitData(response) {

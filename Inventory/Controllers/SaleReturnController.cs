@@ -615,9 +615,9 @@ namespace Inventory.Controllers
                 try
                 {
                     resultDefaultData.IsRequestSuccess = true;
-                    SqlCommand cmd = new SqlCommand(textQuery.deleteSaleReturnQuery(saleReturnId), (SqlConnection)getConnection());
-                    cmd.CommandType = CommandType.Text;
-                    cmd.ExecuteNonQuery();
+                    //SqlCommand cmd = new SqlCommand(textQuery.deleteSaleReturnQuery(saleReturnId), (SqlConnection)getConnection());
+                    //cmd.CommandType = CommandType.Text;
+                    //cmd.ExecuteNonQuery();
                     List<MasterSaleReturnViewModel> lstMasterSaleReturn = Session["MasterSaleReturnData"] as List<MasterSaleReturnViewModel>;
                     int index = lstMasterSaleReturn.FindIndex(x => x.SaleReturnID == saleReturnId);
                     lstMasterSaleReturn.RemoveAt(index);

@@ -11,6 +11,19 @@
         #subMenuPurchaseGp {
             display: block;
         }      
+        .changecursor tbody tr{
+            cursor:not-allowed;   
+            background-color:#e9ecef;       
+        }
+        .changecursor tbody tr:hover{
+            cursor:not-allowed;
+        }
+        .changecursor label{
+            cursor:not-allowed;
+        }
+        .changecursor label:hover{
+            cursor:not-allowed;
+        }
     </style>
 </head>
 
@@ -30,7 +43,7 @@
     </div>   
 </div>
 <div class="row">
-    <div class="col-md-6 col-lg-6">
+    <div id="divPurchaseReturn" class="col-md-6 col-lg-6">
         <div class="m-t-5 padding-5 search-div">
             <div class="row">
                 <div class="col-md-8 col-lg-8">
@@ -84,7 +97,7 @@
                     <div class="col-md-3 col-lg-3 padding-10">@Resource.Total</div>
                     <div class="col-md-4 col-lg-4"></div>
                     <div class="col-md-5 col-lg-5 aligh-right padding-10">
-                        <label id="lblTotal" class="total-amount-value mb-0">0</label>
+                        <label id="lblTotal" class="total-amount-value mb-0 mr-10">0</label>
                     </div>
                 </div>
                 <div class="row mr-0 soft-gray-background pt-1">
@@ -141,19 +154,28 @@
 
 
 <script type="text/javascript">
-    let tranPurchaseReturnAction;
+    let tranPurchaseReturnAction;   
     $('body').addClass("hideVerticalScrollbar");
-    calcPurchaseHeight();
-    function calcPurchaseHeight() {
+    calcPurchaseReturnHeight();
+    calcPurchaseHeight(150);
+    function calcPurchaseReturnHeight() {
         let windowHeight = window.innerHeight;
         let thingsHeight = 100; // average other component height
         let extraHeight = 11;
-        let purchaseAreaHeight = windowHeight - (thingsHeight + extraHeight);
-        let purchaseChildHeight = purchaseAreaHeight - 100;  // 100 is top component
-        let purchaseTranHeight = purchaseChildHeight - 135 - 40;  // 135 is bottom component and 40 is extra
-        document.getElementById('divPurchase').setAttribute("style", "height:" + purchaseAreaHeight + "px");
-        document.getElementById('divPurchaseReturnChild').setAttribute("style", "height:" + purchaseChildHeight + "px");
-        document.getElementById('divPurchaseReturnTran').setAttribute("style", "height:" + purchaseTranHeight + "px");
+        let purchaseReturnAreaHeight = windowHeight - (thingsHeight + extraHeight);
+        let purchaseReturnChildHeight = purchaseReturnAreaHeight - 100;  // 100 is top component
+        let purchaseReturnTranHeight = purchaseReturnChildHeight - 40 - 40;  // 135 is bottom component and 40 is extra
+        document.getElementById('divPurchaseReturn').setAttribute("style", "height:" + purchaseReturnAreaHeight + "px");
+        document.getElementById('divPurchaseReturnChild').setAttribute("style", "height:" + purchaseReturnChildHeight + "px");
+        document.getElementById('divPurchaseReturnTran').setAttribute("style", "height:" + purchaseReturnTranHeight + "px");
+    }
+    function calcPurchaseHeight(thingsHeight) {
+        let windowHeight = window.innerHeight;
+        let extraHeight = 20;
+        let purchaseHeight = windowHeight - (thingsHeight + extraHeight);
+        let purchaseTranHeight = purchaseHeight - 35;
+        document.getElementById('divPurchase').setAttribute("style", "height:" + purchaseHeight + "px");
+        document.getElementById('divPurchaseTran').setAttribute("style", "height:" + purchaseTranHeight + "px");
     }
     $(document).ready(function () {
         setModuleTitle('@Resource.Purchase', '@Resource.AddPurchaseReturn');
@@ -163,6 +185,7 @@
             $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
             $('#inputDate').val(getTodayDate());
             $("#inputSearch").prop("disabled", false);
+            //document.getElementById("tblPurchase").disabled = false;
             showHideTranPurchaseReturnAddEdit(false);
             showHideMainButton(false);
             showHideUnit();
@@ -270,7 +293,7 @@
                         $("#inputProductID").val(response.ProductID);
                         $("#inputProductName").val(response.ProductName);
                         $("#inputQuantity").val(response.Quantity);
-                        $("#inputMaxQty").val(response.MaxQuantity);
+                        $("#inputMaxQty").val(response.Quantity);
                         $("#inputPrice").val(response.Price);
                         $("#inputDisPercent").val(response.DisPercent + '@Resource.PercentSign');
                         $("#inputUnitID").val(response.UnitID);
@@ -333,7 +356,7 @@
             let unitId = $("#inputUnitID").val();
             let unitKeyword = $("#lblUnit").text();
             let currencyId = $("#inputCurrencyID").val();
-            let currencyKeyword = $("#inputCurrencyName").text();
+            let currencyKeyword = $("#inputCurrencyName").val();
             showLoadingIcon();
             $.ajax({
                 type: "GET",
@@ -347,7 +370,9 @@
                         redirectToLogin();
                     else {
                         createTranPurchaseReturnData(response.LstTranPurchaseReturn);
-                        $("#lblTotal").text(response.SubTotal);
+                        $("#lblTotal").text(separatedComma(response.SubTotal));
+                        $("#lblTotal").val(response.SubTotal);
+                        $("#lblUnit").text("UNIT");
                         clearProductControl();
                     }
                 },
@@ -414,9 +439,9 @@
                     if (!response.IsRequestSuccess)
                         redirectToLogin();
                     else {
-                        createTranPurchaseReturnData(response.LstTranPurchaseReturn);
-                        $("#lblTotal").text(response.SubTotal);
-                        //createTranPurchaseData(response.LstTranPurchase);
+                        createTranPurchaseReturnData(response.LstTranPurchaseReturn);                       
+                        $("#lblTotal").text(separatedComma(response.SubTotal));
+                        $("#lblTotal").val(response.SubTotal);
                     }
                 },
                 failure: function (response) {
@@ -481,7 +506,7 @@
                     clearProductControl();
                     $("#tblTranPurchaseReturn").find("tbody").empty();
                     $("#lblTotal").text("0");
-                    createTranPurchaseData(response.LstTranPurchase);
+                    //createTranPurchaseData(response.LstTranPurchase);
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -505,8 +530,8 @@
             let date = $('#inputDate').val();
             let voucherId = $('#inputVoucherID').val();
             let remark = $('#txtRemarkNote').val();
-            let total = $("#lblTotal").text();
-            let userId = localStorage.getItem("UserID");
+            let total = $("#lblTotal").val();
+            let userId = localStorage.getItem("UserID");           
             showLoadingIcon();
             $.ajax({
                 type: "POST",
@@ -553,6 +578,7 @@
             $('#inputDate').val('@ViewBag.Date');
             $('#inputVoucherID').val('@ViewBag.VoucherID');
             $('#lblTotal').text(separatedComma('@ViewBag.Total'));
+            $('#lblTotal').val('@ViewBag.Total');
             $('#inputSearch').val('@ViewBag.ReturnVoucherNo');
             $('#lblTotalPurchaseItem').text('@ViewBag.TotalItem' + '(' + '@ViewBag.TotalQuantity' + ')');
             $('#txtRemarkNote').val('@ViewBag.Remark');
@@ -563,8 +589,13 @@
             let tranPurchaseReturnList = JSON.parse('@Html.Raw(Json.Encode(Session["TranPurchaseReturnData"]))');
             createTranPurchaseReturnData(tranPurchaseReturnList);
             let tranPurchaseList = JSON.parse('@Html.Raw(Json.Encode(Session["TranPurchaseData"]))');
-            createTranPurchaseData(tranPurchaseList);
-
+            createTranPurchaseData(tranPurchaseList);            
+            
+            $('#tblTranPurchase').addClass("changecursor");
+            var nodes = document.getElementById("divPurchase").getElementsByTagName('*');
+            for (var i = 0; i < nodes.length; i++) {
+                nodes[i].disabled = true;             
+            }
         }
         $("#btnEditCancel").click(function (e) {
             window.location.href = '@Url.Action("PurchaseReturn", "PurchaseReturn")?userId=' + userId;
@@ -584,7 +615,7 @@
             let date = $('#inputDate').val();
             let voucherId = $('#inputVoucherID').val();
             let remark = $('#txtRemarkNote').val();
-            let total = $("#lblTotal").text();
+            let total = $("#lblTotal").val();
             let returnVoucherNo = $("#inputSearch").val();
             let userId = localStorage.getItem("UserID");
             showLoadingIcon();

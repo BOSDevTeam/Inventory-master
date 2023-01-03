@@ -23,8 +23,13 @@
 <div>
 
     <div class="row setup-title-layout">
-        <div class="col-md-12 col-lg-12">
+        <div class="col-md-6 col-lg-6">
             <label class="page-title">@Resource.StockStatusByLocation</label>
+        </div>
+        <div class="col-md-6 col-lg-6" style="text-align:right;">
+            @Html.RadioButtonFor(model => Model.PriceType, 1, new { @class= "PriceType", @checked = "checked" })&nbsp;@Html.Label(Resource.SalePrice)
+            &nbsp;&nbsp;
+            @Html.RadioButtonFor(model => Model.PriceType, 0, new { @class = "PriceType" })&nbsp;@Html.Label(Resource.PurchasePrice)
         </div>
     </div>
 
@@ -61,44 +66,46 @@
     $(document).ready(function () {
 
         setModuleTitle('@Resource.StockStatus', '@Resource.StockStatusByLocation');
-        createHeader();
-        createItem();
+        createHeader('', false);
+        createItem('',false);
 
-        function createHeader() {
+        function createHeader(response, isFromJson) {
             $("#tblStockStatus").find("thead").empty();
-            var header = JSON.parse('@Html.Raw(Json.Encode(ViewData["StockStatusHeader"]))');
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["StockStatusHeader"]))');
 
             var row = '<tr class="row table-header">'
-                        + '<th class="col-md-1 col-lg-1">' + header.ProductCode + '</th>'
-                        + '<th class="col-md-2 col-lg-2">' + header.ProductName + '</th>'
-                        + '<th class="col-md-8 col-lg-8">'
+                        + '<th class="col-md-1 col-lg-1">' + response.ProductCode + '</th>'
+                        + '<th class="col-md-2 col-lg-2">' + response.ProductName + '</th>'
+                        + '<th class="col-md-6 col-lg-6">'
                         + '<div class="row">'
                     
-            if (header.lstLocationName.length <= 6) {
-                $.each(header.lstLocationName, function (index, item) {
+            if (response.lstLocationName.length <= 6) {
+                $.each(response.lstLocationName, function (index, item) {
                     row += '<label class="col-md-2 col-lg-2 aligh-right mb-0">' + item + '</label>'
                 });
             } else {
-                $.each(header.lstLocationName, function (index, item) {
+                $.each(response.lstLocationName, function (index, item) {
                     row += '<label class="col-md-1 col-lg-1 aligh-right mb-0">' + item + '</label>'
                 });
             }
             
             row += '</div></th>'
-                + '<th class="col-md-1 col-lg-1 aligh-right">' + header.Balance + '</th>'
+                + '<th class="col-md-1 col-lg-1 aligh-right">' + response.Balance + '</th>'
+                + '<th class="col-md-1 col-lg-1 aligh-right">' + response.Price + '</th>'
+                + '<th class="col-md-1 col-lg-1 aligh-right">' + response.Amount + '</th>'
                 + '</tr>'
             $('#tblStockStatus thead').append(row);
         }
 
-        function createItem() {
+        function createItem(response, isFromJson) {
             $("#tblStockStatus").find("tbody").empty();
-            var response = JSON.parse('@Html.Raw(Json.Encode(ViewData["StockStatusItem"]))');
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["StockStatusItem"]))');
 
             $.each(response, function (index, item) {
                 var row = '<tr class="row table-item">'
                          + '<td class="col-md-1 col-lg-1">' + item.ProductCode + '</td>'
                          + '<td class="col-md-2 col-lg-2">' + item.ProductName + '</td>'
-                         + '<td class="col-md-8 col-lg-8">'
+                         + '<td class="col-md-6 col-lg-6">'
                          + '<div class="row">'
 
                 if (item.lstLocationBalance.length <= 6) {
@@ -113,6 +120,8 @@
               
                 row += '</div></td>'
                     + '<td class="col-md-1 col-lg-1 aligh-right">' + item.Balance + '</td>'
+                    + '<td class="col-md-1 col-lg-1 aligh-right">' + separatedComma(item.Price) + '</td>'
+                    + '<td class="col-md-1 col-lg-1 aligh-right">' + separatedComma(item.Amount) + '</td>'
                     + '</tr>'
                 $('#tblStockStatus tbody').append(row);
             });           
@@ -121,6 +130,34 @@
         $("#tblStockStatus").on("click", "tbody tr", function (event) {
             $('#tblStockStatus tr').removeClass("selected");
             $(this).addClass("selected");
+        });
+
+        $('.PriceType').change(function () {
+            let value = $(this).filter(':checked').val();
+            let isRequestValue = false;
+            if (value == 1) isRequestValue = true;
+            else if (value == 0) isRequestValue = false;
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("PriceTypeChangeAction", "StockStatus")',
+                data: { "isRequestValue": isRequestValue },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createHeader(response.Header, true);
+                    createItem(response.LstItem, true);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
         });
 
     });

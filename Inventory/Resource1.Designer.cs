@@ -205,11 +205,29 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Back to Home.
+        /// </summary>
+        public static string BackToHome {
+            get {
+                return ResourceManager.GetString("BackToHome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Back to POS.
         /// </summary>
         public static string BackToPOS {
             get {
                 return ResourceManager.GetString("BackToPOS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Balance.
+        /// </summary>
+        public static string Balance {
+            get {
+                return ResourceManager.GetString("Balance", resourceCulture);
             }
         }
         
@@ -799,6 +817,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Purchase Price.
+        /// </summary>
+        public static string PurchasePrice {
+            get {
+                return ResourceManager.GetString("PurchasePrice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Purchase Return List.
         /// </summary>
         public static string PurchaseReturnList {
@@ -831,6 +858,15 @@ namespace Inventory {
         public static string Remark {
             get {
                 return ResourceManager.GetString("Remark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reports.
+        /// </summary>
+        public static string Reports {
+            get {
+                return ResourceManager.GetString("Reports", resourceCulture);
             }
         }
         
@@ -880,6 +916,24 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sale Item Report.
+        /// </summary>
+        public static string SaleItemReport {
+            get {
+                return ResourceManager.GetString("SaleItemReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sale Item Simple Report.
+        /// </summary>
+        public static string SaleItemSimpleReport {
+            get {
+                return ResourceManager.GetString("SaleItemSimpleReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sale List.
         /// </summary>
         public static string SaleList {
@@ -912,6 +966,24 @@ namespace Inventory {
         public static string SalePerson {
             get {
                 return ResourceManager.GetString("SalePerson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sale Price.
+        /// </summary>
+        public static string SalePrice {
+            get {
+                return ResourceManager.GetString("SalePrice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sale Report.
+        /// </summary>
+        public static string SaleReport {
+            get {
+                return ResourceManager.GetString("SaleReport", resourceCulture);
             }
         }
         

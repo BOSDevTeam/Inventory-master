@@ -185,6 +185,9 @@
     <Compile Include="Controllers\PurchaseController.cs" />
     <Compile Include="Controllers\PurchaseOrderController.cs" />
     <Compile Include="Controllers\PurchaseReturnController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\RpSaleItemController.cs" />
+    <Compile Include="Controllers\RpSaleItemSimpleController.cs" />
     <Compile Include="Controllers\SaleController.cs" />
     <Compile Include="Controllers\SaleOrderController.cs" />
     <Compile Include="Controllers\SaleReturnController.cs" />
@@ -444,6 +447,8 @@
     <Compile Include="ViewModels\PurchaseOrderViewModel.cs" />
     <Compile Include="ViewModels\PurchaseReturnViewModel.cs" />
     <Compile Include="ViewModels\PurchaseViewModel.cs" />
+    <Compile Include="ViewModels\RpSaleItemSimpleViewModel.cs" />
+    <Compile Include="ViewModels\RpSaleItemViewModel.cs" />
     <Compile Include="ViewModels\SaleOrderViewModel.cs" />
     <Compile Include="ViewModels\SaleViewModel.cs" />
     <Compile Include="ViewModels\StockStatusViewModel.cs" />
@@ -646,6 +651,13 @@
     <Content Include="Views\PurchaseReturn\_PurchaseReturnDetailDialog.cshtml" />
     <Content Include="Views\SaleReturn\_SaleReturnDetailChild.cshtml" />
     <Content Include="Views\SaleReturn\_SaleReturnDetailDialog.cshtml" />
+    <Content Include="Views\RpSaleItem\SaleItemReportFilter.cshtml" />
+    <Content Include="Views\Shared\_LayoutReport.cshtml" />
+    <Content Include="Views\RpSaleItem\SaleItemReport.cshtml" />
+    <Content Include="Views\Shared\_DateFilter.cshtml" />
+    <Content Include="Views\Report\Index.cshtml" />
+    <Content Include="Views\RpSaleItemSimple\SaleItemSimpleReport.cshtml" />
+    <Content Include="Views\RpSaleItemSimple\SaleItemSimpleReportFilter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
