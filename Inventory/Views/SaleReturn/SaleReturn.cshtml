@@ -60,10 +60,10 @@
                 <div class="col-md-8 col-lg-8">
                     <input type="text" id="inputProductName" class="form-control control-input" placeholder="@Resource.ProductName" disabled />
                 </div>
-                <div class="col-md-3 col-lg-3">
+                <div id="divQuantity" class="col-md-3 col-lg-3">
                     <input type="text" id="inputQuantity" class="form-control control-input numberonly" placeholder="@Resource.ReturnQty"/>
                 </div>
-                <div id="" class="col-md-1 col-lg-1 note align-justify-center">
+                <div id="divUnit" class="col-md-1 col-lg-1 note align-justify-center">
                     <label id="lblUnitName" class="control-label mb-0">UNIT</label>
                 </div>
             </div>
@@ -158,7 +158,7 @@
 
 <script type="text/javascript">
 
-    let tranSaleReturnAction;
+    let tranSaleReturnAction, isEditTranSaleReturn;
     document.getElementById('subMenuSaleReturn').className = 'active';
     $('body').addClass("hideVerticalScrollbar");
 
@@ -199,6 +199,18 @@
             $('#inputDate').val(getTodayDate());
             showHideTranSaleReturnAddEdit(false);
             showHideMainButton(false);
+            showHideUnit();
+        }
+
+        function showHideUnit() {
+            if (isMultiUnit == "True") {
+                $("#divUnit").show();
+            }
+            else {
+                $('#divUnit').css("display", "none");
+                $('#divQuantity').addClass("col-md-4 col-lg-4");
+            }
+
         }
 
         $('#inputSearch').keydown(function (e) {
@@ -276,6 +288,7 @@
                         else {
 
                             fillSelectedSaleData(response);
+                            isEditTranSaleReturn = false;
                             showHideTranSaleReturnAddEdit(false);
                         }
                     },
@@ -313,10 +326,18 @@
             addOrEditTranSaleReturn(false);
         });
 
+        $('#inputQuantity').keydown(function (e) {
+            if (e.which == 13) {
+                addOrEditTranSaleReturn(isEditTranSaleReturn);
+            }
+        });
+
         $('#btnEdit').click(function () {
             addOrEditTranSaleReturn(true);
 
         });
+
+
 
         function validateTranSaleReturnControl() {
             if ($('#inputProductID').val().length == 0 || $('#inputProductID').val() == 0) return false;
@@ -438,6 +459,7 @@
                     if (response.DisPercent != 0) $("#inputDisPercent").val(response.DisPercent + '@Resource.PercentSign');
                     else $("#inputDisPercent").val(0 + '@Resource.PercentSign');
                     $('#inputCurrencyKeyword').val(response.CurrencyKeyword);
+                    isEditTranSaleReturn = true;
                     showHideTranSaleReturnAddEdit(true);
                 },
                 failure: function (response) {

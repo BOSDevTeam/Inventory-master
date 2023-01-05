@@ -144,7 +144,7 @@
 
 <script type="text/javascript">
 
-    let tranTransferAction, defaultLocationId;
+    let tranTransferAction, defaultLocationId, isEditTransfer;
     document.getElementById('subMenuTransfer').className = 'active';
     $('body').addClass("hideVerticalScrollbar");
 
@@ -322,6 +322,7 @@
                             $("#inputProductID").val(response.ProductID);
                             $("#inputProductName").val(response.ProductName);
                             $("#inputQuantity").val('1');
+                            isEditTransfer = false;
                             createUnitData(response);
                         }
                     },
@@ -344,6 +345,12 @@
         $('#btnEdit').click(function (e) {
             addOrEditTranTransfer(true);
         });
+
+        $('#inputQuantity').keydown(function (e) {
+            if (e.which == 13) {
+                addOrEditTranTransfer(isEditTransfer);
+            }
+        })
 
         function validateTransferControl() {
             if ($('#inputProductID').val().length == 0 || $('#inputProductID').val() == 0) return false;
@@ -573,6 +580,7 @@
             $('#inputQuantity').val('1');
             createUnitData(response);
             showHideTranTransferAddEdit(false);
+            isEditTransfer = false;
         }
     })
 
@@ -671,6 +679,7 @@
                     createUnitData(response);
                     $("#ddlUnit").val(response.UnitID);
                     showHideTranTransferAddEdit(true);
+                    isEditTransfer = true;
                 }
             },
             failure: function (response) {

@@ -150,7 +150,7 @@
 
 <script type="text/javascript">
     document.getElementById('subMenuPurchaseOrder').className = 'active';
-    let tranPurOrderValue, defaultSupplierId, defaultLocationId;
+    let tranPurOrderValue, defaultSupplierId, defaultLocationId, isEditTranPurchaseOrder;
     $('body').addClass("hideVerticalScrollbar");
     calcSaleHeight();
     calcMenuHeight(155);
@@ -235,6 +235,18 @@
         $('#btnAdd').click(function (e) {
             addOrEditTranPurchaseOrder(false);
         });
+
+        $('#inputQuantity').keydown(function (e) {
+            if (e.which == 13) {
+                addOrEditTranPurchaseOrder(isEditTranPurchaseOrder);
+            }
+        })
+        $('#inputPrice').keydown(function (e) {
+            if (e.which == 13) {
+                addOrEditTranPurchaseOrder(isEditTranPurchaseOrder);
+            }
+        })
+
 
         $('#btnEdit').click(function (e) {
             addOrEditTranPurchaseOrder(true);
@@ -434,6 +446,7 @@
                             createUnitData(response);
                             createCurrencyData(response);
                             showHideTranPurchaseOrderAddEdit(false);
+                            isEditTranPurchaseOrder = false;
                         }
 
                     },
@@ -600,6 +613,7 @@
                         if (response.IsFOC == true) $("#chkItemFOC").prop('checked', true);
                         else $("#chkItemFOC").prop('checked', false);
                         showHideTranPurchaseOrderAddEdit(true);
+                        isEditTranPurchaseOrder = true;
                     }
                 },
                 failure: function (response) {
@@ -775,6 +789,7 @@
             createUnitData(response);
             createCurrencyData(response);
             showHideTranPurchaseOrderAddEdit(false);
+            isEditTranPurchaseOrder = false;
         }
 
 
