@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<!-- settings23:07-->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <link rel="shortcut icon" type="image/x-icon" href="~/assets/img/favicon.ico">
+    <title>QuickInventory - POS & Inventory Management</title>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap-datetimepicker.min.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <!--[if lt IE 9]>
+        <script src="assets/js/html5shiv.min.js"></script>
+        <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        .btn-close{
+            border:none;background-color:transparent;color:#edeff1;padding:0 20px;
+        }
+        .btn-close:hover{
+            background-color:#1F8B4E;
+            cursor:pointer;
+        }
+    </style>
+</head>
+
+<body>
+  
+    <div class="main-wrapper">        
+        <div class="header">
+            <div class="header-left">
+                <a href="#" class="logo">
+                    <img src="~/assets/img/logo.png" width="35" height="35" alt="">
+                </a>
+            </div>           
+            <div class="page-title-box float-left">
+                <h3 id="reportTitle">@Resource.QuickInventory</h3>
+            </div>  
+            <div style="float:right;height:50px;display:flex;">
+                <button id="btnClose" class="btn-close" type="button" onclick="history.back()">
+                    <span aria-hidden="true" style="font-size:25px;">&times;</span>
+                </button> 
+            </div>             
+        </div>
+
+        <div class="page-wrapper" style="margin-left:0;">
+            <div class="content" style="padding:0;">       
+                <div class="row padding-5 soft-gray-background">
+                    <div class="col-md-3 col-lg-3 align-center">
+                        <label class="control-label mb-0">@Resource.FromDate&nbsp;@Resource.ColonSign&nbsp;</label>
+                        <label id="lblFromDate" class="control-label mb-0">@Resource.FromDate</label>
+                    </div>
+                    <div class="col-md-3 col-lg-3 align-center">
+                        <label class="control-label mb-0">@Resource.ToDate&nbsp;@Resource.ColonSign&nbsp;</label>
+                        <label id="lblToDate" class="control-label mb-0">@Resource.ToDate</label>
+                    </div>
+                    <div id="divFilter" class="col-md-6 col-lg-6 aligh-right">                        
+                        <label id="lblFilter" class="control-label mb-0 note"></label>                                           
+                    </div>
+                </div>     
+                @RenderBody()
+            </div>        
+        </div>
+    </div>
+    <div class="sidebar-overlay" data-reff=""></div>
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script src="~/assets/js/popper.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/jquery.slimscroll.js"></script>
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/assets/js/select2.min.js"></script>
+    <script src="~/assets/js/moment.min.js"></script>
+    <script src="~/assets/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/Scripts/Site.js"></script>
+
+    <script>     
+         
+        $(function () {
+           
+        });
+
+        function setReportTitle(title) {
+            $("#reportTitle").text(title);
+        }
+
+        function setDefaultFilter(fromDate, toDate, filter) {
+            $("#lblFromDate").text(fromDate);
+            $("#lblToDate").text(toDate);
+            if (filter.length != 0) $("#lblFilter").text(filter);
+            else $("#divFilter").css("display", "none");
+        }
+
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            return result;
+        }
+
+    </script>
+</body>
+
+<!-- settings23:11-->
+</html>

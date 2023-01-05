@@ -186,6 +186,7 @@
     <Compile Include="Controllers\PurchaseOrderController.cs" />
     <Compile Include="Controllers\PurchaseReturnController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\RpSaleAmountOnlyController.cs" />
     <Compile Include="Controllers\RpSaleItemController.cs" />
     <Compile Include="Controllers\RpSaleItemSimpleController.cs" />
     <Compile Include="Controllers\SaleController.cs" />
@@ -447,6 +448,7 @@
     <Compile Include="ViewModels\PurchaseOrderViewModel.cs" />
     <Compile Include="ViewModels\PurchaseReturnViewModel.cs" />
     <Compile Include="ViewModels\PurchaseViewModel.cs" />
+    <Compile Include="ViewModels\RpSaleAmountOnlyViewModel.cs" />
     <Compile Include="ViewModels\RpSaleItemSimpleViewModel.cs" />
     <Compile Include="ViewModels\RpSaleItemViewModel.cs" />
     <Compile Include="ViewModels\SaleOrderViewModel.cs" />
@@ -658,6 +660,10 @@
     <Content Include="Views\Report\Index.cshtml" />
     <Content Include="Views\RpSaleItemSimple\SaleItemSimpleReport.cshtml" />
     <Content Include="Views\RpSaleItemSimple\SaleItemSimpleReportFilter.cshtml" />
+    <Content Include="Views\Shared\_LayoutReportDetail.cshtml" />
+    <Content Include="Views\Shared\_MenuFilter.cshtml" />
+    <Content Include="Views\RpSaleAmountOnly\SaleAmountOnlyReportFilter.cshtml" />
+    <Content Include="Views\RpSaleAmountOnly\SaleAmountOnlyReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -102,6 +102,7 @@ div.paging-item{display:flex;justify-content:right;color:transparent;font-size:0
 .m-t-5{margin-top:5px;}
 .m-b-5{margin-bottom:5px;}
 div.note{background-color:#ffffcc;padding:5px;}
+.note{background-color:#ffffcc;padding:5px 20px;}
 .align-center{display:flex;align-items:center;}
 .aligh-right{display:flex;justify-content:right;}
 .align-justify-center{display:flex;align-items:center;justify-content:center;}
@@ -247,28 +248,49 @@ label1 {display:block; text-align:right;margin-right:20px}
 /** end client sale order **/
 
 
-/** to delete later*/
-/** report css **/
-.rpt-filter-label{
-    background-color:#ffffcc;
-    padding: 5px 20px 5px 20px;           
+
+/** report **/
+.rpt-main-group{
+    background-color:#e1e1e1;
+    padding: 5px;
+    font-weight:bold;     
+    color:#4884FF;   
+    border-bottom:1px solid #f0f3f7;  
+    font-size:13px;font-family: 'Rubik',sans-serif; 
 }
-.rpt-product-header{
-    padding-top:5px;
-    padding-bottom:5px;
-    background-color:#FFFFEC;
-    color:#0066ff;       
+.rpt-sub-group{
+    background-color:#edecec;
+    padding: 5px;
+    font-weight:bold;    
+    color:#6699FF;     
+    border-bottom:1px solid #f0f3f7; 
+    font-size:13px;font-family: 'Rubik',sans-serif;
 }
-.padding-tb-5{
-    padding-top:5px;
-    padding-bottom:5px;           
+.rpt-item{
+    background-color:#fff;
+    padding: 3px;      
+    color:#333;     
+    border-bottom:1px solid #f0f3f7; 
+    font-size:13px;font-family: 'Rubik',sans-serif;
 }
+.rpt-sub-total{
+    padding: 5px;
+    background-color:#F3F3F3;    
+    font-weight:bold;  
+    color:#333;      
+    border-bottom:1px solid #DEE2E6;
+    font-size:13px;font-family: 'Rubik',sans-serif;
+}  
 .rpt-total{
-    padding-top:5px;
-    padding-bottom:5px;
-    background-color:#e9ecef;           
-}   
-/**end report css**/
+    padding: 5px;
+    background-color:#27ae61;    
+    font-weight:bold;  
+    color:#fff;      
+    border-top:2px solid #DEE2E6;
+    border-bottom:1px solid #DEE2E6;
+    font-size:15px;font-family: 'Rubik',sans-serif;
+}    
+/**end report **/
 
 
 

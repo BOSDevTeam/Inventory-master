@@ -501,4 +501,31 @@
   <data name="SaleItemSimpleReport" xml:space="preserve">
     <value>Sale Item Simple Report</value>
   </data>
+  <data name="All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Cash" xml:space="preserve">
+    <value>Cash</value>
+  </data>
+  <data name="Credit" xml:space="preserve">
+    <value>Credit</value>
+  </data>
+  <data name="ViewReport" xml:space="preserve">
+    <value>View Report</value>
+  </data>
+  <data name="MenuFilter" xml:space="preserve">
+    <value>Menu Filter</value>
+  </data>
+  <data name="SaleAmountOnlyReport" xml:space="preserve">
+    <value>Sale Amount Only Report</value>
+  </data>
+  <data name="Bank" xml:space="preserve">
+    <value>Bank</value>
+  </data>
+  <data name="VouDis" xml:space="preserve">
+    <value>VouDis</value>
+  </data>
+  <data name="VouFOC" xml:space="preserve">
+    <value>VouFOC</value>
+  </data>
 </root>
