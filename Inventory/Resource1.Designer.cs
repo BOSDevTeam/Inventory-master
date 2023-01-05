@@ -196,6 +196,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All.
+        /// </summary>
+        public static string All {
+            get {
+                return ResourceManager.GetString("All", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Amount.
         /// </summary>
         public static string Amount {
@@ -232,6 +241,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bank.
+        /// </summary>
+        public static string Bank {
+            get {
+                return ResourceManager.GetString("Bank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bank/Pay.
         /// </summary>
         public static string BankPay {
@@ -246,6 +264,15 @@ namespace Inventory {
         public static string Cancel {
             get {
                 return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cash.
+        /// </summary>
+        public static string Cash {
+            get {
+                return ResourceManager.GetString("Cash", resourceCulture);
             }
         }
         
@@ -318,6 +345,15 @@ namespace Inventory {
         public static string Continue {
             get {
                 return ResourceManager.GetString("Continue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Credit.
+        /// </summary>
+        public static string Credit {
+            get {
+                return ResourceManager.GetString("Credit", resourceCulture);
             }
         }
         
@@ -628,6 +664,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Menu Filter.
+        /// </summary>
+        public static string MenuFilter {
+            get {
+                return ResourceManager.GetString("MenuFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to My Profile.
         /// </summary>
         public static string MyProfile {
@@ -916,6 +961,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sale Amount Only Report.
+        /// </summary>
+        public static string SaleAmountOnlyReport {
+            get {
+                return ResourceManager.GetString("SaleAmountOnlyReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sale Item Report.
         /// </summary>
         public static string SaleItemReport {
@@ -1177,6 +1231,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to View Report.
+        /// </summary>
+        public static string ViewReport {
+            get {
+                return ResourceManager.GetString("ViewReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Voucher Discount.
         /// </summary>
         public static string VoucherDiscount {
@@ -1209,6 +1272,24 @@ namespace Inventory {
         public static string VoucherNo {
             get {
                 return ResourceManager.GetString("VoucherNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VouDis.
+        /// </summary>
+        public static string VouDis {
+            get {
+                return ResourceManager.GetString("VouDis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to VouFOC.
+        /// </summary>
+        public static string VouFOC {
+            get {
+                return ResourceManager.GetString("VouFOC", resourceCulture);
             }
         }
     }

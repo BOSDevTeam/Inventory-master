@@ -78,6 +78,7 @@
                         <li class="submenu">
                             <a href=""><i class="fa fa-flag"></i> <span> @Resource.SaleReport </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuSaleRpGp">
+                                <li id="subMenuSaleAmountOnlyRp"><a href="#">@Resource.SaleAmountOnlyReport</a></li>
                                 <li id="subMenuSaleItemSimpleRp"><a href="#">@Resource.SaleItemSimpleReport</a></li>
                                 <li id="subMenuSaleItemRp"><a href="#">@Resource.SaleItemReport</a></li>
                             </ul>
@@ -104,7 +105,7 @@
     <script src="~/assets/js/bootstrap-datetimepicker.min.js"></script>
     <script src="~/Scripts/Site.js"></script>
 
-    <script>      
+    <script>
         var userId = 0, userName, isMultiUnit = false, isMultiCurrency = false, isBankPayment = false;
 
         userId = localStorage.getItem("UserID");
@@ -116,6 +117,9 @@
         $("#loginUser").text(userName);
 
         $(function () {
+            $('#subMenuSaleAmountOnlyRp').click(function () {
+                window.location.href = '@Url.Action("SaleAmountOnlyReportFilter", "RpSaleAmountOnly")';
+            });
             $('#subMenuSaleItemSimpleRp').click(function () {
                 window.location.href = '@Url.Action("SaleItemSimpleReportFilter", "RpSaleItemSimple")';
             });
