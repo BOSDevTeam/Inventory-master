@@ -129,7 +129,7 @@
 
 <script type="text/javascript">
 
-    let tranCustomerConsignAction, defaultCustomerId, defaultLocationId, defaultSalePersonId, defaultDivisionId;
+    let tranCustomerConsignAction, defaultCustomerId, defaultLocationId, defaultSalePersonId, defaultDivisionId,isEditTranCustomerConsign=false;
     $('body').addClass("hideVerticalScrollbar");
     calcMenuHeight(210);
     calcCustomerConsignHeight();
@@ -339,6 +339,7 @@
             $("#inputQuantity").val("");
             showHideUnit();
             showHideTranCustomerConsignAddEdit(false);
+            isEditTranCustomerConsign = false;
         }
         function validateProductControl() {
             if ($("#inputProductID").val().length == 0 || $("#inputProductID").val() == 0) return false;
@@ -348,12 +349,16 @@
             }
             return true;
         }
-
+        $("#inputQuantity").keydown(function () {
+            if (event.which === 13) {
+                addOrEditTranCustomerConsign(isEditTranCustomerConsign);
+            }
+        })
         $("#btnAdd").click(function (e) {
-            addOrEditTranCustomerConsign(false);
+            addOrEditTranCustomerConsign(isEditTranCustomerConsign);
         });
         $("#btnEdit").click(function (e) {
-            addOrEditTranCustomerConsign(true);
+            addOrEditTranCustomerConsign(isEditTranCustomerConsign);
         });
         function addOrEditTranCustomerConsign(isEdit) {
             if (validateProductControl()) {
@@ -471,6 +476,7 @@
                         createUnitData(response);
                         $("#ddlUnit").val(response.UnitID);
                         showHideTranCustomerConsignAddEdit(true);
+                        isEditTranCustomerConsign = true;
                     }
                 },
                 failure: function (response) {
@@ -644,6 +650,7 @@
         $("#inputQuantity").val('1');
         createUnitData(response);
         showHideTranCustomerConsignAddEdit(false);
+        isEditTranCustomerConsign = false;
     }
     function showHideMainButton(isEdit) {
         if (isEdit) {

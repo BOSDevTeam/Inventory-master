@@ -1,0 +1,234 @@
+﻿@using Inventory.ViewModels
+@model CustomerOpeningViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+
+    <style type="text/css">
+        #subMenuOpeningGp {
+            display: block;
+        }
+    </style>
+</head>  
+
+<div class="row m-t-5 m-b-5 m-l-5">
+    <div class="col-md-4 col-lg-4 note align-justify-center">
+        <label id="lblUserVoucherNo" class="control-label mb-0"></label>
+    </div>
+    <div class="col-md-4 col-lg-4">
+        <input id="inputDate" type="date" class="form-control control-input" />
+    </div>
+    <div class="col-md-4 col-lg-4">
+        <input id="inputVoucherID" type="text" class="form-control control-input" placeholder="@Resource.VoucherID" />
+    </div>
+</div>
+
+<div>
+    <div class="row m-0">
+        <div class="col-md-3 col-lg-3">
+            <div class="text-center" style="background-color:#fff;padding:5px;"><label class="control-title mb-0">@Resource.AllCustomer</label></div>            
+            <div id="divCustomer" class="submenu">
+                @foreach (var item in Model.Customers)
+                {
+                    <button id="@("btnCustomer"+item.Value)" class="btnCustomer menu-sub" value="@item.Value">@item.Text</button>
+                }
+            </div>
+        </div>
+        <div id="divCustomerOpening" class="col-md-9 col-lg-9">
+
+            <div id="divCustomerOpeningTran" class="tran-table">
+                <table id="tblTranCustomerOpening" class="width-100-percent">
+                    <thead>
+                        <tr class="row table-header">
+                            <td class="col-md-1 col-lg-1"><span>@Resource.HashSign</span></td>
+                            <td class="col-md-7 col-lg-7"><span>@Resource.Customer</span></td>
+                            <td class="col-md-4 col-lg-4"><span>@Resource.Balance</span></td>                            
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="row soft-gray-background pt-1" style="bottom:0px;position:absolute;width:100%;">
+                <div class="col-md-2 col-lg-2">
+                    <button id="btnReset" class="btn btn-white-outline-third">@Resource.Reset</button>
+                </div>
+                <div class="col-md-7 col-lg-7"></div>
+                <div class="col-md-3 col-lg-3 aligh-right">
+                    <button id="btnEdit" class="btn btn-first plr-30">@Resource.Edit</button>
+                    <button id="btnSave" class="btn btn-first plr-30">@Resource.Save</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    let num = 0,customerId;
+
+    document.getElementById('subMenuCustomerOpening').className = 'active';
+    $('body').addClass("hideVerticalScrollbar");
+    calcDivHeight();
+
+    $(document).ready(function () {
+
+        setModuleTitle('@Resource.CustomerOpening', '@Resource.AddCustomerOpening');
+
+        if ('@ViewBag.ErrorMessage'.length != 0) {
+            showToast(0, '@ViewBag.ErrorMessage');
+        }
+
+        if ('@ViewBag.IsEdit' == 'True') fillEditData();
+        else initializeControl();
+
+        $(document).on('click', '.btnCustomer', function (e) {
+            let customerId = $(this).val();
+            let customerName = $(this).text();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CustomerClickAction", "CustomerOpening")',
+                data: { "customerId": customerId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else {
+                        createTranCustomerOpeningData(customerId, customerName);
+                        $("#btnCustomer" + customerId).prop("disabled", true);
+                    }                    
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#tblTranCustomerOpening").on("click", "tbody tr", function (event) {
+            $('#tblTranCustomerOpening tr').removeClass("selected");
+            $(this).addClass("selected");
+            $(this).find("td:last").each(function () {
+                customerId = $(this).text();
+            })
+        });
+
+        $("#tblTranCustomerOpening").on("keydown", "tbody tr .inputBalance", function (event) {
+            if (event.which === 13) {
+                if (customerId == "") return;
+                let balance = $(this).val();
+                if (balance == "") balance = 0;
+                let trId = $(this).closest('tr').attr('id'); // table row ID
+                let nextTrId = parseInt(trId) + 1;
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("AddBalanceAction", "CustomerOpening")',
+                    data: { "customerId": customerId, "balance": balance },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            responseUnSuccessful(response);
+                        else {
+                            $('#tblTranCustomerOpening tr').removeClass("selected");
+                            $('#tblTranCustomerOpening #' + nextTrId + '').addClass("selected");
+                            $('#tblTranCustomerOpening #' + nextTrId + ' .inputBalance').focus();
+                            customerId = $('#tblTranCustomerOpening #' + nextTrId + ' td:last').text();
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $("#btnReset").click(function (e) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("ResetAction", "CustomerOpening")',
+                data: {},
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    clearTransaction();
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        function createTranCustomerOpeningData(customerId,customerName) {
+            num += 1;
+            let row = '<tr id=' + num + ' class="row table-item">'
+                   + '<td class="col-md-1 col-lg-1"><label class="control-label mb-0">' + num + '</label></td>'
+                   + '<td class="col-md-7 col-lg-7"><label class="control-label mb-0">' + customerName + '</label></td>'
+                   + '<td class="col-md-4 col-lg-4"><input type="text" class="inputBalance border-gray control-input mb-0 numberonly" style="text-align:center;" placeholder="0" /></td>'
+                   + '<td style="display:none;">' + customerId + '</td>'
+                   + '</tr>';
+            $('#tblTranCustomerOpening tbody').append(row);
+        }
+
+        function clearTransaction() {
+            num = 0;
+            $("#tblTranCustomerOpening").find("tbody").empty();
+            $(".btnCustomer").prop("disabled", false);
+        }
+
+        function initializeControl() {
+            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputDate').val(getTodayDate());
+            showHideMainButton(false);
+        }
+
+        function showHideMainButton(isEdit) {
+            if (isEdit) $('#btnSave').css("display", "none");
+            else $("#btnEdit").css("display", "none");
+        }
+
+    });
+
+    function calcDivHeight() {
+        let windowHeight = window.innerHeight;
+        let thingsHeight = 101; // average other component height
+        let extraHeight = 10;
+        let divHeight = windowHeight - (thingsHeight + extraHeight);
+        let tranHeight = divHeight - 35;  // 35 is bottom component
+        let customerTitleHeight = 30;
+        let customerHeight = windowHeight - (thingsHeight + extraHeight + customerTitleHeight);
+        document.getElementById('divCustomer').setAttribute("style", "height:" + customerHeight + "px");
+        document.getElementById('divCustomerOpening').setAttribute("style", "height:" + divHeight + "px");
+        document.getElementById('divCustomerOpeningTran').setAttribute("style", "height:" + tranHeight + "px");
+    }
+
+</script>
+
+

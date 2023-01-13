@@ -131,6 +131,20 @@
                             </ul>
                         </li>  
                         <li class="submenu">
+                            <a href=""><i class="fa fa-money"></i> <span> @Resource.Outstanding </span> <span class="menu-arrow"></span></a>
+                            <ul id="subMenuOutstandingGp">
+                                <li id="subMenuCustomerOutstanding"><a href="#">@Resource.CustomerOutstanding</a></li>
+                                <li id="subMenuCustomerOutstandingPaymentHistory"><a href="#">@Resource.CustomerOutstandingPaymentHistory</a></li>
+                            </ul>
+                        </li> 
+                        <li class="submenu">
+                            <a href=""><i class="fa fa-address-card"></i> <span> @Resource.CustomerOpening </span> <span class="menu-arrow"></span></a>
+                            <ul id="subMenuOpeningGp">
+                                <li id="subMenuCustomerOpeningList"><a href="#">@Resource.ListCustomerOpening</a></li>
+                                <li id="subMenuCustomerOpening"><a href="#">@Resource.AddCustomerOpening</a></li>
+                            </ul>
+                        </li>  
+                        <li class="submenu">
                             <a href=""><i class="fa fa-cubes"></i> <span> @Resource.OpeningStock </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuOpeningStockGp">
                                 <li id="subMenuOpeningStockList"><a href="#">@Resource.ListOpeningStock</a></li>
@@ -255,6 +269,12 @@
             });
             $('#subMenuStockStatusByLocation').click(function () {
                 window.location.href = '@Url.Action("StockStatusLocation", "StockStatus")';
+            });
+            $('#subMenuCustomerOpeningList').click(function () {
+                window.location.href = '@Url.Action("ListCustomerOpening", "CustomerOpening")?userId=' + userId;
+            });
+            $('#subMenuCustomerOpening').click(function () {
+                window.location.href = '@Url.Action("CustomerOpening", "CustomerOpening")?userId=' + userId;
             });
             $('.toast').toast({
                 delay: 3000

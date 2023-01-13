@@ -159,7 +159,7 @@
 
 
 <script type="text/javascript">
-    let tranPurchaseAction, defaultSupplierId, defaultLocationId;
+    let tranPurchaseAction, defaultSupplierId, defaultLocationId, isEditTranPurchase=false;
     $('body').addClass("hideVerticalScrollbar");
     calcMenuHeight(155);
     calcPurchaseHeight();
@@ -246,6 +246,7 @@
             showHideUnit();
             showHideCurrency();
             showHideTranPurchaseAddEdit(false);
+            isEditTranPurchase = false;
         }
 
         function createTranPurchaseData(lstTranPurchase) {
@@ -338,9 +339,24 @@
             }
         });
 
+        $("#inputQuantity").keydown(function () {
+            if (event.which === 13) {
+                addOrEditTranPurchase(isEditTranPurchase);
+            }
+        })
+        $("#inputPrice").keydown(function () {
+            if (event.which === 13) {
+                addOrEditTranPurchase(isEditTranPurchase);
+            }
+        })
+        $("#inputDisPercent").keydown(function () {
+            if (event.which === 13) {
+                addOrEditTranPurchase(isEditTranPurchase);
+            }
+        })
 
         $("#btnAdd").click(function (e) {
-            addOrEditTranPurchase(false);
+            addOrEditTranPurchase(isEditTranPurchase);
         });
 
         function addOrEditTranPurchase(isEdit) {
@@ -461,6 +477,7 @@
                         if (response.IsFOC == true) $("#chkItemFOC").prop('checked', true);
                         else $("#chkItemFOC").prop('checked', false);
                         showHideTranPurchaseAddEdit(true);
+                        isEditTranPurchase = true;
                     }
                 },
                 failure: function (response) {
@@ -474,7 +491,7 @@
             });
         }
         $("#btnEdit").click(function (e) {
-            addOrEditTranPurchase(true);
+            addOrEditTranPurchase(isEditTranPurchase);
         });
 
         $("#btnCancel").click(function (e) {
@@ -838,6 +855,7 @@
         createUnitData(response);
         createCurrencyData(response);
         showHideTranPurchaseAddEdit(false);
+        isEditTranPurchase = false;
     }
     function createUnitData(response) {
         let unit;

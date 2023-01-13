@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
@@ -12,7 +13,9 @@ using System.Web;
 namespace Inventory.Common
 {
     public class AppSetting
-    {       
+    {
+        public SqlConnection conn = new SqlConnection(System.Configuration.ConfigurationManager.AppSettings["ConnectionString"].ToString());
+
         public class Paging
         {
             public int eachItemCount = 20; // item count in each paging

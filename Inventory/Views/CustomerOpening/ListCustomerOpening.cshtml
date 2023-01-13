@@ -1,0 +1,190 @@
+﻿@using Inventory.ViewModels
+@model CustomerOpeningViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+
+    <style type="text/css">
+        #subMenuOpeningGp {
+            display: block;
+        }
+    </style>
+</head>
+
+<script type="text/javascript">
+
+    let listActionValue, selectedRowIndex;
+    document.getElementById('subMenuCustomerOpeningList').className = 'active';
+
+    $(document).ready(function () {
+
+        if ('@ViewBag.ErrorMessage'.length != 0) {
+            showToast(0, '@ViewBag.ErrorMessage');
+        }
+
+        setModuleTitle('@Resource.CustomerOpening', '@Resource.ListCustomerOpening');
+        createMasterCustomerOpeningData('', false);
+        createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');
+
+        $("#btnDelOk").click(function () {
+            let customerOpeningId = $("#btnDelOk").val();
+            showLoadingIcon();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeleteAction", "CustomerOpening")',
+                data: JSON.stringify({ "customerOpeningId": customerOpeningId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else {
+                        if (selectedRowIndex != null) {
+                            document.getElementById("tblCustomerOpeningList").deleteRow(selectedRowIndex);
+                            createPaging(response.TotalPage, "");
+                            showToast(1, response.ResultDefaultData.Message);
+                        }
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#tblCustomerOpeningList").on("click", "tbody tr", function (event) {
+            $(this).find("td:last").each(function () {
+                let customerOpeningId = $(this).text();
+                if (listActionValue == 2) {  // edit
+                    clearTableAction();
+                    window.location.href = '@Url.Action("CustomerOpening", "CustomerOpening")?userId=' + userId + '&customerOpeningId=' + customerOpeningId;
+                } else if (listActionValue == 3) {  // delete
+                    clearTableAction();
+                    $('#modalConfirm').modal('show');
+                    $("#btnDelOk").val(customerOpeningId);
+                }
+            });
+        });
+
+        function createMasterCustomerOpeningData(response, isFromJson) {
+            $("#tblCustomerOpeningList").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterCustomerOpening"]))');
+            $.each(response, function (index, item) {
+                var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
+                        + '<td class="col-md-2 col-lg-2 text-overflow">' + item.OpeningDateTime + '</td>'
+                        + '<td class="col-md-3 col-lg-3">' + item.UserVoucherNo + '</td>'
+                        + '<td class="col-md-2 col-lg-2">' + item.VoucherID + '</td>'
+                        + '<td class="col-md-2 col-lg-2">' + item.UserName + '</td>'
+                        + '<td class="col-md-1 col-lg-1 btn-group">'
+                            + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
+                            + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
+                        + '</td>'
+                        + '<td style="display:none">' + item.CustomerOpeningID + '</td>'
+                    + '</tr>'
+                $('#tblCustomerOpeningList tbody').append(row);
+            });
+        }
+
+        $(document).on('click', '.btnPage', function (e) {
+            let currentPage = $(this).text();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CustomerOpeningPagingAction", "CustomerOpening")',
+                data: { "currentPage": currentPage },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else {
+                        createMasterCustomerOpeningData(response.LstMasterCustomerOpening, true);
+                        createPaging(response.TotalPage, currentPage);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnAdd").click(function () {
+            window.location.href = '@Url.Action("CustomerOpening", "CustomerOpening")?userId=' + userId;
+        });
+
+    });
+
+    function listTableAction(value) {
+        listActionValue = value;
+    }
+
+    function findRowIndex(x) {
+        selectedRowIndex = x.rowIndex;
+    }
+
+    function clearTableAction() {
+        listActionValue = 0;
+    }
+
+</script>
+
+<div>
+
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">@Resource.CustomerOpeningList</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right">@Resource.Add</button>
+        </div>
+    </div>
+
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblCustomerOpeningList" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-3 col-lg-3">Date</th>
+                        <th class="col-md-3 col-lg-3">Voucher No.</th>
+                        <th class="col-md-3 col-lg-3">VoucherID</th>                      
+                        <th class="col-md-2 col-lg-2">User</th>
+                        <th class="col-md-1 col-lg-1">Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="divPaging" class="row paging">
+        <div class="col-md-1 col-lg-1"><label id="lblPageNumber" class="page-num"></label></div>
+        <div id="divPagingItem" class="col-md-11 col-lg-11 paging-item"></div>
+    </div>
+
+</div>
+
+<div>
+    @{
+        Html.RenderPartial("_ConfirmDialog");
+    }
+</div>
+
+
+

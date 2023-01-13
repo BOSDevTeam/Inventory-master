@@ -18,6 +18,7 @@ namespace Inventory.Common
         public const int AdjustmentModule = 8;
         public const int TransferModule = 9;
         public const int CustomerConsignModule = 10;
+        public const int CustomerOpeningModule = 11;
 
         //Firebase Notification
         public const string CloudMessagingServerKey = "AAAAm-35J2M:APA91bG7cMqe-P2pkXZsNPn81sz9e0vwEWNKmiPPtblzfGhQYvqE8_JOBCm76cCI9lFyI0Gcglr104CfxkvKqdxs0vITi2sn759ytppjtNQOF3Kyy-A6RATXwmdgLvVEQIj3GSWWQ7PS";  //SysModule table value
@@ -54,7 +55,8 @@ namespace Inventory.Common
             public const string NoOpeningStockSameSubMenu = "Already added products for this submenu!";
             public const string PurReturnQtyCheck = "Return Quantity should not greater than Purchase Quantity";
             public const string SaleReturnQtyCheck = "Return Quantity should not greater than Sale Quantity";
-            public const string NoReturnFOCVoucher = "Cannot return FOC Voucher!";
+            public const string NoReturnFOCVoucher = "Not allow to return FOC Voucher!";
+            public const string NoReturnCreditVoucher = "Not allow to return Credit Voucher!";
         }
     }
 }

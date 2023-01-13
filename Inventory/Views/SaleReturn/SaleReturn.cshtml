@@ -41,7 +41,7 @@
     </div>
 </div>
 
-<div class="row m-t-5 m-b-5 m-l-5" style="margin-top:10px;">
+<div class="row">
     <div id="divSaleReturn" class="col-md-6 col-lg-6">
         <div class="m-t-5 padding-5 search-div">
             <div class="row">
@@ -68,7 +68,7 @@
                 </div>
             </div>
 
-            <div class="row m-t-5">
+            <div class="row m-t-5 align-center">
                 <div class="col-md-4 col-lg-4">
                     <input type="text" id="inputPrice" class="form-control control-input" placeholder="@Resource.Price" disabled/>
                 </div>
@@ -121,8 +121,8 @@
         </div>
     </div>
 
-    <div  id="divSale" class="col-md-6 col-lg-6 m-t-5 divSale">
-        <div class="input-icons">
+    <div  id="divSale" class="col-md-6 col-lg-6 divSale div-return">
+        <div class="margin-5">
             <input id="inputSearch" type="text" class="form-control control-input" placeholder="@Resource.EnterSaleVoucherNo" />
             <div style="display:none" id="PaymentID"></div>
         </div>
@@ -136,11 +136,11 @@
                 <table id="tblTranSale" class="width-100-percent">
                     <thead>
                         <tr class="row return-table-header-row">
-                            <td class="col-md-4 col-lg-4"><span>@Resource.ProductName</span></td>
+                            <td class="col-md-4 col-lg-4"><span>@Resource.Product</span></td>
                             <td class="col-md-2 col-lg-2"><span>@Resource.Qty</span></td>
                             <td class="col-md-2 col-lg-2"><span>@Resource.Price</span></td>
                             <td class="col-md-2 col-lg-2"><span>@Resource.Dis</span></td>
-                            <td class="col-md-2 col-lg-2"><span>@Resource.Amount</span></td>
+                            <td class="col-md-2 col-lg-2"><span class="aligh-right m-r-10">@Resource.Amount</span></td>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -167,11 +167,11 @@
 
     function calcTranSaleReturnHeight() {
         let windowHeight = window.innerHeight;
-        let thingsHeight = 98; // average other component height
-        let extraHeight = 20;
+        let thingsHeight = 100; // average other component height
+        let extraHeight = 11;
         let saleReturnAreaHeight = windowHeight - (thingsHeight + extraHeight);
         let saleReturnChildHeight = saleReturnAreaHeight - 100;  // 100 is top component
-        let saleReturnTranHeight = saleReturnChildHeight - 30 - 40;  // 135 is bottom component and 40 is extra
+        let saleReturnTranHeight = saleReturnChildHeight - 40 - 40;  // 135 is bottom component and 40 is extra
         document.getElementById('divSaleReturn').setAttribute("style", "height:" + saleReturnAreaHeight + "px");
         document.getElementById('divTranSaleReturnChild').setAttribute("style", "height:" + saleReturnChildHeight + "px");
         document.getElementById('divTranSaleReturn').setAttribute("style", "height:" + saleReturnTranHeight + "px");
@@ -263,7 +263,7 @@
                         + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + item.Quantity + '<span class="control-span-sm">&nbsp;' + item.UnitKeyword + '</span></label></td>'
                         + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + separatedComma(item.SalePrice) + '<span class="control-span-sm">&nbsp;' + item.CurrencyKeyword + '</span></label></td>'
                         + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + separatedComma(item.Discount) + '</label></td>'
-                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0 text-link text-overflow">' + separatedComma(item.Amount) + '</label></td>'
+                        + '<td class="col-md-2 col-lg-2 value-right"><label class="control-label mb-0 text-link text-overflow">' + separatedComma(item.Amount) + '</label></td>'
                         + '<td style="display:none">' + num + '</td>'
                 $('#tblTranSale tbody').append(row);
             });

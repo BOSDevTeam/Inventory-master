@@ -81,6 +81,11 @@
                                 <li id="subMenuSaleAmountOnlyRp"><a href="#">@Resource.SaleAmountOnlyReport</a></li>
                                 <li id="subMenuSaleItemSimpleRp"><a href="#">@Resource.SaleItemSimpleReport</a></li>
                                 <li id="subMenuSaleItemRp"><a href="#">@Resource.SaleItemReport</a></li>
+                                <li id="subMenuSaleAuditRp"><a href="#">@Resource.SaleAuditReport</a></li>
+                                <li id="subMenuSaleAmountByCustomerRp"><a href="#">@Resource.SaleAmountByCustomerReport</a></li>
+                                <li id="subMenuSaleItemByCustomerRp"><a href="#">@Resource.SaleItemByCustomerReport</a></li>
+                                <li id="subMenuTopSaleItemRp"><a href="#">@Resource.TopSaleItemReport</a></li>
+                                <li id="subMenuBottomSaleItemRp"><a href="#">@Resource.BottomSaleItemReport</a></li>
                             </ul>
                         </li>                                                                    
                     </ul>
@@ -125,6 +130,21 @@
             });
             $('#subMenuSaleItemRp').click(function () {
                 window.location.href = '@Url.Action("SaleItemReportFilter", "RpSaleItem")';
+            });
+            $('#subMenuSaleAuditRp').click(function () {
+                window.location.href = '@Url.Action("SaleAuditReportFilter", "RpSaleAudit")';
+            });
+            $('#subMenuSaleAmountByCustomerRp').click(function () {
+                window.location.href = '@Url.Action("SaleAmountByCustomerReportFilter", "RpSaleAmountByCustomer")';
+            });
+            $('#subMenuSaleItemByCustomerRp').click(function () {
+                window.location.href = '@Url.Action("SaleItemByCustomerReportFilter", "RpSaleItemByCustomer")';
+            });
+            $('#subMenuTopSaleItemRp').click(function () {
+                window.location.href = '@Url.Action("TopSaleItemReportFilter", "RpTopSaleItem")';
+            });
+            $('#subMenuBottomSaleItemRp').click(function () {
+                window.location.href = '@Url.Action("BottomSaleItemReportFilter", "RpBottomSaleItem")';
             });
             $('.toast').toast({
                 delay: 3000
