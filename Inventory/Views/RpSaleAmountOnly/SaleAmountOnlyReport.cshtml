@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Inventory.ViewModels;
+@model RpSaleAmountOnlyViewModel
+@{
     Layout = "~/Views/Shared/_LayoutReportDetail.cshtml";
 }
 
@@ -6,5 +8,262 @@
     <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
     <link href="~/Content/Site.css" rel="stylesheet" />
     <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        let filter;
+        $(document).ready(function () {
+            let title = '@Resource.SaleAmountOnlyReport';
+            let fromDate = '@Model.FromDate.ToShortDateString()';
+            let toDate = '@Model.ToDate.ToShortDateString()';
+            filter = "";
+            setReportTitle(title);
+            setDefaultFilter(fromDate, toDate, filter);
+        });
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            document.write(result);
+        }
+    </script>
 </head>
+
+<div>
+    <div class="row table-header">
+        <div class="col-md-2 col-lg-2">Date</div>
+        <div class="col-md-1 col-lg-1">Vouncher No.</div>
+        <div class="col-md-1 col-lg-1 aligh-right">Cash</div>
+        <div class="col-md-1 col-lg-1 aligh-right">Credit</div>
+        <div class="col-md-1 col-lg-1 aligh-right">Tax</div>
+        <div class="col-md-1 col-lg-1 aligh-right">Charges</div>
+        <div class="col-md-1 col-lg-1 aligh-right">VouDis</div>
+        <div class="col-md-1 col-lg-1 aligh-right">Bank(%)</div>
+        <div class="col-md-1 col-lg-1 aligh-right">Advanced Pay</div>
+        <div class="col-md-1 col-lg-1 aligh-right">VouFOC</div>
+        <div class="col-md-1 col-lg-1 aligh-right">Grandtotal</div>
+    </div>
+    <div class="rpt-main-group">
+        <label class="mb-0">Cash In Hand</label>
+    </div>
+
+    <div class="">
+            <table class="col-md-12 col-lg-12">
+                    @foreach (var data in Model.lstMasterSaleRpt as List<RpSaleAmountOnlyViewModel.MasterSaleModels>)
+                    {
+                        if (data.PayMethodID == 1)
+                        {
+                            <tr class="row rpt-item">
+                                <td class="col-md-2 col-lg-2">@data.SaleDateTime</td>
+                                <td class="col-md-1 col-lg-1">@data.UserVoucherNo</td>
+                                @if (data.PaymentID == 1)
+                                {
+                                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.Subtotal)</script></td>
+                                }
+                                else
+                                {
+                                    <td class="col-md-1 col-lg-1 aligh-right">-</td>
+                                }
+                                @if (data.PaymentID == 2)
+                                {
+                                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.Subtotal)</script></td>
+                                }
+                                else
+                                {
+                                    <td class="col-md-1 col-lg-1 aligh-right">-</td>
+                                }
+
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.TaxAmt)</script></td>
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.ChargesAmt)</script></td>
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.VouDisAmount)</script></td>
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.PayPercentAmt)</script></td>
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.AdvancedPay)</script></td>
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.VoucherFOC)</script></td>
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.Grandtotal)</script></td>
+                            </tr>
+                        }
+
+
+
+                    }
+
+                <tr class="row rpt-sub-total">
+                    <td class="col-md-2 col-lg-2"></td>
+                    <td class="col-md-1 col-lg-1">Total</td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PaymentID == 1 && m.PayMethodID == 1).Sum(m => m.Subtotal));</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PaymentID == 2 && m.PayMethodID == 1).Sum(m => m.Subtotal));</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 1).Sum(m => m.TaxAmt));</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 1).Sum(m => m.ChargesAmt))</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 1).Sum(m =>m.VouDisAmount))</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 1).Sum(m =>m.PayPercentAmt))</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 1).Sum(m =>m.AdvancedPay))</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 1).Sum(m =>m.VoucherFOC))</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 1).Sum(m =>m.Grandtotal))</script></td>
+                </tr>
+
+
+            </table>
+
+    </div>
+
+    <div class="rpt-main-group">
+        <label class="mb-0">Banking</label>
+    </div>
+    <div class="rpt-sub-group">
+        <label class="mb-0">KPay</label>
+    </div>
+    <div>  
+            <table class="col-md-12 col-lg-12">
+                @foreach (var data in Model.lstMasterSaleRpt as List<RpSaleAmountOnlyViewModel.MasterSaleModels>)
+                {
+                    if (data.PayMethodID == 2)
+                    {
+                        if (data.BankPaymentID == 3)
+                        {
+                            <tr class="row rpt-item">
+                                <td class="col-md-2 col-lg-2">@data.SaleDateTime</td>
+                                <td class="col-md-1 col-lg-1">@data.UserVoucherNo</td>
+                                @if (data.PaymentID == 1)
+                                {
+                                    <td class="col-md-1 col-lg-1 aligh-right">
+                                    <script>separatedComma(@data.Subtotal)</script></td>
+                                }
+                                else
+                                {
+                                    <td class="col-md-1 col-lg-1 aligh-right">-</td>
+                                }
+                                @if (data.PaymentID == 2)
+                                {
+                                    <td class="col-md-1 col-lg-1 aligh-right">
+                                    <script>separatedComma(@data.Subtotal)</script></td>
+                                }
+                                else
+                                {
+                                    <td class="col-md-1 col-lg-1 aligh-right">-</td>
+                                }
+
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.TaxAmt)</script></td>
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.ChargesAmt)</script></td>
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.VouDisAmount)</script></td>
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.PayPercentAmt)</script></td>
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.AdvancedPay)</script></td>
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.VoucherFOC)</script></td>
+                                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.Grandtotal)</script></td>
+                            </tr>
+                        }
+
+                    }
+                }
+
+                <tr class="row rpt-sub-total">
+                    <td class="col-md-2 col-lg-2"></td>
+                    <td class="col-md-1 col-lg-1">Total</td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PaymentID == 1 && m.PayMethodID == 2 && m.BankPaymentID == 3).Sum(m => m.Subtotal));</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PaymentID == 2 && m.PayMethodID == 2 && m.BankPaymentID == 3).Sum(m => m.Subtotal));</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 3).Sum(m => m.TaxAmt));</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 3).Sum(m => m.ChargesAmt))</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 3).Sum(m =>m.VouDisAmount))</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 3).Sum(m =>m.PayPercentAmt))</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 3).Sum(m =>m.AdvancedPay))</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 3).Sum(m =>m.VoucherFOC))</script></td>
+                    <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 3).Sum(m =>m.Grandtotal))</script></td>
+                </tr>
+            </table>
+    </div>
+    <div class="rpt-sub-group">
+        <label>CBPay</label>
+    </div>
+    <div>
+        <table class="col-md-12 col-lg-12">
+            @foreach (var data in Model.lstMasterSaleRpt as List<RpSaleAmountOnlyViewModel.MasterSaleModels>)
+            {
+                if (data.PayMethodID == 2)
+                {
+                    if (data.BankPaymentID == 5)
+                    {
+                        <tr class="row rpt-item">
+                            <td class="col-md-2 col-lg-2">@data.SaleDateTime</td>
+                            <td class="col-md-1 col-lg-1">@data.UserVoucherNo</td>
+                            @if (data.PaymentID == 1)
+                            {
+                                <td class="col-md-1 col-lg-1 aligh-right">
+                                    <script>separatedComma(@data.Subtotal)</script>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="col-md-1 col-lg-1 aligh-right">-</td>
+                            }
+                            @if (data.PaymentID == 2)
+                            {
+                                <td class="col-md-1 col-lg-1 aligh-right">
+                                    <script>separatedComma(@data.Subtotal)</script>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="col-md-1 col-lg-1 aligh-right">-</td>
+                            }
+
+                            <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.TaxAmt)</script></td>
+                            <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.ChargesAmt)</script></td>
+                            <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.VouDisAmount)</script></td>
+                            <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.PayPercentAmt)</script></td>
+                            <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.AdvancedPay)</script></td>
+                            <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.VoucherFOC)</script></td>
+                            <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@data.Grandtotal)</script></td>
+                        </tr>
+                    }
+
+                }
+            }
+
+            <tr class="row rpt-sub-total">
+                <td class="col-md-2 col-lg-2"></td>
+                <td class="col-md-1 col-lg-1">Total</td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PaymentID == 1 && m.PayMethodID == 2 && m.BankPaymentID == 5).Sum(m => m.Subtotal));</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PaymentID == 2 && m.PayMethodID == 2 && m.BankPaymentID == 5).Sum(m => m.Subtotal));</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 5).Sum(m => m.TaxAmt));</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 5).Sum(m => m.ChargesAmt))</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 5).Sum(m =>m.VouDisAmount))</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 5).Sum(m =>m.PayPercentAmt))</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 5).Sum(m =>m.AdvancedPay))</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 5).Sum(m =>m.VoucherFOC))</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PayMethodID == 2 && m.BankPaymentID == 5).Sum(m =>m.Grandtotal))</script></td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <table class="col-md-12 col-lg-12">
+            <tr class="row rpt-total">
+                <td class="col-md-2 col-lg-2"></td>
+                <td class="col-md-1 col-lg-1">Total</td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PaymentID == 1).Sum(m => m.Subtotal));</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Where(m => m.PaymentID == 2).Sum(m => m.Subtotal));</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Sum(m => m.TaxAmt));</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Sum(m => m.ChargesAmt))</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Sum(m =>m.VouDisAmount))</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Sum(m =>m.PayPercentAmt))</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Sum(m =>m.AdvancedPay))</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Sum(m =>m.VoucherFOC))</script></td>
+                <td class="col-md-1 col-lg-1 aligh-right"><script>separatedComma(@Model.lstMasterSaleRpt.Sum(m =>m.Grandtotal))</script></td>
+            </tr>
+        </table>
+    </div>
+    <div class="row rpt-main-group">
+        <div class="col-md-2 col-lg-2"></div>
+        <div class="col-md-1 col-lg-1"></div>
+        <div class="col-md-1 col-lg-1 aligh-right">Cash</div>
+        <div class="col-md-1 col-lg-1 aligh-right">Credit</div>
+        <div class="col-md-1 col-lg-1 aligh-right">Tax</div>
+        <div class="col-md-1 col-lg-1 aligh-right">Charges</div>
+        <div class="col-md-1 col-lg-1 aligh-right">VouDis</div>
+        <div class="col-md-1 col-lg-1 aligh-right">Bank(%)</div>
+        <div class="col-md-1 col-lg-1 aligh-right">Advanced Pay</div>
+        <div class="col-md-1 col-lg-1 aligh-right">VouFOC</div>
+        <div class="col-md-1 col-lg-1 aligh-right">Grandtotal</div>
+    </div>
+
+
+
+
+
+</div>
 
