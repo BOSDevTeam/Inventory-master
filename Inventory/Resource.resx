@@ -528,4 +528,46 @@
   <data name="VouFOC" xml:space="preserve">
     <value>VouFOC</value>
   </data>
+  <data name="SaleAuditReport" xml:space="preserve">
+    <value>Sale Audit Report</value>
+  </data>
+  <data name="Client" xml:space="preserve">
+    <value>Client</value>
+  </data>
+  <data name="SlipID" xml:space="preserve">
+    <value>SlipID</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="AddCustomerOpening" xml:space="preserve">
+    <value>Add Customer Opening</value>
+  </data>
+  <data name="CustomerOpening" xml:space="preserve">
+    <value>Customer Opening</value>
+  </data>
+  <data name="CustomerOpeningList" xml:space="preserve">
+    <value>Customer Opening List</value>
+  </data>
+  <data name="CustomerOutstanding" xml:space="preserve">
+    <value>Customer Outstanding</value>
+  </data>
+  <data name="CustomerOutstandingPaymentHistory" xml:space="preserve">
+    <value>Customer Outstanding Payment History</value>
+  </data>
+  <data name="ListCustomerOpening" xml:space="preserve">
+    <value>List Customer Opening</value>
+  </data>
+  <data name="Outstanding" xml:space="preserve">
+    <value>Outstanding</value>
+  </data>
+  <data name="AllCustomer" xml:space="preserve">
+    <value>All Customer</value>
+  </data>
+  <data name="SaleAmountByCustomerReport" xml:space="preserve">
+    <value>Sale Amount by Customer Report</value>
+  </data>
+  <data name="SaleItemByCustomerReport" xml:space="preserve">
+    <value>Sale Item by Customer Report</value>
+  </data>
 </root>

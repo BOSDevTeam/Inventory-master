@@ -154,7 +154,7 @@
 
 
 <script type="text/javascript">
-    let tranPurchaseReturnAction;   
+    let tranPurchaseReturnAction, isEditTranPurchaseReturn = false;;
     $('body').addClass("hideVerticalScrollbar");
     calcPurchaseReturnHeight();
     calcPurchaseHeight(150);
@@ -300,6 +300,7 @@
                         $("#lblUnit").text(response.UnitKeyword);
                         $("#inputCurrencyID").val(response.CurrencyID);
                         $("#inputCurrencyName").val(response.CurrencyKeyword);
+                        isEditTranPurchaseReturn = false;
                     }
                 },
                 failure: function (response) {
@@ -333,14 +334,21 @@
             return true;
         }
 
+        $("#inputQuantity").keydown(function () {
+            if (event.which === 13) {               
+                if (validateProductControl()) {
+                    addOrEditTranPurchaseReturn(isEditTranPurchaseReturn);
+                }
+            }
+        })
         $("#btnAdd").click(function () {
             if (validateProductControl()) {
-                addOrEditTranPurchaseReturn(false);
+                addOrEditTranPurchaseReturn(isEditTranPurchaseReturn);
             }
         });
         $("#btnEdit").click(function (e) {
             if (validateProductControl()) {
-                addOrEditTranPurchaseReturn(true);
+                addOrEditTranPurchaseReturn(isEditTranPurchaseReturn);
             }
         });
 
@@ -412,6 +420,7 @@
             $("#inputPrice").val("");
             $("#inputDisPercent").val("");
             showHideTranPurchaseReturnAddEdit(false);
+            isEditTranPurchaseReturn = false;
         }
         $("#tblTranPurchaseReturn").on("click", "tbody tr", function (event) {
             $('#tblTranPurchaseReturn tr').removeClass("selected");
@@ -481,6 +490,7 @@
                         $("#inputCurrencyID").val(response.CurrencyID);
                         $("#inputCurrencyName").val(response.CurrencyKeyword);
                         showHideTranPurchaseReturnAddEdit(true);
+                        isEditTranPurchaseReturn = true;
                     }
                 },
                 failure: function (response) {

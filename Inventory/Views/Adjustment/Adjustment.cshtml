@@ -119,7 +119,7 @@
 
 <script type="text/javascript">
 
-    let tranAdjustmentAction, defaultLocationId, defaultAdjustTypeId;
+    let tranAdjustmentAction, defaultLocationId, defaultAdjustTypeId, isEditTranAdjustment = false;
     $('body').addClass("hideVerticalScrollbar");
     calcMenuHeight(155);
     calcAdjustmentHeight();
@@ -180,6 +180,7 @@
             showHideUnit();
             showHideTranAdjustmentAddEdit(false);
             createDefaultAdjustType();
+            isEditTranAdjustment = false;
         }
         function validateProductControl() {
             if ($("#inputProductID").val().length == 0 || $("#inputProductID").val() == 0) return false;
@@ -189,11 +190,16 @@
             }
             return true;
         }
+        $("#inputQuantity").keydown(function () {
+            if (event.which === 13) {
+                addOrEditTranAdjustment(isEditTranAdjustment);
+            }           
+        })
         $("#btnAdd").click(function (e) {
-            addOrEditTranAdjustment(false);
+            addOrEditTranAdjustment(isEditTranAdjustment);
         });
         $("#btnEdit").click(function (e) {
-            addOrEditTranAdjustment(true);
+            addOrEditTranAdjustment(isEditTranAdjustment);
         });
         function addOrEditTranAdjustment(isEdit) {
             if (validateProductControl()) {
@@ -317,6 +323,7 @@
                         $("#ddlUnit").val(response.UnitID);
                         $("#ddlAdjustType").val(response.AdjustTypeID);
                         showHideTranAdjustmentAddEdit(true);
+                        isEditTranAdjustment = true;
                     }
                 },
                 failure: function (response) {
@@ -617,6 +624,7 @@
         createUnitData(response);
         createAdjustmentData(response);
         showHideTranAdjustmentAddEdit(false);
+        isEditTranAdjustment = false;
     }
     function showHideTranAdjustmentAddEdit(isEdit) {
         if (isEdit) {

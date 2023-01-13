@@ -169,6 +169,7 @@
     <Compile Include="Controllers\AdjustTypeController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\CustomerConsignController.cs" />
+    <Compile Include="Controllers\CustomerOpeningController.cs" />
     <Compile Include="Controllers\OpeningStockController.cs" />
     <Compile Include="Controllers\PaymentDialogController.cs" />
     <Compile Include="Controllers\ProductMenuController.cs" />
@@ -186,7 +187,10 @@
     <Compile Include="Controllers\PurchaseOrderController.cs" />
     <Compile Include="Controllers\PurchaseReturnController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\RpSaleAmountByCustomerController.cs" />
     <Compile Include="Controllers\RpSaleAmountOnlyController.cs" />
+    <Compile Include="Controllers\RpSaleAuditController.cs" />
+    <Compile Include="Controllers\RpSaleItemByCustomerController.cs" />
     <Compile Include="Controllers\RpSaleItemController.cs" />
     <Compile Include="Controllers\RpSaleItemSimpleController.cs" />
     <Compile Include="Controllers\SaleController.cs" />
@@ -236,6 +240,7 @@
     <Compile Include="Models\CLMasterSaleOrderModels.cs" />
     <Compile Include="Models\MasterAdjustmentModels.cs" />
     <Compile Include="Models\MasterCustomerConsignModels.cs" />
+    <Compile Include="Models\MasterCustomerOpeningModels.cs" />
     <Compile Include="Models\MasterOpeningStockModels.cs" />
     <Compile Include="Models\MasterPurchaseModels.cs" />
     <Compile Include="Models\MasterPurchaseOrderModels.cs" />
@@ -255,6 +260,7 @@
     <Compile Include="Models\TownshipModels.cs" />
     <Compile Include="Models\TranAdjustmentModels.cs" />
     <Compile Include="Models\TranCustomerConsignModels.cs" />
+    <Compile Include="Models\TranCustomerOpeningModels.cs" />
     <Compile Include="Models\TranOpeningStockModels.cs" />
     <Compile Include="Models\TranPurchaseModels.cs" />
     <Compile Include="Models\TranPurchaseOrderModels.cs" />
@@ -432,6 +438,7 @@
     </Compile>
     <Compile Include="ViewModels\AdjustmentViewModel.cs" />
     <Compile Include="ViewModels\CustomerConsignViewModel.cs" />
+    <Compile Include="ViewModels\CustomerOpeningViewModel.cs" />
     <Compile Include="ViewModels\MasterAdjustmentViewModel.cs" />
     <Compile Include="ViewModels\MasterCustomerConsignViewModel.cs" />
     <Compile Include="ViewModels\MasterPurchaseReturnViewModel.cs" />
@@ -448,7 +455,10 @@
     <Compile Include="ViewModels\PurchaseOrderViewModel.cs" />
     <Compile Include="ViewModels\PurchaseReturnViewModel.cs" />
     <Compile Include="ViewModels\PurchaseViewModel.cs" />
+    <Compile Include="ViewModels\RpSaleAmountByCustomerViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAmountOnlyViewModel.cs" />
+    <Compile Include="ViewModels\RpSaleAuditViewModel.cs" />
+    <Compile Include="ViewModels\RpSaleItemByCustomerViewModel.cs" />
     <Compile Include="ViewModels\RpSaleItemSimpleViewModel.cs" />
     <Compile Include="ViewModels\RpSaleItemViewModel.cs" />
     <Compile Include="ViewModels\SaleOrderViewModel.cs" />
@@ -664,6 +674,14 @@
     <Content Include="Views\Shared\_MenuFilter.cshtml" />
     <Content Include="Views\RpSaleAmountOnly\SaleAmountOnlyReportFilter.cshtml" />
     <Content Include="Views\RpSaleAmountOnly\SaleAmountOnlyReport.cshtml" />
+    <Content Include="Views\RpSaleAudit\SaleAuditReportFilter.cshtml" />
+    <Content Include="Views\RpSaleAudit\SaleAuditReport.cshtml" />
+    <Content Include="Views\CustomerOpening\CustomerOpening.cshtml" />
+    <Content Include="Views\CustomerOpening\ListCustomerOpening.cshtml" />
+    <Content Include="Views\RpSaleAmountByCustomer\SaleAmountByCustomerReportFilter.cshtml" />
+    <Content Include="Views\RpSaleAmountByCustomer\SaleAmountByCustomerReport.cshtml" />
+    <Content Include="Views\RpSaleItemByCustomer\SaleItemByCustomerReportFilter.cshtml" />
+    <Content Include="Views\RpSaleItemByCustomer\SaleItemByCustomerReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

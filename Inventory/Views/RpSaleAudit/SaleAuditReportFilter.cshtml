@@ -1,0 +1,56 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutReport.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+
+    <style type="text/css">
+        #subMenuSaleRpGp {
+            display: block;
+        }
+    </style>
+    <script type="text/javascript">
+        document.getElementById('subMenuSaleAuditRp').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">@Resource.SaleAuditReport</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnViewReport" class="btn btn-second" style="float:right">@Resource.ViewReport</button>
+        </div>
+    </div>
+
+    @{
+        Html.RenderPartial("_DateFilter");
+    }
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        initializeControl();
+
+        $('#btnViewReport').click(function () {           
+            let fromDate = $('#inputFromDate').val();
+            let toDate = $('#inputToDate').val();          
+            window.location.href = '@Url.Action("SaleAuditReport", "RpSaleAudit")?fromDate=' + fromDate + '&toDate=' + toDate;
+        });
+
+        function initializeControl() {
+            $('#inputFromDate').val(getTodayDate());
+            $('#inputToDate').val(getTodayDate());
+        }
+
+    });
+
+</script>
+
+

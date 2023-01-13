@@ -11,6 +11,8 @@ namespace Inventory.Common
     public class AppData
     {
         TextQuery textQuery = new TextQuery();
+        AppSetting setting = new AppSetting();
+
         public List<CustomerModels.CustomerModel> selectCustomer(object connection)
         {
             List<CustomerModels.CustomerModel> list = new List<CustomerModels.CustomerModel>();
@@ -440,6 +442,47 @@ namespace Inventory.Common
             }
             reader.Close();
 
+            return list;
+        }
+
+        public string selectUserVoucherNo(int moduleCode, int userId)
+        {
+            string result="";
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetUserVoucherNo, setting.conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@ModuleCode", moduleCode);  //sale,purchase...
+            cmd.Parameters.AddWithValue("@ID", userId);
+            cmd.Parameters.AddWithValue("@IsClient", false);  //client is mobile user
+            cmd.Parameters.AddWithValue("@IsUpdateNo", false);  //client is mobile user
+            cmd.Parameters.AddWithValue("@UserVoucherNo", "");  //output parameter
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read()) result = Convert.ToString(reader[0]);
+            reader.Close();
+            setting.conn.Close();
+            return result;
+        }
+
+        public List<CustomerModels.CustomerModel> selectCustomer()
+        {
+            setting.conn.Open();
+            List<CustomerModels.CustomerModel> list = new List<CustomerModels.CustomerModel>();
+            CustomerModels.CustomerModel item;
+
+            SqlCommand cmd = new SqlCommand(TextQuery.customerQuery, setting.conn);
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new CustomerModels.CustomerModel();
+                item.CustomerID = Convert.ToInt32(reader["CustomerID"]);
+                item.CustomerName = Convert.ToString(reader["CustomerName"]);
+                list.Add(item);
+            }
+            reader.Close();
+            setting.conn.Close();
             return list;
         }
     }
