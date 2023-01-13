@@ -277,6 +277,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bottom Sale Item Report.
+        /// </summary>
+        public static string BottomSaleItemReport {
+            get {
+                return ResourceManager.GetString("BottomSaleItemReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {
@@ -1272,6 +1281,15 @@ namespace Inventory {
         public static string ToLocation {
             get {
                 return ResourceManager.GetString("ToLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top Sale Item Report.
+        /// </summary>
+        public static string TopSaleItemReport {
+            get {
+                return ResourceManager.GetString("TopSaleItemReport", resourceCulture);
             }
         }
         

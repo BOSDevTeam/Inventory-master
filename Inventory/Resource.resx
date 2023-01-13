@@ -570,4 +570,10 @@
   <data name="SaleItemByCustomerReport" xml:space="preserve">
     <value>Sale Item by Customer Report</value>
   </data>
+  <data name="BottomSaleItemReport" xml:space="preserve">
+    <value>Bottom Sale Item Report</value>
+  </data>
+  <data name="TopSaleItemReport" xml:space="preserve">
+    <value>Top Sale Item Report</value>
+  </data>
 </root>
