@@ -232,6 +232,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Back.
+        /// </summary>
+        public static string Back {
+            get {
+                return ResourceManager.GetString("Back", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Back to Home.
         /// </summary>
         public static string BackToHome {
@@ -430,11 +439,20 @@ namespace Inventory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Customer Outstanding.
+        ///   Looks up a localized string similar to Customer Outstanding List.
         /// </summary>
-        public static string CustomerOutstanding {
+        public static string CustomerOutstandingList {
             get {
-                return ResourceManager.GetString("CustomerOutstanding", resourceCulture);
+                return ResourceManager.GetString("CustomerOutstandingList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Customer Outstanding Payment.
+        /// </summary>
+        public static string CustomerOutstandingPayment {
+            get {
+                return ResourceManager.GetString("CustomerOutstandingPayment", resourceCulture);
             }
         }
         
@@ -637,6 +655,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to List Customer Outstanding.
+        /// </summary>
+        public static string ListCustomerOutstanding {
+            get {
+                return ResourceManager.GetString("ListCustomerOutstanding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to List Opening Stock.
         /// </summary>
         public static string ListOpeningStock {
@@ -781,6 +808,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Opening.
+        /// </summary>
+        public static string Opening {
+            get {
+                return ResourceManager.GetString("Opening", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Opening Stock.
         /// </summary>
         public static string OpeningStock {
@@ -822,6 +858,33 @@ namespace Inventory {
         public static string Paid {
             get {
                 return ResourceManager.GetString("Paid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pay by All.
+        /// </summary>
+        public static string PayByAll {
+            get {
+                return ResourceManager.GetString("PayByAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pay Date.
+        /// </summary>
+        public static string PayDate {
+            get {
+                return ResourceManager.GetString("PayDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pay Each Voucher.
+        /// </summary>
+        public static string PayEachVoucher {
+            get {
+                return ResourceManager.GetString("PayEachVoucher", resourceCulture);
             }
         }
         

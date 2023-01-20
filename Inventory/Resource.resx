@@ -549,8 +549,8 @@
   <data name="CustomerOpeningList" xml:space="preserve">
     <value>Customer Opening List</value>
   </data>
-  <data name="CustomerOutstanding" xml:space="preserve">
-    <value>Customer Outstanding</value>
+  <data name="CustomerOutstandingList" xml:space="preserve">
+    <value>Customer Outstanding List</value>
   </data>
   <data name="CustomerOutstandingPaymentHistory" xml:space="preserve">
     <value>Customer Outstanding Payment History</value>
@@ -575,5 +575,26 @@
   </data>
   <data name="TopSaleItemReport" xml:space="preserve">
     <value>Top Sale Item Report</value>
+  </data>
+  <data name="ListCustomerOutstanding" xml:space="preserve">
+    <value>List Customer Outstanding</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="CustomerOutstandingPayment" xml:space="preserve">
+    <value>Customer Outstanding Payment</value>
+  </data>
+  <data name="PayByAll" xml:space="preserve">
+    <value>Pay by All</value>
+  </data>
+  <data name="PayEachVoucher" xml:space="preserve">
+    <value>Pay Each Voucher</value>
+  </data>
+  <data name="Opening" xml:space="preserve">
+    <value>Opening</value>
+  </data>
+  <data name="PayDate" xml:space="preserve">
+    <value>Pay Date</value>
   </data>
 </root>

@@ -9,6 +9,7 @@ namespace Inventory.Models
     {
         public int ID { get; set; }
         public int CustomerID { get; set; }
-        public int Balance { get; set; }       
+        public int Balance { get; set; }
+        public string CustomerName { get; set; }
     }
 }

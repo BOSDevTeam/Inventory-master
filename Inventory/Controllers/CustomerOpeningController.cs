@@ -9,22 +9,38 @@ using Inventory.ViewModels;
 using Inventory.Models;
 using System.Data.SqlClient;
 using System.Runtime.InteropServices;
+using System.Data;
 
 namespace Inventory.Controllers
 {
     public class CustomerOpeningController : MyController
     {       
         AppData appData = new AppData();
+        AppSetting setting = new AppSetting();
+        TextQuery textQuery = new TextQuery();
         CustomerOpeningViewModel customerOpeningViewModel = new CustomerOpeningViewModel();
         AppSetting.Paging paging = new AppSetting.Paging();
 
         [SessionTimeoutAttribute]
-        public ActionResult CustomerOpening(int userId)
+        public ActionResult CustomerOpening(int userId, int? customerOpeningId)
         {
             try
             {
-                ViewBag.UserVoucherNo = getUserVoucherNo(userId);
                 getCustomer();
+                Session["TranCustomerOpeningList"] = null;
+                if (customerOpeningId != null)
+                {
+                    ViewBag.IsEdit = true;
+                    CustomerOpeningViewModel.MasterCustomerOpeningViewModel data = selectMasterCustomerOpeningByID((int)customerOpeningId);
+                    List<TranCustomerOpeningModels> lstTranCustomerOpening = selectTranCustomerOpeningByID((int)customerOpeningId);
+                    Session["TranCustomerOpeningList"] = lstTranCustomerOpening;
+                    ViewBag.UserVoucherNo = data.UserVoucherNo;
+                    DateTime date = setting.convertStringToDate(data.OpeningDateTime);
+                    ViewBag.Date = setting.convertDateToString(date);
+                    ViewBag.VoucherID = data.VoucherID;
+                    ViewBag.CustomerOpeningID = customerOpeningId;
+                }
+                else ViewBag.UserVoucherNo = getUserVoucherNo(userId);                
             }
             catch (Exception ex)
             {
@@ -34,11 +50,11 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult ListCustomerOpening(int userId)
+        public ActionResult ListCustomerOpening()
         {
             try
             {
-                List<CustomerOpeningViewModel.MasterCustomerOpeningViewModel> tempList = selectMasterCustomerOpening(userId);
+                List<CustomerOpeningViewModel.MasterCustomerOpeningViewModel> tempList = selectMasterCustomerOpening();
                 PagingViewModel pagingViewModel = calcMasterCustomerOpeningPaging(tempList);
                 List<CustomerOpeningViewModel.MasterCustomerOpeningViewModel> lstMasterCustomerOpening = getMasterCustomerOpeningByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
                 ViewData["LstMasterCustomerOpening"] = lstMasterCustomerOpening;
@@ -58,22 +74,130 @@ namespace Inventory.Controllers
             ResultDefaultData resultDefaultData = new ResultDefaultData();
             try
             {
-                List<TranCustomerOpeningModels> list = new List<TranCustomerOpeningModels>();
-                TranCustomerOpeningModels data = new TranCustomerOpeningModels();
-                data.CustomerID = customerId;
-                data.Balance = 0;
-                if (Session["TranCustomerOpeningList"] != null)
-                    list = Session["TranCustomerOpeningList"] as List<TranCustomerOpeningModels>;
+                if (!checkIsExistInTran(customerId))
+                {
+                    List<TranCustomerOpeningModels> list = new List<TranCustomerOpeningModels>();
+                    TranCustomerOpeningModels data = new TranCustomerOpeningModels();
+                    data.CustomerID = customerId;
+                    data.Balance = 0;
+                    if (Session["TranCustomerOpeningList"] != null)
+                        list = Session["TranCustomerOpeningList"] as List<TranCustomerOpeningModels>;
 
-                list.Add(data);
-                Session["TranCustomerOpeningList"] = list;
-                resultDefaultData.IsRequestSuccess = true;
+                    list.Add(data);
+                    Session["TranCustomerOpeningList"] = list;
+                    resultDefaultData.IsRequestSuccess = true;
+                }else
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.InCompletedData.ToString();
+                    resultDefaultData.Message = AppConstants.Message.AlreadyAddCustomer;
+                }                
             }
             catch(Exception ex)
             {
                 resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
                 resultDefaultData.Message = ex.Message;
             }
+
+            var jsonResult = new
+            {
+                ResultDefaultData = resultDefaultData
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult SaveAction(string userVoucherNo, string date, string voucherId, int userId)
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+
+            if (Session["TranCustomerOpeningList"] != null)
+            {
+                try
+                {
+                    List<TranCustomerOpeningModels> list = Session["TranCustomerOpeningList"] as List<TranCustomerOpeningModels>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("CustomerID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Balance", typeof(int)));
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        dt.Rows.Add(list[i].CustomerID, list[i].Balance);
+                    }
+
+                    DateTime openingDateTime = DateTime.Parse(date);
+                    setting.conn.Open();
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcInsertCustomerOpening, setting.conn);
+                    cmd.Parameters.AddWithValue("@OpeningDateTime", openingDateTime);                  
+                    cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.CustomerOpeningModule);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
+                    cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Connection = setting.conn;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {                      
+                        userVoucherNo = Convert.ToString(reader[0]);
+                        Session["TranCustomerOpeningList"] = null;
+                        resultDefaultData.IsRequestSuccess = true;
+                        resultDefaultData.Message = AppConstants.Message.SaveSuccess;                     
+                    }
+                    reader.Close();
+                    setting.conn.Close();
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+            }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
+
+            var jsonResult = new
+            {
+                UserVoucherNo = userVoucherNo,
+                ResultDefaultData = resultDefaultData
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public JsonResult EditAction(int customerOpeningId)
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+
+            if (Session["TranCustomerOpeningList"] != null)
+            {
+                try
+                {
+                    List<TranCustomerOpeningModels> list = Session["TranCustomerOpeningList"] as List<TranCustomerOpeningModels>;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("CustomerID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Balance", typeof(int)));
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        dt.Rows.Add(list[i].CustomerID, list[i].Balance);
+                    }
+
+                    setting.conn.Open();
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateCustomerOpening, setting.conn);
+                    cmd.Parameters.AddWithValue("@CustomerOpeningID", customerOpeningId);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Connection = setting.conn;
+                    cmd.ExecuteNonQuery();
+                    setting.conn.Close();
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+            }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             var jsonResult = new
             {
@@ -133,20 +257,23 @@ namespace Inventory.Controllers
             {
                 try
                 {
-                    //SqlCommand cmd = new SqlCommand(textQuery.deleteOpeningStockQuery(openingStockId), (SqlConnection)getConnection());
-                    //cmd.CommandType = CommandType.Text;
-                    //cmd.ExecuteNonQuery();
+                    setting.conn.Open();
+                    SqlCommand cmd = new SqlCommand(textQuery.deleteCustomerOpeningQuery(customerOpeningId), setting.conn);
+                    cmd.CommandType = CommandType.Text;
+                    cmd.Connection = setting.conn;
+                    cmd.ExecuteNonQuery();
+                    setting.conn.Close();
 
-                    //List<OpeningStockViewModel.MasterOpeningStockViewModel> lstMasterOpeningStock = Session["MasterOpeningStockData"] as List<OpeningStockViewModel.MasterOpeningStockViewModel>;
-                    //int index = lstMasterOpeningStock.FindIndex(x => x.OpeningStockID == openingStockId);
-                    //lstMasterOpeningStock.RemoveAt(index);
+                    List<CustomerOpeningViewModel.MasterCustomerOpeningViewModel> lstMasterCustomerOpening = Session["MasterCustomerOpeningList"] as List<CustomerOpeningViewModel.MasterCustomerOpeningViewModel>;
+                    int index = lstMasterCustomerOpening.FindIndex(x => x.CustomerOpeningID == customerOpeningId);
+                    lstMasterCustomerOpening.RemoveAt(index);
 
-                    //if (lstMasterOpeningStock.Count > paging.eachItemCount)
-                    //{
-                    //    totalPageNum = lstMasterOpeningStock.Count / paging.eachItemCount;
-                    //    paging.lastItemCount = lstMasterOpeningStock.Count % paging.eachItemCount;
-                    //    if (paging.lastItemCount != 0) totalPageNum += 1;
-                    //}
+                    if (lstMasterCustomerOpening.Count > paging.eachItemCount)
+                    {
+                        totalPageNum = lstMasterCustomerOpening.Count / paging.eachItemCount;
+                        paging.lastItemCount = lstMasterCustomerOpening.Count % paging.eachItemCount;
+                        if (paging.lastItemCount != 0) totalPageNum += 1;
+                    }
                     resultDefaultData.IsRequestSuccess = true;
                     resultDefaultData.Message = AppConstants.Message.DeleteSuccess;
                 }
@@ -201,6 +328,21 @@ namespace Inventory.Controllers
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
+        private bool checkIsExistInTran(int customerId)
+        {
+            bool result = false;          
+            if (Session["TranCustomerOpeningList"] != null)
+            {
+                List<TranCustomerOpeningModels> lstTranCustomerOpening = Session["TranCustomerOpeningList"] as List<TranCustomerOpeningModels>;
+                if (lstTranCustomerOpening.Count() != 0)
+                {
+                    TranCustomerOpeningModels data = lstTranCustomerOpening.Where(x => x.CustomerID == customerId).SingleOrDefault();
+                    if (data != null) result = true;
+                }
+            }          
+            return result;
+        }
+
         private string getUserVoucherNo(int userId)
         {
             string userVoucherNo = appData.selectUserVoucherNo(AppConstants.CustomerOpeningModule, userId);
@@ -216,31 +358,76 @@ namespace Inventory.Controllers
             }
         }
 
-        private List<CustomerOpeningViewModel.MasterCustomerOpeningViewModel> selectMasterCustomerOpening(int userId)
+        private List<CustomerOpeningViewModel.MasterCustomerOpeningViewModel> selectMasterCustomerOpening()
         {
             List<CustomerOpeningViewModel.MasterCustomerOpeningViewModel> tempList = new List<CustomerOpeningViewModel.MasterCustomerOpeningViewModel>();
             CustomerOpeningViewModel.MasterCustomerOpeningViewModel item = new CustomerOpeningViewModel.MasterCustomerOpeningViewModel();
 
-            //SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterOpeningStockList, (SqlConnection)getConnection());
-            //cmd.CommandType = CommandType.StoredProcedure;
-            //cmd.Parameters.AddWithValue("@UserID", userId);
-
-            //SqlDataReader reader = cmd.ExecuteReader();
-            //while (reader.Read())
-            //{
-            //    item = new OpeningStockViewModel.MasterOpeningStockViewModel();
-            //    item.OpeningStockID = Convert.ToInt32(reader["OpeningStockID"]);
-            //    item.OpeningDateTime = Convert.ToString(reader["OpeningDateTime"]);
-            //    item.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
-            //    item.VoucherID = Convert.ToString(reader["VoucherID"]);
-            //    item.LocationName = Convert.ToString(reader["LocationName"]);
-            //    item.UserName = Convert.ToString(reader["UserName"]);
-            //    tempList.Add(item);
-            //}
-            //reader.Close();
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterCustomerOpeningList, setting.conn);
+            cmd.CommandType = CommandType.StoredProcedure;        
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new CustomerOpeningViewModel.MasterCustomerOpeningViewModel();
+                item.CustomerOpeningID = Convert.ToInt32(reader["CustomerOpeningID"]);
+                item.OpeningDateTime = Convert.ToString(reader["OpeningDateTime"]);
+                item.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
+                item.VoucherID = Convert.ToString(reader["VoucherID"]);
+                item.UserName = Convert.ToString(reader["UserName"]);
+                tempList.Add(item);
+            }
+            reader.Close();
+            setting.conn.Close();
             Session["MasterCustomerOpeningList"] = tempList;  // for paging
 
             return tempList;
+        }
+
+        private CustomerOpeningViewModel.MasterCustomerOpeningViewModel selectMasterCustomerOpeningByID(int customerOpeningId)
+        {
+            CustomerOpeningViewModel.MasterCustomerOpeningViewModel item = new CustomerOpeningViewModel.MasterCustomerOpeningViewModel();
+
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterCustomerOpeningByID, setting.conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@CustomerOpeningID", customerOpeningId);
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                item.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
+                item.VoucherID = Convert.ToString(reader["VoucherID"]);
+                item.OpeningDateTime = Convert.ToString(reader["Date"]);
+            }
+            reader.Close();
+            setting.conn.Close();
+            return item;
+        }
+
+        private List<TranCustomerOpeningModels> selectTranCustomerOpeningByID(int customerOpeningId)
+        {
+            List<TranCustomerOpeningModels> list = new List<TranCustomerOpeningModels>();
+            TranCustomerOpeningModels item = new TranCustomerOpeningModels();
+
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetTranCustomerOpeningByID, setting.conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@CustomerOpeningID", customerOpeningId);
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new TranCustomerOpeningModels();
+                item.CustomerID = Convert.ToInt32(reader["CustomerID"]);
+                item.CustomerName = Convert.ToString(reader["CustomerName"]);
+                item.Balance = Convert.ToInt32(reader["Balance"]);
+                list.Add(item);
+            }
+            reader.Close();
+            setting.conn.Close();
+            return list;
         }
 
         private PagingViewModel calcMasterCustomerOpeningPaging(List<CustomerOpeningViewModel.MasterCustomerOpeningViewModel> tempList, [Optional]int currentPage)

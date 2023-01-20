@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Inventory.ViewModels;
+@model RpSaleAmountByCustomerViewModel
+@{
     Layout = "~/Views/Shared/_LayoutReportDetail.cshtml";
 }
 
@@ -6,6 +8,150 @@
     <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
     <link href="~/Content/Site.css" rel="stylesheet" />
     <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            setReportTitle('@Resource.SaleAmountByCustomerReport');
+            setDefaultFilter('@Model.FromDate.ToShortDateString()', '@Model.ToDate.ToShortDateString()', '');
+            $("#divFilter").visible = false;
+        });
+
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            document.write(result);
+        }
+    </script>
 </head>
+<div>
+    @*@if (ViewBag.ErrorMessage != null)
+    {
+        <script type = "text/javascript" >
+            window.onload = function () {
+            alert(@ViewBag.ErrorMessage);            
+        }
+        </script>
+    }*@
+    <div class="row table-header font-weight-500">
+        <div class="col-md-2 col-lg-2">
+            <span class="ml-10">@Resource.Date</span>
+        </div>
+        <div class="col-md-1 col-lg-1">
+            <span>@Resource.VoucherNo</span>
+        </div>
+        <div class="col-md-1 col-lg-1 aligh-right">
+            <span>@Resource.Cash</span>
+        </div>
+        <div class="col-md-1 col-lg-1 aligh-right">
+            <span>@Resource.Credit</span>
+        </div>
+        <div class="col-md-1 col-lg-1 aligh-right">
+            <span>@Resource.Tax</span>
+        </div>
+        <div class="col-md-1 col-lg-1 aligh-right">
+            <span>@Resource.Charges</span>
+        </div>
+        <div class="col-md-1 col-lg-1 aligh-right">
+            <span>@Resource.VouDis</span>
+        </div>
+        <div class="col-md-1 col-lg-1 aligh-right">
+            <span>@Resource.AdvancedPay</span>
+        </div>
+        <div class="col-md-1 col-lg-1 aligh-right">
+            <span>@Resource.Bank (@Resource.PercentSign)</span>
+        </div>
+        <div class="col-md-1 col-lg-1 aligh-right">
+            <span>@Resource.VouFOC</span>
+        </div>
+        <div class="col-md-1 col-lg-1 aligh-right">
+            <span class="mr-10">@Resource.Grandtotal</span>
+        </div>
+    </div>
+</div>
+<div>
+    @foreach (var customer in Model.lstRptSaleAmountByCustomer as List<RpSaleAmountByCustomerViewModel.CustomerViewModel>)
+    {
+        <div class="row rpt-main-group" style="background-color:#ffffec;">
+            <div class="col-md-12 col-lg-12">
+                <span class="ml-10">@customer.CustomerName</span>
+            </div>
+        </div>
+        foreach(var sale in customer.lstSaleItem as List<RpSaleAmountByCustomerViewModel.SaleItemViewModel>)
+        {
+            <div class="row rpt-item">
+                <div class="col-md-2 col-lg-2"><span class="ml-10">@sale.SaleDate.ToShortDateString()</span></div>
+                <div class="col-md-1 col-lg-1"><span>@sale.SaleVoucherNO</span></div>
+                <div class="col-md-1 col-lg-1 aligh-right">
+                    @if (sale.PaymentID == 1)
+                    {
+                        <span><script>separatedComma(@sale.SubTotal)</script></span>
+                    }
+                    else { <span>-</span>}
+                </div>
+                <div class="col-md-1 col-lg-1 aligh-right">
+                    @if (sale.PaymentID == 2)
+                    {
+                        <span><script>separatedComma(@sale.SubTotal)</script></span>
+                    }
+                    else
+                    { <span>-</span>}
+                </div>
+                <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@sale.TaxAmount)</script></span></div>
+                <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@sale.ChargesAmount)</script></span></div>
+                <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@sale.VouDiscount)</script></span></div>
+                <div class="col-md-1 col-lg-1 aligh-right">
+                    @if (sale.PaymentID == 1)
+                    {
+                        <span>-</span>
+                    }
+                    else
+                    {
+                        <span><script>separatedComma(@sale.AdvancedPay)</script></span>
+                    }
+                </div>
+                <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@sale.PayPercentAmount)</script></span></div>
+                <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@sale.VouFOC)</script></span></div>
+                <div class="col-md-1 col-lg-1 aligh-right"><span class="mr-10"><script>separatedComma(@sale.GrandTotal)</script></span></div>
+            </div>
+        }
+        <div class="row rpt-sub-total">
+            <div class="col-md-2 col-lg-2"></div>
+            <div class="col-md-1 col-lg-1"><span>@Resource.Total</span></div>
+            <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@customer.lstSaleItem.Where(m => m.PaymentID == 1).Sum(m => m.SubTotal))</script></span></div>
+            <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@customer.lstSaleItem.Where(m => m.PaymentID == 2).Sum(m => m.SubTotal))</script></span></div>
+            <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@customer.lstSaleItem.Sum(m=>m.TaxAmount))</script></span></div>
+            <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@customer.lstSaleItem.Sum(m=>m.ChargesAmount))</script></span></div>
+            <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@customer.lstSaleItem.Sum(m=>m.VouDiscount))</script></span></div>
+            <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@customer.lstSaleItem.Sum(m=>m.AdvancedPay))</script></span></div>
+            <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@customer.lstSaleItem.Sum(m=>m.PayPercentAmount))</script></span></div>
+            <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@customer.lstSaleItem.Sum(m=>m.VouFOC))</script></span></div>
+            <div class="col-md-1 col-lg-1 aligh-right"><span class="mr-10"><script>separatedComma(@customer.lstSaleItem.Sum(m=>m.GrandTotal))</script></span></div>
+        </div>
+    }
+    <div class="row rpt-total">
+        <div class="col-md-2 col-lg-2"></div>
+        <div class="col-md-1 col-lg-1"><span>@Resource.Total</span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@Model.TotalCash)</script></span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@Model.TotalCredit)</script></span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@Model.TotalTax)</script></span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@Model.TotalCharges)</script></span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@Model.TotalVouDis)</script></span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@Model.TotalAdvancedPay)</script></span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@Model.TotalPayPercent)</script></span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@Model.TotalVouFOC)</script></span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span class="mr-10"><script>separatedComma(@Model.TotalAmount)</script></span></div>       
+    </div>
+    <div class="row padding-10 font-weight-500">
+        <div class="col-md-3 col-lg-3"></div>        
+        <div class="col-md-1 col-lg-1 aligh-right"><span>@Resource.Cash</span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span>@Resource.Credit</span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span>@Resource.Tax</span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span>@Resource.Charges</span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span>@Resource.VouDis</span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span>@Resource.AdvancedPay</span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span>@Resource.Bank (@Resource.PercentSign)</span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span>@Resource.VouFOC</span></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span class="mr-10">@Resource.Grandtotal</span></div>       
+    </div>
+</div>
 
 

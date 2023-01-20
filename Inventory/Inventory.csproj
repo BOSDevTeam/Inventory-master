@@ -170,6 +170,7 @@
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\CustomerConsignController.cs" />
     <Compile Include="Controllers\CustomerOpeningController.cs" />
+    <Compile Include="Controllers\CustomerOutstandingController.cs" />
     <Compile Include="Controllers\OpeningStockController.cs" />
     <Compile Include="Controllers\PaymentDialogController.cs" />
     <Compile Include="Controllers\ProductMenuController.cs" />
@@ -441,6 +442,7 @@
     <Compile Include="ViewModels\AdjustmentViewModel.cs" />
     <Compile Include="ViewModels\CustomerConsignViewModel.cs" />
     <Compile Include="ViewModels\CustomerOpeningViewModel.cs" />
+    <Compile Include="ViewModels\CustomerOutstandingViewModel.cs" />
     <Compile Include="ViewModels\MasterAdjustmentViewModel.cs" />
     <Compile Include="ViewModels\MasterCustomerConsignViewModel.cs" />
     <Compile Include="ViewModels\MasterPurchaseReturnViewModel.cs" />
@@ -690,6 +692,8 @@
     <Content Include="Views\RpTopSaleItem\TopSaleItemReport.cshtml" />
     <Content Include="Views\RpBottomSaleItem\BottomSaleItemReportFilter.cshtml" />
     <Content Include="Views\RpBottomSaleItem\BottomSaleItemReport.cshtml" />
+    <Content Include="Views\CustomerOutstanding\ListCustomerOutstanding.cshtml" />
+    <Content Include="Views\CustomerOutstanding\CustomerOutstandingPayment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

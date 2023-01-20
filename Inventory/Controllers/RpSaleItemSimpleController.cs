@@ -29,11 +29,7 @@ namespace Inventory.Controllers
             string getVal = Request.QueryString["SubMenuID"];
             string concat = @"{""data"":" + getVal + "}";
             ValList vl = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);
-            ValList subMenu = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);
-            //foreach(var item in vl.data)
-            //{
-
-            //}
+            ValList subMenu = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);            
             List<RpSaleItemSimpleViewModel.MainMenuViewModel> lstSaleItemSimpleRpt = GetSaleItemSimpleReport(FromDate,ToDate,subMenu.data);
             saleItemSimpleViewModel.lstSaleRpt = lstSaleItemSimpleRpt;
             saleItemSimpleViewModel.FromDate = FromDate;
@@ -46,8 +42,7 @@ namespace Inventory.Controllers
             List<RpSaleItemSimpleViewModel.MainMenuViewModel> lstSaleItemSimpleRpt = new List<RpSaleItemSimpleViewModel.MainMenuViewModel>();
             RpSaleItemSimpleViewModel.MainMenuViewModel MainMenuModel = new RpSaleItemSimpleViewModel.MainMenuViewModel();
             RpSaleItemSimpleViewModel.SubMenuViewModel SubMenuModel = new RpSaleItemSimpleViewModel.SubMenuViewModel();
-            RpSaleItemSimpleViewModel.SaleItemViewModel SaleItemModel = new RpSaleItemSimpleViewModel.SaleItemViewModel();
-           
+            RpSaleItemSimpleViewModel.SaleItemViewModel SaleItemModel = new RpSaleItemSimpleViewModel.SaleItemViewModel();           
             DataTable dt = new DataTable();
             dt.Columns.Add(new DataColumn("SubMenuID", typeof(int)));
             for(int i = 0; i < lstSubMenuID.Count(); i++)
@@ -80,16 +75,8 @@ namespace Inventory.Controllers
                             SaleItemModel.UnitID = Convert.ToInt32(reader["UnitID"]);
                             SaleItemModel.UnitKeyword = Convert.ToString(reader["UnitKeyword"]);
                             SaleItemModel.Quantity = Convert.ToInt32(reader["Quantity"]);
-                            SaleItemModel.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
-                            if (SaleItemModel.DiscountPercent > 0)
-                            {
-                                int saleprice = Convert.ToInt32(reader["SalePrice"]);
-                                SaleItemModel.SalePrice = saleprice - ((saleprice * SaleItemModel.DiscountPercent) / 100);
-                            }
-                            else
-                            {
-                                SaleItemModel.SalePrice = Convert.ToInt32(reader["SalePrice"]);
-                            }
+                            SaleItemModel.Discount = Convert.ToInt32(reader["Discount"]);
+                            SaleItemModel.SalePrice = Convert.ToInt32(reader["SalePrice"]);                           
                             SaleItemModel.Amount = Convert.ToInt32(reader["Amount"]);
                             foreach(var SubMenuData in MainMenuData.lstSubMenu.Where(m => m.SubMenuID == SubMenuModel.SubMenuID))
                             {
@@ -97,9 +84,7 @@ namespace Inventory.Controllers
                             }                           
                         }
                         else
-                        {
-                            //List<RpSaleItemSimpleViewModel.SubMenuViewModel> lstsub = new List<RpSaleItemSimpleViewModel.SubMenuViewModel>();
-                            //lstsub.Add(SubMenuModel);
+                        {                          
                             MainMenuData.lstSubMenu.Add(SubMenuModel);
                             SaleItemModel = new RpSaleItemSimpleViewModel.SaleItemViewModel();
                             SaleItemModel.Code = Convert.ToString(reader["Code"]);
@@ -107,16 +92,8 @@ namespace Inventory.Controllers
                             SaleItemModel.UnitID = Convert.ToInt32(reader["UnitID"]);
                             SaleItemModel.UnitKeyword = Convert.ToString(reader["UnitKeyword"]);
                             SaleItemModel.Quantity = Convert.ToInt32(reader["Quantity"]);
-                            SaleItemModel.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
-                            if (SaleItemModel.DiscountPercent > 0)
-                            {
-                                int saleprice = Convert.ToInt32(reader["SalePrice"]);
-                                SaleItemModel.SalePrice = saleprice - ((saleprice * SaleItemModel.DiscountPercent) / 100);
-                            }
-                            else
-                            {
-                                SaleItemModel.SalePrice = Convert.ToInt32(reader["SalePrice"]);
-                            }
+                            SaleItemModel.Discount = Convert.ToInt32(reader["Discount"]);
+                            SaleItemModel.SalePrice = Convert.ToInt32(reader["SalePrice"]);                            
                             SaleItemModel.Amount = Convert.ToInt32(reader["Amount"]);
                             foreach (var SubMenuData in MainMenuData.lstSubMenu.Where(m => m.SubMenuID == SubMenuModel.SubMenuID))
                             {
@@ -144,16 +121,8 @@ namespace Inventory.Controllers
                         SaleItemModel.UnitID = Convert.ToInt32(reader["UnitID"]);
                         SaleItemModel.UnitKeyword = Convert.ToString(reader["UnitKeyword"]);
                         SaleItemModel.Quantity = Convert.ToInt32(reader["Quantity"]);
-                        SaleItemModel.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
-                        if (SaleItemModel.DiscountPercent > 0)
-                        {
-                            int saleprice = Convert.ToInt32(reader["SalePrice"]);
-                            SaleItemModel.SalePrice = saleprice - ((saleprice * SaleItemModel.DiscountPercent) / 100);
-                        }
-                        else
-                        {
-                            SaleItemModel.SalePrice = Convert.ToInt32(reader["SalePrice"]);
-                        }
+                        SaleItemModel.Discount = Convert.ToInt32(reader["Discount"]);
+                        SaleItemModel.SalePrice = Convert.ToInt32(reader["SalePrice"]);                        
                         SaleItemModel.Amount = Convert.ToInt32(reader["Amount"]);
                         foreach(var SubMenuData in MainMenuData.lstSubMenu.Where(m => m.SubMenuID == SubMenuModel.SubMenuID))
                         {

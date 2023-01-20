@@ -466,10 +466,11 @@ namespace Inventory.Common
 
         public List<CustomerModels.CustomerModel> selectCustomer()
         {
-            setting.conn.Open();
+            
             List<CustomerModels.CustomerModel> list = new List<CustomerModels.CustomerModel>();
             CustomerModels.CustomerModel item;
 
+            setting.conn.Open();
             SqlCommand cmd = new SqlCommand(TextQuery.customerQuery, setting.conn);
             cmd.CommandType = CommandType.Text;
             cmd.Connection = setting.conn;

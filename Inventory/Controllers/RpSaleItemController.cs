@@ -37,7 +37,7 @@ namespace Inventory.Controllers
         public List<RpSaleItemViewModel.MasterSaleViewModel>GetSaleItemReport(DateTime fromDate,DateTime toDate,bool isAll,bool isCash,bool isCredit)
         {
             string code = "", productName = "", unitKeyword = "";
-            int unitID = 0, salePrice = 0;
+            int unitID = 0;
             List<RpSaleItemViewModel.MasterSaleViewModel> lstSaleItemRpt = new List<RpSaleItemViewModel.MasterSaleViewModel>();          
             RpSaleItemViewModel.MasterSaleViewModel item = new RpSaleItemViewModel.MasterSaleViewModel();
             List<RpSaleItemViewModel.SaleItemViewModel> lst = new List<RpSaleItemViewModel.SaleItemViewModel>();
@@ -66,12 +66,8 @@ namespace Inventory.Controllers
                         if (model.IsFOC) model.PaymentName = "FOC";
                         model.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
                         model.Quantity = Convert.ToInt32(reader["Quantity"]);
-                        salePrice = Convert.ToInt32(reader["SalePrice"]);
-                        if (model.DiscountPercent > 0)
-                        {
-                            model.SalePrice = salePrice - ((salePrice * model.DiscountPercent) / 100);
-                        }
-                        else { model.SalePrice = salePrice; }
+                        model.SalePrice = Convert.ToInt32(reader["SalePrice"]);
+                        model.Discount = Convert.ToInt32(reader["Discount"]);                       
                         model.Amount = Convert.ToInt32(reader["Amount"]);
                         data.lstSaleItem.Add(model);
                     }                    
@@ -92,12 +88,8 @@ namespace Inventory.Controllers
                     if (model.IsFOC) model.PaymentName = "FOC";
                     model.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
                     model.Quantity = Convert.ToInt32(reader["Quantity"]);
-                    salePrice = Convert.ToInt32(reader["SalePrice"]);
-                    if (model.DiscountPercent > 0)
-                    {
-                        model.SalePrice =salePrice-((salePrice*model.DiscountPercent)/100);
-                    }
-                    else { model.SalePrice = salePrice; }
+                    model.SalePrice = Convert.ToInt32(reader["SalePrice"]);
+                    model.Discount = Convert.ToInt32(reader["Discount"]);                    
                     model.Amount = Convert.ToInt32(reader["Amount"]);
                     lst.Add(model);             
                     item.lstSaleItem=lst;
