@@ -19,6 +19,7 @@ namespace Inventory.Common
         public const int TransferModule = 9;
         public const int CustomerConsignModule = 10;
         public const int CustomerOpeningModule = 11;
+        public const int CustomerOutstandingModule = 12;
 
         //Firebase Notification
         public const string CloudMessagingServerKey = "AAAAm-35J2M:APA91bG7cMqe-P2pkXZsNPn81sz9e0vwEWNKmiPPtblzfGhQYvqE8_JOBCm76cCI9lFyI0Gcglr104CfxkvKqdxs0vITi2sn759ytppjtNQOF3Kyy-A6RATXwmdgLvVEQIj3GSWWQ7PS";  //SysModule table value
@@ -57,6 +58,8 @@ namespace Inventory.Common
             public const string SaleReturnQtyCheck = "Return Quantity should not greater than Sale Quantity";
             public const string NoReturnFOCVoucher = "Not allow to return FOC Voucher!";
             public const string NoReturnCreditVoucher = "Not allow to return Credit Voucher!";
+            public const string AlreadyAddCustomer = "Already added customer!";
+            public const string InvalidPayment = "Invalid Payment";
         }
     }
 }

@@ -79,11 +79,11 @@
 
     $(document).ready(function () {
 
-        setModuleTitle('@Resource.CustomerOpening', '@Resource.AddCustomerOpening');
-
         if ('@ViewBag.ErrorMessage'.length != 0) {
             showToast(0, '@ViewBag.ErrorMessage');
         }
+
+        setModuleTitle('@Resource.CustomerOpening', '@Resource.AddCustomerOpening');
 
         if ('@ViewBag.IsEdit' == 'True') fillEditData();
         else initializeControl();
@@ -103,9 +103,9 @@
                     if (!response.ResultDefaultData.IsRequestSuccess)
                         responseUnSuccessful(response);
                     else {
-                        createTranCustomerOpeningData(customerId, customerName);
+                        createTranCustomerOpeningData(customerId, customerName, null, false);
                         $("#btnCustomer" + customerId).prop("disabled", true);
-                    }                    
+                    }
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -163,6 +163,70 @@
             }
         });
 
+        $("#btnSave").click(function (e) {
+            let row = $("#tblTranCustomerOpening tbody tr").length;
+            if (row < 1) return;
+            let userVoucherNo = $('#lblUserVoucherNo').text();
+            let date = $('#inputDate').val();
+            let voucherId = $('#inputVoucherID').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveAction", "CustomerOpening")',
+                data: JSON.stringify({ "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "userId": userId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else {
+                        showToast(1, response.ResultDefaultData.Message);
+                        $("#lblUserVoucherNo").text(response.UserVoucherNo);
+                        $('#inputDate').val(getTodayDate());
+                        $('#inputVoucherID').val("");
+                        clearTransaction();
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnEdit").click(function (e) {
+            let row = $("#tblTranCustomerOpening tbody tr").length;
+            if (row < 1) return;
+            let customerOpeningId = $(this).val();
+            showLoadingIcon();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("EditAction", "CustomerOpening")',
+                data: JSON.stringify({ "customerOpeningId": customerOpeningId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else window.location.href = '@Url.Action("ListCustomerOpening", "CustomerOpening")?userId=' + userId;
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
         $("#btnReset").click(function (e) {
             showLoadingIcon();
             $.ajax({
@@ -186,15 +250,28 @@
             });
         });
 
-        function createTranCustomerOpeningData(customerId,customerName) {
-            num += 1;
-            let row = '<tr id=' + num + ' class="row table-item">'
-                   + '<td class="col-md-1 col-lg-1"><label class="control-label mb-0">' + num + '</label></td>'
-                   + '<td class="col-md-7 col-lg-7"><label class="control-label mb-0">' + customerName + '</label></td>'
-                   + '<td class="col-md-4 col-lg-4"><input type="text" class="inputBalance border-gray control-input mb-0 numberonly" style="text-align:center;" placeholder="0" /></td>'
-                   + '<td style="display:none;">' + customerId + '</td>'
-                   + '</tr>';
-            $('#tblTranCustomerOpening tbody').append(row);
+        function createTranCustomerOpeningData(customerId, customerName, response, isFromEdit) {
+            if (!isFromEdit) {
+                num += 1;
+                let row = '<tr id=' + num + ' class="row table-item">'
+                       + '<td class="col-md-1 col-lg-1"><label class="control-label mb-0">' + num + '</label></td>'
+                       + '<td class="col-md-7 col-lg-7"><label class="control-label mb-0">' + customerName + '</label></td>'
+                       + '<td class="col-md-4 col-lg-4"><input type="text" class="inputBalance border-gray control-input mb-0 numberonly" style="text-align:center;" placeholder="0" /></td>'
+                       + '<td style="display:none;">' + customerId + '</td>'
+                       + '</tr>';
+                $('#tblTranCustomerOpening tbody').append(row);
+            } else {
+                $.each(response, function (i, item) {
+                    num += 1;
+                    let row = '<tr id=' + num + ' class="row table-item">'
+                           + '<td class="col-md-1 col-lg-1"><label class="control-label mb-0">' + num + '</label></td>'
+                           + '<td class="col-md-7 col-lg-7"><label class="control-label mb-0">' + item.CustomerName + '</label></td>'
+                           + '<td class="col-md-4 col-lg-4"><input type="text" class="inputBalance border-gray control-input mb-0 numberonly" style="text-align:center;" value="' + item.Balance + '" /></td>'
+                           + '<td style="display:none;">' + item.CustomerID + '</td>'
+                           + '</tr>';
+                    $('#tblTranCustomerOpening tbody').append(row);
+                })
+            }
         }
 
         function clearTransaction() {
@@ -207,6 +284,18 @@
             $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
             $('#inputDate').val(getTodayDate());
             showHideMainButton(false);
+        }
+
+        function fillEditData() {
+            $('#btnEdit').val('@ViewBag.CustomerOpeningID');
+            $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
+            $('#inputDate').val('@ViewBag.Date');
+            $('#inputVoucherID').val('@ViewBag.VoucherID');
+            $('#inputDate').prop("disabled", true);
+            $('#inputVoucherID').prop("disabled", true);
+            showHideMainButton(true);
+            let tranCustomerOpeningList = JSON.parse('@Html.Raw(Json.Encode(Session["TranCustomerOpeningList"]))');
+            createTranCustomerOpeningData(0, '', tranCustomerOpeningList, true);
         }
 
         function showHideMainButton(isEdit) {

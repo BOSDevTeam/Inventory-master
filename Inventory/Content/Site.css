@@ -130,6 +130,7 @@ button:disabled{background-color:#edeff1;}
 button:disabled:hover{background-color:#edeff1;cursor:default;color:#000;}
 span{font-size:13px;}
 .hideVerticalScrollbar{overflow-y: hidden!important;}
+.first-text-color{color:#27ae61;}
 /** end general */
 
 

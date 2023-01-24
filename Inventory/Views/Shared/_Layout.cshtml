@@ -133,7 +133,7 @@
                         <li class="submenu">
                             <a href=""><i class="fa fa-money"></i> <span> @Resource.Outstanding </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuOutstandingGp">
-                                <li id="subMenuCustomerOutstanding"><a href="#">@Resource.CustomerOutstanding</a></li>
+                                <li id="subMenuCustomerOutstandingList"><a href="#">@Resource.ListCustomerOutstanding</a></li>
                                 <li id="subMenuCustomerOutstandingPaymentHistory"><a href="#">@Resource.CustomerOutstandingPaymentHistory</a></li>
                             </ul>
                         </li> 
@@ -271,10 +271,13 @@
                 window.location.href = '@Url.Action("StockStatusLocation", "StockStatus")';
             });
             $('#subMenuCustomerOpeningList').click(function () {
-                window.location.href = '@Url.Action("ListCustomerOpening", "CustomerOpening")?userId=' + userId;
+                window.location.href = '@Url.Action("ListCustomerOpening", "CustomerOpening")';
             });
             $('#subMenuCustomerOpening').click(function () {
                 window.location.href = '@Url.Action("CustomerOpening", "CustomerOpening")?userId=' + userId;
+            });
+            $('#subMenuCustomerOutstandingList').click(function () {
+                window.location.href = '@Url.Action("ListCustomerOutstanding", "CustomerOutstanding")';
             });
             $('.toast').toast({
                 delay: 3000

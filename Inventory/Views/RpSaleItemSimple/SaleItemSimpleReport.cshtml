@@ -18,30 +18,29 @@
 
     function separatedComma(value) {
         let iVal = parseInt(value);
-        let result = iVal.toLocaleString('en-US');
-        //return result;
+        let result = iVal.toLocaleString('en-US');      
         document.write(result);
     }
-    </script>
-    <style>
-        
-    </style>
+    </script>  
 </head>
 <div>
     <div class="row table-header font-weight-500">
         <div class="col-md-2 col-lg-2">
             <span class="ml-10">@Resource.Code</span>
         </div>
-        <div class="col-md-3 col-lg-3">
+        <div class="col-md-2 col-lg-2">
             <span> @Resource.Product</span>
         </div>
-        <div class="col-md-1 col-lg-1 aligh-right">
+        <div class="col-md-2 col-lg-2 aligh-right">
             <span class="text-align-right">@Resource.Qty</span>
         </div>
-        <div class="col-md-3 col-lg-3 aligh-right">
+        <div class="col-md-2 col-lg-2 aligh-right">
             <span>@Resource.SalePrice</span>
         </div>
-        <div class="col-md-3 col-lg-3 aligh-right plr-30">
+        <div class="col-md-2 col-lg-2 aligh-right">
+            <span>Discount</span>
+        </div>
+        <div class="col-md-2 col-lg-2 aligh-right plr-30">
             <span class="mr-10">@Resource.Amount</span>
         </div>
     </div>
@@ -65,10 +64,20 @@
             {
                 <div class="row rpt-item">
                     <div class="col-md-2 col-lg-2"><span class="ml-10">@Item.Code</span></div>
-                    <div class="col-md-3 col-lg-3">@Item.ProductName @if (Item.UnitID != 0) {<span>( @Item.UnitKeyword )</span>} </div>
-                    <div class="col-md-1 col-lg-1 aligh-right"><span>@Item.Quantity</span></div>
-                    <div class="col-md-3 col-lg-3 aligh-right"><span><script>separatedComma(@Item.SalePrice)</script></span></div>
-                    <div class="col-md-3 col-lg-3 aligh-right plr-30"><span class="mr-10"> <script>separatedComma(@Item.Amount)</script></span></div>
+                    <div class="col-md-2 col-lg-2">@Item.ProductName @if (Item.UnitID != 0) {<span>( @Item.UnitKeyword )</span>} </div>
+                    <div class="col-md-2 col-lg-2 aligh-right"><span>@Item.Quantity</span></div>
+                    <div class="col-md-2 col-lg-2 aligh-right"><span><script>separatedComma(@Item.SalePrice)</script></span></div>
+                    <div class="col-md-2 col-lg-2 aligh-right">
+                        @if (Item.Discount > 0)
+                        {
+                            <span><script>separatedComma(@Item.Discount)</script></span>
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </div>
+                    <div class="col-md-2 col-lg-2 aligh-right plr-30"><span class="mr-10"> <script>separatedComma(@Item.Amount)</script></span></div>
                 </div>
             }
             <div class="row rpt-sub-total">

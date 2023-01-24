@@ -82,6 +82,20 @@
            
         });
 
+        function showToast(type, message) {
+            $('.toast').toast('show');
+            if (type == 1) {
+                $('#lblToastHeader').text("Success");
+                $('.toast-header').removeClass("toast-error");
+                $('.toast-header').addClass("toast-success");
+            } else if (type == 0) {
+                $('#lblToastHeader').text("Alert");
+                $('.toast-header').removeClass("toast-success");
+                $('.toast-header').addClass("toast-error");
+            }
+            $('#lblToastMessage').text(message);
+        }
+
         function setReportTitle(title) {
             $("#reportTitle").text(title);
         }

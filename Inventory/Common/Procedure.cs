@@ -109,5 +109,15 @@ namespace Inventory.Common
         public const string PrcGetRptTranSaleList = "PrcGetRptTranSaleList";
         public const string PrcGetMenuData = "PrcGetMenuData";
         public const string PrcGetRptSaleItemSimple = "PrcGetRptSaleItemSample";
+        public const string PrcGetRptSaleAmount = "PrcGetRptSaleAmount";
+        public const string PrcInsertCustomerOpening = "PrcInsertCustomerOpening";
+        public const string PrcGetMasterCustomerOpeningList = "PrcGetMasterCustomerOpeningList";
+        public const string PrcGetMasterCustomerOpeningByID = "PrcGetMasterCustomerOpeningByID";
+        public const string PrcGetTranCustomerOpeningByID = "PrcGetTranCustomerOpeningByID";
+        public const string PrcUpdateCustomerOpening = "PrcUpdateCustomerOpening";
+        public const string PrcGetCustomerOutstanding = "PrcGetCustomerOutstanding";
+        public const string PrcGetTranCustomerOutstanding = "PrcGetTranCustomerOutstanding";
+        public const string PrcGetRptSaleItemByCustomer = "PrcGetRptSaleItemByCustomer";
+        public const string PrcGetRptSaleAmountByCustomer = "PrcGetRptSaleAmountByCustomer";
     }
 }
