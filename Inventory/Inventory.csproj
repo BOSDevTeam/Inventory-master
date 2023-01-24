@@ -191,6 +191,7 @@
     <Compile Include="Controllers\RpBottomSaleItemController.cs" />
     <Compile Include="Controllers\RpSaleAmountByCustomerController.cs" />
     <Compile Include="Controllers\RpSaleAmountOnlyController.cs" />
+    <Compile Include="Controllers\RpSaleAmountSummaryController.cs" />
     <Compile Include="Controllers\RpSaleAuditController.cs" />
     <Compile Include="Controllers\RpSaleItemByCustomerController.cs" />
     <Compile Include="Controllers\RpSaleItemController.cs" />
@@ -462,6 +463,7 @@
     <Compile Include="ViewModels\RpBottomSaleItemViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAmountByCustomerViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAmountOnlyViewModel.cs" />
+    <Compile Include="ViewModels\RpSaleAmountSummaryViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAuditViewModel.cs" />
     <Compile Include="ViewModels\RpSaleItemByCustomerViewModel.cs" />
     <Compile Include="ViewModels\RpSaleItemSimpleViewModel.cs" />
@@ -694,6 +696,8 @@
     <Content Include="Views\RpBottomSaleItem\BottomSaleItemReport.cshtml" />
     <Content Include="Views\CustomerOutstanding\ListCustomerOutstanding.cshtml" />
     <Content Include="Views\CustomerOutstanding\CustomerOutstandingPayment.cshtml" />
+    <Content Include="Views\RpSaleAmountSummary\SaleAmountSummaryReportFilter.cshtml" />
+    <Content Include="Views\RpSaleAmountSummary\SaleAmountSummaryReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

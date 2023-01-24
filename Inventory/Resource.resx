@@ -597,4 +597,7 @@
   <data name="PayDate" xml:space="preserve">
     <value>Pay Date</value>
   </data>
+  <data name="SaleAmountSummaryReport" xml:space="preserve">
+    <value>Sale Amount Summary Report</value>
+  </data>
 </root>

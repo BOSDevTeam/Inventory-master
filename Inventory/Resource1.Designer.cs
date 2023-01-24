@@ -1132,6 +1132,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sale Amount Summary Report.
+        /// </summary>
+        public static string SaleAmountSummaryReport {
+            get {
+                return ResourceManager.GetString("SaleAmountSummaryReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sale Audit Report.
         /// </summary>
         public static string SaleAuditReport {
