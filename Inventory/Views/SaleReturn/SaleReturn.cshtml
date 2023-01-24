@@ -216,28 +216,33 @@
         $('#inputSearch').keydown(function (e) {
             if (e.which == 13) {
                 let keyword = $('#inputSearch').val();
-                let paymentId = 1;
                 showLoadingIcon();
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("SearchActionByPaymentID", "SaleReturn")',
-                    data: { "keyword": keyword, "paymentId": paymentId },
+                    data: { "keyword": keyword},
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
                         if (!response.IsExistPurchase) {
-                            showToast(0, '@Inventory.Common.AppConstants.Message.NoReturnFOCVoucher');
+                            showToast(0, '@Inventory.Common.AppConstants.Message.NoProductByCode');
                         }
                         else {
-                            if (!response.IsVoucherFOC) {
-                                let totalItem = response.List.length;
-                                $('#lblTotalItem').text(totalItem + '@Resource.OpenParenthesis' + response.TotalQuantity + '@Resource.CloseParenthesis');
-                                createTranSaleData(response.List);
-                            }
-                            else {
+                            if (response.IsPayment == true) {
                                 showToast(0, response.ResultDefaultData.Message);
                             }
+                            else {
+                                if (!response.IsVoucherFOC) {
+                                    let totalItem = response.List.length;
+                                    $('#lblTotalItem').text(totalItem + '@Resource.OpenParenthesis' + response.TotalQuantity + '@Resource.CloseParenthesis');
+                                    createTranSaleData(response.List);
+                                }
+                                else {
+                                    showToast(0, response.ResultDefaultData.Message);
+                                }
+                            }
+
                         }
                     },
                     failure: function (response) {

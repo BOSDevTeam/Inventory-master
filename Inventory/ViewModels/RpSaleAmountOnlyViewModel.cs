@@ -10,14 +10,19 @@ namespace Inventory.ViewModels
     {
         public RpSaleAmountOnlyViewModel()
         {
+            this.lstBankPayment = new List<BankPayment>();
             this.lstMasterSaleRpt = new List<MasterSaleModels>();
             this.FromDate = new DateTime();
             this.ToDate = new DateTime();
         }
 
+        public List<BankPayment> lstBankPayment { get; set; }
+
         public List<MasterSaleModels> lstMasterSaleRpt { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
+        public string PayMethodName { get; set; }
+        public string PayMethodName2 { get; set; }
 
         public class MasterSaleModels
         {
@@ -44,6 +49,12 @@ namespace Inventory.ViewModels
             public int VoucherFOC { get; set; }
             public bool IsVouFOC { get; set; }
 
+        }
+
+        public class BankPayment
+        {
+            public int BankPaymentID { get; set; }
+            public string BankPaymentName { get; set; }
         }
     }
 }

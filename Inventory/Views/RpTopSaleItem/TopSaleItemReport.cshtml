@@ -1,4 +1,7 @@
-﻿@{
+﻿@using Inventory.ViewModels;
+@model RpTopSaleItemViewModel
+
+@{
     Layout = "~/Views/Shared/_LayoutReportDetail.cshtml";
 }
 
@@ -6,4 +9,84 @@
     <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
     <link href="~/Content/Site.css" rel="stylesheet" />
     <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        let filter;
+        $(document).ready(function () {
+            let title = '@Resource.TopSaleItemReport';
+            let fromDate = '@Model.FromDate.ToShortDateString()';
+            let toDate = '@Model.ToDate.ToShortDateString()';
+            filter = "";
+            setReportTitle(title);
+            setDefaultFilter(fromDate, toDate, filter);
+        });
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            document.write(result);
+        }
+    </script>
 </head>
+<div>
+    <div class="row table-header">
+        <div class="col-md-2 col-lg-2">@Resource.Code</div>
+        <div class="col-md-2 col-lg-2">@Resource.ProductName</div>
+        <div class="col-md-2 col-lg-2">@Resource.Qty</div>
+        <div class="col-md-2 col-lg-2">@Resource.Price</div>
+        <div class="col-md-2 col-lg-2">@Resource.Dis</div>
+        <div class="col-md-2 col-lg-2">@Resource.Amount</div>
+    </div>
+
+    @{
+        var productId = 0;
+        foreach (var item in Model.lstTranSaleRpt as List<RpTopSaleItemViewModel.TranSaleModels>)
+        {
+            if (productId != 0)
+            {
+                if (productId != item.ProductID)
+                {
+                    <div class="row rpt-sub-total">
+                        <div class="col-md-2 col-lg-2"></div>
+                        <div class="col-md-2 col-lg-2">@Resource.Total</div>
+                        <div class="col-md-2 col-lg-2">@Model.lstTranSaleRpt.Where(m => m.ProductID == productId).Sum(m => m.Quantity)</div>
+                        <div class="col-md-2 col-lg-2"></div>
+                        <div class="col-md-2 col-lg-2"></div>
+                        <div class="col-md-2 col-lg-2">@Model.lstTranSaleRpt.Where(m => m.ProductID == productId).Sum(m => m.Amount)</div>
+                    </div>
+                }
+            }
+
+            <div class="row rpt-item">
+                <div class="col-md-2 col-lg-2">@item.ProductCode</div>
+                <div class="col-md-2 col-lg-2">@item.ProductName</div>
+                <div class="col-md-2 col-lg-2 aligh-right">@item.Quantity</div>
+                <div class="col-md-2 col-lg-2 aligh-right">@item.SalePrice</div>
+                <div class="col-md-2 col-lg-2 aligh-right">@item.Discount</div>
+                <div class="col-md-2 col-lg-2 aligh-right">@item.Amount</div>
+            </div>
+
+            productId = item.ProductID;
+        }
+
+
+        var listCount = Model.lstTranSaleRpt.Count();
+        if (listCount !=0)
+        {
+            var lastProductID = Model.lstTranSaleRpt[listCount - 1].ProductID;
+
+            List<RpTopSaleItemViewModel.TranSaleModels> list = Model.lstTranSaleRpt.Where(x => x.ProductID == lastProductID).ToList();
+            if (list.Count() > 1)
+            {
+                <div class="row rpt-sub-total">
+                    <div class="col-md-2 col-lg-2"></div>
+                    <div class="col-md-2 col-lg-2">@Resource.Total</div>
+                    <div class="col-md-2 col-lg-2">@Model.lstTranSaleRpt.Where(m => m.ProductID == lastProductID).Sum(m => m.Quantity)</div>
+                    <div class="col-md-2 col-lg-2"></div>
+                    <div class="col-md-2 col-lg-2"></div>
+                    <div class="col-md-2 col-lg-2">@Model.lstTranSaleRpt.Where(m => m.ProductID == lastProductID).Sum(m => m.Amount)</div>
+                </div>
+            }
+        }
+
+
+    }
+</div>

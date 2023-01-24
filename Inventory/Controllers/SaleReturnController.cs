@@ -261,18 +261,17 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SearchActionByPaymentID(int paymentId, string keyword)
+        public JsonResult SearchActionByPaymentID(string keyword)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
             List<TranSaleModels> list = new List<TranSaleModels>();
             TranSaleModels item = new TranSaleModels();
             MasterSaleModels data = new MasterSaleModels();
             int totalQuantity = 0;
-            bool isExistPurchase = true, isVoucherFOC = false;
+            bool isExistPurchase = true, isVoucherFOC = false, isPayment = false ;
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterANDTranSaleByPaymentID, (SqlConnection) getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@keyword", keyword);
-            cmd.Parameters.AddWithValue("@PaymentID", paymentId);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -293,20 +292,30 @@ namespace Inventory.Controllers
                 data.LocationID = Convert.ToInt32(reader["LocationID"]);
                 item.SaleID = Convert.ToInt32(reader["SaleID"]);
                 data.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
+                data.PaymentID = Convert.ToInt32(reader["PaymentID"]);
                 list.Add(item);
             }
             reader.Close();
 
             if (item.SaleID > 0)
             {
-                if (data.IsVouFOC == false)
+                if (data.PaymentID == 2)
                 {
+                    resultDefaultData.Message = AppConstants.Message.NoReturnCreditVoucher;
+                    isPayment = true;
                 }
                 else
                 {
-                    resultDefaultData.Message = AppConstants.Message.NoReturnFOCVoucher;
-                    isVoucherFOC = true;
+                    if (data.IsVouFOC == false)
+                    {
+                    }
+                    else
+                    {
+                        resultDefaultData.Message = AppConstants.Message.NoReturnFOCVoucher;
+                        isVoucherFOC = true;
+                    }
                 }
+
             }
             else isExistPurchase = false;
 
@@ -323,6 +332,7 @@ namespace Inventory.Controllers
                 TotalQuantity = totalQuantity,
                 IsExistPurchase = isExistPurchase,
                 IsVoucherFOC = isVoucherFOC,
+                IsPayment = isPayment,
                 ResultDefaultData = resultDefaultData
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
