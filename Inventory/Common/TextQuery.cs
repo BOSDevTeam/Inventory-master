@@ -60,7 +60,7 @@ namespace Inventory.Common
 
         public string deleteSaleQuery(int saleId)
         {
-            return "Delete From TTranSale Where SaleID=" + saleId + " Delete From TMasterSale Where SaleID=" + saleId;           
+            return "Delete From TTranSale Where SaleID=" + saleId + " Delete From TMasterSale Where SaleID=" + saleId + " Delete From TMasterLedger Where SaleID=" + saleId;           
         }
 
         public string deleteOpenBillQuery(int openBillId)
@@ -70,7 +70,7 @@ namespace Inventory.Common
 
         public string getMasterOpenBillQuery(int openBillId)
         {
-            return "Select UserVoucherNo,VoucherID,Subtotal,TaxAmt,ChargesAmt,Total,LocationID,CustomerID"
+            return "Select UserVoucherNo,VoucherID,Subtotal,TaxAmt,ChargesAmt,Total,LocationID,CustomerID,CurrencyID"
             + " From TMasterOpenBill Where OpenBillID=" + openBillId;
         }
 

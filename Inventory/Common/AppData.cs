@@ -465,8 +465,7 @@ namespace Inventory.Common
         }
 
         public List<CustomerModels.CustomerModel> selectCustomer()
-        {
-            
+        {            
             List<CustomerModels.CustomerModel> list = new List<CustomerModels.CustomerModel>();
             CustomerModels.CustomerModel item;
 
@@ -480,6 +479,50 @@ namespace Inventory.Common
                 item = new CustomerModels.CustomerModel();
                 item.CustomerID = Convert.ToInt32(reader["CustomerID"]);
                 item.CustomerName = Convert.ToString(reader["CustomerName"]);
+                list.Add(item);
+            }
+            reader.Close();
+            setting.conn.Close();
+            return list;
+        }
+
+        public List<LocationModels.LocationModel> selectLocation()
+        {
+            List<LocationModels.LocationModel> list = new List<LocationModels.LocationModel>();
+            LocationModels.LocationModel item;
+
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(TextQuery.locationQuery, setting.conn);
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new LocationModels.LocationModel();
+                item.LocationID = Convert.ToInt32(reader["LocationID"]);
+                item.ShortName = Convert.ToString(reader["ShortName"]);
+                list.Add(item);
+            }
+            reader.Close();
+            setting.conn.Close();
+            return list;
+        }
+
+        public List<CurrencyModels> selectCurrency()
+        {
+            List<CurrencyModels> list = new List<CurrencyModels>();
+            CurrencyModels item;
+
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(TextQuery.currencyQuery, setting.conn);
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new CurrencyModels();
+                item.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
+                item.Keyword = Convert.ToString(reader["Keyword"]);
                 list.Add(item);
             }
             reader.Close();

@@ -17,14 +17,20 @@
 </head>  
 
 <div class="row m-t-5 m-b-5 m-l-5">
-    <div class="col-md-4 col-lg-4 note align-justify-center">
+    <div class="col-md-3 col-lg-3 note align-justify-center">
         <label id="lblUserVoucherNo" class="control-label mb-0"></label>
     </div>
-    <div class="col-md-4 col-lg-4">
+    <div class="col-md-3 col-lg-3">
         <input id="inputDate" type="date" class="form-control control-input" />
     </div>
-    <div class="col-md-4 col-lg-4">
+    <div class="col-md-3 col-lg-3">
         <input id="inputVoucherID" type="text" class="form-control control-input" placeholder="@Resource.VoucherID" />
+    </div>
+    <div class="col-md-2 col-lg-2">
+        @Html.DropDownList("Location", Model.Locations, new { @id = "ddlLocation", @class = "form-control control-input" })
+    </div>
+    <div class="col-md-1 col-lg-1">
+        @Html.DropDownList("Currency", Model.Currencies, new { @id = "ddlCurrency", @class = "form-control control-input" })
     </div>
 </div>
 
@@ -169,11 +175,13 @@
             let userVoucherNo = $('#lblUserVoucherNo').text();
             let date = $('#inputDate').val();
             let voucherId = $('#inputVoucherID').val();
+            let locationId = $('#ddlLocation option:selected').val();
+            let currencyId = $('#ddlCurrency option:selected').val();
             showLoadingIcon();
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("SaveAction", "CustomerOpening")',
-                data: JSON.stringify({ "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "userId": userId }),
+                data: JSON.stringify({ "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "userId": userId, "locationId": locationId, "currencyId": currencyId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -291,8 +299,12 @@
             $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
             $('#inputDate').val('@ViewBag.Date');
             $('#inputVoucherID').val('@ViewBag.VoucherID');
+            $("#ddlLocation").val('@ViewBag.LocationID');
+            $("#ddlCurrency").val('@ViewBag.CurrencyID');
             $('#inputDate').prop("disabled", true);
             $('#inputVoucherID').prop("disabled", true);
+            $('#ddlLocation').prop("disabled", true);
+            $('#ddlCurrency').prop("disabled", true);
             showHideMainButton(true);
             let tranCustomerOpeningList = JSON.parse('@Html.Raw(Json.Encode(Session["TranCustomerOpeningList"]))');
             createTranCustomerOpeningData(0, '', tranCustomerOpeningList, true);

@@ -10,9 +10,13 @@ namespace Inventory.ViewModels
     {
         public CustomerOpeningViewModel(){
             this.Customers = new List<SelectListItem>();
+            this.Locations = new List<SelectListItem>();
+            this.Currencies = new List<SelectListItem>();
         }
 
         public List<SelectListItem> Customers { get; set; }
+        public List<SelectListItem> Locations { get; set; }
+        public List<SelectListItem> Currencies { get; set; }
 
         public class MasterCustomerOpeningViewModel
         {
@@ -20,7 +24,9 @@ namespace Inventory.ViewModels
             public string UserVoucherNo { get; set; }
             public string OpeningDateTime { get; set; }
             public string VoucherID { get; set; }          
-            public string UserName { get; set; }          
+            public string UserName { get; set; }
+            public int LocationID { get; set; }
+            public int CurrencyID { get; set; }
         }
     }
 }

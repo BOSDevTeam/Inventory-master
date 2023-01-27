@@ -16,6 +16,7 @@ namespace Inventory.Models
         public int UserID { get; set; }
         public int CustomerID { get; set; }
         public int LocationID { get; set; }
+        public int CurrencyID { get; set; }
         public int PaymentID { get; set; }
         public int VoucherDiscount { get; set; }
         public int AdvancedPay { get; set; }

@@ -31,6 +31,7 @@ namespace Inventory.Controllers
                 int totalQuantity = 0;
                 getCustomer(false);
                 getLocation();
+                getMCurrency();
                 getMainMenu();
                 getSubMenu(getFirstMainMenuID());
                 getProduct(getFirstSubMenuID());
@@ -53,6 +54,7 @@ namespace Inventory.Controllers
                     ViewBag.VoucherID = data.MasterSaleModel.VoucherID;
                     ViewBag.CustomerID = data.MasterSaleModel.CustomerID;
                     ViewBag.LocationID = data.MasterSaleModel.LocationID;
+                    ViewBag.CurrencyID = data.MasterSaleModel.CurrencyID;
                     ViewBag.Subtotal = data.MasterSaleModel.Subtotal;
                     ViewBag.TaxAmt = data.MasterSaleModel.TaxAmt;
                     ViewBag.ChargesAmt = data.MasterSaleModel.ChargesAmt;
@@ -75,6 +77,7 @@ namespace Inventory.Controllers
                     ViewBag.VoucherID = data.VoucherID;
                     ViewBag.CustomerID = data.CustomerID;
                     ViewBag.LocationID = data.LocationID;
+                    ViewBag.CurrencyID = data.CurrencyID;
                     ViewBag.Subtotal = data.Subtotal;
                     ViewBag.TaxAmt = data.TaxAmt;
                     ViewBag.ChargesAmt = data.ChargesAmt;
@@ -445,7 +448,7 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult PaymentEditAction(int saleId, string date, string voucherId, int customerId, int locationId, int taxAmt, int chargesAmt, int subtotal, int total)
+        public JsonResult PaymentEditAction(int saleId, string date, string voucherId, int customerId, int locationId, int taxAmt, int chargesAmt, int subtotal, int total, int currencyId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
 
@@ -475,6 +478,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
                     cmd.Parameters.AddWithValue("@CustomerID", customerId);
                     cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@CurrencyID", currencyId);
                     cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
                     cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
                     cmd.Parameters.AddWithValue("@Subtotal", subtotal);
@@ -506,7 +510,7 @@ namespace Inventory.Controllers
         public JsonResult PaymentSubmitAction(string userVoucherNo, string date, string voucherId, int customerId, int locationId,
                 int paymentId, int? payMethodId, int? limitedDayId, int? bankPaymentId, string remark, int? advancedPay,
                 int? payPercent, int? payPercentAmt, int? vouDisPercent, int? vouDisAmount, int? voucherDiscount,
-                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId, int? openBillId, int? clSaleOrderId, bool isVoucherFOC)
+                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId, int? openBillId, int? clSaleOrderId, bool isVoucherFOC, int currencyId)
         {
             string systemVoucherNo = "";
             ResultDefaultData resultDefaultData = new ResultDefaultData();
@@ -548,6 +552,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
                     cmd.Parameters.AddWithValue("@CustomerID", customerId);
                     cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@CurrencyID", currencyId);
                     cmd.Parameters.AddWithValue("@PaymentID", paymentId);
                     cmd.Parameters.AddWithValue("@VoucherDiscount", voucherDiscount);
                     cmd.Parameters.AddWithValue("@AdvancedPay", advancedPay);
@@ -575,6 +580,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@OpenBillID", openBillId);
                     cmd.Parameters.AddWithValue("@CLSaleOrderID", clSaleOrderId);
                     cmd.Parameters.AddWithValue("@IsVoucherFOC", isVoucherFOC);
+                    cmd.Parameters.AddWithValue("@AccountCode", AppConstants.SaleAccountCode);
                     cmd.CommandType = CommandType.StoredProcedure;
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read()) systemVoucherNo = Convert.ToString(reader[0]);
@@ -648,6 +654,7 @@ namespace Inventory.Controllers
                 VoucherID = item.MasterSaleModel.VoucherID,
                 Remark = item.MasterSaleModel.Remark,
                 LocationName = item.LocationName,
+                CurrencyKeyword = item.CurrencyKeyword,
                 Payment = item.Payment,
                 PayMethod = item.PayMethod,
                 BankPayment = item.BankPayment,
@@ -718,7 +725,7 @@ namespace Inventory.Controllers
 
         [HttpPost]
         public JsonResult HoldAction(string userVoucherNo, string date, string voucherId, int customerId, int locationId,
-                string remark, int taxAmt, int chargesAmt, int subtotal, int total, int userId)
+                string remark, int taxAmt, int chargesAmt, int subtotal, int total, int userId, int currencyId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
 
@@ -748,6 +755,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@OpenDateTime", openDateTime);
                     cmd.Parameters.AddWithValue("@CustomerID", customerId);
                     cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@CurrencyID", currencyId);
                     cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
                     cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
                     cmd.Parameters.AddWithValue("@Subtotal", subtotal);
@@ -987,6 +995,7 @@ namespace Inventory.Controllers
                 item.MasterSaleModel.VoucherID = Convert.ToString(reader["VoucherID"]);
                 item.MasterSaleModel.Remark = Convert.ToString(reader["Remark"]);
                 item.LocationName = Convert.ToString(reader["LocationName"]);
+                item.CurrencyKeyword = Convert.ToString(reader["CurrencyKeyword"]);
                 item.Payment = Convert.ToString(reader["Payment"]);
                 item.PayMethod = Convert.ToString(reader["PayMethod"]);
                 item.BankPayment = Convert.ToString(reader["BankPayment"]);
@@ -1006,6 +1015,7 @@ namespace Inventory.Controllers
                 item.MasterSaleModel.VouDisPercent = Convert.ToInt32(reader["VouDisPercent"]);
                 item.MasterSaleModel.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
                 item.MasterSaleModel.LocationID = Convert.ToInt32(reader["LocationID"]);
+                item.MasterSaleModel.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
                 item.MasterSaleModel.CustomerID = Convert.ToInt32(reader["CustomerID"]);
                 item.MasterSaleModel.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
             }
@@ -1176,6 +1186,7 @@ namespace Inventory.Controllers
                 item.VoucherID = Convert.ToString(reader["VoucherID"]);
                 item.CustomerID = Convert.ToInt32(reader["CustomerID"]);
                 item.LocationID = Convert.ToInt32(reader["LocationID"]);
+                item.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
                 item.Subtotal = Convert.ToInt32(reader["Subtotal"]);
                 item.TaxAmt = Convert.ToInt32(reader["TaxAmt"]);
                 item.ChargesAmt = Convert.ToInt32(reader["ChargesAmt"]);
@@ -1448,6 +1459,15 @@ namespace Inventory.Controllers
             }
             else list = Session["CurrencyData"] as List<CurrencyModels>;
             return list;
+        }
+
+        private void getMCurrency()
+        {
+            List<CurrencyModels> list = getCurrency();
+            for (int i = 0; i < list.Count; i++)
+            {
+                saleViewModel.Currencies.Add(new SelectListItem { Text = list[i].Keyword, Value = Convert.ToString(list[i].CurrencyID) });
+            }
         }
 
         private bool checkConnection()

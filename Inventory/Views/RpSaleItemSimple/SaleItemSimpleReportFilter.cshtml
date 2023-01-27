@@ -45,18 +45,21 @@
     $(function () {
         $('#btnViewReport').click(function () {
             let fromDate = $('#inputFromDate').val();
-            let toDate = $('#inputToDate').val();                       
-            window.location.href = '@Url.Action("SaleItemSimpleReport", "RpSaleItemSimple")?fromDate=' + fromDate + '&toDate=' + toDate + '&SubMenuID=' + JSON.stringify(subMenuIDArray);
+            let toDate = $('#inputToDate').val();
+            $("#divMenuFilter").load("#divMenuFilter");
+            window.location.href = '@Url.Action("SaleItemSimpleReport", "RpSaleItemSimple")?fromDate=' + fromDate + '&toDate=' + toDate + '&SubMenuID=' + JSON.stringify(subMenuIDArray);            
         });
     })
     $(document).ready(function () {
+        if ('@ViewBag.ErrorMessage'.length != 0) {
+            showToast(0, '@ViewBag.ErrorMessage');
+        }
         initializeControl();
 
-        function initializeControl() {
-            
+        function initializeControl() {           
             $('#inputFromDate').val(getTodayDate());
             $('#inputToDate').val(getTodayDate());
-            let menuList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.MenuData))');           
+            let menuList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.MenuData))');
             let menu='', submenu='',mainMenu = 0;
             $("#divMenuFilter").html("");
             $.each(menuList, function (i, item) {
@@ -89,9 +92,9 @@
                     })
                     $("#divMainMenu" + item.MainMenuID).append(submenu);
                 }
-            })                                
+            })
         }
-        
+
     })
     function mainMenuChange(mainMenu) {
         var checkboxes = document.getElementsByName(mainMenu.value);
@@ -111,7 +114,7 @@
             });
         }
     }
-    function subMenuChange(subMenu) {       
+    function subMenuChange(subMenu) {
         if (subMenu.checked == true) {
             subMenuIDArray.push(subMenu.value);
         }

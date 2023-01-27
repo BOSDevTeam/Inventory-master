@@ -14,6 +14,9 @@
         let filter;
 
         $(document).ready(function () {
+            if ('@ViewBag.ErrorMessage'.length != 0) {
+                showToast(0, '@ViewBag.ErrorMessage');
+            }
             setReportTitle('@Resource.SaleItemReport');
  
             if ('@Model.IsAll' == 'True') filter = '@Resource.All';
@@ -45,7 +48,7 @@
             <span>@Resource.SalePrice</span>
         </div>
         <div class="col-md-2 col-lg-2 aligh-right">
-            <span>Discount</span>
+            <span>@Resource.Dis</span>
         </div>
         <div class="col-md-2 col-lg-2 aligh-right">
             <span class="mr-10">@Resource.Amount</span>
@@ -70,14 +73,9 @@
                             <td class="col-md-2 col-lg-2 aligh-right"><span class="m-r-5">@data.Quantity</span></td>
                             <td class="col-md-2 col-lg-2 aligh-right"><span class="mr-10"><script>separatedComma(@data.SalePrice);</script></span></td>
                             <td class="col-md-2 col-lg-2 aligh-right">
-                                @if (data.Discount > 0)
-                                {
-                                    <span class="mr-10"><script>separatedComma(@data.Discount)</script></span>
-                                }
-                                else
-                                {
-                                    <span class="mr-10">-</span>
-                                }
+                                <span class="mr-10">
+                                    <script>separatedComma(@data.Discount)</script>
+                                </span>
                             </td>
                             <td class="col-md-2 col-lg-2 aligh-right plr-30"><script>separatedComma(@data.Amount);</script></td>
                         </tr>
@@ -103,15 +101,9 @@
                             <td class="col-md-2 col-lg-2 aligh-right"><span class="m-r-5">@data.Quantity</span></td>
                             <td class="col-md-2 col-lg-2 aligh-right"><span class="mr-10"><script>separatedComma(@data.SalePrice);</script></span></td>
                             <td class="col-md-2 col-lg-2 aligh-right">
-                                @if (data.Discount > 0)
-                                {
-                                    <span class="mr-10">
-                                    <script>separatedComma(@data.Discount)</script></span>
-                                }
-                                else
-                                {
-                                    <span class="mr-10">-</span>
-                                }
+                                <span class="mr-10">
+                                    <script>separatedComma(@data.Discount)</script>
+                                </span>
                             </td>
                             <td class="col-md-2 col-lg-2 aligh-right plr-30"><script>separatedComma(@data.Amount);</script></td>
                         </tr>

@@ -189,6 +189,9 @@
     <Compile Include="Controllers\PurchaseReturnController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RpBottomSaleItemController.cs" />
+    <Compile Include="Controllers\RpPurchaseAuditController.cs" />
+    <Compile Include="Controllers\RpPurchaseItemBySupplierController.cs" />
+    <Compile Include="Controllers\RpPurchaseItemSimpleController.cs" />
     <Compile Include="Controllers\RpSaleAmountByCustomerController.cs" />
     <Compile Include="Controllers\RpSaleAmountOnlyController.cs" />
     <Compile Include="Controllers\RpSaleAmountSummaryController.cs" />
@@ -461,6 +464,9 @@
     <Compile Include="ViewModels\PurchaseReturnViewModel.cs" />
     <Compile Include="ViewModels\PurchaseViewModel.cs" />
     <Compile Include="ViewModels\RpBottomSaleItemViewModel.cs" />
+    <Compile Include="ViewModels\RpPurchaseAuditViewModel.cs" />
+    <Compile Include="ViewModels\RpPurchaseItemBySupplierViewModel.cs" />
+    <Compile Include="ViewModels\RpPurchaseItemSimpleViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAmountByCustomerViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAmountOnlyViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAmountSummaryViewModel.cs" />
@@ -695,9 +701,15 @@
     <Content Include="Views\RpBottomSaleItem\BottomSaleItemReportFilter.cshtml" />
     <Content Include="Views\RpBottomSaleItem\BottomSaleItemReport.cshtml" />
     <Content Include="Views\CustomerOutstanding\ListCustomerOutstanding.cshtml" />
-    <Content Include="Views\CustomerOutstanding\CustomerOutstandingPayment.cshtml" />
     <Content Include="Views\RpSaleAmountSummary\SaleAmountSummaryReportFilter.cshtml" />
     <Content Include="Views\RpSaleAmountSummary\SaleAmountSummaryReport.cshtml" />
+    <Content Include="Views\CustomerOutstanding\_CustomerOutstandingPayment.cshtml" />
+    <Content Include="Views\RpPurchaseAudit\PurchaseAuditReportFilter.cshtml" />
+    <Content Include="Views\RpPurchaseAudit\PurchaseAuditReport.cshtml" />
+    <Content Include="Views\RpPurchaseItemSimple\PurchaseItemSimpleReport.cshtml" />
+    <Content Include="Views\RpPurchaseItemSimple\PurchaseItemSimpleReportFilter.cshtml" />
+    <Content Include="Views\RpPurchaseItemBySupplier\PurchaseItemBySupplierReportFilter.cshtml" />
+    <Content Include="Views\RpPurchaseItemBySupplier\PurchaseItemBySupplierReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

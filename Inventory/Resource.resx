@@ -600,4 +600,25 @@
   <data name="SaleAmountSummaryReport" xml:space="preserve">
     <value>Sale Amount Summary Report</value>
   </data>
+  <data name="AccountOpening" xml:space="preserve">
+    <value>Account Opening</value>
+  </data>
+  <data name="OutstandingOpening" xml:space="preserve">
+    <value>Outstanding Opening</value>
+  </data>
+  <data name="PurchaseAuditReport" xml:space="preserve">
+    <value>Purchase Audit Report</value>
+  </data>
+  <data name="PurchaseItemBySupplierReport" xml:space="preserve">
+    <value>Purchase Item By Supplier Report</value>
+  </data>
+  <data name="PurchaseItemSimpleReport" xml:space="preserve">
+    <value>Purchase Item Simple Report</value>
+  </data>
+  <data name="Currency" xml:space="preserve">
+    <value>Currency</value>
+  </data>
+  <data name="PurchaseReport" xml:space="preserve">
+    <value>Purchase Report</value>
+  </data>
 </root>

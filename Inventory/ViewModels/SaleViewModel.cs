@@ -48,6 +48,7 @@ namespace Inventory.ViewModels
             public string VoucherID { get; set; }
             public int CustomerID { get; set; }
             public int LocationID { get; set; }
+            public int CurrencyID { get; set; }
             public int Subtotal { get; set; }
             public int TaxAmt { get; set; }
             public int ChargesAmt { get; set; }

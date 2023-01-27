@@ -18,12 +18,16 @@
                     <tr>
                         <td class="padding-5"><label class="control-label mb-0">Location</label></td>
                         <td class="aligh-right padding-5"><label id="lblLocation" class="control-input mb-0"></label></td>
-                        <td class="padding-5"><label class="control-label mb-0">Pay Type</label></td>
-                        <td class="aligh-right padding-5"><label id="lblPayment" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">Currency</label></td>
+                        <td class="aligh-right padding-5"><label id="lblCurrency" class="control-input mb-0"></label></td>                      
                     </tr>
                     <tr>
+                        <td class="padding-5"><label class="control-label mb-0">Pay Type</label></td>
+                        <td class="aligh-right padding-5"><label id="lblPayment" class="control-input mb-0"></label></td>
                         <td id="tdPayMethod" class="padding-5"><label class="control-label mb-0">Pay Method</label></td>
                         <td id="tdPayMethodValue" class="aligh-right padding-5"><label id="lblPayMethod" class="control-input mb-0"></label></td>
+                    </tr>
+                    <tr>
                         <td id="tdBankPayment" class="padding-5"><label class="control-label mb-0">Bank Payment</label></td>
                         <td id="tdBankPaymentValue" class="aligh-right padding-5"><label id="lblBankPayment" class="control-input mb-0"></label></td>
                     </tr>
@@ -62,6 +66,7 @@
     function createMasterSaleDetail(response) {
         $('#lblUserVoucherNo').text(response.UserVoucherNo);
         $('#lblLocation').text(response.LocationName);
+        $('#lblCurrency').text(response.CurrencyKeyword);
 
         if (response.LimitedDay.length != 0) $('#lblPayment').text(response.Payment + " (Duration:" + response.LimitedDay + ")");
         else $('#lblPayment').text(response.Payment);

@@ -10,6 +10,9 @@
     <script src="~/assets/js/jquery-3.2.1.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            if ('@ViewBag.ErrorMessage'.length != 0) {
+                showToast(0, '@ViewBag.ErrorMessage');
+            }
             setReportTitle('@Resource.SaleAmountByCustomerReport');
             setDefaultFilter('@Model.FromDate.ToShortDateString()', '@Model.ToDate.ToShortDateString()', '');
             $("#divFilter").visible = false;
@@ -75,7 +78,7 @@
                 <span class="ml-10">@customer.CustomerName</span>
             </div>
         </div>
-        foreach(var sale in customer.lstSaleItem as List<RpSaleAmountByCustomerViewModel.SaleItemViewModel>)
+        foreach(var sale in customer.lstSaleItem.OrderBy(m=>m.SaleVoucherNO).ToList() as List<RpSaleAmountByCustomerViewModel.SaleItemViewModel>)
         {
             <div class="row rpt-item">
                 <div class="col-md-2 col-lg-2"><span class="ml-10">@sale.SaleDate.ToShortDateString()</span></div>
