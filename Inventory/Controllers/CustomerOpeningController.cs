@@ -26,6 +26,8 @@ namespace Inventory.Controllers
         {
             try
             {
+                getLocation();
+                getCurrency();
                 getCustomer();
                 Session["TranCustomerOpeningList"] = null;
                 if (customerOpeningId != null)
@@ -38,6 +40,8 @@ namespace Inventory.Controllers
                     DateTime date = setting.convertStringToDate(data.OpeningDateTime);
                     ViewBag.Date = setting.convertDateToString(date);
                     ViewBag.VoucherID = data.VoucherID;
+                    ViewBag.LocationID = data.LocationID;
+                    ViewBag.CurrencyID = data.CurrencyID;
                     ViewBag.CustomerOpeningID = customerOpeningId;
                 }
                 else ViewBag.UserVoucherNo = getUserVoucherNo(userId);                
@@ -107,7 +111,7 @@ namespace Inventory.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveAction(string userVoucherNo, string date, string voucherId, int userId)
+        public JsonResult SaveAction(string userVoucherNo, string date, string voucherId, int userId, int locationId, int currencyId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
 
@@ -133,6 +137,9 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
                     cmd.Parameters.AddWithValue("@VoucherID", voucherId);
                     cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@CurrencyID", currencyId);
+                    cmd.Parameters.AddWithValue("@AccountCode", AppConstants.CustomerOpeningAccountCode);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Connection = setting.conn;
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -358,6 +365,24 @@ namespace Inventory.Controllers
             }
         }
 
+        private void getLocation()
+        {
+            List<LocationModels.LocationModel> list = appData.selectLocation();
+            for (int i = 0; i < list.Count; i++)
+            {
+                customerOpeningViewModel.Locations.Add(new SelectListItem { Text = list[i].ShortName, Value = Convert.ToString(list[i].LocationID) });
+            }
+        }
+
+        private void getCurrency()
+        {
+            List<CurrencyModels> list = appData.selectCurrency();
+            for (int i = 0; i < list.Count; i++)
+            {
+                customerOpeningViewModel.Currencies.Add(new SelectListItem { Text = list[i].Keyword, Value = Convert.ToString(list[i].CurrencyID) });
+            }
+        }
+
         private List<CustomerOpeningViewModel.MasterCustomerOpeningViewModel> selectMasterCustomerOpening()
         {
             List<CustomerOpeningViewModel.MasterCustomerOpeningViewModel> tempList = new List<CustomerOpeningViewModel.MasterCustomerOpeningViewModel>();
@@ -400,6 +425,8 @@ namespace Inventory.Controllers
                 item.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
                 item.VoucherID = Convert.ToString(reader["VoucherID"]);
                 item.OpeningDateTime = Convert.ToString(reader["Date"]);
+                item.LocationID = Convert.ToInt32(reader["LocationID"]);
+                item.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
             }
             reader.Close();
             setting.conn.Close();

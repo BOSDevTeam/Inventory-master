@@ -8,7 +8,6 @@ using System.Data.SqlClient;
 using Inventory.Models;
 using Inventory.ViewModels;
 using Inventory.Common;
-using System.Runtime.InteropServices;
 using Inventory.Filters;
 
 
@@ -17,23 +16,41 @@ namespace Inventory.Controllers
     public class RpSaleItemSimpleController : MyController
     {
         DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
+        AppSetting setting = new AppSetting();
         RpSaleItemSimpleViewModel saleItemSimpleViewModel = new RpSaleItemSimpleViewModel();
+
+        [SessionTimeoutAttribute]
         public ActionResult SaleItemSimpleReportFilter()
         {
-            ViewBag.MenuData = getMenuData();
+            try
+            {
+                ViewBag.MenuData = getMenuData();
+            }
+            catch(Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+            }            
             return View();
         }
 
+        [SessionTimeoutAttribute]
         public ActionResult SaleItemSimpleReport(DateTime FromDate,DateTime ToDate)
         {
-            string getVal = Request.QueryString["SubMenuID"];
-            string concat = @"{""data"":" + getVal + "}";
-            ValList vl = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);
-            ValList subMenu = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);            
-            List<RpSaleItemSimpleViewModel.MainMenuViewModel> lstSaleItemSimpleRpt = GetSaleItemSimpleReport(FromDate,ToDate,subMenu.data);
-            saleItemSimpleViewModel.lstSaleRpt = lstSaleItemSimpleRpt;
-            saleItemSimpleViewModel.FromDate = FromDate;
-            saleItemSimpleViewModel.ToDate = ToDate;
+            try
+            {
+                string getVal = Request.QueryString["SubMenuID"];
+                string concat = @"{""data"":" + getVal + "}";
+                ValList vl = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);
+                ValList subMenu = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);
+                List<RpSaleItemSimpleViewModel.MainMenuViewModel> lstSaleItemSimpleRpt = GetSaleItemSimpleReport(FromDate, ToDate, subMenu.data);
+                saleItemSimpleViewModel.lstSaleRpt = lstSaleItemSimpleRpt;
+                saleItemSimpleViewModel.FromDate = FromDate;
+                saleItemSimpleViewModel.ToDate = ToDate;
+            }
+            catch(Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+            }           
             return View(saleItemSimpleViewModel);
         }
 
@@ -49,11 +66,13 @@ namespace Inventory.Controllers
             {
                 dt.Rows.Add(Convert.ToInt32(lstSubMenuID[i]));
             }
-            SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptSaleItemSimple, (SqlConnection)getConnection());
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptSaleItemSimple, setting.conn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@FromDate", FromDate);
             cmd.Parameters.AddWithValue("@ToDate", ToDate);
             cmd.Parameters.AddWithValue("@temptbl", dt);
+            cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -134,7 +153,7 @@ namespace Inventory.Controllers
                 }               
             }
             reader.Close();
-            dataConnectorSQL.Close();
+            setting.conn.Close();           
             int totalQuanity=0,totalAmount=0;
             foreach (var MainMenu in lstSaleItemSimpleRpt)
             {
@@ -153,8 +172,10 @@ namespace Inventory.Controllers
         {
             List<SubMenuModels.SubMenuModel> lst = new List<SubMenuModels.SubMenuModel>();
             SubMenuModels.SubMenuModel menu = new SubMenuModels.SubMenuModel();
-            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMenuData, (SqlConnection)getConnection());
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMenuData, setting.conn);
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -166,18 +187,18 @@ namespace Inventory.Controllers
                 lst.Add(menu);
             }
             reader.Close();
-            dataConnectorSQL.Close();
+            setting.conn.Close();
             return lst;
         }
-        private object getConnection()
-        {
-            object connection;
-            if (Session[AppConstants.SQLConnection] == null)
-                Session[AppConstants.SQLConnection] = dataConnectorSQL.Connect();
+        //private object getConnection()
+        //{
+        //    object connection;
+        //    if (Session[AppConstants.SQLConnection] == null)
+        //        Session[AppConstants.SQLConnection] = dataConnectorSQL.Connect();
 
-            connection = Session[AppConstants.SQLConnection];
-            return connection;
-        }
+        //    connection = Session[AppConstants.SQLConnection];
+        //    return connection;
+        //}
 
         public class ValList
         {

@@ -118,10 +118,36 @@
                     let customerId = $(this).text();
                     if (listActionValue == 1) {   // payment
                         clearTableAction();
-                        window.location.href = '@Url.Action("CustomerOutstandingPayment", "CustomerOutstanding")?userId=' + userId + '&customerId=' + customerId + '&customerName=' + customerName;
-                    } 
+                        paymentView(customerId);
+                    }
                 });
             });
+
+            function paymentView(customerId) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("PaymentAction", "CustomerOutstanding")',
+                    data: { "customerId": customerId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();                                             
+                        $('#modalPayment').modal('show');
+                        initializePaymentControl(customerId,customerName, response.TotalBalance);
+                        createCustomerOutstandingData(response.LstCustomerOutstandingPayment);
+                        $('.inputPayDate').val(getTodayDate());
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
 
             function createOutstandingData(response, isFromJson) {
                 $("#tblOutstandingList").find("tbody").empty();
@@ -129,10 +155,11 @@
                 $.each(response, function (index, item) {
                     var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
                             + '<td class="col-md-2 col-lg-2">' + item.CustomerName + '</td>'
-                            + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Opening) + '</td>'
+                            + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.OutstandingOpening) + '</td>'
+                            + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.AccountOpening) + '</td>'
                             + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Sale) + '</td>'
-                            + '<td class="col-md-3 col-lg-3 aligh-right">' + separatedComma(item.Balance) + '</td>'
-                            + '<td class="col-md-2 col-lg-2">'
+                            + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Balance) + '</td>'
+                            + '<td class="col-md-1 col-lg-1"></td>'
                             + '<td class="col-md-1 col-lg-1 btn-group">'
                                 + '<button title="Payment" class="btn btn-sm btn-primary" onclick="listTableAction(1)">@Resource.Payment</button>'
                             + '</td>'
@@ -202,10 +229,11 @@
                 <thead>
                     <tr class="row table-header">
                         <th class="col-md-2 col-lg-2">@Resource.Customer</th>
-                        <th class="col-md-2 col-lg-2 aligh-right">@Resource.Opening</th>
+                        <th class="col-md-2 col-lg-2 aligh-right">@Resource.OutstandingOpening</th>
+                        <th class="col-md-2 col-lg-2 aligh-right">@Resource.AccountOpening</th>
                         <th class="col-md-2 col-lg-2 aligh-right">@Resource.Sale</th>
-                        <th class="col-md-3 col-lg-3 aligh-right">@Resource.Balance</th>
-                        <th class="col-md-2 col-lg-2"></th>
+                        <th class="col-md-2 col-lg-2 aligh-right">@Resource.Balance</th>   
+                        <th class="col-md-1 col-lg-1"></th>                    
                         <th class="col-md-1 col-lg-1">@Resource.Action</th>
                     </tr>
                 </thead>
@@ -219,6 +247,12 @@
         <div id="divPagingItem" class="col-md-11 col-lg-11 paging-item"></div>
     </div>
 
+</div>
+
+<div>
+    @{
+        Html.RenderPartial("_CustomerOutstandingPayment");
+    }
 </div>
 
 

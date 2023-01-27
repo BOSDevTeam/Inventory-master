@@ -24,11 +24,14 @@
     <div class="col-md-3 col-lg-3">
         <input id="inputVoucherID" type="text" class="form-control control-input" placeholder="@Resource.VoucherID" />
     </div>
-    <div class="col-md-3 col-lg-3">
+    <div class="col-md-2 col-lg-2">
         @Html.DropDownList("Customer",Model.Customers, new { @id = "ddlCustomer", @class = "form-control control-input" })
     </div>
     <div class="col-md-2 col-lg-2">
         @Html.DropDownList("Location", Model.Locations, new { @id = "ddlLocation", @class = "form-control control-input" })
+    </div>
+    <div class="col-md-1 col-lg-1">
+        @Html.DropDownList("MCurrency", Model.Currencies, new { @id = "ddlMCurrency", @class = "form-control control-input" })
     </div>
 </div>
 
@@ -164,7 +167,7 @@
 
 <script type="text/javascript">
 
-    let tranSaleAction, defaultCustomerId, defaultLocationId, isEditTranSale = false;
+    let tranSaleAction, defaultCustomerId, defaultLocationId, defaultCurrencyId, isEditTranSale = false;
 
     document.getElementById('subMenuSale').className = 'active';
     $('body').addClass("hideVerticalScrollbar");
@@ -204,6 +207,7 @@
             $('#inputVoucherID').val('@ViewBag.VoucherID');
             $("#ddlCustomer").val('@ViewBag.CustomerID');
             $("#ddlLocation").val('@ViewBag.LocationID');
+            $("#ddlMCurrency").val('@ViewBag.CurrencyID');
             $('#lblSubtotal').text(separatedComma('@ViewBag.Subtotal'));
             $('#lblTax').text(separatedComma('@ViewBag.TaxAmt'));
             $('#lblCharges').text(separatedComma('@ViewBag.ChargesAmt'));
@@ -228,6 +232,7 @@
             $('#inputVoucherID').val('@ViewBag.VoucherID');
             $("#ddlCustomer").val('@ViewBag.CustomerID');
             $("#ddlLocation").val('@ViewBag.LocationID');
+            $("#ddlMCurrency").val('@ViewBag.CurrencyID');
             $('#lblSubtotal').text(separatedComma('@ViewBag.Subtotal'));
             $('#lblTax').text(separatedComma('@ViewBag.TaxAmt'));
             $('#lblCharges').text(separatedComma('@ViewBag.ChargesAmt'));
@@ -277,6 +282,7 @@
             showHideMainButton(false, false, false);
             defaultCustomerId = $('#ddlCustomer option:selected').val();
             defaultLocationId = $('#ddlLocation option:selected').val();
+            defaultCurrencyId = $('#ddlMCurrency option:selected').val();
         }
 
         function showHideUnit() {
@@ -444,6 +450,7 @@
             let voucherId = $('#inputVoucherID').val();
             let customerId = $('#ddlCustomer option:selected').val();
             let locationId = $('#ddlLocation option:selected').val();
+            let currencyId = $('#ddlMCurrency option:selected').val();
             let subtotal = $("#inputHdnSubtotal").val();
             let taxAmt = $("#inputHdnTax").val();
             let chargesAmt = $("#inputHdnCharges").val();
@@ -455,7 +462,7 @@
                 url: '@Url.Action("HoldAction", "Sale")',
                 data: JSON.stringify({
                     "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "customerId": customerId, "locationId": locationId,
-                    "remark": remark, "taxAmt": taxAmt, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total, "userId": userId
+                    "remark": remark, "taxAmt": taxAmt, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total, "userId": userId, "currencyId": currencyId
                 }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -472,6 +479,7 @@
                         $('#inputVoucherID').val("");
                         $("#ddlCustomer").val(defaultCustomerId);
                         $("#ddlLocation").val(defaultLocationId);
+                        $("#ddlMCurrency").val(defaultCurrencyId);
                         clearProductControl();
                         $("#tblTranSale").find("tbody").empty();
                         clearAmount();
@@ -578,6 +586,7 @@
             let voucherId = $('#inputVoucherID').val();
             let customerId = $('#ddlCustomer option:selected').val();
             let locationId = $('#ddlLocation option:selected').val();
+            let currencyId = $('#ddlMCurrency option:selected').val();
             let subtotal = $("#inputHdnSubtotal").val();
             let taxAmt = $("#inputHdnTax").val();
             let chargesAmt = $("#inputHdnCharges").val();
@@ -588,7 +597,7 @@
                 url: '@Url.Action("PaymentEditAction", "Sale")',
                 data: {
                     "saleId": saleId, "date": date, "voucherId": voucherId, "customerId": customerId, "locationId": locationId,
-                    "taxAmt": taxAmt, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total
+                    "taxAmt": taxAmt, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total, "currencyId": currencyId
                 },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -801,6 +810,7 @@
             let voucherId = $('#inputVoucherID').val();
             let customerId = $('#ddlCustomer option:selected').val();
             let locationId = $('#ddlLocation option:selected').val();
+            let currencyId = $('#ddlMCurrency option:selected').val();
             let paymentId = $('#ddlPayment option:selected').val();
             let payMethodId = $('#ddlPayMethod option:selected').val();
             let limitedDayId = $('#ddlLimitedDay option:selected').val();
@@ -836,7 +846,7 @@
                     "paymentId": paymentId, "payMethodId": payMethodId, "limitedDayId": limitedDayId, "bankPaymentId": bankPaymentId, "remark": remark, "advancedPay": advancedPay,
                     "payPercent": payPercent, "payPercentAmt": payPercentAmt, "vouDisPercent": vouDisPercent, "vouDisAmount": vouDisAmount, "voucherDiscount": voucherDiscount,
                     "tax": tax, "taxAmt": taxAmt, "charges": charges, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total, "grandtotal": grandtotal, "userId": userId,
-                    "openBillId": openBillId, "clSaleOrderId": clSaleOrderId, "isVoucherFOC": isVoucherFOC
+                    "openBillId": openBillId, "clSaleOrderId": clSaleOrderId, "isVoucherFOC": isVoucherFOC, "currencyId": currencyId
                 }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",

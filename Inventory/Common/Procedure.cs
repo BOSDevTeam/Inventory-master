@@ -119,5 +119,9 @@ namespace Inventory.Common
         public const string PrcGetTranCustomerOutstanding = "PrcGetTranCustomerOutstanding";
         public const string PrcGetRptSaleItemByCustomer = "PrcGetRptSaleItemByCustomer";
         public const string PrcGetRptSaleAmountByCustomer = "PrcGetRptSaleAmountByCustomer";
+        public const string PrcGetRptBankPayment = "PrcGetRptBankPayment";
+        public const string PrcGetRptTopSaleItem = "PrcGetRptTopSaleItem";
+        public const string PrcGetRptBottomSale = "PrcGetRptBottomSale";
+        public const string PrcInsertCustomerOutstandingPayment = "PrcInsertCustomerOutstandingPayment";
     }
 }

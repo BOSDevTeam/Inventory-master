@@ -14,8 +14,10 @@ namespace Inventory.Controllers
 {
     public class RpSaleItemController : MyController
     {
-        DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
+        //DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
+        AppSetting setting = new AppSetting();
         RpSaleItemViewModel saleItemViewModel = new RpSaleItemViewModel();
+
         [SessionTimeoutAttribute]
         public ActionResult SaleItemReportFilter()
         {
@@ -25,13 +27,20 @@ namespace Inventory.Controllers
         [SessionTimeoutAttribute]
         public ActionResult SaleItemReport(DateTime fromDate,DateTime toDate, bool isAll, bool isCash,bool isCredit)
         {
-            List<RpSaleItemViewModel.MasterSaleViewModel> lstSaleItemRpt = GetSaleItemReport(fromDate, toDate, isAll, isCash, isCredit);
-            saleItemViewModel.lstMasterSaleRpt = lstSaleItemRpt;
-            saleItemViewModel.FromDate = fromDate;
-            saleItemViewModel.ToDate = toDate;
-            saleItemViewModel.IsAll = isAll;
-            saleItemViewModel.IsCash = isCash;
-            saleItemViewModel.IsCredit = isCredit;       
+            try
+            {
+                List<RpSaleItemViewModel.MasterSaleViewModel> lstSaleItemRpt = GetSaleItemReport(fromDate, toDate, isAll, isCash, isCredit);
+                saleItemViewModel.lstMasterSaleRpt = lstSaleItemRpt;
+                saleItemViewModel.FromDate = fromDate;
+                saleItemViewModel.ToDate = toDate;
+                saleItemViewModel.IsAll = isAll;
+                saleItemViewModel.IsCash = isCash;
+                saleItemViewModel.IsCredit = isCredit;
+            }
+            catch(Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+            }                   
             return View(saleItemViewModel);
         }
         public List<RpSaleItemViewModel.MasterSaleViewModel>GetSaleItemReport(DateTime fromDate,DateTime toDate,bool isAll,bool isCash,bool isCredit)
@@ -41,13 +50,15 @@ namespace Inventory.Controllers
             List<RpSaleItemViewModel.MasterSaleViewModel> lstSaleItemRpt = new List<RpSaleItemViewModel.MasterSaleViewModel>();          
             RpSaleItemViewModel.MasterSaleViewModel item = new RpSaleItemViewModel.MasterSaleViewModel();
             List<RpSaleItemViewModel.SaleItemViewModel> lst = new List<RpSaleItemViewModel.SaleItemViewModel>();
-            SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptSaleItemList, (SqlConnection)getConnection());
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptSaleItemList, setting.conn);
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@fromDate", fromDate);
             cmd.Parameters.AddWithValue("@toDate", toDate);
             cmd.Parameters.AddWithValue("@isAll", isAll);
             cmd.Parameters.AddWithValue("@isCash", isCash);
             cmd.Parameters.AddWithValue("@isCredit", isCredit);
+            cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {               
@@ -97,22 +108,23 @@ namespace Inventory.Controllers
                 }              
             }
             reader.Close();
+            setting.conn.Close();
             return lstSaleItemRpt;
         }
 
-        private object getConnection()
-        {
-            object connection;
-            if (Session[AppConstants.SQLConnection] == null)
-                Session[AppConstants.SQLConnection] = dataConnectorSQL.Connect();
+        //private object getConnection()
+        //{
+        //    object connection;
+        //    if (Session[AppConstants.SQLConnection] == null)
+        //        Session[AppConstants.SQLConnection] = dataConnectorSQL.Connect();
 
-            connection = Session[AppConstants.SQLConnection];
-            return connection;
-        }
-        private bool checkConnection()
-        {
-            if (Session[AppConstants.SQLConnection] != null) return true;
-            else return false;
-        }
+        //    connection = Session[AppConstants.SQLConnection];
+        //    return connection;
+        //}
+        //private bool checkConnection()
+        //{
+        //    if (Session[AppConstants.SQLConnection] != null) return true;
+        //    else return false;
+        //}
     }
 }

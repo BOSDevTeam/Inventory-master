@@ -1,0 +1,312 @@
+﻿@using Inventory.ViewModels
+@model CustomerOutstandingViewModel
+
+<div class="modal fade" id="modalPayment" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:1100px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">@Resource.CustomerOutstandingPayment</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="divAlertError" class="alert alert-danger alert-dismissible fade show" style="display:none;">
+                    <h4 class="alert-heading">Alert!</h4><span id="spnAlertMessage"></span>
+                </div>
+                <div style="border:1px solid #f3f3f3;background-color:#fff;padding:10px;">  
+                                  
+                    <div class="row setup-title-layout search-div">
+                        <div class="col-md-2 col-lg-2 padding-10 text-center">
+                            <input id="inputHidCustomerID" type="hidden" />
+                            <label id="lblCustomer" class="control-label note mb-0 display-block">Customer Name</label>
+                        </div>
+                        <div class="col-md-2 col-lg-2">
+                            <input id="inputDate" type="date" class="form-control control-input" />
+                        </div>
+                        <div class="col-md-8 col-lg-8  padding-10" style="text-align:right;">
+                            @Html.RadioButtonFor(model => Model.PayType, 1, new { @class = "PayType", @checked = "checked" })&nbsp;@Html.Label(Resource.PayEachVoucher)
+                            &nbsp;&nbsp;
+                            @Html.RadioButtonFor(model => Model.PayType, 2, new { @class = "PayType" })&nbsp;@Html.Label(Resource.PayByAll)
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <table id="tblTranOutstandingList" class="col-md-12 col-lg-12" role="grid">
+                            <thead>
+                                <tr class="row table-header">
+                                    <th class="col-md-2 col-lg-2">@Resource.Date</th>
+                                    <th class="col-md-2 col-lg-2">@Resource.VoucherNo</th>
+                                    <th class="col-md-2 col-lg-2 aligh-right">@Resource.Opening</th>
+                                    <th class="col-md-2 col-lg-2 aligh-right">@Resource.Sale</th>
+                                    <th class="col-md-2 col-lg-2 text-center">@Resource.PayDate</th>
+                                    <th class="col-md-2 col-lg-2 text-center">@Resource.Payment</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                        <div class="col-md-12 col-lg-12 search-div">
+                            <div class="row">
+                                <div class="col-md-4 col-lg-4"></div>
+                                <div class="col-md-4 col-lg-4 aligh-right">
+                                    <div class="align-justify-center">
+                                        <h5 class="mb-0">@Resource.Balance@Resource.ColonSign</h5>&nbsp;&nbsp;
+                                        <h4 id="hTotalBalance" class="mb-0 first-text-color"></h4>
+                                        <input id="inputHidTotalBalance" type="hidden" />
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-lg-2 text-center padding-10">
+                                    <input id="inputAllPayDate" type="date" class="border-gray control-input padding-5" style="height:50px;" />
+                                </div>
+                                <div class="col-md-2 col-lg-2 text-center padding-10">
+                                    <input id="inputAllPayment" type="text" class="border-gray control-input mb-0 numberonly text-center" style="height:50px;" placeholder="0" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>                 
+                </div>
+            </div>
+            <div class="modal-footer">
+                    <button id="btnClose" class="btn btn-white-outline-third">@Resource.Close</button>
+                    <button id="btnSave" class="btn btn-first plr-30" data-dismiss="modal" aria-label="Close">@Resource.Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    let num = 0, allPayment = 0;
+
+    function initializePaymentControl(customerId, customerName, totalBalance) {     
+        $('#inputHidCustomerID').val(customerId);
+        $('#lblCustomer').text(customerName);
+        $('#inputDate').val(getTodayDate());
+        $('#inputAllPayDate').val(getTodayDate());
+        changeControlByPayType(1);
+        $('#hTotalBalance').text(separatedComma(totalBalance));
+        $('#inputHidTotalBalance').val(totalBalance);
+    }
+
+    function changeControlByPayType(payType) {
+        if (payType == 1) {
+            $('#inputAllPayDate').attr("disabled", true);
+            $('#inputAllPayment').attr("disabled", true);
+            $('.inputPayDate').attr("disabled", false);
+            $('.inputPayment').attr("disabled", false);
+            $('#inputAllPayDate').val(getTodayDate());
+            $('#inputAllPayment').val("");
+        } else if (payType == 2) {
+            $('#inputAllPayDate').attr("disabled", false);
+            $('#inputAllPayment').attr("disabled", false);
+            $('.inputPayDate').attr("disabled", true);
+            $('.inputPayment').attr("disabled", true);
+            $('.inputPayDate').val(getTodayDate());
+            $('.inputPayment').val("");
+            $('#tblTranOutstandingList tr').removeClass("selected");
+            allPayment = 0;
+        }
+    }
+
+    function createCustomerOutstandingData(response) {
+        $("#tblTranOutstandingList").find("tbody").empty();
+        $.each(response, function (i, item) {
+            num += 1;
+            let row = '<tr id=' + num + ' class="row table-item">'
+                    + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + item.Date + '</label></td>'
+                    + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + item.UserVoucherNo + '</label></td>'
+            if (item.Opening == 0) {
+                row += '<td class="col-md-2 col-lg-2 aligh-right"><label class="control-label mb-0">-</label></td>'
+            }
+            else {
+                row += '<td class="col-md-2 col-lg-2 aligh-right"><label class="control-label mb-0">' + separatedComma(item.Opening) + '</label></td>'
+            }
+            if (item.Sale == 0) {
+                row += '<td class="col-md-2 col-lg-2 aligh-right"><label class="control-label mb-0">-</label></td>'
+            } else {
+                row += '<td class="col-md-2 col-lg-2 aligh-right"><label class="control-label mb-0">' + separatedComma(item.Sale) + '</label></td>'
+            }
+            row += '<td class="col-md-2 col-lg-2 text-center"><input type="date" class="inputPayDate border-gray control-input" /></td>'
+                    + '<td class="col-md-2 col-lg-2 text-center"><input type="text" class="inputPayment border-gray control-input mb-0 numberonly text-center" placeholder="0" /></td>'
+                    + '<td style="display:none;">' + item.UserVoucherNo + '</td>'
+                    + '</tr>';
+            $('#tblTranOutstandingList tbody').append(row);
+        })
+    }
+
+    $(document).ready(function () {
+
+        $("#tblTranOutstandingList").on("click", "tbody tr", function (event) {
+            let payType = $('.PayType').filter(':checked').val();
+            if (payType == 2) return;
+            $('#tblTranOutstandingList tr').removeClass("selected");
+            $(this).addClass("selected");
+            $(this).find("td:last").each(function () {
+                userVoucherNo = $(this).text();
+            })
+        });
+
+        $("#tblTranOutstandingList").on("keydown", "tbody tr .inputPayment", function (event) {
+            if (event.which === 13) {
+                if (userVoucherNo == "") return;
+                let payment = $(this).val();
+                if (payment == "" || payment == 0) return;
+                let trId = $(this).closest('tr').attr('id'); // table row ID
+                let nextTrId = parseInt(trId) + 1;
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("AddPaymentAction", "CustomerOutstanding")',
+                    data: { "userVoucherNo": userVoucherNo, "payment": payment },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess) {
+                            if (response.ResultDefaultData.UnSuccessfulReason!= '@Inventory.Common.AppConstants.RequestUnSuccessful.SessionExpired')
+                                  showAlertInDialog(0, '@Inventory.Common.AppConstants.Message.InvalidPayment');
+                            else responseUnSuccessful(response);
+                        }
+                        else {
+                            $('#tblTranOutstandingList tr').removeClass("selected");
+                            $('#tblTranOutstandingList #' + nextTrId + '').addClass("selected");
+                            $('#tblTranOutstandingList #' + nextTrId + ' .inputPayment').focus();
+                            userVoucherNo = $('#tblTranOutstandingList #' + nextTrId + ' td:last').text();
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $("#tblTranOutstandingList").on("change", "tbody tr .inputPayDate", function (event) {
+            if (userVoucherNo == "") return;
+            let payDate = $(this).val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("ChangedPayDateAction", "CustomerOutstanding")',
+                data: { "userVoucherNo": userVoucherNo, "payDate": payDate },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $('.PayType').change(function () {
+            let payType = $(this).filter(':checked').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("PayTypeChangeAction", "CustomerOutstanding")',
+                data: { "payType": payType },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    changeControlByPayType(payType);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnReset").click(function (e) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("ResetAction", "CustomerOutstanding")',
+                data: {},
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    location.reload();
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $('#inputAllPayment').keydown(function (event) {
+            if (event.which === 13) {
+                let payment = $(this).val();
+                if (payment == "" || payment == 0) return;
+                let totalBalance = $('#inputHidTotalBalance').val();
+                if (parseInt(payment) > parseInt(totalBalance)) {
+                    showAlertInDialog(0, '@Inventory.Common.AppConstants.Message.InvalidPayment');
+                } else {
+                    allPayment = payment;
+                }
+            }
+        });
+
+        $("#btnSave").click(function (e) {
+            let payType = $('.PayType').filter(':checked').val();
+            let allPayDate = "";
+            if (payType == 2) {
+                if (allPayment == "" || allPayment == 0) return;
+                else allPayDate = $('#inputAllPayDate').val();
+            }
+            let customerId = $('#inputHidCustomerID').val();         
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SaveAction", "CustomerOutstanding")',
+                data: { "payType": payType, "allPayment": allPayment, "allPayDate": allPayDate, "customerId": customerId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        showAlertInDialog(0, response.Message);
+                    else {
+                        showToast(1, response.ResultDefaultData.Message);
+                        $('#modalPayment').modal('hide');
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+    });
+
+</script>

@@ -19,7 +19,8 @@ namespace Inventory.ViewModels
         {
             public int CustomerID { get; set; }
             public string CustomerName { get; set; }
-            public int Opening { get; set; }
+            public int AccountOpening { get; set; }
+            public int OutstandingOpening { get; set; }
             public int Sale { get; set; }
             public int Balance { get; set; }
         }
@@ -30,7 +31,7 @@ namespace Inventory.ViewModels
             public string UserVoucherNo { get; set; }
             public int Opening { get; set; }
             public int Sale { get; set; }
-            public string PayDate { get; set; }
+            public DateTime PayDate { get; set; }
             public int Payment { get; set; }
             public bool IsOpening { get; set; }
         }

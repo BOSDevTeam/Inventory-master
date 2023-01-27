@@ -11,6 +11,9 @@
     <script type="text/javascript">
 
     $(document).ready(function () {
+        if ('@ViewBag.ErrorMessage'.length != 0) {
+            showToast(0, '@ViewBag.ErrorMessage');
+        }
         setReportTitle('@Resource.SaleItemSimpleReport');
         setDefaultFilter('@Model.FromDate.ToShortDateString()', '@Model.ToDate.ToShortDateString()', '');
         $("#divFilter").visible = false;
@@ -18,7 +21,7 @@
 
     function separatedComma(value) {
         let iVal = parseInt(value);
-        let result = iVal.toLocaleString('en-US');      
+        let result = iVal.toLocaleString('en-US');
         document.write(result);
     }
     </script>  
@@ -38,7 +41,7 @@
             <span>@Resource.SalePrice</span>
         </div>
         <div class="col-md-2 col-lg-2 aligh-right">
-            <span>Discount</span>
+            <span>@Resource.Dis</span>
         </div>
         <div class="col-md-2 col-lg-2 aligh-right plr-30">
             <span class="mr-10">@Resource.Amount</span>
@@ -60,7 +63,7 @@
                    <span class="ml-10">@SubMenuData.SubMenuName</span> 
                 </div>
             </div>
-            foreach (var Item in SubMenuData.lstSaleItem as List<RpSaleItemSimpleViewModel.SaleItemViewModel>)
+            foreach (var Item in SubMenuData.lstSaleItem.OrderBy(m=>m.Code).ThenBy(m=>m.ProductName).ThenBy(m=>m.UnitID).ToList() as List<RpSaleItemSimpleViewModel.SaleItemViewModel>)
             {
                 <div class="row rpt-item">
                     <div class="col-md-2 col-lg-2"><span class="ml-10">@Item.Code</span></div>
@@ -68,14 +71,7 @@
                     <div class="col-md-2 col-lg-2 aligh-right"><span>@Item.Quantity</span></div>
                     <div class="col-md-2 col-lg-2 aligh-right"><span><script>separatedComma(@Item.SalePrice)</script></span></div>
                     <div class="col-md-2 col-lg-2 aligh-right">
-                        @if (Item.Discount > 0)
-                        {
-                            <span><script>separatedComma(@Item.Discount)</script></span>
-                        }
-                        else
-                        {
-                            <span>-</span>
-                        }
+                        <span><script>separatedComma(@Item.Discount)</script></span>
                     </div>
                     <div class="col-md-2 col-lg-2 aligh-right plr-30"><span class="mr-10"> <script>separatedComma(@Item.Amount)</script></span></div>
                 </div>

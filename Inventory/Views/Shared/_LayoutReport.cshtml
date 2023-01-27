@@ -88,6 +88,12 @@
                                 <li id="subMenuTopSaleItemRp"><a href="#">@Resource.TopSaleItemReport</a></li>
                                 <li id="subMenuBottomSaleItemRp"><a href="#">@Resource.BottomSaleItemReport</a></li>
                             </ul>
+                            <a href=""><i class="fa fa-flag"></i> <span> @Resource.PurchaseReport </span> <span class="menu-arrow"></span></a>
+                            <ul id="subMenuPurchaseRpGp">                           
+                                <li id="subMenuPurchaseItemSimpleRp"><a href="#">@Resource.PurchaseItemSimpleReport</a></li>                             
+                                <li id="subMenuPurchaseAuditRp"><a href="#">@Resource.PurchaseAuditReport</a></li>                               
+                                <li id="subMenuPurchaseItemBySupplierRp"><a href="#">@Resource.PurchaseItemBySupplierReport</a></li>                             
+                            </ul>
                         </li>                                                                    
                     </ul>
                 </div>
@@ -149,6 +155,15 @@
             });
             $('#subMenuBottomSaleItemRp').click(function () {
                 window.location.href = '@Url.Action("BottomSaleItemReportFilter", "RpBottomSaleItem")';
+            });
+            $('#subMenuPurchaseItemSimpleRp').click(function () {
+                window.location.href = '@Url.Action("PurchaseItemSimpleReportFilter", "RpPurchaseItemSimple")';
+            });
+            $('#subMenuPurchaseAuditRp').click(function () {
+                window.location.href = '@Url.Action("PurchaseAuditReportFilter", "RpPurchaseAudit")';
+            });
+            $('#subMenuPurchaseItemBySupplierRp').click(function () {
+                window.location.href = '@Url.Action("PurchaseItemBySupplierReportFilter", "RpPurchaseItemBySupplier")';
             });
             $('.toast').toast({
                 delay: 3000
