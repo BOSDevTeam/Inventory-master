@@ -16,13 +16,19 @@ namespace Inventory.ViewModels
             this.ToDate = new DateTime();
         }
 
-        public List<BankPayment> lstBankPayment { get; set; }
-
         public List<MasterSaleModels> lstMasterSaleRpt { get; set; }
+        public List<BankPayment> lstBankPayment { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public string PayMethodName { get; set; }
         public string PayMethodName2 { get; set; }
+
+        public class BankPayment
+        {
+            public int BankPaymentID { get; set; }
+            public string BankPaymentName { get; set; }
+
+        }
 
         public class MasterSaleModels
         {
@@ -51,10 +57,6 @@ namespace Inventory.ViewModels
 
         }
 
-        public class BankPayment
-        {
-            public int BankPaymentID { get; set; }
-            public string BankPaymentName { get; set; }
-        }
+
     }
 }

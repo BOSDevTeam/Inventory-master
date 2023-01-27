@@ -30,10 +30,10 @@
     <div class="row table-header">
         <div class="col-md-2 col-lg-2">@Resource.Code</div>
         <div class="col-md-2 col-lg-2">@Resource.ProductName</div>
-        <div class="col-md-2 col-lg-2">@Resource.Qty</div>
-        <div class="col-md-2 col-lg-2">@Resource.Price</div>
-        <div class="col-md-2 col-lg-2">@Resource.Dis</div>
-        <div class="col-md-2 col-lg-2">@Resource.Amount</div>
+        <div class="col-md-2 col-lg-2 aligh-right">@Resource.Qty</div>
+        <div class="col-md-2 col-lg-2 aligh-right">@Resource.Price</div>
+        <div class="col-md-2 col-lg-2 aligh-right">@Resource.Dis</div>
+        <div class="col-md-2 col-lg-2 aligh-right">@Resource.Amount</div>
     </div>
 
     @{
@@ -42,15 +42,16 @@
         {
             if (productId != 0)
             {
-                if (productId != item.ProductID)
+                var count = Model.lstTranSaleRpt.Where(m => m.ProductID == productId).ToList();
+                if (productId != item.ProductID && count.Count > 1)
                 {
                     <div class="row rpt-sub-total">
                         <div class="col-md-2 col-lg-2"></div>
                         <div class="col-md-2 col-lg-2">@Resource.Total</div>
-                        <div class="col-md-2 col-lg-2">@Model.lstTranSaleRpt.Where(m => m.ProductID == productId).Sum(m => m.Quantity)</div>
+                        <div class="col-md-2 col-lg-2 aligh-right"><script>separatedComma(@Model.lstTranSaleRpt.Where(m => m.ProductID == productId).Sum(m => m.Quantity))</script> </div>
                         <div class="col-md-2 col-lg-2"></div>
                         <div class="col-md-2 col-lg-2"></div>
-                        <div class="col-md-2 col-lg-2">@Model.lstTranSaleRpt.Where(m => m.ProductID == productId).Sum(m => m.Amount)</div>
+                        <div class="col-md-2 col-lg-2 aligh-right"><script>separatedComma(@Model.lstTranSaleRpt.Where(m => m.ProductID == productId).Sum(m => m.Amount))</script></div>
                     </div>
                 }
             }
@@ -58,15 +59,14 @@
             <div class="row rpt-item">
                 <div class="col-md-2 col-lg-2">@item.ProductCode</div>
                 <div class="col-md-2 col-lg-2">@item.ProductName</div>
-                <div class="col-md-2 col-lg-2 aligh-right">@item.Quantity</div>
-                <div class="col-md-2 col-lg-2 aligh-right">@item.SalePrice</div>
-                <div class="col-md-2 col-lg-2 aligh-right">@item.Discount</div>
-                <div class="col-md-2 col-lg-2 aligh-right">@item.Amount</div>
+                <div class="col-md-2 col-lg-2 aligh-right"><script>separatedComma(@item.Quantity)</script></div>
+                <div class="col-md-2 col-lg-2 aligh-right"><script>separatedComma(@item.SalePrice)</script></div>
+                <div class="col-md-2 col-lg-2 aligh-right"><script>separatedComma(@item.Discount)</script></div>
+                <div class="col-md-2 col-lg-2 aligh-right"><script>separatedComma(@item.Amount)</script></div>
             </div>
 
             productId = item.ProductID;
         }
-
 
         var listCount = Model.lstTranSaleRpt.Count();
         if (listCount !=0)
@@ -79,10 +79,10 @@
                 <div class="row rpt-sub-total">
                     <div class="col-md-2 col-lg-2"></div>
                     <div class="col-md-2 col-lg-2">@Resource.Total</div>
-                    <div class="col-md-2 col-lg-2">@Model.lstTranSaleRpt.Where(m => m.ProductID == lastProductID).Sum(m => m.Quantity)</div>
+                    <div class="col-md-2 col-lg-2 aligh-right"><script>separatedComma(@Model.lstTranSaleRpt.Where(m => m.ProductID == lastProductID).Sum(m => m.Quantity))</script></div>
                     <div class="col-md-2 col-lg-2"></div>
                     <div class="col-md-2 col-lg-2"></div>
-                    <div class="col-md-2 col-lg-2">@Model.lstTranSaleRpt.Where(m => m.ProductID == lastProductID).Sum(m => m.Amount)</div>
+                    <div class="col-md-2 col-lg-2 aligh-right"><script>separatedComma(@Model.lstTranSaleRpt.Where(m => m.ProductID == lastProductID).Sum(m => m.Amount))</script></div>
                 </div>
             }
         }

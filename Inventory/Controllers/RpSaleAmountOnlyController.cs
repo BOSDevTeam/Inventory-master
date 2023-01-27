@@ -24,7 +24,7 @@ namespace Inventory.Controllers
         {
             saleAmountViewModel = new RpSaleAmountOnlyViewModel();
             List<RpSaleAmountOnlyViewModel.MasterSaleModels> lstSaleReport = GetSaleReport(fromDate, toDate);
-            List<RpSaleAmountOnlyViewModel.BankPayment> lstBankPayment = GetBankPayment();
+            List<RpSaleAmountOnlyViewModel.BankPayment> lstBankPayment = GetBankPayment(fromDate, toDate);
             saleAmountViewModel.FromDate = fromDate;
             saleAmountViewModel.ToDate = toDate;
             saleAmountViewModel.lstMasterSaleRpt = lstSaleReport;
@@ -32,12 +32,14 @@ namespace Inventory.Controllers
             return View(saleAmountViewModel);
         }
 
-        private List<RpSaleAmountOnlyViewModel.BankPayment> GetBankPayment()
+        private List<RpSaleAmountOnlyViewModel.BankPayment> GetBankPayment(DateTime fromDate, DateTime toDate)
         {
             List<RpSaleAmountOnlyViewModel.BankPayment> list = new List<RpSaleAmountOnlyViewModel.BankPayment>();
             RpSaleAmountOnlyViewModel.BankPayment item = new RpSaleAmountOnlyViewModel.BankPayment();
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptBankPayment, (SqlConnection) getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@fromDate", fromDate);
+            cmd.Parameters.AddWithValue("@toDate", toDate);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -55,7 +57,7 @@ namespace Inventory.Controllers
         {
             List<RpSaleAmountOnlyViewModel.MasterSaleModels> list = new List<RpSaleAmountOnlyViewModel.MasterSaleModels>();
             RpSaleAmountOnlyViewModel.MasterSaleModels item = new RpSaleAmountOnlyViewModel.MasterSaleModels();
-            SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptSaleAmount, (SqlConnection)getConnection());
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptSaleAmountOnly, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@fromDate", fromDate);
             cmd.Parameters.AddWithValue("@toDate", toDate);
