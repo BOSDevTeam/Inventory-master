@@ -154,17 +154,19 @@ namespace Inventory.Controllers
             }
             reader.Close();
             setting.conn.Close();           
-            int totalQuanity=0,totalAmount=0;
+            int totalQuanity=0,totalAmount=0,totalDis=0;
             foreach (var MainMenu in lstSaleItemSimpleRpt)
             {
                 foreach(var SubMenu in MainMenu.lstSubMenu)
                 {
                     totalQuanity+=SubMenu.lstSaleItem.Sum(m => m.Quantity);
                     totalAmount += SubMenu.lstSaleItem.Sum(m => m.Amount);
+                    totalDis += SubMenu.lstSaleItem.Sum(m => m.Discount);
                 }
             }
             saleItemSimpleViewModel.TotalQuantity = totalQuanity;
             saleItemSimpleViewModel.TotalAmount = totalAmount;
+            saleItemSimpleViewModel.TotalDis = totalDis;
             return lstSaleItemSimpleRpt;
         }
 

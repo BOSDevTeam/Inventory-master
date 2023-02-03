@@ -621,4 +621,19 @@
   <data name="PurchaseReport" xml:space="preserve">
     <value>Purchase Report</value>
   </data>
+  <data name="OpeningPayment" xml:space="preserve">
+    <value>Opening Payment</value>
+  </data>
+  <data name="SalePayment" xml:space="preserve">
+    <value>Sale Payment</value>
+  </data>
+  <data name="ViewDetail" xml:space="preserve">
+    <value>View Detail</value>
+  </data>
+  <data name="CustomerOutstandingPaymentDetail" xml:space="preserve">
+    <value>Customer Outstanding Payment Detail</value>
+  </data>
+  <data name="PurchaseAmountBySupplierReport" xml:space="preserve">
+    <value>Purchase Amount By Supplier Report</value>
+  </data>
 </root>

@@ -18,6 +18,7 @@ namespace Inventory.ViewModels
         public List<CustomerViewModel> lstRptSaleItemByCustomer { get; set; }
         public int TotalQuantity { get; set; }
         public int TotalAmount { get; set; }
+        public int TotalDis { get; set; }
         public class CustomerViewModel
         {
             public int CustomerID { get; set; }

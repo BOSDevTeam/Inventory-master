@@ -2,7 +2,7 @@
 @model CustomerOutstandingViewModel
 
 <div class="modal fade" id="modalPayment" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:1100px;">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:1200px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="adminModalLongTitle">@Resource.CustomerOutstandingPayment</h5>
@@ -17,17 +17,17 @@
                 <div style="border:1px solid #f3f3f3;background-color:#fff;padding:10px;">  
                                   
                     <div class="row setup-title-layout search-div">
-                        <div class="col-md-2 col-lg-2 padding-10 text-center">
-                            <input id="inputHidCustomerID" type="hidden" />
-                            <label id="lblCustomer" class="control-label note mb-0 display-block">Customer Name</label>
-                        </div>
                         <div class="col-md-2 col-lg-2">
                             <input id="inputDate" type="date" class="form-control control-input" />
                         </div>
+                        <div class="col-md-2 col-lg-2 padding-10 text-center">
+                            <input id="inputHidCustomerID" type="hidden" />
+                            <label id="lblCustomer" class="control-label note mb-0 display-block">Customer Name</label>
+                        </div>                      
                         <div class="col-md-8 col-lg-8  padding-10" style="text-align:right;">
-                            @Html.RadioButtonFor(model => Model.PayType, 1, new { @class = "PayType", @checked = "checked" })&nbsp;@Html.Label(Resource.PayEachVoucher)
+                            @Html.RadioButtonFor(model => Model.PayType, 1, new { @id = "rdoPayEach", @class = "PayType", @checked = "checked" })&nbsp;@Html.Label(Resource.PayEachVoucher)
                             &nbsp;&nbsp;
-                            @Html.RadioButtonFor(model => Model.PayType, 2, new { @class = "PayType" })&nbsp;@Html.Label(Resource.PayByAll)
+                            @Html.RadioButtonFor(model => Model.PayType, 2, new { @id = "rdoPayAll", @class = "PayType" })&nbsp;@Html.Label(Resource.PayByAll)
                         </div>
                     </div>
 
@@ -68,7 +68,7 @@
             </div>
             <div class="modal-footer">
                     <button id="btnClose" class="btn btn-white-outline-third">@Resource.Close</button>
-                    <button id="btnSave" class="btn btn-first plr-30" data-dismiss="modal" aria-label="Close">@Resource.Save</button>
+                    <button id="btnSave" class="btn btn-first plr-30">@Resource.Save</button>
             </div>
         </div>
     </div>
@@ -76,16 +76,21 @@
 
 <script type="text/javascript">
 
-    let num = 0, allPayment = 0;
+    let num = 0, allPayment = 0, userVoucherNo = "";
 
-    function initializePaymentControl(customerId, customerName, totalBalance) {     
+    function initializeHeaderControl(customerId, customerName) {
         $('#inputHidCustomerID').val(customerId);
         $('#lblCustomer').text(customerName);
         $('#inputDate').val(getTodayDate());
-        $('#inputAllPayDate').val(getTodayDate());
+    }
+
+    function initializePaymentControl(totalBalance) {
+        const rdoPayEach = document.getElementById('rdoPayEach');
+        rdoPayEach.checked = true;
         changeControlByPayType(1);
         $('#hTotalBalance').text(separatedComma(totalBalance));
         $('#inputHidTotalBalance').val(totalBalance);
+        $('#inputAllPayDate').val(getTodayDate());
     }
 
     function changeControlByPayType(payType) {
@@ -164,7 +169,7 @@
                         hideLoadingIcon();
                         if (!response.ResultDefaultData.IsRequestSuccess) {
                             if (response.ResultDefaultData.UnSuccessfulReason!= '@Inventory.Common.AppConstants.RequestUnSuccessful.SessionExpired')
-                                  showAlertInDialog(0, '@Inventory.Common.AppConstants.Message.InvalidPayment');
+                                  showAlertInDialog(0, response.Message);
                             else responseUnSuccessful(response);
                         }
                         else {
@@ -199,7 +204,40 @@
                 success: function (response) {
                     hideLoadingIcon();
                     if (!response.ResultDefaultData.IsRequestSuccess)
-                        responseUnSuccessful(response);
+                        if (response.ResultDefaultData.UnSuccessfulReason != '@Inventory.Common.AppConstants.RequestUnSuccessful.SessionExpired')
+                            showAlertInDialog(0, response.Message);
+                        else responseUnSuccessful(response);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $('#inputDate').change(function () {
+            let date = $('#inputDate').val();
+            let customerId = $('#inputHidCustomerID').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("DateChangeAction", "CustomerOutstanding")',
+                data: { "customerId": customerId, "date": date },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        showAlertInDialog(0, response.Message);
+                    else {
+                        initializePaymentControl(response.TotalBalance);
+                        createCustomerOutstandingData(response.LstCustomerOutstandingPayment);
+                        $('.inputPayDate').val(getTodayDate());
+                    }
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -236,29 +274,6 @@
             });
         });
 
-        $("#btnReset").click(function (e) {
-            showLoadingIcon();
-            $.ajax({
-                type: "GET",
-                url: '@Url.Action("ResetAction", "CustomerOutstanding")',
-                data: {},
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (response) {
-                    hideLoadingIcon();
-                    location.reload();
-                },
-                failure: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                },
-                error: function (response) {
-                    hideLoadingIcon();
-                    alert(response.responseText);
-                }
-            });
-        });
-
         $('#inputAllPayment').keydown(function (event) {
             if (event.which === 13) {
                 let payment = $(this).val();
@@ -279,7 +294,7 @@
                 if (allPayment == "" || allPayment == 0) return;
                 else allPayDate = $('#inputAllPayDate').val();
             }
-            let customerId = $('#inputHidCustomerID').val();         
+            let customerId = $('#inputHidCustomerID').val();
             showLoadingIcon();
             $.ajax({
                 type: "GET",
@@ -289,11 +304,13 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.ResultDefaultData.IsRequestSuccess)
-                        showAlertInDialog(0, response.Message);
+                    if (!response.ResultDefaultData.IsRequestSuccess) {
+                        showAlertInDialog(0, response.ResultDefaultData.Message);
+                    }
                     else {
                         showToast(1, response.ResultDefaultData.Message);
                         $('#modalPayment').modal('hide');
+                        searchAction();
                     }
                 },
                 failure: function (response) {
@@ -305,6 +322,10 @@
                     alert(response.responseText);
                 }
             });
+        });
+
+        $("#btnClose").click(function (e) {
+            $('#modalPayment').modal('hide');
         });
 
     });

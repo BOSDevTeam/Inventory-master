@@ -279,6 +279,9 @@
             $('#subMenuCustomerOutstandingList').click(function () {
                 window.location.href = '@Url.Action("ListCustomerOutstanding", "CustomerOutstanding")';
             });
+            $('#subMenuCustomerOutstandingPaymentHistory').click(function () {
+                window.location.href = '@Url.Action("CustomerOutstandingPaymentHistory", "CustomerOutstandingHistory")';
+            });
             $('.toast').toast({
                 delay: 3000
             });

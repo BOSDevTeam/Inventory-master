@@ -1,5 +1,195 @@
-﻿@{
+﻿@using Inventory.ViewModels;
+@model RpPurchaseAuditViewModel
+@{
     Layout = "~/Views/Shared/_LayoutReportDetail.cshtml";
 }
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            setReportTitle('@Resource.PurchaseAuditReport');
+            setDefaultFilter('@Model.FromDate.ToShortDateString()', '@Model.ToDate.ToShortDateString()', '');
+        });
+
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            document.write(result);
+        }
+
+    </script>
+</head>
+<div>
+    <div class="row table-header" style="padding:10px 15px;">
+        <div class="col-md-2 col-lg-2">@Resource.Date</div>       
+        <div class="col-md-1 col-lg-1">@Resource.User</div>
+        <div class="col-md-2 col-lg-2">Supplier</div>       
+        <div class="col-md-2 col-lg-2">@Resource.Location</div>
+        <div class="col-md-1 col-lg-1">@Resource.Currency</div>
+        <div class="col-md-1 col-lg-1">@Resource.PayType</div>
+        <div class="col-md-1 col-lg-1">@Resource.PayMethod</div>
+        <div class="col-md-2 col-lg-2 aligh-right">@Resource.BankPay</div>       
+    </div>
+    <div class="row table-header" style="padding:10px 15px;color:#666;">
+        <div class="col-md-5 col-lg-5"></div>        
+        <div class="col-md-2 col-lg-2">@Resource.Product</div>
+        <div class="col-md-1 col-lg-1">@Resource.Qty</div>
+        <div class="col-md-1 col-lg-1">@Resource.Price</div>       
+        <div class="col-md-1 col-lg-1">@Resource.Dis</div>
+        <div class="col-md-2 col-lg-2 aligh-right">@Resource.Amount</div>
+    </div>
+    @foreach(var master in Model.lstMasterPurchase as List<RpPurchaseAuditViewModel.MasterPurchaseView>)
+    {
+        <div style="margin:10px;">
+            <div>
+                <div class="row rpt-main-group" style="background-color:#ffffec;">
+                    <div class="col-md-2 col-lg-2">@master.PurDateTime.ToShortDateString()</div>                    
+                    <div class="col-md-1 col-lg-1">@master.User</div>
+                    <div class="col-md-2 col-lg-2">@master.SupplierName</div>
+                    <div class="col-md-2 col-lg-2">@master.LocationName</div>
+                    <div class="col-md-1 col-lg-1">@master.CurrencyName</div>
+                    <div class="col-md-1 col-lg-1">@master.PaymentKeyword</div>
+                    <div class="col-md-1 col-lg-1">@master.PayMethodName</div>
+                    <div class="col-md-2 col-lg-2 aligh-right">@master.BankPayment</div>                    
+                </div>
+                @foreach(var item in Model.lstTranPurchase.Where(m=>m.PurchaseID==master.PurchaseID).ToList() as List<RpPurchaseAuditViewModel.TranPurchaseView>)
+                {
+                    <div class="row rpt-item">
+                        <div class="col-md-5 col-lg-5"></div>
+                        <div class="col-md-2 col-lg-2">
+                            @if (item.IsFOC == true)
+                            {
+                                @item.ProductName@Resource.OpenParenthesis@Resource.FOC@Resource.CloseParenthesis
+                            }
+                            else
+                            {
+                                @item.ProductName
+                            }                            
+                        </div>
+                        <div class="col-md-1 col-lg-1">@item.Quantity@item.UnitKeyword</div>
+                        <div class="col-md-1 col-lg-1">
+                            <script>separatedComma(@item.PurchasePrice);</script>@item.CurrencyKeyword
+                        </div>
+                        <div class="col-md-1 col-lg-1">
+                            <script>separatedComma(@item.Discount);</script>
+                        </div>
+                        <div class="col-md-2 col-lg-2 aligh-right">
+                            <script>separatedComma(@item.Amount);</script>
+                        </div>
+                    </div>
+                }
+                <div class="row rpt-sub-total">
+                    <div class="col-md-9 col-lg-9"></div>
+                    <div class="col-md-3 col-lg-3">
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6">@Resource.Subtotal@Resource.ColonSign</div>
+                            <div class="col-md-6 col-lg-6 aligh-right">
+                                <script>separatedComma(@master.Subtotal);</script>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6">@Resource.Tax@Resource.ColonSign</div>
+                            <div class="col-md-6 col-lg-6 aligh-right">
+                                <script>separatedComma(@master.TaxAmt);</script>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6">@Resource.Charges@Resource.ColonSign</div>
+                            <div class="col-md-6 col-lg-6 aligh-right">
+                                <script>separatedComma(@master.ChargesAmt);</script>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-lg-6">@Resource.Total@Resource.ColonSign</div>
+                            <div class="col-md-6 col-lg-6 aligh-right">
+                                <script>separatedComma(@master.Total);</script>
+                            </div>
+                        </div>
+                        <div class="row rpt-divider">
+                            <div class="col-md-6 col-lg-6">
+                                @if (master.VouDisPercent != 0)
+                                {
+                                    @Resource.VoucherDiscount@Resource.OpenParenthesis@master.VouDisPercent@Resource.PercentSign@Resource.CloseParenthesis@Resource.ColonSign
+                                }
+                                else
+                                {
+                                    @Resource.VoucherDiscount@Resource.ColonSign
+                                }
+                            </div>
+                            <div class="col-md-6 col-lg-6 aligh-right">
+                                <script>separatedComma(@master.VoucherDiscount);</script>
+                            </div>
+                        </div>
+                        @if (master.AdvancedPay != 0)
+                        {
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6">
+                                    @Resource.AdvancedPay@Resource.ColonSign
+                                </div>
+                                <div class="col-md-6 col-lg-6 aligh-right">
+                                    <script>separatedComma(@master.AdvancedPay);</script>
+                                </div>
+                            </div>
+                        }
+                        <div class="row rpt-divider">
+                            <div class="col-md-6 col-lg-6">
+                                @Resource.Grandtotal@Resource.ColonSign
+                            </div>
+                            <div class="col-md-6 col-lg-6 aligh-right">
+                                @if (master.PaymentPercent != 0)
+                                {
+                                    <script>separatedComma(@master.Grandtotal - @master.PayPercentAmt);</script>
+                                }
+                                else
+                                {
+                                    <script>separatedComma(@master.Grandtotal);</script>
+                                }
+                            </div>
+                        </div>
+                        @if (master.PaymentPercent != 0)
+                        {
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6">
+                                    @Resource.Percent@Resource.OpenParenthesis@master.PaymentPercent@Resource.PercentSign@Resource.CloseParenthesis@Resource.ColonSign
+                                </div>
+                                <div class="col-md-6 col-lg-6 aligh-right">
+                                    <script>separatedComma(@master.PayPercentAmt);</script>
+                                </div>
+                            </div>
+                            <div class="row rpt-divider">
+                                <div class="col-md-6 col-lg-6"></div>
+                                <div class="col-md-6 col-lg-6 aligh-right">
+                                    <script>separatedComma(@master.Grandtotal);</script>
+                                </div>
+                            </div>
+                        }
+                        @if (master.IsVouFOC == true)
+                        {
+                            <div class="row">
+                                <div class="col-md-6 col-lg-6">
+                                    @Resource.VoucherFOC@Resource.ColonSign
+                                </div>
+                                <div class="col-md-6 col-lg-6 aligh-right">
+                                    <script>separatedComma(@master.VoucherFOC);</script>
+                                </div>
+                            </div>
+                            <div class="row rpt-divider">
+                                <div class="col-md-6 col-lg-6"></div>
+                                <div class="col-md-6 col-lg-6 aligh-right">0</div>
+                            </div>
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
 
 

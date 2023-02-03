@@ -33,5 +33,7 @@ namespace Inventory.Models
         public int PayPercentAmt { get; set; }
         public string Remark { get; set; }
         public bool IsVouFOC { get; set; }
+        public int MCurrencyID { get; set; }
+        public string MCurrencyName { get; set; }
     }
 }

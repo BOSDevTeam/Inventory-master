@@ -60,7 +60,7 @@ namespace Inventory.Common
 
         public string deleteSaleQuery(int saleId)
         {
-            return "Delete From TTranSale Where SaleID=" + saleId + " Delete From TMasterSale Where SaleID=" + saleId + " Delete From TMasterLedger Where SaleID=" + saleId;           
+            return "Delete From TTranSale Where SaleID=" + saleId + " Delete From TMasterSale Where SaleID=" + saleId + " Delete From TMasterLedger Where TranID=" + saleId +" And AccountCode=" +AppConstants.SaleAccountCode;           
         }
 
         public string deleteOpenBillQuery(int openBillId)
@@ -134,7 +134,7 @@ namespace Inventory.Common
 
         public string deleteCustomerOpeningQuery(int customerOpeningId)
         {
-            return "Delete From TTranCustomerOpening Where CustomerOpeningID=" + customerOpeningId + " Delete From TMasterCustomerOpening Where CustomerOpeningID=" + customerOpeningId;
+            return "Delete From TTranCustomerOpening Where CustomerOpeningID=" + customerOpeningId + " Delete From TMasterCustomerOpening Where CustomerOpeningID=" + customerOpeningId + " Delete From TMasterLedger Where TranID=" + customerOpeningId + " And AccountCode=" + AppConstants.CustomerOpeningAccountCode;
         }
     }
 }

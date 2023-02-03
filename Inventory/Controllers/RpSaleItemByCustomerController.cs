@@ -95,14 +95,16 @@ namespace Inventory.Controllers
             reader.Close();
             setting.conn.Close();
                        
-            int totalQuantity = 0,totalAmount=0;
+            int totalQuantity = 0,totalAmount=0,totalDis=0;
             foreach(var customer in lstSaleItemByCustomer)
             {
                 totalQuantity += customer.lstSaleItem.Sum(m => m.Quantity);
                 totalAmount += customer.lstSaleItem.Sum(m => m.Amount);
+                totalDis += customer.lstSaleItem.Sum(m => m.Discount);
             }
             SaleItemByCustomerViewModel.TotalQuantity = totalQuantity;
             SaleItemByCustomerViewModel.TotalAmount = totalAmount;
+            SaleItemByCustomerViewModel.TotalDis = totalDis;
             return lstSaleItemByCustomer;
         }
     }

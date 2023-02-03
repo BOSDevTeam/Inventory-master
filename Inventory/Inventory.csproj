@@ -171,6 +171,7 @@
     <Compile Include="Controllers\CustomerConsignController.cs" />
     <Compile Include="Controllers\CustomerOpeningController.cs" />
     <Compile Include="Controllers\CustomerOutstandingController.cs" />
+    <Compile Include="Controllers\CustomerOutstandingHistoryController.cs" />
     <Compile Include="Controllers\OpeningStockController.cs" />
     <Compile Include="Controllers\PaymentDialogController.cs" />
     <Compile Include="Controllers\ProductMenuController.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="Controllers\PurchaseReturnController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RpBottomSaleItemController.cs" />
+    <Compile Include="Controllers\RpPurchaseAmountBySupplierController.cs" />
     <Compile Include="Controllers\RpPurchaseAuditController.cs" />
     <Compile Include="Controllers\RpPurchaseItemBySupplierController.cs" />
     <Compile Include="Controllers\RpPurchaseItemSimpleController.cs" />
@@ -446,6 +448,7 @@
     <Compile Include="ViewModels\AdjustmentViewModel.cs" />
     <Compile Include="ViewModels\CustomerConsignViewModel.cs" />
     <Compile Include="ViewModels\CustomerOpeningViewModel.cs" />
+    <Compile Include="ViewModels\CustomerOutstandingHistoryViewModel.cs" />
     <Compile Include="ViewModels\CustomerOutstandingViewModel.cs" />
     <Compile Include="ViewModels\MasterAdjustmentViewModel.cs" />
     <Compile Include="ViewModels\MasterCustomerConsignViewModel.cs" />
@@ -464,6 +467,7 @@
     <Compile Include="ViewModels\PurchaseReturnViewModel.cs" />
     <Compile Include="ViewModels\PurchaseViewModel.cs" />
     <Compile Include="ViewModels\RpBottomSaleItemViewModel.cs" />
+    <Compile Include="ViewModels\RpPurchaseAmountBySupplierViewModel.cs" />
     <Compile Include="ViewModels\RpPurchaseAuditViewModel.cs" />
     <Compile Include="ViewModels\RpPurchaseItemBySupplierViewModel.cs" />
     <Compile Include="ViewModels\RpPurchaseItemSimpleViewModel.cs" />
@@ -710,6 +714,10 @@
     <Content Include="Views\RpPurchaseItemSimple\PurchaseItemSimpleReportFilter.cshtml" />
     <Content Include="Views\RpPurchaseItemBySupplier\PurchaseItemBySupplierReportFilter.cshtml" />
     <Content Include="Views\RpPurchaseItemBySupplier\PurchaseItemBySupplierReport.cshtml" />
+    <Content Include="Views\CustomerOutstandingHistory\CustomerOutstandingPaymentHistory.cshtml" />
+    <Content Include="Views\CustomerOutstandingHistory\_CustomerOutstandingPaymentDetail.cshtml" />
+    <Content Include="Views\RpPurchaseAmountBySupplier\PurchaseAmountBySupplierReportFilter.cshtml" />
+    <Content Include="Views\RpPurchaseAmountBySupplier\PurchaseAmountBySupplierReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

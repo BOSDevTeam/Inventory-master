@@ -30,6 +30,7 @@ namespace Inventory.Controllers
                 getSupplier(false);
                 getLocation();
                 getMainMenu();
+                getMCurrency();
                 getSubMenu(getFirstMainMenuID());
                 getProduct(getFirstSubMenuID());
                 clearTranPurchase();
@@ -50,6 +51,7 @@ namespace Inventory.Controllers
                     ViewBag.VoucherID = data.MasterPurchaseModel.VoucherID;
                     ViewBag.SupplierID = data.MasterPurchaseModel.SupplierID;
                     ViewBag.LocationID = data.MasterPurchaseModel.LocationID;
+                    ViewBag.MCurrencyID = data.MasterPurchaseModel.MCurrencyID;
                     ViewBag.Subtotal = data.MasterPurchaseModel.Subtotal;
                     ViewBag.TaxAmt = data.MasterPurchaseModel.TaxAmt;
                     ViewBag.ChargesAmt = data.MasterPurchaseModel.ChargesAmt;
@@ -344,7 +346,7 @@ namespace Inventory.Controllers
             return Json("", JsonRequestBehavior.AllowGet);
         }
         [HttpPost]
-        public JsonResult PaymentSubmitAction(string userVoucherNo, string date, string voucherId, int supplierId, int locationId,
+        public JsonResult PaymentSubmitAction(string userVoucherNo, string date, string voucherId, int supplierId, int locationId,int mcurrencyid,
                 int paymentId, int? payMethodId, int? bankPaymentId, string remark, int? advancedPay,
                 int? payPercent, int? payPercentAmt, int? vouDisPercent, int? vouDisAmount, int? voucherDiscount,
                 int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId, bool isVoucherFOC)
@@ -383,6 +385,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@PurchaseDateTime", purchaseDateTime);
                     cmd.Parameters.AddWithValue("@SupplierID", supplierId);
                     cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@MCurrencyID", mcurrencyid);
                     cmd.Parameters.AddWithValue("@PaymentID", paymentId);
                     cmd.Parameters.AddWithValue("@VoucherDiscount", voucherDiscount);
                     cmd.Parameters.AddWithValue("@AdvancedPay", advancedPay);
@@ -519,7 +522,7 @@ namespace Inventory.Controllers
                 resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
                 resultDefaultData.Message = ex.Message;
             }
-            
+
             var jsonResult = new
             {
                 LstTranPurchase = lstTranPurchase,
@@ -530,10 +533,11 @@ namespace Inventory.Controllers
                 Payment = item.Payment,
                 PayMethod = item.PayMethod,
                 BankPayment = item.BankPayment,
-                
+
                 PurchaseDateTime = item.MasterPurchaseModel.PurchaseDateTime,
                 UserName = item.UserName,
                 SupplierName = item.SupplierName,
+                CurrencyName = item.MasterPurchaseModel.MCurrencyName,
                 Subtotal = item.MasterPurchaseModel.Subtotal,
                 TaxAmt = item.MasterPurchaseModel.TaxAmt,
                 ChargesAmt = item.MasterPurchaseModel.ChargesAmt,
@@ -581,7 +585,7 @@ namespace Inventory.Controllers
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
         [HttpGet]
-        public JsonResult PaymentEditAction(int purchaseId, string date, string voucherId, int supplierId, int locationId, int taxAmt, int chargesAmt, int subtotal, int total)
+        public JsonResult PaymentEditAction(int purchaseId, string date, string voucherId, int supplierId, int locationId,int mcurrencyId, int taxAmt, int chargesAmt, int subtotal, int total)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["TranPurchaseData"] != null)
@@ -610,6 +614,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@PurchaseDateTime", purchaseDateTime);
                     cmd.Parameters.AddWithValue("@SupplierID", supplierId);
                     cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    cmd.Parameters.AddWithValue("@MCurrencyID", mcurrencyId);
                     cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
                     cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
                     cmd.Parameters.AddWithValue("@Subtotal", subtotal);
@@ -717,6 +722,14 @@ namespace Inventory.Controllers
             }
             else list = Session["CurrencyData"] as List<CurrencyModels>;
             return list;
+        }
+        private void getMCurrency()
+        {
+            List<CurrencyModels> list = getCurrency();
+            for (int i = 0; i < list.Count; i++)
+            {
+                purchaseViewModel.Currencies.Add(new SelectListItem { Text = list[i].Keyword, Value = Convert.ToString(list[i].CurrencyID) });
+            }
         }
         private bool checkConnection()
         {
@@ -864,6 +877,8 @@ namespace Inventory.Controllers
                 item.MasterPurchaseModel.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
                 item.MasterPurchaseModel.LocationID = Convert.ToInt32(reader["LocationID"]);
                 item.MasterPurchaseModel.SupplierID = Convert.ToInt32(reader["SupplierID"]);
+                item.MasterPurchaseModel.MCurrencyID = Convert.ToInt32(reader["CurrencyID"]);
+                item.MasterPurchaseModel.MCurrencyName = Convert.ToString(reader["Keyword"]);
                 item.MasterPurchaseModel.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
             }
             reader.Close();
