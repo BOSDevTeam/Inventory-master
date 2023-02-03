@@ -91,7 +91,8 @@
                             <a href=""><i class="fa fa-flag"></i> <span> @Resource.PurchaseReport </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuPurchaseRpGp">                           
                                 <li id="subMenuPurchaseItemSimpleRp"><a href="#">@Resource.PurchaseItemSimpleReport</a></li>                             
-                                <li id="subMenuPurchaseAuditRp"><a href="#">@Resource.PurchaseAuditReport</a></li>                               
+                                <li id="subMenuPurchaseAuditRp"><a href="#">@Resource.PurchaseAuditReport</a></li>   
+                                <li id="subMenuPurchaseAmountBySupplierRp"><a href="#">@Resource.PurchaseAmountBySupplierReport</a></li>                            
                                 <li id="subMenuPurchaseItemBySupplierRp"><a href="#">@Resource.PurchaseItemBySupplierReport</a></li>                             
                             </ul>
                         </li>                                                                    
@@ -161,6 +162,9 @@
             });
             $('#subMenuPurchaseAuditRp').click(function () {
                 window.location.href = '@Url.Action("PurchaseAuditReportFilter", "RpPurchaseAudit")';
+            });
+            $('#subMenuPurchaseAmountBySupplierRp').click(function () {
+                window.location.href = '@Url.Action("PurchaseAmountBySupplierReportFilter", "RpPurchaseAmountBySupplier")';
             });
             $('#subMenuPurchaseItemBySupplierRp').click(function () {
                 window.location.href = '@Url.Action("PurchaseItemBySupplierReportFilter", "RpPurchaseItemBySupplier")';

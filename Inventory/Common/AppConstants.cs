@@ -67,6 +67,7 @@ namespace Inventory.Common
             public const string InvalidPayment = "Invalid Payment";
             public const string FillOutstandingPayment = "Fill Outstanding Payment";
             public const string PaymentSuccess = "Payment Successful";
+            public const string SessionExpired = "Session Expired";
         }
     }
 }

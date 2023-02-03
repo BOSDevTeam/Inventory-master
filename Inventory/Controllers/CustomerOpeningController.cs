@@ -192,6 +192,7 @@ namespace Inventory.Controllers
                     SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateCustomerOpening, setting.conn);
                     cmd.Parameters.AddWithValue("@CustomerOpeningID", customerOpeningId);
                     cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Parameters.AddWithValue("@AccountCode", AppConstants.CustomerOpeningAccountCode);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Connection = setting.conn;
                     cmd.ExecuteNonQuery();

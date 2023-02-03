@@ -23,6 +23,8 @@ namespace Inventory.ViewModels
             public int OutstandingOpening { get; set; }
             public int Sale { get; set; }
             public int Balance { get; set; }
+            public int OpeningPayment { get; set; }
+            public int SalePayment { get; set; }
         }
 
         public class CustomerOutstandingPaymentViewModel

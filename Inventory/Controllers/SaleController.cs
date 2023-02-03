@@ -485,6 +485,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@Total", total);
                     cmd.Parameters.AddWithValue("@temptbl", dt);
                     cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.Parameters.AddWithValue("@AccountCode", AppConstants.SaleAccountCode);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                     dataConnectorSQL.Close();

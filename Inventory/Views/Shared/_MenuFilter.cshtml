@@ -7,3 +7,64 @@
 
     </div>
 </div>
+<script type="text/javascript">
+    function createMenuFilter(menuList) {
+        let menu = '', submenu = '', mainMenu = 0;
+        $("#divMenuFilter").html("");
+        $.each(menuList, function (i, item) {
+            if (mainMenu != item.MainMenuID) {
+                mainMenu = item.MainMenuID;
+                menu += '<div class="row rpt-main-group" id="divMainMenu" style="background-color:#ffffec;">'
+                     + '<div class="col-md-10 col-lg-10 padding-5">'
+                     + '<span>' + item.MainMenuName + '</span>'
+                     + '</div>'
+                     + '<div class="col-md-2 col-lg-2 aligh-right padding-5">'
+                     + '<input type="checkbox" name="' + item.MainMenuName + '" value="' + item.MainMenuID + '" onchange="mainMenuChange(this)" class="aligh-right mr-10" />'
+                     + '</div>'
+                     + '</div>'
+                     + '<div class="row">'
+                     + '<div class="col-md-12 col-lg-12" id="divMainMenu' + item.MainMenuID + '"></div>'
+                     + '</div>'
+            }
+        })
+        $("#divMenuFilter").append(menu);
+        t = 0;
+        $.each(menuList, function (i, item) {
+            submenu = '';
+            if (t != item.MainMenuID) {
+                t = item.MainMenuID;
+                $.each(menuList, function (j, data) {
+                    if (data.MainMenuID === t && data.SubMenuID != 0) {
+                        submenu += '<div class="row rpt-item"><div class="col-md-10 col-lg-10 padding-5"><span>' + data.SubMenuName + '</span></div><div class="col-md-2 col-lg-2 padding-5 aligh-right"><input type="checkbox" name="' + data.MainMenuID + '" value="' + data.SubMenuID + '" onchange="subMenuChange(this)" class="aligh-right mr-10" /></div></div>'
+                    }
+                })
+                $("#divMainMenu" + item.MainMenuID).append(submenu);
+            }
+        })
+    }
+    function mainMenuChange(mainMenu) {
+        var checkboxes = document.getElementsByName(mainMenu.value);
+        if (mainMenu.checked == true) {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = true;
+                if (!subMenuIDArray.some(e=>e == checkbox.value)) {
+                    subMenuIDArray.push(checkbox.value);
+                }
+            });
+        }
+        else {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = false;
+                subMenuIDArray = subMenuIDArray.filter(e=>e !== checkbox.value);
+            });
+        }
+    }
+    function subMenuChange(subMenu) {
+        if (subMenu.checked == true) {
+            subMenuIDArray.push(subMenu.value);
+        }
+        else {
+            subMenuIDArray = subMenuIDArray.filter(e=>e !== subMenu.value);
+        }
+    }
+</script>

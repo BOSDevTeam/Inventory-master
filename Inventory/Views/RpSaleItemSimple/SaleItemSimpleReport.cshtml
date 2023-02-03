@@ -80,8 +80,12 @@
                 <div class="col-md-2 col-lg-2"></div>
                 <div class="col-md-3 col-lg-3">@Resource.Total</div>
                 <div class="col-md-1 col-lg-1 aligh-right"><span>@SubMenuData.lstSaleItem.Sum(m=>m.Quantity)</span></div>
-                <div class="col-md-3 col-lg-3"></div>
-                <div class="col-md-3 col-lg-3 aligh-right plr-30"><span class="mr-10"><script>separatedComma(@SubMenuData.lstSaleItem.Sum(m => m.Amount))</script></span></div>
+                <div class="col-md-4 col-lg-4 aligh-right">
+                    <span>
+                        <script>separatedComma(@SubMenuData.lstSaleItem.Sum(m=>m.Discount))</script>
+                    </span>
+                </div>
+                <div class="col-md-2 col-lg-2 aligh-right plr-30"><span class="mr-10"><script>separatedComma(@SubMenuData.lstSaleItem.Sum(m => m.Amount))</script></span></div>
             </div>
         }
     }
@@ -89,13 +93,18 @@
         <div class="col-md-2 col-lg-2"></div>
         <div class="col-md-3 col-lg-3">@Resource.Total</div>
         <div class="col-md-1 col-lg-1 aligh-right"><span><script>separatedComma(@Model.TotalQuantity)</script></span></div>
-        <div class="col-md-3 col-lg-3"></div>
-        <div class="col-md-3 col-lg-3 aligh-right plr-30"><span class="mr-10"><script>separatedComma(@Model.TotalAmount)</script></span></div>
+        <div class="col-md-4 col-lg-4 aligh-right">
+            <span>
+                <script>separatedComma(@Model.TotalDis)</script>
+            </span>
+        </div>
+        <div class="col-md-2 col-lg-2 aligh-right plr-30"><span class="mr-10"><script>separatedComma(@Model.TotalAmount)</script></span></div>
     </div>
     <div class="row padding-10" style="font-weight:bold;">
         <div class="col-md-5 col-lg-5"></div>
         <div class="col-md-1 col-lg-1 aligh-right"><span>@Resource.Qty</span></div>
-        <div class="col-md-6 col-lg-6 aligh-right plr-30"><span class="mr-10">@Resource.Amount</span></div>
+        <div class="col-md-4 col-lg-4 aligh-right"><span>@Resource.Dis</span></div>
+        <div class="col-md-2 col-lg-2 aligh-right plr-30"><span class="mr-10">@Resource.Amount</span></div>
     </div>
 </div>
 

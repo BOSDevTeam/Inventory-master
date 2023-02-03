@@ -266,30 +266,62 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult ResetAction()
-        {
-            Session["CustomerOutstandingPaymentList"] = null;
-            return Json("", JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpGet]
-        public JsonResult SaveAction(int payType,int allPayment,string allPayDate, int customerId)
+        public JsonResult SaveAction(int payType, int allPayment, string allPayDate, int customerId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
+
+            if (payType == 2)
+            {
+                if (Session["CustomerOutstandingTranList"] != null)
+                {
+                    List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel> lstTran = Session["CustomerOutstandingTranList"] as List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel>;
+                    List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel> lstPayment = new List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel>();
+                    CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel data = new CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel();
+                    int amount = 0;
+
+                    for (int i = 0; i < lstTran.Count(); i++)
+                    {
+                        data = lstTran[i];
+
+                        if (data.IsOpening) amount = data.Opening;
+                        else amount = data.Sale;
+
+                        if (amount < allPayment)
+                        {
+                            data.Payment = amount;
+                            allPayment -= amount;
+                            lstPayment.Add(data);
+                        }
+                        else if (amount >= allPayment)
+                        {
+                            data.Payment = allPayment;
+                            lstPayment.Add(data);
+                            break;
+                        }
+                    }
+                    Session["CustomerOutstandingPaymentList"] = lstPayment;
+                }
+                else
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
+                    resultDefaultData.Message = AppConstants.Message.SessionExpired;
+                }
+            }
+
             if (Session["CustomerOutstandingPaymentList"] != null)
             {
                 try
                 {
-                    List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel>  lstPayment = Session["CustomerOutstandingPaymentList"] as List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel>;
-                
+                    List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel> lstPayment = Session["CustomerOutstandingPaymentList"] as List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel>;
+
                     DataTable dt = new DataTable();
                     dt.Columns.Add(new DataColumn("UserVoucherNo", typeof(string)));
                     dt.Columns.Add(new DataColumn("PayDate", typeof(DateTime)));
                     dt.Columns.Add(new DataColumn("Payment", typeof(int)));
                     for (int i = 0; i < lstPayment.Count; i++)
                     {
-                        if(lstPayment[i].Payment!=0)
-                            dt.Rows.Add(lstPayment[i].UserVoucherNo, lstPayment[i].PayDate, lstPayment[i].Payment);                    
+                        if (lstPayment[i].Payment != 0)
+                            dt.Rows.Add(lstPayment[i].UserVoucherNo, lstPayment[i].PayDate, lstPayment[i].Payment);
                     }
 
                     setting.conn.Open();
@@ -321,6 +353,31 @@ namespace Inventory.Controllers
 
             var jsonResult = new
             {
+                ResultDefaultData = resultDefaultData
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult DateChangeAction(int customerId, string date)
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel> lstCustomerOutstandingPayment = new List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel>();
+            try
+            {
+                Session["CustomerOutstandingPaymentList"] = null;
+                lstCustomerOutstandingPayment = selectTranCustomerOutstanding(customerId, Convert.ToDateTime(date));
+                resultDefaultData.IsRequestSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                resultDefaultData.Message = ex.Message;
+            }
+            var jsonResult = new
+            {
+                LstCustomerOutstandingPayment = lstCustomerOutstandingPayment,
+                TotalBalance = totalBalance,
                 ResultDefaultData = resultDefaultData
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -360,6 +417,7 @@ namespace Inventory.Controllers
             }
             cmd.Parameters.AddWithValue("@SaleAccountCode", AppConstants.SaleAccountCode);
             cmd.Parameters.AddWithValue("@CustomerOpeningAccountCode", AppConstants.CustomerOpeningAccountCode);
+            cmd.Parameters.AddWithValue("@ARAccountCode", AppConstants.ARAccountCode);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -369,7 +427,12 @@ namespace Inventory.Controllers
                 item.CustomerName = Convert.ToString(reader["CustomerName"]);
                 item.OutstandingOpening = Convert.ToInt32(reader["OutstandingOpening"]);
                 item.AccountOpening = Convert.ToInt32(reader["AccountOpening"]);
+                int outOpeningPayment= Convert.ToInt32(reader["OutstandingOpeningPayment"]);
+                if (outOpeningPayment != 0)
+                    item.OpeningPayment = outOpeningPayment;
+                else item.OpeningPayment= Convert.ToInt32(reader["AccountOpeningPayment"]);
                 item.Sale = Convert.ToInt32(reader["Sale"]);
+                item.SalePayment = Convert.ToInt32(reader["SalePayment"]);
                 item.Balance = Convert.ToInt32(reader["Balance"]);
                 tempList.Add(item);
             }
@@ -427,17 +490,13 @@ namespace Inventory.Controllers
                 item.CustomerName = tempList[page].CustomerName;
                 item.OutstandingOpening = tempList[page].OutstandingOpening;
                 item.AccountOpening = tempList[page].AccountOpening;
+                item.OpeningPayment= tempList[page].OpeningPayment;
                 item.Sale = tempList[page].Sale;
+                item.SalePayment = tempList[page].SalePayment;
                 item.Balance = tempList[page].Balance;
                 list.Add(item);
             }
             return list;
-        }
-
-        private string getUserVoucherNo(int userId)
-        {
-            string userVoucherNo = appData.selectUserVoucherNo(AppConstants.CustomerOutstandingModule, userId);
-            return userVoucherNo;
         }
 
         private List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel> selectTranCustomerOutstanding(int customerId, DateTime toDate)
@@ -470,7 +529,7 @@ namespace Inventory.Controllers
             }
             reader.Close();
             setting.conn.Close();
-            Session["CustomerOutstandingTranList"] = list;  // for paging         
+            Session["CustomerOutstandingTranList"] = list;        
 
             return list;
         }

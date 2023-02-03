@@ -475,6 +475,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Customer Outstanding Payment Detail.
+        /// </summary>
+        public static string CustomerOutstandingPaymentDetail {
+            get {
+                return ResourceManager.GetString("CustomerOutstandingPaymentDetail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Customer Outstanding Payment History.
         /// </summary>
         public static string CustomerOutstandingPaymentHistory {
@@ -835,6 +844,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Opening Payment.
+        /// </summary>
+        public static string OpeningPayment {
+            get {
+                return ResourceManager.GetString("OpeningPayment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Opening Stock.
         /// </summary>
         public static string OpeningStock {
@@ -1011,6 +1029,15 @@ namespace Inventory {
         public static string Purchase {
             get {
                 return ResourceManager.GetString("Purchase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Purchase Amount By Supplier Report.
+        /// </summary>
+        public static string PurchaseAmountBySupplierReport {
+            get {
+                return ResourceManager.GetString("PurchaseAmountBySupplierReport", resourceCulture);
             }
         }
         
@@ -1267,6 +1294,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sale Payment.
+        /// </summary>
+        public static string SalePayment {
+            get {
+                return ResourceManager.GetString("SalePayment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sale Person.
         /// </summary>
         public static string SalePerson {
@@ -1506,6 +1542,15 @@ namespace Inventory {
         public static string User {
             get {
                 return ResourceManager.GetString("User", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View Detail.
+        /// </summary>
+        public static string ViewDetail {
+            get {
+                return ResourceManager.GetString("ViewDetail", resourceCulture);
             }
         }
         

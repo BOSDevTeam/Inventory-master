@@ -109,7 +109,8 @@ namespace Inventory.Common
         public const string PrcGetRptTranSaleList = "PrcGetRptTranSaleList";
         public const string PrcGetMenuData = "PrcGetMenuData";
         public const string PrcGetRptSaleItemSimple = "PrcGetRptSaleItemSample";
-        public const string PrcGetRptSaleAmount = "PrcGetRptSaleAmount";
+        public const string PrcGetRptSaleAmountOnly = "PrcGetRptSaleAmountOnly";
+        public const string PrcGetRptSaleAmountSummary = "PrcGetRptSaleAmountSummary";
         public const string PrcInsertCustomerOpening = "PrcInsertCustomerOpening";
         public const string PrcGetMasterCustomerOpeningList = "PrcGetMasterCustomerOpeningList";
         public const string PrcGetMasterCustomerOpeningByID = "PrcGetMasterCustomerOpeningByID";
@@ -123,5 +124,10 @@ namespace Inventory.Common
         public const string PrcGetRptTopSaleItem = "PrcGetRptTopSaleItem";
         public const string PrcGetRptBottomSale = "PrcGetRptBottomSale";
         public const string PrcInsertCustomerOutstandingPayment = "PrcInsertCustomerOutstandingPayment";
+        public const string PrcGetCustomerOutstandingHistory = "PrcGetCustomerOutstandingHistory";
+        public const string PrcGetTranCustomerOutstandingHistory = "PrcGetTranCustomerOutstandingHistory";
+        public const string PrcGetRptPurchaseItemSimple = "PrcGetRptPurchaseItemSimple";
+        public const string PrcGetRptMasterPurchaseList = "PrcGetRptMasterPurchaseList";
+        public const string PrcGetRptTranPurchaseList = "PrcGetRptTranPurchaseList";
     }
 }

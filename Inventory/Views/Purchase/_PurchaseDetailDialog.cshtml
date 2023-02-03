@@ -37,6 +37,10 @@
                         <td class="padding-5"><label class="control-label mb-0">Bank Payment</label></td>
                         <td class="aligh-right padding-5"><label id="lblBankPayment" class="control-input mb-0"></label></td>
                     </tr>
+                    <tr>
+                        <td class="padding-5"><label class="control-label mb-0">@Resource.Currency</label></td>
+                        <td class="aligh-right padding-5"><label id="lblMCurrency" class="control-input mb-0"></label></td>
+                    </tr>
                 </table>
 
                 @{
@@ -76,7 +80,7 @@
 
         $('#lblPurchaseDateTime').text(response.PurchaseDateTime);
         $('#lblSupplierName').text(response.SupplierName);
-
+        $('#lblMCurrency').text(response.CurrencyName);
         $('#lblUserName').text(response.UserName);
         $('#lblLocation').text(response.LocationName);
 

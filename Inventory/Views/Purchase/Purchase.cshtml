@@ -31,11 +31,14 @@
     <div class="col-md-3 col-lg-3">
         <input id="inputVoucherID" type="text" class="form-control control-input" placeholder="@Resource.VoucherID" />
     </div>
-    <div class="col-md-3 col-lg-3">
+    <div class="col-md-2 col-lg-2">
         @Html.DropDownList("Supplier", Model.Suppliers, new { @id = "ddlSupplier", @class = "form-control control-input" })
     </div>
     <div class="col-md-2 col-lg-2">
         @Html.DropDownList("Location",Model.Locations, new { @id = "ddlLocation", @class = "form-control control-input" })
+    </div>
+    <div class="col-md-1 col-lg-1">
+        @Html.DropDownList("MCurrency",Model.Currencies,new { @id="ddlMCurrency",@class="form-control control-input" })
     </div>
 </div>
 <div class="row">
@@ -159,7 +162,7 @@
 
 
 <script type="text/javascript">
-    let tranPurchaseAction, defaultSupplierId, defaultLocationId, isEditTranPurchase=false;
+    let tranPurchaseAction, defaultSupplierId, defaultLocationId, defaultMCurrencyId, isEditTranPurchase = false;
     $('body').addClass("hideVerticalScrollbar");
     calcMenuHeight(155);
     calcPurchaseHeight();
@@ -190,6 +193,7 @@
             showHideMainButton(false, false, false);
             defaultSupplierId = $('#ddlSupplier option:selected').val();
             defaultLocationId = $('#ddlLocation option:selected').val();
+            defaultMCurrencyId = $('#defaultMCurrencyId option:selected').val();
         }
         function createDefaultUnit() {
             let unit;
@@ -709,6 +713,7 @@
             let voucherId = $('#inputVoucherID').val();
             let supplierId = $('#ddlSupplier option:selected').val();
             let locationId = $('#ddlLocation option:selected').val();
+            let mcurrencyId = $('#ddlMCurrency option:selected').val();
             let paymentId = $('#ddlPayment option:selected').val();
             let payMethodId = $('#ddlPayMethod option:selected').val();
             let bankPaymentId = $('#ddlBankPayment option:selected').val();
@@ -737,7 +742,7 @@
                 type: "POST",
                 url: '@Url.Action("PaymentSubmitAction", "Purchase")',
                 data: JSON.stringify({
-                    "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "supplierId": supplierId, "locationId": locationId,
+                    "userVoucherNo": userVoucherNo, "date": date, "voucherId": voucherId, "supplierId": supplierId, "locationId": locationId, "mcurrencyid": mcurrencyId,
                     "paymentId": paymentId, "payMethodId": payMethodId, "bankPaymentId": bankPaymentId, "remark": remark, "advancedPay": advancedPay,
                     "payPercent": payPercent, "payPercentAmt": payPercentAmt, "vouDisPercent": vouDisPercent, "vouDisAmount": vouDisAmount, "voucherDiscount": voucherDiscount,
                     "tax": tax, "taxAmt": taxAmt, "charges": charges, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total, "grandtotal": grandtotal, "userId": userId,
@@ -761,6 +766,7 @@
                         $('#inputVoucherID').val("");
                         $("#ddlSupplier").val(defaultSupplierId);
                         $("#ddlLocation").val(defaultLocationId);
+                        $("#ddlMCurrency").val(defaultMCurrencyId);
                     }                  
                 },
                 failure: function (response) {
@@ -780,6 +786,7 @@
             $('#inputVoucherID').val('@ViewBag.VoucherID');
             $("#ddlSupplier").val('@ViewBag.SupplierID');
             $("#ddlLocation").val('@ViewBag.LocationID');
+            $("#ddlMCurrency").val('@ViewBag.MCurrencyID');
             $('#lblSubtotal').text(separatedComma('@ViewBag.Subtotal'));
             $('#lblTax').text(separatedComma('@ViewBag.TaxAmt'));
             $('#lblCharges').text(separatedComma('@ViewBag.ChargesAmt'));
@@ -804,6 +811,7 @@
             let voucherId = $('#inputVoucherID').val();
             let supplierId = $('#ddlSupplier option:selected').val();
             let locationId = $('#ddlLocation option:selected').val();
+            let mcurrencyId = $('#ddlMCurrency option:selected').val();
             let subtotal = $("#inputHdnSubtotal").val();
             let taxAmt = $("#inputHdnTax").val();
             let chargesAmt = $("#inputHdnCharges").val();
@@ -813,7 +821,7 @@
                 type: "GET",
                 url: '@Url.Action("PaymentEditAction", "Purchase")',
                 data: {
-                    "purchaseId": purchaseId, "date": date, "voucherId": voucherId, "supplierId": supplierId, "locationId": locationId,
+                    "purchaseId": purchaseId, "date": date, "voucherId": voucherId, "supplierId": supplierId, "locationId": locationId, "mcurrencyid": mcurrencyId,
                     "taxAmt": taxAmt, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total
                 },
                 contentType: "application/json; charset=utf-8",

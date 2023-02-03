@@ -17,6 +17,7 @@ namespace Inventory.ViewModels
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public int TotalQuantity { get; set; }
+        public int TotalDis { get; set; }
         public int TotalAmount { get; set; }
         public class MainMenuViewModel
         {
