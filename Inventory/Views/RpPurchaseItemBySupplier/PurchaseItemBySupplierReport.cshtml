@@ -72,7 +72,15 @@
 
                 <div class="row rpt-item">
                     <div class="col-md-2 col-lg-2">@purchase.ProductCode</div>
-                    <div class="col-md-2 col-lg-2">@purchase.ProductName <span>(@purchase.UnitKeyword)</span></div>
+                    @if (purchase.UnitID != 0)
+                    {
+                        <div class="col-md-2 col-lg-2">@purchase.ProductName <span>(@purchase.UnitKeyword)</span></div>
+                    }
+                    else
+                    {
+                        <div class="col-md-2 col-lg-2">@purchase.ProductName</div>
+                    }
+
                     <div class="col-md-2 col-lg-2 aligh-right">
                     <script>separatedComma(@purchase.Quantity)</script></div>
                     <div class="col-md-2 col-lg-2 aligh-right">
@@ -85,10 +93,44 @@
 
                 productId = purchase.ProductID;
             }
+
+            var listCount = Model.lstTranPurchase.Count();
+            if (listCount != 0)
+            {
+                var lastProductId = Model.lstTranPurchase[listCount - 1].ProductID;
+                List<RpPurchaseItemBySupplierViewModel.TranPurchaseModels> list = Model.lstTranPurchase.Where(m => m.ProductID == lastProductId).ToList();
+                if (list.Count() > 1)
+                {
+                    <div class="row rpt-sub-total">
+                        <div class="col-md-2 col-lg-2"></div>
+                        <div class="col-md-2 col-lg-2">@Resource.Total</div>
+                        <div class="col-md-2 col-lg-2 aligh-right">
+                            <script>separatedComma(@Model.lstTranPurchase.Where(m => m.ProductID == productId && m.SupplierID == supplier.SupplierID).Sum(m => m.Quantity))</script>
+                        </div>
+                        <div class="col-md-2 col-lg-2"></div>
+                        <div class="col-md-2 col-lg-2 aligh-right">
+                            <script>separatedComma(@Model.lstTranPurchase.Where(m => m.ProductID == productId && m.SupplierID == supplier.SupplierID).Sum(m => m.Discount))</script>
+                        </div>
+                        <div class="col-md-2 col-lg-2 aligh-right">
+                            <script>separatedComma(@Model.lstTranPurchase.Where(m => m.ProductID == productId && m.SupplierID == supplier.SupplierID).Sum(m => m.Amount))</script>
+                        </div>
+                    </div>
+                }
+            }
+
         }
+
+
+
+
     }
 
-    <div class="row rpt-total">
+
+    @{ 
+        var purchaseCount = Model.lstTranPurchase.Count;
+        if (purchaseCount > 1)
+        {
+                <div class="row rpt-total">
         <div class="col-md-2 col-lg-2"></div>
         <div class="col-md-2 col-lg-2">@Resource.Total</div>
         <div class="col-md-2 col-lg-2 aligh-right">
@@ -109,6 +151,10 @@
         <div class="col-md-2 col-lg-2 aligh-right">@Resource.Dis</div>
         <div class="col-md-2 col-lg-2 aligh-right">@Resource.Amount</div>
     </div>
+        }
+    }
+
+
 
 </div>
 
