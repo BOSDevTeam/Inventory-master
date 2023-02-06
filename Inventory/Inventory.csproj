@@ -191,6 +191,7 @@
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\RpBottomSaleItemController.cs" />
     <Compile Include="Controllers\RpPurchaseAmountBySupplierController.cs" />
+    <Compile Include="Controllers\RpPurchaseAmountOnlyController.cs" />
     <Compile Include="Controllers\RpPurchaseAuditController.cs" />
     <Compile Include="Controllers\RpPurchaseItemBySupplierController.cs" />
     <Compile Include="Controllers\RpPurchaseItemSimpleController.cs" />
@@ -468,6 +469,7 @@
     <Compile Include="ViewModels\PurchaseViewModel.cs" />
     <Compile Include="ViewModels\RpBottomSaleItemViewModel.cs" />
     <Compile Include="ViewModels\RpPurchaseAmountBySupplierViewModel.cs" />
+    <Compile Include="ViewModels\RpPurchaseAmountOnlyViewModel.cs" />
     <Compile Include="ViewModels\RpPurchaseAuditViewModel.cs" />
     <Compile Include="ViewModels\RpPurchaseItemBySupplierViewModel.cs" />
     <Compile Include="ViewModels\RpPurchaseItemSimpleViewModel.cs" />
@@ -718,6 +720,8 @@
     <Content Include="Views\CustomerOutstandingHistory\_CustomerOutstandingPaymentDetail.cshtml" />
     <Content Include="Views\RpPurchaseAmountBySupplier\PurchaseAmountBySupplierReportFilter.cshtml" />
     <Content Include="Views\RpPurchaseAmountBySupplier\PurchaseAmountBySupplierReport.cshtml" />
+    <Content Include="Views\RpPurchaseAmountOnly\PurchaseAmountOnlyReportFilter.cshtml" />
+    <Content Include="Views\RpPurchaseAmountOnly\PurchaseAmountOnlyReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

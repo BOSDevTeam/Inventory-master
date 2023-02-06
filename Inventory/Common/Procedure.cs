@@ -129,5 +129,7 @@ namespace Inventory.Common
         public const string PrcGetRptPurchaseItemSimple = "PrcGetRptPurchaseItemSimple";
         public const string PrcGetRptMasterPurchaseList = "PrcGetRptMasterPurchaseList";
         public const string PrcGetRptTranPurchaseList = "PrcGetRptTranPurchaseList";
+        public const string PrcGetRptSupplier = "PrcGetRptSupplier";
+        public const string PrcGetRptPurchaseBySupplier = "PrcGetRptPurchaseBySupplier";
     }
 }

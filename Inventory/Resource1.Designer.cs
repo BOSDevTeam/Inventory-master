@@ -1042,6 +1042,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Purchase Amount Only Report.
+        /// </summary>
+        public static string PurchaseAmountOnlyReport {
+            get {
+                return ResourceManager.GetString("PurchaseAmountOnlyReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Purchase Audit Report.
         /// </summary>
         public static string PurchaseAuditReport {

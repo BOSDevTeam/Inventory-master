@@ -636,4 +636,7 @@
   <data name="PurchaseAmountBySupplierReport" xml:space="preserve">
     <value>Purchase Amount By Supplier Report</value>
   </data>
+  <data name="PurchaseAmountOnlyReport" xml:space="preserve">
+    <value>Purchase Amount Only Report</value>
+  </data>
 </root>
