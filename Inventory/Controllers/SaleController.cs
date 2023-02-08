@@ -448,7 +448,7 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult PaymentEditAction(int saleId, string date, string voucherId, int customerId, int locationId, int taxAmt, int chargesAmt, int subtotal, int total, int currencyId)
+        public JsonResult PaymentEditAction(int saleId, string date, string voucherId, int customerId, int locationId, int taxAmt, int chargesAmt, int subtotal, int total, int currencyId, int userId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
 
@@ -486,6 +486,10 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@temptbl", dt);
                     cmd.Parameters.AddWithValue("@VoucherID", voucherId);
                     cmd.Parameters.AddWithValue("@AccountCode", AppConstants.SaleAccountCode);
+                    cmd.Parameters.AddWithValue("@UpdatedUserID", userId);
+                    cmd.Parameters.AddWithValue("@UpdatedDateTime", setting.getLocalDateTime());
+                    cmd.Parameters.AddWithValue("@ActionCode", AppConstants.EditActionCode);
+                    cmd.Parameters.AddWithValue("@ActionName", AppConstants.EditActionName);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                     dataConnectorSQL.Close();
@@ -681,31 +685,90 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult DeleteAction(int saleId)
+        public JsonResult CheckLedgerForSaleEditAction(int saleId)
+        {
+            bool isSuccess = false;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand(Procedure.PrcCheckLedgerForSaleEdit, (SqlConnection)getConnection());
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@SaleID", saleId);
+                cmd.Parameters.AddWithValue("@ARAccountCode", AppConstants.ARAccountCode);
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read()) isSuccess = Convert.ToBoolean(reader[0]);
+                reader.Close();
+
+                if (isSuccess)
+                {
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                else
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.InCompletedData.ToString();
+                    resultDefaultData.Message = AppConstants.Message.NoEditByOutstanding;
+                }
+            }
+            catch (Exception ex)
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                resultDefaultData.Message = ex.Message;
+            }
+
+            var jsonResult = new
+            {
+                ResultDefaultData = resultDefaultData
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult DeleteAction(int saleId,int userId)
         {           
-            int totalPageNum = 0;          
+            int totalPageNum = 0;
+            bool isSuccess = false;
             ResultDefaultData resultDefaultData = new ResultDefaultData();
 
             if (Session["MasterSaleData"] != null)
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand(textQuery.deleteSaleQuery(saleId), (SqlConnection)getConnection());
-                    cmd.CommandType = CommandType.Text;
-                    cmd.ExecuteNonQuery();
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcDeleteSale, (SqlConnection)getConnection());
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@SaleID", saleId);
+                    cmd.Parameters.AddWithValue("@SaleAccountCode", AppConstants.SaleAccountCode);
+                    cmd.Parameters.AddWithValue("@ARAccountCode", AppConstants.ARAccountCode);
+                    cmd.Parameters.AddWithValue("@UpdatedUserID", userId);
+                    cmd.Parameters.AddWithValue("@UpdatedDateTime", setting.getLocalDateTime());
+                    cmd.Parameters.AddWithValue("@ActionCode", AppConstants.DeleteActionCode);
+                    cmd.Parameters.AddWithValue("@ActionName", AppConstants.DeleteActionName);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read()) isSuccess = Convert.ToBoolean(reader[0]);
+                    reader.Close();
 
-                    List<SaleViewModel.MasterSaleViewModel> lstMasterSale = Session["MasterSaleData"] as List<SaleViewModel.MasterSaleViewModel>;
-                    int index = lstMasterSale.FindIndex(x => x.SaleID == saleId);
-                    lstMasterSale.RemoveAt(index);
-
-                    if (lstMasterSale.Count > paging.eachItemCount)
+                    if (isSuccess)
                     {
-                        totalPageNum = lstMasterSale.Count / paging.eachItemCount;
-                        paging.lastItemCount = lstMasterSale.Count % paging.eachItemCount;
-                        if (paging.lastItemCount != 0) totalPageNum += 1;
+                        List<SaleViewModel.MasterSaleViewModel> lstMasterSale = Session["MasterSaleData"] as List<SaleViewModel.MasterSaleViewModel>;
+                        int index = lstMasterSale.FindIndex(x => x.SaleID == saleId);
+                        lstMasterSale.RemoveAt(index);
+
+                        if (lstMasterSale.Count > paging.eachItemCount)
+                        {
+                            totalPageNum = lstMasterSale.Count / paging.eachItemCount;
+                            paging.lastItemCount = lstMasterSale.Count % paging.eachItemCount;
+                            if (paging.lastItemCount != 0) totalPageNum += 1;
+                        }
+                        resultDefaultData.IsRequestSuccess = true;
+                        resultDefaultData.Message = AppConstants.Message.DeleteSuccess;
                     }
-                    resultDefaultData.IsRequestSuccess = true;
-                    resultDefaultData.Message = AppConstants.Message.DeleteSuccess;
+                    else
+                    {
+                        resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.InCompletedData.ToString();
+                        resultDefaultData.Message = AppConstants.Message.NoDeleteByOutstanding;
+                    }
                 }
                 catch (Exception ex)
                 {

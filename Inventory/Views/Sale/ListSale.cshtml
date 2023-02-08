@@ -97,13 +97,13 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("DeleteAction", "Sale")',
-                    data: { "saleId": saleId },
+                    data: { "saleId": saleId, "userId": userId },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
                         if (!response.ResultDefaultData.IsRequestSuccess)
-                            responseUnSuccessful(response);                       
+                            responseUnSuccessful(response);
                         else {
                             if (selectedRowIndex != null) {
                                 document.getElementById("tblSaleList").deleteRow(selectedRowIndex);
@@ -130,8 +130,7 @@
                         clearTableAction();
                         viewDetail(saleId);
                     } else if (listActionValue == 2) {  // edit
-                        clearTableAction();
-                        window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId + '&saleId=' + saleId;
+                        checkLedgerForSaleEditAction(saleId);
                     } else if (listActionValue == 3) {  // delete
                         clearTableAction();
                         $('#modalConfirm').modal('show');
@@ -139,6 +138,34 @@
                     }
                 });
             });
+
+            function checkLedgerForSaleEditAction(saleId) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("CheckLedgerForSaleEditAction", "Sale")',
+                    data: { "saleId": saleId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            responseUnSuccessful(response);
+                        else {
+                            clearTableAction();
+                            window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId + '&saleId=' + saleId;
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
 
             function viewDetail(saleId) {
                 showLoadingIcon();
@@ -183,7 +210,7 @@
                             + '<td style="display:none">' + item.SaleID + '</td>'
                         +'</tr>'
                     $('#tblSaleList tbody').append(row);
-                });               
+                });
             }
 
             $(document).on('click', '.btnPage', function (e) {

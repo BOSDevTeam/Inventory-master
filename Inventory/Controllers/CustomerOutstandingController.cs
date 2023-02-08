@@ -22,7 +22,7 @@ namespace Inventory.Controllers
         int totalBalance;
 
         [SessionTimeoutAttribute]
-        public ActionResult ListCustomerOutstanding()
+        public ActionResult CustomerOutstanding()
         {
             try
             {
@@ -282,7 +282,7 @@ namespace Inventory.Controllers
                     for (int i = 0; i < lstTran.Count(); i++)
                     {
                         data = lstTran[i];
-
+                        data.PayDate = Convert.ToDateTime(allPayDate);
                         if (data.IsOpening) amount = data.Opening;
                         else amount = data.Sale;
 
@@ -425,14 +425,15 @@ namespace Inventory.Controllers
                 item = new CustomerOutstandingViewModel.CustomerOutstandingListViewModel();
                 item.CustomerID = Convert.ToInt32(reader["CustomerID"]);
                 item.CustomerName = Convert.ToString(reader["CustomerName"]);
-                item.OutstandingOpening = Convert.ToInt32(reader["OutstandingOpening"]);
-                item.AccountOpening = Convert.ToInt32(reader["AccountOpening"]);
-                int outOpeningPayment= Convert.ToInt32(reader["OutstandingOpeningPayment"]);
-                if (outOpeningPayment != 0)
-                    item.OpeningPayment = outOpeningPayment;
-                else item.OpeningPayment= Convert.ToInt32(reader["AccountOpeningPayment"]);
-                item.Sale = Convert.ToInt32(reader["Sale"]);
-                item.SalePayment = Convert.ToInt32(reader["SalePayment"]);
+                int outOpening = Convert.ToInt32(reader["OutstandingOpening"]);
+                int outOpeningPayment = Convert.ToInt32(reader["OutstandingOpeningPayment"]);
+                int accountOpening = Convert.ToInt32(reader["AccountOpening"]);
+                int accountOpeningPayment = Convert.ToInt32(reader["AccountOpeningPayment"]);
+                item.OutstandingOpening = outOpening + (outOpeningPayment);
+                item.AccountOpening = accountOpening + (accountOpeningPayment);
+                int sale = Convert.ToInt32(reader["Sale"]);
+                int salePayment = Convert.ToInt32(reader["SalePayment"]);
+                item.Sale = sale + (salePayment);
                 item.Balance = Convert.ToInt32(reader["Balance"]);
                 tempList.Add(item);
             }

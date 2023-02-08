@@ -133,12 +133,11 @@
                         <li class="submenu">
                             <a href=""><i class="fa fa-money"></i> <span> @Resource.Outstanding </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuOutstandingGp">
-                                <li id="subMenuCustomerOutstandingList"><a href="#">@Resource.ListCustomerOutstanding</a></li>
-                                <li id="subMenuCustomerOutstandingPaymentHistory"><a href="#">@Resource.CustomerOutstandingPaymentHistory</a></li>
+                                <li id="subMenuCustomerOutstanding"><a href="#">@Resource.CustomerOutstanding</a></li>                            
                             </ul>
                         </li> 
                         <li class="submenu">
-                            <a href=""><i class="fa fa-address-card"></i> <span> @Resource.CustomerOpening </span> <span class="menu-arrow"></span></a>
+                            <a href=""><i class="fa fa-address-card"></i> <span> @Resource.Opening </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuOpeningGp">
                                 <li id="subMenuCustomerOpeningList"><a href="#">@Resource.ListCustomerOpening</a></li>
                                 <li id="subMenuCustomerOpening"><a href="#">@Resource.AddCustomerOpening</a></li>
@@ -276,12 +275,10 @@
             $('#subMenuCustomerOpening').click(function () {
                 window.location.href = '@Url.Action("CustomerOpening", "CustomerOpening")?userId=' + userId;
             });
-            $('#subMenuCustomerOutstandingList').click(function () {
-                window.location.href = '@Url.Action("ListCustomerOutstanding", "CustomerOutstanding")';
+            $('#subMenuCustomerOutstanding').click(function () {
+                window.location.href = '@Url.Action("CustomerOutstanding", "CustomerOutstanding")';
             });
-            $('#subMenuCustomerOutstandingPaymentHistory').click(function () {
-                window.location.href = '@Url.Action("CustomerOutstandingPaymentHistory", "CustomerOutstandingHistory")';
-            });
+          
             $('.toast').toast({
                 delay: 3000
             });

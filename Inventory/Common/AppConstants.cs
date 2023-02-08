@@ -26,6 +26,12 @@ namespace Inventory.Common
         public const int CustomerOpeningAccountCode = 110;
         public const int ARAccountCode = 310;
 
+        //Action Codes and Names
+        public const string EditActionCode = "1";  //SysAction table value
+        public const string DeleteActionCode = "2";
+        public const string EditActionName = "Edit";
+        public const string DeleteActionName = "Delete";
+
         //Firebase Notification
         public const string CloudMessagingServerKey = "AAAAm-35J2M:APA91bG7cMqe-P2pkXZsNPn81sz9e0vwEWNKmiPPtblzfGhQYvqE8_JOBCm76cCI9lFyI0Gcglr104CfxkvKqdxs0vITi2sn759ytppjtNQOF3Kyy-A6RATXwmdgLvVEQIj3GSWWQ7PS";  //SysModule table value
         public static Uri FirebasePushNotificationsURL = new Uri("https://fcm.googleapis.com/fcm/send");
@@ -68,6 +74,9 @@ namespace Inventory.Common
             public const string FillOutstandingPayment = "Fill Outstanding Payment";
             public const string PaymentSuccess = "Payment Successful";
             public const string SessionExpired = "Session Expired";
+            public const string UpdateSuccess = "Updated Successfully!";
+            public const string NoDeleteByOutstanding = "Not allow to delete! This voucher has payments in outstanding!";
+            public const string NoEditByOutstanding = "Not allow to edit! This voucher has payments in outstanding!";
         }
     }
 }

@@ -96,6 +96,11 @@
                                 <li id="subMenuPurchaseAmountBySupplierRp"><a href="#">@Resource.PurchaseAmountBySupplierReport</a></li>                            
                                 <li id="subMenuPurchaseItemBySupplierRp"><a href="#">@Resource.PurchaseItemBySupplierReport</a></li>                             
                             </ul>
+                            <a href=""><i class="fa fa-flag"></i> <span> @Resource.TransferReport </span> <span class="menu-arrow"></span></a>
+                            <ul id="subMenuTransferRpGp">
+                                <li id="subMenuTransferVoucherRp"><a href="#">@Resource.TransferVoucherReport</a></li>
+                                <li id="subMenuTransferItemRp"><a href="#">@Resource.TransferItemReport</a></li>                               
+                            </ul>
                         </li>                                                                    
                     </ul>
                 </div>
@@ -172,6 +177,12 @@
             });
             $('#subMenuPurchaseItemBySupplierRp').click(function () {
                 window.location.href = '@Url.Action("PurchaseItemBySupplierReportFilter", "RpPurchaseItemBySupplier")';
+            });
+            $('#subMenuTransferVoucherRp').click(function () {
+                window.location.href = '@Url.Action("TransferVoucherReportFilter", "RpTransferVoucher")';
+            });
+            $('#subMenuTransferItemRp').click(function () {
+                window.location.href = '@Url.Action("TransferItemReportFilter", "RpTransferItem")';
             });
             $('.toast').toast({
                 delay: 3000
