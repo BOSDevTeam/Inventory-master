@@ -20,26 +20,26 @@ namespace Inventory.Controllers
         AppSetting.Paging paging = new AppSetting.Paging();
         CustomerOutstandingHistoryViewModel viewModel = new CustomerOutstandingHistoryViewModel();
 
-        [SessionTimeoutAttribute]
-        public ActionResult CustomerOutstandingPaymentHistory()
-        {
-            try
-            {
-                getCustomer(true);
-                List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList = selectCustomerOutstandingHistory(false);
-                PagingViewModel pagingViewModel = calcCustomerOutstandingPaging(tempList);
-                List<CustomerOutstandingHistoryViewModel.ListViewModel> lstCustomerOutstanding = getCustomerOutstandingByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
-                ViewData["LstCustomerOutstanding"] = lstCustomerOutstanding;
-                ViewBag.TotalPageNum = pagingViewModel.TotalPageNum;
-                ViewBag.CurrentPage = pagingViewModel.CurrentPage;
-            }
-            catch (Exception ex)
-            {
-                ViewBag.ErrorMessage = ex.Message;
-            }
+        //[SessionTimeoutAttribute]
+        //public ActionResult CustomerOutstandingPaymentHistory()
+        //{
+        //    try
+        //    {
+        //        getCustomer(true);
+        //        List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList = selectCustomerOutstandingHistory(false);
+        //        PagingViewModel pagingViewModel = calcCustomerOutstandingPaging(tempList);
+        //        List<CustomerOutstandingHistoryViewModel.ListViewModel> lstCustomerOutstanding = getCustomerOutstandingByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+        //        ViewData["LstCustomerOutstanding"] = lstCustomerOutstanding;
+        //        ViewBag.TotalPageNum = pagingViewModel.TotalPageNum;
+        //        ViewBag.CurrentPage = pagingViewModel.CurrentPage;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ViewBag.ErrorMessage = ex.Message;
+        //    }
 
-            return View(viewModel);
-        }
+        //    return View(viewModel);
+        //}
 
         #region OutstandingListAction
 
@@ -50,7 +50,7 @@ namespace Inventory.Controllers
             List<CustomerOutstandingHistoryViewModel.DetailViewModel> lstCustomerOutstandingPayment = new List<CustomerOutstandingHistoryViewModel.DetailViewModel>();
             try
             {
-                Session["CustomerOutstandingPaymentList"] = null;
+                Session["HCustomerOutstandingPaymentList"] = null;
                 lstCustomerOutstandingPayment = selectTranCustomerOutstanding(customerId);
                 resultDefaultData.IsRequestSuccess = true;
             }
@@ -67,50 +67,138 @@ namespace Inventory.Controllers
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
-        public JsonResult SearchAction(DateTime fromDate, DateTime toDate, int customerId)
-        {
-            List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList = selectCustomerOutstandingHistory(true, fromDate, toDate, customerId);
-            PagingViewModel pagingViewModel = calcCustomerOutstandingPaging(tempList);
-            List<CustomerOutstandingHistoryViewModel.ListViewModel> lstCustomerOutstanding = getCustomerOutstandingByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
-            var jsonResult = new
-            {
-                TotalPage = pagingViewModel.TotalPageNum,
-                CurrentPage = pagingViewModel.CurrentPage,
-                LstCustomerOutstanding = lstCustomerOutstanding
-            };
-            return Json(jsonResult, JsonRequestBehavior.AllowGet);
-        }
+        //[HttpGet]
+        //public JsonResult SearchAction(DateTime fromDate, DateTime toDate, int customerId)
+        //{
+        //    List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList = selectCustomerOutstandingHistory(true, fromDate, toDate, customerId);
+        //    PagingViewModel pagingViewModel = calcCustomerOutstandingPaging(tempList);
+        //    List<CustomerOutstandingHistoryViewModel.ListViewModel> lstCustomerOutstanding = getCustomerOutstandingByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+        //    var jsonResult = new
+        //    {
+        //        TotalPage = pagingViewModel.TotalPageNum,
+        //        CurrentPage = pagingViewModel.CurrentPage,
+        //        LstCustomerOutstanding = lstCustomerOutstanding
+        //    };
+        //    return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        //}
+
+        //[HttpGet]
+        //public JsonResult RefreshAction()
+        //{
+        //    List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList = selectCustomerOutstandingHistory(false);
+        //    PagingViewModel pagingViewModel = calcCustomerOutstandingPaging(tempList);
+        //    List<CustomerOutstandingHistoryViewModel.ListViewModel> lstCustomerOutstanding = getCustomerOutstandingByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+        //    var jsonResult = new
+        //    {
+        //        TotalPage = pagingViewModel.TotalPageNum,
+        //        CurrentPage = pagingViewModel.CurrentPage,
+        //        LstCustomerOutstanding = lstCustomerOutstanding
+        //    };
+        //    return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        //}
+
+        //[HttpGet]
+        //public JsonResult OutstandingPagingAction(int currentPage)
+        //{
+        //    ResultDefaultData resultDefaultData = new ResultDefaultData();
+        //    List<CustomerOutstandingHistoryViewModel.ListViewModel> lstCustomerOutstanding = new List<CustomerOutstandingHistoryViewModel.ListViewModel>();
+        //    PagingViewModel pagingViewModel = new PagingViewModel();
+
+        //    if (Session["CustomerOutstandingList"] != null)
+        //    {
+        //        try
+        //        {
+        //            List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList = Session["CustomerOutstandingList"] as List<CustomerOutstandingHistoryViewModel.ListViewModel>;
+        //            pagingViewModel = calcCustomerOutstandingPaging(tempList, currentPage);
+        //            lstCustomerOutstanding = getCustomerOutstandingByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+        //            resultDefaultData.IsRequestSuccess = true;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+        //            resultDefaultData.Message = ex.Message;
+        //        }
+        //    }
+        //    else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
+
+        //    var jsonResult = new
+        //    {
+        //        LstCustomerOutstanding = lstCustomerOutstanding,
+        //        TotalPage = pagingViewModel.TotalPageNum,
+        //        ResultDefaultData = resultDefaultData
+        //    };
+
+        //    return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        //}
+
+        #endregion
+
+        #region PaymentAction
 
         [HttpGet]
-        public JsonResult RefreshAction()
-        {
-            List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList = selectCustomerOutstandingHistory(false);
-            PagingViewModel pagingViewModel = calcCustomerOutstandingPaging(tempList);
-            List<CustomerOutstandingHistoryViewModel.ListViewModel> lstCustomerOutstanding = getCustomerOutstandingByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
-            var jsonResult = new
-            {
-                TotalPage = pagingViewModel.TotalPageNum,
-                CurrentPage = pagingViewModel.CurrentPage,
-                LstCustomerOutstanding = lstCustomerOutstanding
-            };
-            return Json(jsonResult, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpGet]
-        public JsonResult OutstandingPagingAction(int currentPage)
+        public JsonResult AddPaymentAction(int ledgerId, int payment)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
-            List<CustomerOutstandingHistoryViewModel.ListViewModel> lstCustomerOutstanding = new List<CustomerOutstandingHistoryViewModel.ListViewModel>();
-            PagingViewModel pagingViewModel = new PagingViewModel();
-
-            if (Session["CustomerOutstandingList"] != null)
+            if (Session["HCustomerOutstandingTranList"] != null)
             {
                 try
                 {
-                    List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList = Session["CustomerOutstandingList"] as List<CustomerOutstandingHistoryViewModel.ListViewModel>;
-                    pagingViewModel = calcCustomerOutstandingPaging(tempList, currentPage);
-                    lstCustomerOutstanding = getCustomerOutstandingByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
+                    List<CustomerOutstandingHistoryViewModel.DetailViewModel> lstTranCustomerOutstanding = Session["HCustomerOutstandingTranList"] as List<CustomerOutstandingHistoryViewModel.DetailViewModel>;
+                    CustomerOutstandingHistoryViewModel.DetailViewModel data = lstTranCustomerOutstanding.Where(x => x.LedgerID == ledgerId).SingleOrDefault();
+                    List<CustomerOutstandingHistoryViewModel.DetailViewModel> lstPayment = new List<CustomerOutstandingHistoryViewModel.DetailViewModel>();
+                    if (Session["HCustomerOutstandingPaymentList"] != null)
+                    {
+                        lstPayment = Session["HCustomerOutstandingPaymentList"] as List<CustomerOutstandingHistoryViewModel.DetailViewModel>;
+                    }
+                    data.Payment = payment;
+
+                    int index = lstPayment.FindIndex(x => x.LedgerID == ledgerId);
+                    if (index != -1)
+                        lstPayment[index] = data;
+                    else lstPayment.Add(data);
+
+                    Session["HCustomerOutstandingPaymentList"] = lstPayment;
+                    resultDefaultData.IsRequestSuccess = true;                    
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+            }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
+
+            var jsonResult = new
+            {
+                ResultDefaultData = resultDefaultData
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult ChangedPayDateAction(int ledgerId, string payDate)
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            if (Session["HCustomerOutstandingTranList"] != null)
+            {
+                try
+                {
+                    List<CustomerOutstandingHistoryViewModel.DetailViewModel> lstTranCustomerOutstanding = Session["HCustomerOutstandingTranList"] as List<CustomerOutstandingHistoryViewModel.DetailViewModel>;
+                    CustomerOutstandingHistoryViewModel.DetailViewModel data = lstTranCustomerOutstanding.Where(x => x.LedgerID == ledgerId).SingleOrDefault();
+                    List<CustomerOutstandingHistoryViewModel.DetailViewModel> lstPayment = new List<CustomerOutstandingHistoryViewModel.DetailViewModel>();
+                    if (Session["HCustomerOutstandingPaymentList"] != null)
+                    {
+                        lstPayment = Session["HCustomerOutstandingPaymentList"] as List<CustomerOutstandingHistoryViewModel.DetailViewModel>;
+                    }
+                    data.PayDate = payDate;
+
+                    int index = lstPayment.FindIndex(x => x.LedgerID == ledgerId);
+                    if (index != -1)
+                        lstPayment[index] = data;
+                    else lstPayment.Add(data);
+
+                    Session["HCustomerOutstandingPaymentList"] = lstPayment;
                     resultDefaultData.IsRequestSuccess = true;
                 }
                 catch (Exception ex)
@@ -123,199 +211,166 @@ namespace Inventory.Controllers
 
             var jsonResult = new
             {
-                LstCustomerOutstanding = lstCustomerOutstanding,
-                TotalPage = pagingViewModel.TotalPageNum,
                 ResultDefaultData = resultDefaultData
             };
-
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
-        #endregion
-
-        #region PaymentAction
-
         [HttpGet]
-        public JsonResult AddPaymentAction(int ledgerId, int payment)
+        public JsonResult SaveAction(int customerId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
-            //if (Session["CustomerOutstandingTranList"] != null)
-            //{
-            //    try
-            //    {
-            //        List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel> lstTranCustomerOutstanding = Session["CustomerOutstandingTranList"] as List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel>;
-            //        CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel data = lstTranCustomerOutstanding.Where(x => x.UserVoucherNo == userVoucherNo).SingleOrDefault();
-            //        if (data.IsOpening)
-            //        {
-            //            if (payment > data.Opening)
-            //            {
-            //                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.InCompletedData.ToString();
-            //                resultDefaultData.Message = AppConstants.Message.InvalidPayment;
-            //            }
-            //            else
-            //            {
-            //                List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel> lstPayment = new List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel>();
-            //                if (Session["CustomerOutstandingPaymentList"] != null)
-            //                {
-            //                    lstPayment = Session["CustomerOutstandingPaymentList"] as List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel>;
-            //                }
-            //                data.Payment = payment;
 
-            //                int index = lstPayment.FindIndex(x => x.UserVoucherNo == userVoucherNo);
-            //                if (index != -1)
-            //                    lstPayment[index] = data;
-            //                else lstPayment.Add(data);
+            if (Session["HCustomerOutstandingPaymentList"] != null)
+            {
+                try
+                {
+                    List<CustomerOutstandingHistoryViewModel.DetailViewModel> lstPayment = Session["HCustomerOutstandingPaymentList"] as List<CustomerOutstandingHistoryViewModel.DetailViewModel>;
 
-            //                Session["CustomerOutstandingPaymentList"] = lstPayment;
-            //                resultDefaultData.IsRequestSuccess = true;
-            //            }
-            //        }
-            //        else
-            //        {
-            //            if (payment > data.Sale)
-            //            {
-            //                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.InCompletedData.ToString();
-            //                resultDefaultData.Message = AppConstants.Message.InvalidPayment;
-            //            }
-            //            else
-            //            {
-            //                List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel> lstPayment = new List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel>();
-            //                if (Session["CustomerOutstandingPaymentList"] != null)
-            //                {
-            //                    lstPayment = Session["CustomerOutstandingPaymentList"] as List<CustomerOutstandingViewModel.CustomerOutstandingPaymentViewModel>;
-            //                }
-            //                data.Payment = payment;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("LedgerID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("PayDate", typeof(DateTime)));
+                    dt.Columns.Add(new DataColumn("Payment", typeof(int)));
+                    for (int i = 0; i < lstPayment.Count; i++)
+                    {
+                        dt.Rows.Add(lstPayment[i].LedgerID, Convert.ToDateTime(lstPayment[i].PayDate), lstPayment[i].Payment);
+                    }
 
-            //                int index = lstPayment.FindIndex(x => x.UserVoucherNo == userVoucherNo);
-            //                if (index != -1)
-            //                    lstPayment[index] = data;
-            //                else lstPayment.Add(data);
+                    setting.conn.Open();
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateCustomerOutstandingPayment, setting.conn);
+                    cmd.CommandType = CommandType.StoredProcedure;               
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Connection = setting.conn;
+                    cmd.ExecuteNonQuery();
+                    setting.conn.Close();
 
-            //                Session["CustomerOutstandingPaymentList"] = lstPayment;
-            //                resultDefaultData.IsRequestSuccess = true;
-            //            }
-            //        }
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
-            //        resultDefaultData.Message = ex.Message;
-            //    }
-            //}
-            //else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
+                    Session["HCustomerOutstandingPaymentList"] = null;
+                    resultDefaultData.IsRequestSuccess = true;
+                    resultDefaultData.Message = AppConstants.Message.UpdateSuccess;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+            }
+            else
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.InCompletedData.ToString();
+                resultDefaultData.Message = AppConstants.Message.FillOutstandingPayment;
+            }
 
             var jsonResult = new
             {
                 ResultDefaultData = resultDefaultData
             };
-
-            return Json("", JsonRequestBehavior.AllowGet);
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
         #endregion
 
-        private List<CustomerOutstandingHistoryViewModel.ListViewModel> selectCustomerOutstandingHistory(bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]int customerId)
-        {
-            List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList = new List<CustomerOutstandingHistoryViewModel.ListViewModel>();
-            CustomerOutstandingHistoryViewModel.ListViewModel item = new CustomerOutstandingHistoryViewModel.ListViewModel();
-            int payment = 0;
+        //private List<CustomerOutstandingHistoryViewModel.ListViewModel> selectCustomerOutstandingHistory(bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]int customerId)
+        //{
+        //    List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList = new List<CustomerOutstandingHistoryViewModel.ListViewModel>();
+        //    CustomerOutstandingHistoryViewModel.ListViewModel item = new CustomerOutstandingHistoryViewModel.ListViewModel();
+        //    int payment = 0;
 
-            setting.conn.Open();
-            SqlCommand cmd = new SqlCommand(Procedure.PrcGetCustomerOutstandingHistory, setting.conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-            if (!isSearch)
-            {
-                cmd.Parameters.AddWithValue("@FromDate", setting.getLocalDate());
-                cmd.Parameters.AddWithValue("@ToDate", setting.getLocalDate());
-                cmd.Parameters.AddWithValue("@CustomerID", 0);
-            }
-            else
-            {
-                cmd.Parameters.AddWithValue("@FromDate", fromDate);
-                cmd.Parameters.AddWithValue("@ToDate", toDate);
-                cmd.Parameters.AddWithValue("@CustomerID", customerId);
-            }
-            cmd.Parameters.AddWithValue("@ARAccountCode", AppConstants.ARAccountCode);
-            cmd.Connection = setting.conn;
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                item = new CustomerOutstandingHistoryViewModel.ListViewModel();
-                item.CustomerID = Convert.ToInt32(reader["VendorID"]);
-                item.CustomerName = Convert.ToString(reader["CustomerName"]);
-                payment = Convert.ToInt32(reader["Payment"]);
-                if (payment.ToString().StartsWith("-"))               
-                    payment=Convert.ToInt32(payment.ToString().Remove(0, 1));               
-                item.Payment = payment;
-                tempList.Add(item);
-            }
-            reader.Close();
-            setting.conn.Close();
-            Session["CustomerOutstandingList"] = tempList;  // for paging
+        //    setting.conn.Open();
+        //    SqlCommand cmd = new SqlCommand(Procedure.PrcGetCustomerOutstandingHistory, setting.conn);
+        //    cmd.CommandType = CommandType.StoredProcedure;
+        //    if (!isSearch)
+        //    {
+        //        cmd.Parameters.AddWithValue("@FromDate", setting.getLocalDate());
+        //        cmd.Parameters.AddWithValue("@ToDate", setting.getLocalDate());
+        //        cmd.Parameters.AddWithValue("@CustomerID", 0);
+        //    }
+        //    else
+        //    {
+        //        cmd.Parameters.AddWithValue("@FromDate", fromDate);
+        //        cmd.Parameters.AddWithValue("@ToDate", toDate);
+        //        cmd.Parameters.AddWithValue("@CustomerID", customerId);
+        //    }
+        //    cmd.Parameters.AddWithValue("@ARAccountCode", AppConstants.ARAccountCode);
+        //    cmd.Connection = setting.conn;
+        //    SqlDataReader reader = cmd.ExecuteReader();
+        //    while (reader.Read())
+        //    {
+        //        item = new CustomerOutstandingHistoryViewModel.ListViewModel();
+        //        item.CustomerID = Convert.ToInt32(reader["VendorID"]);
+        //        item.CustomerName = Convert.ToString(reader["CustomerName"]);
+        //        payment = Convert.ToInt32(reader["Payment"]);
+        //        if (payment.ToString().StartsWith("-"))               
+        //            payment=Convert.ToInt32(payment.ToString().Remove(0, 1));               
+        //        item.Payment = payment;
+        //        tempList.Add(item);
+        //    }
+        //    reader.Close();
+        //    setting.conn.Close();
+        //    Session["CustomerOutstandingList"] = tempList;  // for paging
 
-            return tempList;
-        }
+        //    return tempList;
+        //}
 
-        private PagingViewModel calcCustomerOutstandingPaging(List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList, [Optional]int currentPage)
-        {
-            PagingViewModel item = new PagingViewModel();
-            int totalPageNum = 0;
+        //private PagingViewModel calcCustomerOutstandingPaging(List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList, [Optional]int currentPage)
+        //{
+        //    PagingViewModel item = new PagingViewModel();
+        //    int totalPageNum = 0;
 
-            if (currentPage == 0) currentPage = 1;
-            if (tempList.Count > paging.eachItemCount)
-            {
-                totalPageNum = tempList.Count / paging.eachItemCount;
-                paging.lastItemCount = tempList.Count % paging.eachItemCount;
-                if (paging.lastItemCount != 0) totalPageNum += 1;
+        //    if (currentPage == 0) currentPage = 1;
+        //    if (tempList.Count > paging.eachItemCount)
+        //    {
+        //        totalPageNum = tempList.Count / paging.eachItemCount;
+        //        paging.lastItemCount = tempList.Count % paging.eachItemCount;
+        //        if (paging.lastItemCount != 0) totalPageNum += 1;
 
-                int i = currentPage * paging.eachItemCount;
-                int j = (i - paging.eachItemCount) + 1;
-                int start = j;
-                int end = i;
-                paging.startItemIndex = start - 1;
-                paging.endItemIndex = end - 1;
-            }
-            else
-            {
-                paging.startItemIndex = 0;
-                paging.endItemIndex = tempList.Count - 1;
-            }
+        //        int i = currentPage * paging.eachItemCount;
+        //        int j = (i - paging.eachItemCount) + 1;
+        //        int start = j;
+        //        int end = i;
+        //        paging.startItemIndex = start - 1;
+        //        paging.endItemIndex = end - 1;
+        //    }
+        //    else
+        //    {
+        //        paging.startItemIndex = 0;
+        //        paging.endItemIndex = tempList.Count - 1;
+        //    }
 
-            item.CurrentPage = currentPage;
-            item.TotalPageNum = totalPageNum;
-            item.StartItemIndex = paging.startItemIndex;
-            item.EndItemIndex = paging.endItemIndex;
+        //    item.CurrentPage = currentPage;
+        //    item.TotalPageNum = totalPageNum;
+        //    item.StartItemIndex = paging.startItemIndex;
+        //    item.EndItemIndex = paging.endItemIndex;
 
-            return item;
-        }
+        //    return item;
+        //}
 
-        private List<CustomerOutstandingHistoryViewModel.ListViewModel> getCustomerOutstandingByPaging(List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList, int startRowIndex, int endRowIndex)
-        {
-            List<CustomerOutstandingHistoryViewModel.ListViewModel> list = new List<CustomerOutstandingHistoryViewModel.ListViewModel>();
-            CustomerOutstandingHistoryViewModel.ListViewModel item = new CustomerOutstandingHistoryViewModel.ListViewModel();
+        //private List<CustomerOutstandingHistoryViewModel.ListViewModel> getCustomerOutstandingByPaging(List<CustomerOutstandingHistoryViewModel.ListViewModel> tempList, int startRowIndex, int endRowIndex)
+        //{
+        //    List<CustomerOutstandingHistoryViewModel.ListViewModel> list = new List<CustomerOutstandingHistoryViewModel.ListViewModel>();
+        //    CustomerOutstandingHistoryViewModel.ListViewModel item = new CustomerOutstandingHistoryViewModel.ListViewModel();
 
-            for (int page = startRowIndex; page < tempList.Count; page++)
-            {
-                if (page > endRowIndex) break;
+        //    for (int page = startRowIndex; page < tempList.Count; page++)
+        //    {
+        //        if (page > endRowIndex) break;
 
-                item = new CustomerOutstandingHistoryViewModel.ListViewModel();
-                item.CustomerID = tempList[page].CustomerID;
-                item.CustomerName = tempList[page].CustomerName;
-                item.Payment = tempList[page].Payment;
-                list.Add(item);
-            }
-            return list;
-        }
+        //        item = new CustomerOutstandingHistoryViewModel.ListViewModel();
+        //        item.CustomerID = tempList[page].CustomerID;
+        //        item.CustomerName = tempList[page].CustomerName;
+        //        item.Payment = tempList[page].Payment;
+        //        list.Add(item);
+        //    }
+        //    return list;
+        //}
 
-        private void getCustomer(bool isIncludeDefault)
-        {
-            if (isIncludeDefault) viewModel.Customers.Add(new SelectListItem { Text = AppConstants.AllCustomer, Value = "0" });
-            List<CustomerModels.CustomerModel> list = appData.selectCustomer();
-            for (int i = 0; i < list.Count; i++)
-            {
-                viewModel.Customers.Add(new SelectListItem { Text = list[i].CustomerName, Value = Convert.ToString(list[i].CustomerID) });
-            }
-        }
+        //private void getCustomer(bool isIncludeDefault)
+        //{
+        //    if (isIncludeDefault) viewModel.Customers.Add(new SelectListItem { Text = AppConstants.AllCustomer, Value = "0" });
+        //    List<CustomerModels.CustomerModel> list = appData.selectCustomer();
+        //    for (int i = 0; i < list.Count; i++)
+        //    {
+        //        viewModel.Customers.Add(new SelectListItem { Text = list[i].CustomerName, Value = Convert.ToString(list[i].CustomerID) });
+        //    }
+        //}
 
         private List<CustomerOutstandingHistoryViewModel.DetailViewModel> selectTranCustomerOutstanding(int customerId)
         {
@@ -346,7 +401,7 @@ namespace Inventory.Controllers
             }
             reader.Close();
             setting.conn.Close();
-            Session["CustomerOutstandingTranList"] = list;
+            Session["HCustomerOutstandingTranList"] = list;
 
             return list;
         }

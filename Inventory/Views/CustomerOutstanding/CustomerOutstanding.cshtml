@@ -18,7 +18,7 @@
     <script type="text/javascript">
 
         let listActionValue, selectedRowIndex, customerName;
-        document.getElementById('subMenuCustomerOutstandingList').className = 'active';
+        document.getElementById('subMenuCustomerOutstanding').className = 'active';
 
         $(document).ready(function () {
 
@@ -26,7 +26,7 @@
                 showToast(0, '@ViewBag.ErrorMessage');
             }
 
-            setModuleTitle('@Resource.Outstanding', '@Resource.ListCustomerOutstanding');
+            setModuleTitle('@Resource.Outstanding', '@Resource.CustomerOutstanding');
             initializeControl();
             createOutstandingData('', false);
             createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');
@@ -118,6 +118,7 @@
                             initializePaymentControl(response.TotalBalance);
                             createCustomerOutstandingData(response.LstCustomerOutstandingPayment);
                             $('.inputPayDate').val(getTodayDate());
+                            document.getElementById("defaultOpen").click();
                         }                       
                     },
                     failure: function (response) {
@@ -176,13 +177,14 @@
             if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstCustomerOutstanding"]))');
             $.each(response, function (index, item) {
                 var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
-                        + '<td class="col-md-1 col-lg-1">' + item.CustomerName + '</td>'
+                        + '<td class="col-md-2 col-lg-2">' + item.CustomerName + '</td>'
                         + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.OutstandingOpening) + '</td>'
                         + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.AccountOpening) + '</td>'
-                        + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.OpeningPayment) + '</td>'
-                        + '<td class="col-md-1 col-lg-1 aligh-right">' + separatedComma(item.Sale) + '</td>'
-                        + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.SalePayment) + '</td>'
-                        + '<td class="col-md-1 col-lg-1 aligh-right">' + separatedComma(item.Balance) + '</td>'
+                        //+ '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.OpeningPayment) + '</td>'
+                        + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Sale) + '</td>'
+                        //+ '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.SalePayment) + '</td>'
+                        + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Balance) + '</td>'
+                        + '<td class="col-md-1 col-lg-1"></td>'
                         + '<td class="col-md-1 col-lg-1 btn-group">'
                             + '<button title="Payment" class="btn btn-sm btn-primary" onclick="listTableAction(1)">@Resource.Payment</button>'
                         + '</td>'
@@ -211,7 +213,7 @@
 
     <div class="row setup-title-layout">
         <div class="col-md-12 col-lg-12">
-            <label class="page-title">@Resource.CustomerOutstandingList</label>
+            <label class="page-title">@Resource.CustomerOutstanding</label>
         </div>
     </div>
 
@@ -238,13 +240,14 @@
             <table id="tblOutstandingList" class="col-md-12 col-lg-12" role="grid">
                 <thead>
                     <tr class="row table-header">
-                        <th class="col-md-1 col-lg-1">@Resource.Customer</th>
+                        <th class="col-md-2 col-lg-2">@Resource.Customer</th>
                         <th class="col-md-2 col-lg-2 aligh-right">@Resource.OutstandingOpening</th>
                         <th class="col-md-2 col-lg-2 aligh-right">@Resource.AccountOpening</th>
-                        <th class="col-md-2 col-lg-2 aligh-right">@Resource.OpeningPayment</th>
-                        <th class="col-md-1 col-lg-1 aligh-right">@Resource.Sale</th>
-                        <th class="col-md-2 col-lg-2 aligh-right">@Resource.SalePayment</th>
-                        <th class="col-md-1 col-lg-1 aligh-right">@Resource.Balance</th>                     
+                        @*<th class="col-md-2 col-lg-2 aligh-right">@Resource.OpeningPayment</th>*@
+                        <th class="col-md-2 col-lg-2 aligh-right">@Resource.Sale</th>
+                        @*<th class="col-md-2 col-lg-2 aligh-right">@Resource.SalePayment</th>*@
+                        <th class="col-md-2 col-lg-2 aligh-right">@Resource.Balance</th>  
+                        <th class="col-md-1 col-lg-1"></th>
                         <th class="col-md-1 col-lg-1">@Resource.Action</th>
                     </tr>
                 </thead>

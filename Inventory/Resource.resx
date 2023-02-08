@@ -543,17 +543,11 @@
   <data name="AddCustomerOpening" xml:space="preserve">
     <value>Add Customer Opening</value>
   </data>
-  <data name="CustomerOpening" xml:space="preserve">
-    <value>Customer Opening</value>
-  </data>
   <data name="CustomerOpeningList" xml:space="preserve">
     <value>Customer Opening List</value>
   </data>
-  <data name="CustomerOutstandingList" xml:space="preserve">
-    <value>Customer Outstanding List</value>
-  </data>
-  <data name="CustomerOutstandingPaymentHistory" xml:space="preserve">
-    <value>Customer Outstanding Payment History</value>
+  <data name="CustomerOutstanding" xml:space="preserve">
+    <value>Customer Outstanding</value>
   </data>
   <data name="ListCustomerOpening" xml:space="preserve">
     <value>List Customer Opening</value>
@@ -575,9 +569,6 @@
   </data>
   <data name="TopSaleItemReport" xml:space="preserve">
     <value>Top Sale Item Report</value>
-  </data>
-  <data name="ListCustomerOutstanding" xml:space="preserve">
-    <value>List Customer Outstanding</value>
   </data>
   <data name="Back" xml:space="preserve">
     <value>Back</value>
@@ -630,13 +621,19 @@
   <data name="ViewDetail" xml:space="preserve">
     <value>View Detail</value>
   </data>
-  <data name="CustomerOutstandingPaymentDetail" xml:space="preserve">
-    <value>Customer Outstanding Payment Detail</value>
-  </data>
   <data name="PurchaseAmountBySupplierReport" xml:space="preserve">
     <value>Purchase Amount By Supplier Report</value>
   </data>
   <data name="PurchaseAmountOnlyReport" xml:space="preserve">
     <value>Purchase Amount Only Report</value>
+  </data>
+  <data name="TransferItemReport" xml:space="preserve">
+    <value>Transfer Item Report</value>
+  </data>
+  <data name="TransferReport" xml:space="preserve">
+    <value>Transfer Report</value>
+  </data>
+  <data name="TransferVoucherReport" xml:space="preserve">
+    <value>Transfer Voucher Report</value>
   </data>
 </root>

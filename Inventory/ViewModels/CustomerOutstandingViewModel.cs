@@ -10,9 +10,10 @@ namespace Inventory.ViewModels
     {
         public CustomerOutstandingViewModel()
         {
-            this.Customers = new List<SelectListItem>();
+            this.Customers = new List<SelectListItem>();          
         }
         public List<SelectListItem> Customers { get; set; }
+
         public int PayType { get; set; }
 
         public class CustomerOutstandingListViewModel

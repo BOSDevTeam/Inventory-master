@@ -439,15 +439,6 @@ namespace Inventory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Customer Opening.
-        /// </summary>
-        public static string CustomerOpening {
-            get {
-                return ResourceManager.GetString("CustomerOpening", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Customer Opening List.
         /// </summary>
         public static string CustomerOpeningList {
@@ -457,11 +448,11 @@ namespace Inventory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Customer Outstanding List.
+        ///   Looks up a localized string similar to Customer Outstanding.
         /// </summary>
-        public static string CustomerOutstandingList {
+        public static string CustomerOutstanding {
             get {
-                return ResourceManager.GetString("CustomerOutstandingList", resourceCulture);
+                return ResourceManager.GetString("CustomerOutstanding", resourceCulture);
             }
         }
         
@@ -471,24 +462,6 @@ namespace Inventory {
         public static string CustomerOutstandingPayment {
             get {
                 return ResourceManager.GetString("CustomerOutstandingPayment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Customer Outstanding Payment Detail.
-        /// </summary>
-        public static string CustomerOutstandingPaymentDetail {
-            get {
-                return ResourceManager.GetString("CustomerOutstandingPaymentDetail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Customer Outstanding Payment History.
-        /// </summary>
-        public static string CustomerOutstandingPaymentHistory {
-            get {
-                return ResourceManager.GetString("CustomerOutstandingPaymentHistory", resourceCulture);
             }
         }
         
@@ -678,15 +651,6 @@ namespace Inventory {
         public static string ListCustomerOpening {
             get {
                 return ResourceManager.GetString("ListCustomerOpening", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to List Customer Outstanding.
-        /// </summary>
-        public static string ListCustomerOutstanding {
-            get {
-                return ResourceManager.GetString("ListCustomerOutstanding", resourceCulture);
             }
         }
         
@@ -1528,6 +1492,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Transfer Item Report.
+        /// </summary>
+        public static string TransferItemReport {
+            get {
+                return ResourceManager.GetString("TransferItemReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Transfer List.
         /// </summary>
         public static string TransferList {
@@ -1542,6 +1515,24 @@ namespace Inventory {
         public static string TransferQty {
             get {
                 return ResourceManager.GetString("TransferQty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transfer Report.
+        /// </summary>
+        public static string TransferReport {
+            get {
+                return ResourceManager.GetString("TransferReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Transfer Voucher Report.
+        /// </summary>
+        public static string TransferVoucherReport {
+            get {
+                return ResourceManager.GetString("TransferVoucherReport", resourceCulture);
             }
         }
         

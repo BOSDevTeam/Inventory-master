@@ -124,6 +124,7 @@ namespace Inventory.Common
         public const string PrcGetRptTopSaleItem = "PrcGetRptTopSaleItem";
         public const string PrcGetRptBottomSale = "PrcGetRptBottomSale";
         public const string PrcInsertCustomerOutstandingPayment = "PrcInsertCustomerOutstandingPayment";
+        public const string PrcUpdateCustomerOutstandingPayment = "PrcUpdateCustomerOutstandingPayment";
         public const string PrcGetCustomerOutstandingHistory = "PrcGetCustomerOutstandingHistory";
         public const string PrcGetTranCustomerOutstandingHistory = "PrcGetTranCustomerOutstandingHistory";
         public const string PrcGetRptPurchaseItemSimple = "PrcGetRptPurchaseItemSimple";
@@ -131,5 +132,7 @@ namespace Inventory.Common
         public const string PrcGetRptTranPurchaseList = "PrcGetRptTranPurchaseList";
         public const string PrcGetRptSupplier = "PrcGetRptSupplier";
         public const string PrcGetRptPurchaseBySupplier = "PrcGetRptPurchaseBySupplier";
+        public const string PrcDeleteSale = "PrcDeleteSale";
+        public const string PrcCheckLedgerForSaleEdit = "PrcCheckLedgerForSaleEdit";
     }
 }

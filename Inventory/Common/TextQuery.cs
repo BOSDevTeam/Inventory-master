@@ -58,10 +58,10 @@ namespace Inventory.Common
             + " From SVoucherSetting Where LocationID=" + locationId;
         }
 
-        public string deleteSaleQuery(int saleId)
-        {
-            return "Delete From TTranSale Where SaleID=" + saleId + " Delete From TMasterSale Where SaleID=" + saleId + " Delete From TMasterLedger Where TranID=" + saleId +" And AccountCode=" +AppConstants.SaleAccountCode;           
-        }
+        //public string deleteSaleQuery(int saleId)
+        //{
+        //    return "Delete From TTranSale Where SaleID=" + saleId + " Delete From TMasterSale Where SaleID=" + saleId + " Delete From TMasterLedger Where TranID=" + saleId +" And AccountCode=" +AppConstants.SaleAccountCode;           
+        //}
 
         public string deleteOpenBillQuery(int openBillId)
         {
