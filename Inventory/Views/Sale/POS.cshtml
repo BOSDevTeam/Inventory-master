@@ -206,6 +206,7 @@
             $('#inputDate').val('@ViewBag.Date');
             $('#inputVoucherID').val('@ViewBag.VoucherID');
             $("#ddlCustomer").val('@ViewBag.CustomerID');
+            $("#ddlCustomer").chosen();
             $("#ddlLocation").val('@ViewBag.LocationID');
             $("#ddlMCurrency").val('@ViewBag.CurrencyID');
             $('#lblSubtotal').text(separatedComma('@ViewBag.Subtotal'));
@@ -231,6 +232,7 @@
             $('#inputDate').val(getTodayDate());
             $('#inputVoucherID').val('@ViewBag.VoucherID');
             $("#ddlCustomer").val('@ViewBag.CustomerID');
+            $("#ddlCustomer").chosen();
             $("#ddlLocation").val('@ViewBag.LocationID');
             $("#ddlMCurrency").val('@ViewBag.CurrencyID');
             $('#lblSubtotal').text(separatedComma('@ViewBag.Subtotal'));
@@ -256,6 +258,7 @@
             $('#inputDate').val(getTodayDate());
             let customerId = '@ViewBag.CustomerID';
             if (customerId != 0) $("#ddlCustomer").val('@ViewBag.CustomerID');
+            $("#ddlCustomer").chosen();
             $('#lblSubtotal').text(separatedComma('@ViewBag.Subtotal'));
             $('#lblTax').text(separatedComma('@ViewBag.TaxAmt'));
             $('#lblCharges').text(separatedComma('@ViewBag.ChargesAmt'));
@@ -282,7 +285,8 @@
             showHideMainButton(false, false, false);
             defaultCustomerId = $('#ddlCustomer option:selected').val();
             defaultLocationId = $('#ddlLocation option:selected').val();
-            defaultCurrencyId = $('#ddlMCurrency option:selected').val();
+            defaultCurrencyId = $('#ddlMCurrency option:selected').val();          
+            $("#ddlCustomer").chosen();
         }
 
         function showHideUnit() {
@@ -477,7 +481,7 @@
                         $("#lblUserVoucherNo").text(response.UserVoucherNo);
                         $('#inputDate').val(getTodayDate());
                         $('#inputVoucherID').val("");
-                        $("#ddlCustomer").val(defaultCustomerId);
+                        $("#ddlCustomer").val(defaultCustomerId).trigger("chosen:updated");
                         $("#ddlLocation").val(defaultLocationId);
                         $("#ddlMCurrency").val(defaultCurrencyId);
                         clearProductControl();

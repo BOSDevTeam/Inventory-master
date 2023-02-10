@@ -189,6 +189,8 @@
     <Compile Include="Controllers\PurchaseOrderController.cs" />
     <Compile Include="Controllers\PurchaseReturnController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Controllers\RpAdjustmentItemController.cs" />
+    <Compile Include="Controllers\RpAdjustmentVoucherController.cs" />
     <Compile Include="Controllers\RpBottomSaleItemController.cs" />
     <Compile Include="Controllers\RpPurchaseAmountBySupplierController.cs" />
     <Compile Include="Controllers\RpPurchaseAmountOnlyController.cs" />
@@ -211,6 +213,9 @@
     <Compile Include="Controllers\StockStatusController.cs" />
     <Compile Include="Controllers\SubMenuController.cs" />
     <Compile Include="Controllers\SupplierController.cs" />
+    <Compile Include="Controllers\SupplierOpeningController.cs" />
+    <Compile Include="Controllers\SupplierOutstandingController.cs" />
+    <Compile Include="Controllers\SupplierOutstandingHistoryController.cs" />
     <Compile Include="Controllers\TechnicianController.cs" />
     <Compile Include="Controllers\TownshipController.cs" />
     <Compile Include="Controllers\TransferController.cs" />
@@ -272,6 +277,7 @@
     <Compile Include="Models\TownshipModels.cs" />
     <Compile Include="Models\TranAdjustmentModels.cs" />
     <Compile Include="Models\TranCustomerConsignModels.cs" />
+    <Compile Include="Models\TranSupplierOpeningModels.cs" />
     <Compile Include="Models\TranCustomerOpeningModels.cs" />
     <Compile Include="Models\TranOpeningStockModels.cs" />
     <Compile Include="Models\TranPurchaseModels.cs" />
@@ -469,6 +475,8 @@
     <Compile Include="ViewModels\PurchaseOrderViewModel.cs" />
     <Compile Include="ViewModels\PurchaseReturnViewModel.cs" />
     <Compile Include="ViewModels\PurchaseViewModel.cs" />
+    <Compile Include="ViewModels\RpAdjustmentItemViewModel.cs" />
+    <Compile Include="ViewModels\RpAdjustmentVoucherViewModel.cs" />
     <Compile Include="ViewModels\RpBottomSaleItemViewModel.cs" />
     <Compile Include="ViewModels\RpPurchaseAmountBySupplierViewModel.cs" />
     <Compile Include="ViewModels\RpPurchaseAmountOnlyViewModel.cs" />
@@ -488,6 +496,9 @@
     <Compile Include="ViewModels\SaleOrderViewModel.cs" />
     <Compile Include="ViewModels\SaleViewModel.cs" />
     <Compile Include="ViewModels\StockStatusViewModel.cs" />
+    <Compile Include="ViewModels\SupplierOpeningViewModel.cs" />
+    <Compile Include="ViewModels\SupplierOutstandingHistoryViewModel.cs" />
+    <Compile Include="ViewModels\SupplierOutstandingViewModel.cs" />
     <Compile Include="ViewModels\TransferViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -536,6 +547,8 @@
     <Content Include="assets\plugins\light-gallery\js\lightgallery-all.min.js" />
     <Content Include="assets\plugins\summernote\dist\summernote-bs4.css" />
     <Content Include="assets\plugins\summernote\dist\summernote-bs4.min.js" />
+    <Content Include="Content\Chosen\chosen-sprite.png" />
+    <Content Include="Content\Chosen\chosen.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -580,6 +593,7 @@
     <None Include="Properties\PublishProfiles\Inventory.pubxml" />
     <None Include="Properties\PublishProfiles\InventoryApp.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\chosen.jquery.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -728,6 +742,14 @@
     <Content Include="Views\RpTransferVoucher\TransferVoucherReport.cshtml" />
     <Content Include="Views\RpTransferItem\TransferItemReportFilter.cshtml" />
     <Content Include="Views\RpTransferItem\TransferItemReport.cshtml" />
+    <Content Include="Views\RpAdjustmentVoucher\AdjustmentVoucherReportFilter.cshtml" />
+    <Content Include="Views\RpAdjustmentVoucher\AdjustmentVoucherReport.cshtml" />
+    <Content Include="Views\RpAdjustmentItem\AdjustmentItemReportFilter.cshtml" />
+    <Content Include="Views\RpAdjustmentItem\AdjustmentItemReport.cshtml" />
+    <Content Include="Views\SupplierOpening\SupplierOpening.cshtml" />
+    <Content Include="Views\SupplierOpening\ListSupplierOpening.cshtml" />
+    <Content Include="Views\SupplierOutstanding\SupplierOutstanding.cshtml" />
+    <Content Include="Views\SupplierOutstanding\_SupplierOutstandingPayment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

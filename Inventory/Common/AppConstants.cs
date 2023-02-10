@@ -20,11 +20,15 @@ namespace Inventory.Common
         public const int CustomerConsignModule = 10;
         public const int CustomerOpeningModule = 11;
         public const int CustomerOutstandingModule = 12;
+        public const int SupplierOpeningModule = 13;
+        public const int SupplierOutstandingModule = 14;
 
         //Account Codes
         public const int SaleAccountCode = 210;  //SysModule table value
         public const int CustomerOpeningAccountCode = 110;
         public const int ARAccountCode = 310;
+        public const int SupplierOpeningAccountCode = 410;
+        public const int PurchaseAccountCode = 510;
 
         //Action Codes and Names
         public const string EditActionCode = "1";  //SysAction table value
@@ -77,6 +81,7 @@ namespace Inventory.Common
             public const string UpdateSuccess = "Updated Successfully!";
             public const string NoDeleteByOutstanding = "Not allow to delete! This voucher has payments in outstanding!";
             public const string NoEditByOutstanding = "Not allow to edit! This voucher has payments in outstanding!";
+            public const string AlreadyAddSupplier = "Already added supplier!";
         }
     }
 }

@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
     <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/Chosen/chosen.min.css" rel="stylesheet" />
     <!--[if lt IE 9]>
         <script src="assets/js/html5shiv.min.js"></script>
         <script src="assets/js/respond.min.js"></script>
@@ -133,7 +134,8 @@
                         <li class="submenu">
                             <a href=""><i class="fa fa-money"></i> <span> @Resource.Outstanding </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuOutstandingGp">
-                                <li id="subMenuCustomerOutstanding"><a href="#">@Resource.CustomerOutstanding</a></li>                            
+                                <li id="subMenuCustomerOutstanding"><a href="#">@Resource.CustomerOutstanding</a></li>
+                                <li id="subMenuSupplierOutstanding"><a href="#">@Resource.SupplierOutstanding</a></li>                             
                             </ul>
                         </li> 
                         <li class="submenu">
@@ -141,6 +143,8 @@
                             <ul id="subMenuOpeningGp">
                                 <li id="subMenuCustomerOpeningList"><a href="#">@Resource.ListCustomerOpening</a></li>
                                 <li id="subMenuCustomerOpening"><a href="#">@Resource.AddCustomerOpening</a></li>
+                                <li id="subMenuSupplierOpeningList"><a href="#">@Resource.ListSupplierOpening</a></li>
+                                <li id="subMenuSupplierOpening"><a href="#">@Resource.AddSupplierOpening</a></li>
                             </ul>
                         </li>  
                         <li class="submenu">
@@ -183,6 +187,7 @@
     <script src="~/assets/js/moment.min.js"></script>
     <script src="~/assets/js/bootstrap-datetimepicker.min.js"></script>
     <script src="~/Scripts/Site.js"></script>
+    <script src="~/Scripts/chosen.jquery.min.js"></script>
 
     <script>
         var userId = 0, userName, isMultiUnit = false, isMultiCurrency = false, isBankPayment = false;
@@ -278,7 +283,16 @@
             $('#subMenuCustomerOutstanding').click(function () {
                 window.location.href = '@Url.Action("CustomerOutstanding", "CustomerOutstanding")';
             });
-          
+            $('#subMenuSupplierOutstanding').click(function () {
+                window.location.href = '@Url.Action("SupplierOutstanding", "SupplierOutstanding")';
+            });
+            $('#subMenuSupplierOpeningList').click(function () {
+                window.location.href = '@Url.Action("ListSupplierOpening", "SupplierOpening")';
+            });
+            $('#subMenuSupplierOpening').click(function () {
+                window.location.href = '@Url.Action("SupplierOpening", "SupplierOpening")?userId=' + userId;
+            });
+
             $('.toast').toast({
                 delay: 3000
             });

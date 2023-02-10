@@ -178,6 +178,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Supplier Opening.
+        /// </summary>
+        public static string AddSupplierOpening {
+            get {
+                return ResourceManager.GetString("AddSupplierOpening", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Transfer.
         /// </summary>
         public static string AddTransfer {
@@ -196,11 +205,38 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Adjustment Item Report.
+        /// </summary>
+        public static string AdjustmentItemReport {
+            get {
+                return ResourceManager.GetString("AdjustmentItemReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Adjustment List.
         /// </summary>
         public static string AdjustmentList {
             get {
                 return ResourceManager.GetString("AdjustmentList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjustment Report.
+        /// </summary>
+        public static string AdjustmentReport {
+            get {
+                return ResourceManager.GetString("AdjustmentReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjustment Voucher Report.
+        /// </summary>
+        public static string AdjustmentVoucherReport {
+            get {
+                return ResourceManager.GetString("AdjustmentVoucherReport", resourceCulture);
             }
         }
         
@@ -228,6 +264,15 @@ namespace Inventory {
         public static string AllCustomer {
             get {
                 return ResourceManager.GetString("AllCustomer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All Supplier.
+        /// </summary>
+        public static string AllSupplier {
+            get {
+                return ResourceManager.GetString("AllSupplier", resourceCulture);
             }
         }
         
@@ -714,6 +759,15 @@ namespace Inventory {
         public static string ListSaleReturn {
             get {
                 return ResourceManager.GetString("ListSaleReturn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List Supplier Opening.
+        /// </summary>
+        public static string ListSupplierOpening {
+            get {
+                return ResourceManager.GetString("ListSupplierOpening", resourceCulture);
             }
         }
         
@@ -1389,6 +1443,42 @@ namespace Inventory {
         public static string Subtotal {
             get {
                 return ResourceManager.GetString("Subtotal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Supplier.
+        /// </summary>
+        public static string Supplier {
+            get {
+                return ResourceManager.GetString("Supplier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Supplier Opening List.
+        /// </summary>
+        public static string SupplierOpeningList {
+            get {
+                return ResourceManager.GetString("SupplierOpeningList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Supplier Outstanding.
+        /// </summary>
+        public static string SupplierOutstanding {
+            get {
+                return ResourceManager.GetString("SupplierOutstanding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Supplier Outstanding Payment.
+        /// </summary>
+        public static string SupplierOutstandingPayment {
+            get {
+                return ResourceManager.GetString("SupplierOutstandingPayment", resourceCulture);
             }
         }
         
