@@ -1,5 +1,86 @@
-﻿@{
+﻿@using Inventory.ViewModels;
+@model RpTransferVoucherViewModel
+@{
     Layout = "~/Views/Shared/_LayoutReportDetail.cshtml";
 }
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        let filter;
+        $(document).ready(function () {
+            let title = '@Resource.TransferVoucherReport';
+            let fromDate = '@Model.FromDate.ToShortDateString()';
+            let toDate = '@Model.ToDate.ToShortDateString()';
+            filter = "";
+            setReportTitle(title);
+            setDefaultFilter(fromDate, toDate, filter);
+        });
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            document.write(result);
+        }
+    </script>
+</head>
+<div>
+    <div class="row table-header">
+        <div class="col-md-2 col-lg-2">@Resource.Date</div>
+        <div class="col-md-2 col-lg-2">@Resource.VoucherNo</div>
+        <div class="col-md-2 col-lg-2">@Resource.VoucherID</div>
+        <div class="col-md-2 col-lg-2">@Resource.User</div>
+        <div class="col-md-2 col-lg-2">@Resource.FromLocation</div>
+        <div class="col-md-2 col-lg-2 aligh-right">@Resource.ToLocation</div>
+    </div>
+    <div class="row table-header">
+        <div class="col-md-2 col-lg-2"></div>
+        <div class="col-md-2 col-lg-2"></div>
+        <div class="col-md-2 col-lg-2"></div>
+        <div class="col-md-2 col-lg-2"></div>
+        <div class="col-md-2 col-lg-2">@Resource.Product</div>
+        <div class="col-md-2 col-lg-2 aligh-right">@Resource.Qty</div>
+    </div>
+    @foreach (var masterTransfer in Model.lstMasterTransfer as List<RpTransferVoucherViewModel.MasterTransferModels>)
+    {
+        <div class="row rpt-main-group">
+            <div class="col-md-2 col-lg-2">@masterTransfer.TransferDateTime</div>
+            <div class="col-md-2 col-lg-2">@masterTransfer.UserVoucherNo</div>
+            @if (masterTransfer.VoucherID != "" && masterTransfer.VoucherID != null)
+            {
+                <div class="col-md-2 col-lg-2">@masterTransfer.VoucherID</div>
+            }
+            else
+            {
+                <div class="col-md-2 col-lg-2">-</div>
+            }
+
+            <div class="col-md-2 col-lg-2">@masterTransfer.UserName</div>
+            <div class="col-md-2 col-lg-2">@masterTransfer.FromLocationName</div>
+            <div class="col-md-2 col-lg-2 aligh-right">@masterTransfer.ToLocationName</div>
+        </div>
+
+        foreach (var tranTransfer in Model.lstTranTransfer.Where(t => t.TransferID == masterTransfer.TransferID).ToList())
+        {
+            <div class="row rpt-item">
+                <div class="col-md-2 col-lg-2"></div>
+                <div class="col-md-2 col-lg-2"></div>
+                <div class="col-md-2 col-lg-2"></div>
+                <div class="col-md-2 col-lg-2"></div>
+                <div class="col-md-2 col-lg-2">@tranTransfer.ProductName</div>
+                <div class="col-md-2 col-lg-2 aligh-right">@tranTransfer.Quantity<span>@tranTransfer.UnitKeyword</span></div>
+            </div>
+
+        }
+        if (masterTransfer.Remark != "")
+        {
+            <div class="col-md-12 col-lg-12 rpt-sub-total">@masterTransfer.Remark</div>
+        }
+
+
+    }
+</div>
+
 
 

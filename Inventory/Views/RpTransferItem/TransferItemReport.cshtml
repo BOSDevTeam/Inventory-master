@@ -1,5 +1,64 @@
-﻿@{
+﻿@using Inventory.ViewModels;
+@model RpTransferItemViewModel
+
+@{
     Layout = "~/Views/Shared/_LayoutReportDetail.cshtml";
 }
 
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        let filter;
+        $(document).ready(function () {
+            let title = '@Resource.TransferItemReport';
+            let fromDate = '@Model.FromDate.ToShortDateString()';
+            let toDate = '@Model.ToDate.ToShortDateString()';
+            filter = "";
+            setReportTitle(title);
+            setDefaultFilter(fromDate, toDate, filter);
+        });
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            document.write(result);
+        }
+    </script>
+</head>
+<div>
+    <div class="row table-header">
+        <div class="col-md-3 col-lg-3">@Resource.Code</div>
+        <div class="col-md-3 col-lg-3">@Resource.Product</div>
+        <div class="col-md-3 col-lg-3">@Resource.PurchasePrice</div>
+        <div class="col-md-3 col-lg-3">@Resource.Qty</div>
+    </div>
+    @foreach (var masterTransfer in Model.lstMasterTransfer as List<RpTransferItemViewModel.MasterTransferModels>)
+    {
+        <div class="col-md-12 col-lg-12 rpt-main-group">
+            <span>@masterTransfer.FromLocationName</span> &nbsp; &nbsp; &nbsp; &nbsp;<span><i class="fa fa-long-arrow-right" aria-hidden="true"></i></span> &nbsp; &nbsp; &nbsp; &nbsp;<span> @masterTransfer.ToLocationName</span>
+        </div>
+
+        foreach (var tranTransfer in Model.lstTranTransfer.Where(t => t.FromLocationID == masterTransfer.FromLocationID && t.ToLocationID == masterTransfer.ToLocationID ).ToList())
+        {
+            <div class="row rpt-item">
+                <div class="col-md-3 col-lg-3">@tranTransfer.ProductCode</div>
+                @if (@tranTransfer.UnitKeyword != "")
+                {
+                    <div class="col-md-3 col-lg-3">@tranTransfer.ProductName <span>(@tranTransfer.UnitKeyword)</span></div>
+                }
+                else
+                {
+                    <div class="col-md-3 col-lg-3">@tranTransfer.ProductName </div>
+                }
+
+                <div class="col-md-3 col-lg-3"><script>separatedComma(@tranTransfer.PurPrice)</script></div>
+                <div class="col-md-3 col-lg-3"><script>separatedComma(@tranTransfer.Quantity)</script> </div>
+            </div>
+
+        }
+    }
+
+
+</div>
 

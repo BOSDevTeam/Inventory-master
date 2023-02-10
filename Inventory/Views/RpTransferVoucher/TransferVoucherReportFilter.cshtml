@@ -17,4 +17,39 @@
     </script>
 </head>
 
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">@Resource.TransferVoucherReport</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnViewReport" class="btn btn-second" style="float:right">@Resource.ViewReport</button>
+        </div>
+    </div>
+
+    @{
+        Html.RenderPartial("_DateFilter");
+    }
+</div>
+
+<script type="text/javascript">
+    $(function () {
+
+        $('#btnViewReport').click(function () {
+            let fromDate = $('#inputFromDate').val();
+            let toDate = $('#inputToDate').val();
+            window.location.href = '@Url.Action("TransferVoucherReport", "RpTransferVoucher")?fromDate=' + fromDate + '&toDate=' + toDate
+        })
+
+        $(document).ready(function () {
+            initializeControl();
+
+            function initializeControl() {
+                $('#inputFromDate').val(getTodayDate());
+                $('#inputToDate').val(getTodayDate());
+            }
+        })
+    })
+</script>
+
 
