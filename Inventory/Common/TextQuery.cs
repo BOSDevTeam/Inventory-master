@@ -136,5 +136,10 @@ namespace Inventory.Common
         {
             return "Delete From TTranCustomerOpening Where CustomerOpeningID=" + customerOpeningId + " Delete From TMasterCustomerOpening Where CustomerOpeningID=" + customerOpeningId + " Delete From TMasterLedger Where TranID=" + customerOpeningId + " And AccountCode=" + AppConstants.CustomerOpeningAccountCode;
         }
+
+        public string deleteSupplierOpeningQuery(int supplierOpeningId)
+        {
+            return "Delete From TTranSupplierOpening Where SupplierOpeningID=" + supplierOpeningId + " Delete From TMasterSupplierOpening Where SupplierOpeningID=" + supplierOpeningId + " Delete From TMasterLedger Where TranID=" + supplierOpeningId + " And AccountCode=" + AppConstants.SupplierOpeningAccountCode;
+        }
     }
 }

@@ -636,4 +636,34 @@
   <data name="TransferVoucherReport" xml:space="preserve">
     <value>Transfer Voucher Report</value>
   </data>
+  <data name="AdjustmentItemReport" xml:space="preserve">
+    <value>Adjustment Item Report</value>
+  </data>
+  <data name="AdjustmentReport" xml:space="preserve">
+    <value>Adjustment Report</value>
+  </data>
+  <data name="AdjustmentVoucherReport" xml:space="preserve">
+    <value>Adjustment Voucher Report</value>
+  </data>
+  <data name="AddSupplierOpening" xml:space="preserve">
+    <value>Add Supplier Opening</value>
+  </data>
+  <data name="ListSupplierOpening" xml:space="preserve">
+    <value>List Supplier Opening</value>
+  </data>
+  <data name="SupplierOpeningList" xml:space="preserve">
+    <value>Supplier Opening List</value>
+  </data>
+  <data name="AllSupplier" xml:space="preserve">
+    <value>All Supplier</value>
+  </data>
+  <data name="Supplier" xml:space="preserve">
+    <value>Supplier</value>
+  </data>
+  <data name="SupplierOutstanding" xml:space="preserve">
+    <value>Supplier Outstanding</value>
+  </data>
+  <data name="SupplierOutstandingPayment" xml:space="preserve">
+    <value>Supplier Outstanding Payment</value>
+  </data>
 </root>

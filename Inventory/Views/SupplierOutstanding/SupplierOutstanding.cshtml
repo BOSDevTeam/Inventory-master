@@ -1,0 +1,270 @@
+﻿@using Inventory.ViewModels
+@model SupplierOutstandingViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+
+    <style type="text/css">
+        #subMenuOutstandingGp {
+            display: block;
+        }
+    </style>
+
+    <script type="text/javascript">
+
+        let listActionValue, selectedRowIndex, supplierName;
+        document.getElementById('subMenuSupplierOutstanding').className = 'active';
+
+        $(document).ready(function () {
+
+            if ('@ViewBag.ErrorMessage'.length != 0) {
+                showToast(0, '@ViewBag.ErrorMessage');
+            }
+
+            setModuleTitle('@Resource.Outstanding', '@Resource.SupplierOutstanding');
+            initializeControl();
+            createOutstandingData('', false);
+            createPaging('@ViewBag.TotalPageNum', '@ViewBag.CurrentPage');
+
+            $("#btnSearch").click(function (e) {
+                searchAction();
+            });
+
+            $("#btnRefresh").click(function (e) {
+                clearControl();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("RefreshAction", "SupplierOutstanding")',
+                    data: { },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        createOutstandingData(response.LstSupplierOutstanding, true);
+                        createPaging(response.TotalPage, response.CurrentPage);
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+            $(document).on('click', '.btnPage', function (e) {
+                let currentPage = $(this).text();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("OutstandingPagingAction", "SupplierOutstanding")',
+                    data: { "currentPage": currentPage },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            responseUnSuccessful(response);
+                        else {
+                            createOutstandingData(response.LstSupplierOutstanding, true);
+                            createPaging(response.TotalPage, currentPage);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+            $("#tblOutstandingList").on("click", "tbody tr", function (event) {
+                supplierName = $(this).find("td:first").text();
+                $(this).find("td:last").each(function () {
+                    let supplierId = $(this).text();
+                    if (listActionValue == 1) {   // payment
+                        clearTableAction();
+                        paymentView(supplierId);
+                    }
+                });
+            });
+
+            function paymentView(supplierId) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("PaymentAction", "SupplierOutstanding")',
+                    data: { "supplierId": supplierId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            responseUnSuccessful(response);
+                        else {
+                            $('#modalPayment').modal('show');
+                            initializeHeaderControl(supplierId, supplierName);
+                            initializePaymentControl(response.TotalBalance);
+                            createSupplierOutstandingData(response.LstSupplierOutstandingPayment);
+                            $('.inputPayDate').val(getTodayDate());
+                            document.getElementById("defaultOpen").click();
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+
+            function initializeControl() {
+                $('#inputFromDate').val(getTodayDate());
+                $('#inputToDate').val(getTodayDate());
+            }
+
+            function clearControl() {
+                $('#inputFromDate').val(getTodayDate());
+                $('#inputToDate').val(getTodayDate());
+                $("#ddlSupplier").val('0');
+            }
+
+        });
+
+        function searchAction() {
+            let fromDate = $('#inputFromDate').val();
+            let toDate = $('#inputToDate').val();
+            let supplierId = $('#ddlSupplier option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("SearchAction", "SupplierOutstanding")',
+                data: { "fromDate": fromDate, "toDate": toDate, "supplierId": supplierId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createOutstandingData(response.LstSupplierOutstanding, true);
+                    createPaging(response.TotalPage, response.CurrentPage);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        }
+
+        function createOutstandingData(response, isFromJson) {
+            $("#tblOutstandingList").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstSupplierOutstanding"]))');
+            $.each(response, function (index, item) {
+                var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
+                        + '<td class="col-md-2 col-lg-2">' + item.SupplierName + '</td>'
+                        + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.OutstandingOpening) + '</td>'
+                        + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.AccountOpening) + '</td>'
+                        + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Purchase) + '</td>'
+                        + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Balance) + '</td>'
+                        + '<td class="col-md-1 col-lg-1"></td>'
+                        + '<td class="col-md-1 col-lg-1 btn-group">'
+                            + '<button title="Payment" class="btn btn-sm btn-primary" onclick="listTableAction(1)">@Resource.Payment</button>'
+                        + '</td>'
+                        + '<td style="display:none">' + item.SupplierID + '</td>'
+                    + '</tr>'
+                $('#tblOutstandingList tbody').append(row);
+            });
+        }
+
+        function listTableAction(value) {
+            listActionValue = value;
+        }
+
+        function findRowIndex(x) {
+            selectedRowIndex = x.rowIndex;
+        }
+
+        function clearTableAction() {
+            listActionValue = 0;
+        }
+
+    </script>
+</head>
+
+<div>
+
+    <div class="row setup-title-layout">
+        <div class="col-md-12 col-lg-12">
+            <label class="page-title">@Resource.SupplierOutstanding</label>
+        </div>
+    </div>
+
+    <div class="row setup-title-layout search-div">
+        <table class="width-100-percent">
+            <tr>
+                <td class="control-label" style="text-align:center;">From Date</td>
+                <td><input id="inputFromDate" type="date" class="form-control control-input" /></td>
+                <td class="control-label" style="text-align:center;">To Date</td>
+                <td><input id="inputToDate" type="date" class="form-control control-input" /></td>
+                <td>@Html.DropDownList("Supplier", Model.Suppliers, new { @id = "ddlSupplier", @class = "form-control control-input" })</td>
+                <td>
+                    <div class="btn-group" style="float:right">
+                        <button id="btnSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                        <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblOutstandingList" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-2 col-lg-2">@Resource.Supplier</th>
+                        <th class="col-md-2 col-lg-2 aligh-right">@Resource.OutstandingOpening</th>
+                        <th class="col-md-2 col-lg-2 aligh-right">@Resource.AccountOpening</th>
+                        @*<th class="col-md-2 col-lg-2 aligh-right">@Resource.OpeningPayment</th>*@
+                        <th class="col-md-2 col-lg-2 aligh-right">@Resource.Purchase</th>
+                        @*<th class="col-md-2 col-lg-2 aligh-right">@Resource.SalePayment</th>*@
+                        <th class="col-md-2 col-lg-2 aligh-right">@Resource.Balance</th>
+                        <th class="col-md-1 col-lg-1"></th>
+                        <th class="col-md-1 col-lg-1">@Resource.Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="divPaging" class="row paging">
+        <div class="col-md-1 col-lg-1"><label id="lblPageNumber" class="page-num"></label></div>
+        <div id="divPagingItem" class="col-md-11 col-lg-11 paging-item"></div>
+    </div>
+
+</div>
+
+<div>
+    @{
+        Html.RenderPartial("_SupplierOutstandingPayment");
+    }
+</div>
+
+
