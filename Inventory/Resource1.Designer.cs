@@ -259,6 +259,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All Client SalePerson.
+        /// </summary>
+        public static string AllClientSalePerson {
+            get {
+                return ResourceManager.GetString("AllClientSalePerson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All Customer.
         /// </summary>
         public static string AllCustomer {
@@ -273,6 +282,15 @@ namespace Inventory {
         public static string AllSupplier {
             get {
                 return ResourceManager.GetString("AllSupplier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All User.
+        /// </summary>
+        public static string AllUser {
+            get {
+                return ResourceManager.GetString("AllUser", resourceCulture);
             }
         }
         
@@ -1240,6 +1258,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sale Amount By SalePerson Report.
+        /// </summary>
+        public static string SaleAmountBySalePersonReport {
+            get {
+                return ResourceManager.GetString("SaleAmountBySalePersonReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sale Amount Only Report.
         /// </summary>
         public static string SaleAmountOnlyReport {
@@ -1632,6 +1659,15 @@ namespace Inventory {
         public static string User {
             get {
                 return ResourceManager.GetString("User", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User or Client SalePerson Filter.
+        /// </summary>
+        public static string UserClientSalePersonFilter {
+            get {
+                return ResourceManager.GetString("UserClientSalePersonFilter", resourceCulture);
             }
         }
         

@@ -96,8 +96,7 @@
                     clearTableAction();
                     viewDetail(purchaseId);
                 } else if (listActionValue == 2) {  // edit
-                    clearTableAction();
-                    window.location.href = '@Url.Action("Purchase", "Purchase")?userId=' + userId + '&purchaseId=' + purchaseId;
+                    checkLedgerForPurchaseEditAction(purchaseId);
                 } else if (listActionValue == 3) {  // delete
                     clearTableAction();
                     $('#modalConfirm').modal('show');
@@ -105,13 +104,41 @@
                 }
             });
         });
+        function checkLedgerForPurchaseEditAction(purchaseId) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CheckLedgerForPurchaseEditAction", "Purchase")',
+                data: { "purchaseId": purchaseId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else {
+                        clearTableAction();
+                        window.location.href = '@Url.Action("Purchase", "Purchase")?userId=' + userId + '&purchaseId=' + purchaseId;
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        }
+
         $("#btnDelOk").click(function () {
             let purchaseId = $("#btnDelOk").val();
             showLoadingIcon();
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("DeleteAction", "Purchase")',
-                data: { "purchaseId": purchaseId },
+                data: { "purchaseId": purchaseId,"userId":userId },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {

@@ -409,6 +409,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
                     cmd.Parameters.AddWithValue("@VoucherID", voucherId);
                     cmd.Parameters.AddWithValue("@IsVoucherFOC", isVoucherFOC);
+                    cmd.Parameters.AddWithValue("@AccountCode", AppConstants.PurchaseAccountCode);
                     cmd.CommandType = CommandType.StoredProcedure;
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read()) userVoucherNo = Convert.ToString(reader[0]);
@@ -458,31 +459,82 @@ namespace Inventory.Controllers
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult DeleteAction(int purchaseId)
+        
+        public JsonResult CheckLedgerForPurchaseEditAction(int purchaseId)
+        {
+            bool isSuccess = false;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            try
+            {
+                SqlCommand cmd = new SqlCommand(Procedure.PrcCheckLedgerForPurchaseEdit, (SqlConnection)getConnection());
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@PurchaseID", purchaseId);
+                cmd.Parameters.AddWithValue("@APAccountCode", AppConstants.APAccountCode);
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read()) isSuccess = Convert.ToBoolean(reader[0]);
+                reader.Close();
+                if (isSuccess)
+                {
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                else
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.InCompletedData.ToString();
+                    resultDefaultData.Message = AppConstants.Message.NoEditByOutstanding;
+                }
+            }
+            catch (Exception ex)
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                resultDefaultData.Message = ex.Message;
+            }
+            var jsonResult = new
+            {
+                ResultDefaultData = resultDefaultData
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult DeleteAction(int purchaseId,int userId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
             int totalPageNum = 0;
-
+            bool isSuccess = false;
             if (Session["MasterPurchaseData"] != null)
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand(textQuery.deletePurchaseQuery(purchaseId), (SqlConnection)getConnection());
-                    cmd.CommandType = CommandType.Text;
-                    cmd.ExecuteNonQuery();
-
-                    List<PurchaseViewModel.MasterPurchaseViewModel> lstMasterPurchase = Session["MasterPurchaseData"] as List<PurchaseViewModel.MasterPurchaseViewModel>;
-                    int index = lstMasterPurchase.FindIndex(x => x.PurchaseID == purchaseId);
-                    lstMasterPurchase.RemoveAt(index);
-
-                    if (lstMasterPurchase.Count > paging.eachItemCount)
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcDeletePurchase, (SqlConnection)getConnection());
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@PurchaseID",purchaseId);
+                    cmd.Parameters.AddWithValue("@PurchaseAccountCode",AppConstants.PurchaseAccountCode);
+                    cmd.Parameters.AddWithValue("@APAccountCode", AppConstants.APAccountCode);
+                    cmd.Parameters.AddWithValue("@UpdatedUserID",userId);
+                    cmd.Parameters.AddWithValue("@UpdatedDateTime",setting.getLocalDateTime());
+                    cmd.Parameters.AddWithValue("@ActionCode",AppConstants.DeleteActionCode);
+                    cmd.Parameters.AddWithValue("@ActionName",AppConstants.DeleteActionName);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read()) isSuccess = Convert.ToBoolean(reader[0]);
+                    reader.Close();
+                    if(isSuccess)
                     {
-                        totalPageNum = lstMasterPurchase.Count / paging.eachItemCount;
-                        paging.lastItemCount = lstMasterPurchase.Count % paging.eachItemCount;
-                        if (paging.lastItemCount != 0) totalPageNum += 1;
+                        List<PurchaseViewModel.MasterPurchaseViewModel> lstMasterPurchase = Session["MasterPurchaseData"] as List<PurchaseViewModel.MasterPurchaseViewModel>;
+                        int index = lstMasterPurchase.FindIndex(x => x.PurchaseID == purchaseId);
+                        lstMasterPurchase.RemoveAt(index);
+                        if (lstMasterPurchase.Count > paging.eachItemCount)
+                        {
+                            totalPageNum = lstMasterPurchase.Count / paging.eachItemCount;
+                            paging.lastItemCount = lstMasterPurchase.Count % paging.eachItemCount;
+                            if (paging.lastItemCount != 0) totalPageNum += 1;
+                        }
+                        resultDefaultData.IsRequestSuccess = true;
+                        resultDefaultData.Message = AppConstants.Message.DeleteSuccess;
                     }
-                    resultDefaultData.IsRequestSuccess = true;
-                    resultDefaultData.Message = AppConstants.Message.DeleteSuccess;
+                    else
+                    {
+                        resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.InCompletedData.ToString();
+                        resultDefaultData.Message = AppConstants.Message.NoDeleteByOutstanding;
+                    }                                        
                 }
                 catch (Exception ex)
                 {
@@ -585,7 +637,7 @@ namespace Inventory.Controllers
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
         [HttpGet]
-        public JsonResult PaymentEditAction(int purchaseId, string date, string voucherId, int supplierId, int locationId,int mcurrencyId, int taxAmt, int chargesAmt, int subtotal, int total)
+        public JsonResult PaymentEditAction(int purchaseId, string date, string voucherId, int supplierId, int locationId,int mcurrencyId, int taxAmt, int chargesAmt, int subtotal, int total,int userId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
             if (Session["TranPurchaseData"] != null)
@@ -621,6 +673,11 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@Total", total);
                     cmd.Parameters.AddWithValue("@temptbl", dt);
                     cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+                    cmd.Parameters.AddWithValue("@AccountCode", AppConstants.PurchaseAccountCode);
+                    cmd.Parameters.AddWithValue("@UpdatedUserID", userId);
+                    cmd.Parameters.AddWithValue("@UpdatedDateTime", setting.getLocalDateTime());
+                    cmd.Parameters.AddWithValue("@ActionCode", AppConstants.EditActionCode);
+                    cmd.Parameters.AddWithValue("@ActionName", AppConstants.EditActionName);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                     dataConnectorSQL.Close();

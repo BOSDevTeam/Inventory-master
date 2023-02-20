@@ -5,10 +5,8 @@ using System.Web;
 
 namespace Inventory.Models
 {
-    public class TranSaleModels
-    {
-        public int ID { get; set; }
-        public int SaleID { get; set; }
+    public class TranSaleLogModels
+    {     
         public int ProductID { get; set; }
         public int Quantity { get; set; }
         public int SalePrice { get; set; }
@@ -18,12 +16,6 @@ namespace Inventory.Models
         public int? CurrencyID { get; set; }
         public int Discount { get; set; }
         public int DiscountPercent { get; set; }
-        public string ProductName { get; set; }
-        public string ProductCode { get; set; }
-        public string UnitKeyword { get; set; }
-        public string CurrencyKeyword { get; set; }
-        public int? Number { get; set; }
         public string ActionCode { get; set; }
-        public bool IsNewTran { get; set; }
     }
 }

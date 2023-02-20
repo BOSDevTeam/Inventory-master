@@ -666,4 +666,16 @@
   <data name="SupplierOutstandingPayment" xml:space="preserve">
     <value>Supplier Outstanding Payment</value>
   </data>
+  <data name="AllClientSalePerson" xml:space="preserve">
+    <value>All Client SalePerson</value>
+  </data>
+  <data name="AllUser" xml:space="preserve">
+    <value>All User</value>
+  </data>
+  <data name="SaleAmountBySalePersonReport" xml:space="preserve">
+    <value>Sale Amount By SalePerson Report</value>
+  </data>
+  <data name="UserClientSalePersonFilter" xml:space="preserve">
+    <value>User or Client SalePerson Filter</value>
+  </data>
 </root>

@@ -193,7 +193,8 @@
             showHideMainButton(false, false, false);
             defaultSupplierId = $('#ddlSupplier option:selected').val();
             defaultLocationId = $('#ddlLocation option:selected').val();
-            defaultMCurrencyId = $('#defaultMCurrencyId option:selected').val();
+            defaultMCurrencyId = $('#ddlMCurrency option:selected').val();
+            $("#ddlSupplier").chosen();
         }
         function createDefaultUnit() {
             let unit;
@@ -764,7 +765,7 @@
                         $("#lblUserVoucherNo").text(response.UserVoucherNo);
                         $('#inputDate').val(getTodayDate());
                         $('#inputVoucherID').val("");
-                        $("#ddlSupplier").val(defaultSupplierId);
+                        $("#ddlSupplier").val(defaultSupplierId).trigger("chosen:updated");
                         $("#ddlLocation").val(defaultLocationId);
                         $("#ddlMCurrency").val(defaultMCurrencyId);
                     }                  
@@ -785,6 +786,7 @@
             $('#inputDate').val('@ViewBag.Date');
             $('#inputVoucherID').val('@ViewBag.VoucherID');
             $("#ddlSupplier").val('@ViewBag.SupplierID');
+            $("#ddlSupplier").chosen();
             $("#ddlLocation").val('@ViewBag.LocationID');
             $("#ddlMCurrency").val('@ViewBag.MCurrencyID');
             $('#lblSubtotal').text(separatedComma('@ViewBag.Subtotal'));
@@ -822,7 +824,7 @@
                 url: '@Url.Action("PaymentEditAction", "Purchase")',
                 data: {
                     "purchaseId": purchaseId, "date": date, "voucherId": voucherId, "supplierId": supplierId, "locationId": locationId, "mcurrencyid": mcurrencyId,
-                    "taxAmt": taxAmt, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total
+                    "taxAmt": taxAmt, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total,"userId": userId
                 },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",

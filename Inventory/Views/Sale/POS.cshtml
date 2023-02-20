@@ -167,7 +167,7 @@
 
 <script type="text/javascript">
 
-    let tranSaleAction, defaultCustomerId, defaultLocationId, defaultCurrencyId, isEditTranSale = false;
+    let tranSaleAction, defaultCustomerId, defaultLocationId, defaultCurrencyId, isEditTranSale = false, isVoucherEdit = false;
 
     document.getElementById('subMenuSale').className = 'active';
     $('body').addClass("hideVerticalScrollbar");
@@ -201,6 +201,7 @@
         else initializeControl();
 
         function fillEditData() {
+            isVoucherEdit = true;
             $('#btnEditPayment').val('@ViewBag.SaleID');
             $('#lblUserVoucherNo').text('@ViewBag.UserVoucherNo');
             $('#inputDate').val('@ViewBag.Date');
@@ -336,10 +337,10 @@
         }
 
         function createTranSaleData(lstTranSale) {
-            let num = 0;
+            //let num = 0;
             $("#tblTranSale").find("tbody").empty();
             $.each(lstTranSale, function (i, item) {
-                num += 1;
+                //num += 1;
                 if (item.UnitKeyword == null) item.UnitKeyword = '';
                 if (item.CurrencyKeyword == null) item.CurrencyKeyword = '';
                 let row = '<tr class="row tran-table-item-row">'
@@ -350,7 +351,7 @@
                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + separatedComma(item.Discount) + '</label></td>'
                        + '<td class="col-md-2 col-lg-2 value-right"><label class="control-label mb-0">' + separatedComma(item.Amount) + '</label></td>'
                        + '<td class="col-md-1 col-lg-1 value-right"><button class="btn-icon gray" title="Delete" onclick="tranSaleTableAction(3)"><i class="fa fa-remove"></i></button></td>'
-                       + '<td style="display:none;">' + num + '</td>'
+                       + '<td>' + item.Number + '</td>'
                        + '</tr>';
                 $('#tblTranSale tbody').append(row);
             })
@@ -641,7 +642,7 @@
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("TranSaleDeleteAction", "Sale")',
-                data: { "number": number },
+                data: { "number": number, "isVoucherEdit": isVoucherEdit },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -688,7 +689,7 @@
                 $.ajax({
                     type: "GET",
                     url: '@Url.Action("TranSaleAddEditAction", "Sale")',
-                    data: { "productId": productId, "productCode": productCode, "productName": productName, "quantity": quantity, "price": price, "disPercent": disPercent, "unitId": unitId, "unitKeyword": unitKeyword, "currencyId": currencyId, "currencyKeyword": currencyKeyword, "isEdit": isEdit, "number": number, "isItemFOC": isItemFOC },
+                    data: { "productId": productId, "productCode": productCode, "productName": productName, "quantity": quantity, "price": price, "disPercent": disPercent, "unitId": unitId, "unitKeyword": unitKeyword, "currencyId": currencyId, "currencyKeyword": currencyKeyword, "isEdit": isEdit, "number": number, "isItemFOC": isItemFOC, "isVoucherEdit": isVoucherEdit },
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (response) {

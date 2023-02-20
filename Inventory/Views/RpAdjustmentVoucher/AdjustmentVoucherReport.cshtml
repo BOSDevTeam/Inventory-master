@@ -1,5 +1,62 @@
-﻿@{
+﻿@using Inventory.ViewModels;
+@model RpAdjustmentVoucherViewModel
+@{
     Layout = "~/Views/Shared/_LayoutReportDetail.cshtml";
 }
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            setReportTitle('@Resource.AdjustmentVoucherReport');
+            setDefaultFilter('@Model.FromDate.ToShortDateString()', '@Model.ToDate.ToShortDateString()', '');
+        });        
+    </script>
+</head>
+<div>
+    <div class="row table-header" style="padding:10px 15px;">
+        <div class="col-md-2 col-lg-2">@Resource.Date</div>
+        <div class="col-md-3 col-lg-3">@Resource.VoucherNo</div>
+        <div class="col-md-2 col-lg-2">@Resource.VoucherID</div>
+        <div class="col-md-2 col-lg-2">@Resource.User</div>             
+        <div class="col-md-3 col-lg-3 aligh-right">@Resource.Location</div>
+    </div>
+    <div class="row table-header" style="padding:10px 15px;color:#666;">
+        <div class="col-md-5 col-lg-5"></div>
+        <div class="col-md-2 col-lg-2">@Resource.Product</div>
+        <div class="col-md-2 col-lg-2">@Resource.Qty</div>       
+        <div class="col-md-3 col-lg-3 aligh-right">Adjust Type</div>
+    </div>
+    @foreach(var master in Model.lstMasterAdjustment as List<RpAdjustmentVoucherViewModel.MasterAdjustmentView>)
+    {
+        <div style="margin:10px;">
+            <div>
+                <div class="row rpt-main-group" style="background-color:#ffffec;">
+                    <div class="col-md-2 col-lg-2">@master.AdjustDate.ToShortDateString()</div>
+                    <div class="col-md-3 col-lg-3">@master.VoucherNo</div>
+                    <div class="col-md-2 col-lg-2">@master.VoucherID</div>
+                    <div class="col-md-2 col-lg-2">@master.UserName</div>
+                    <div class="col-md-3 col-lg-3 aligh-right">@master.LocationName</div>
+                </div>
+                @foreach(var item in Model.lstTranAdjustment.Where(m=>m.AdjustmentID==master.AdjustmentID).ToList() as List<RpAdjustmentVoucherViewModel.TranAdjustmentView>)
+                {
+                    <div class="row rpt-item">
+                        <div class="col-md-5 col-lg-5"></div>
+                        <div class="col-md-2 col-lg-2">@item.ProductName</div>
+                        <div class="col-md-2 col-lg-2">@item.Quantity@item.UnitName</div>
+                        <div class="col-md-3 col-lg-3 aligh-right">@item.AdjustTypeName</div>
+                    </div>
+                }               
+                <div class="row">
+                    <div class="col-md-12 col-lg-12">@master.Remark</div>
+                </div>
+            </div>
+        </div>
+        
+    }
+</div>
 
 

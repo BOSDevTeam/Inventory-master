@@ -330,7 +330,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@SupplierID", supplierId);
                     cmd.Parameters.AddWithValue("@PayType", payType);
                     cmd.Parameters.AddWithValue("@temptbl", dt);
-                    cmd.Parameters.AddWithValue("@AccountCode", AppConstants.ARAccountCode);
+                    cmd.Parameters.AddWithValue("@AccountCode", AppConstants.APAccountCode);
                     cmd.Connection = setting.conn;
                     cmd.ExecuteNonQuery();
                     setting.conn.Close();
@@ -417,7 +417,7 @@ namespace Inventory.Controllers
             }
             cmd.Parameters.AddWithValue("@PurchaseAccountCode", AppConstants.PurchaseAccountCode);
             cmd.Parameters.AddWithValue("@SupplierOpeningAccountCode", AppConstants.SupplierOpeningAccountCode);
-            cmd.Parameters.AddWithValue("@ARAccountCode", AppConstants.ARAccountCode);
+            cmd.Parameters.AddWithValue("@APAccountCode", AppConstants.APAccountCode);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -513,7 +513,7 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@ToDate", toDate);
             cmd.Parameters.AddWithValue("@PurchaseAccountCode", AppConstants.PurchaseAccountCode);
             cmd.Parameters.AddWithValue("@SupplierOpeningAccountCode", AppConstants.SupplierOpeningAccountCode);
-            cmd.Parameters.AddWithValue("@ARAccountCode", AppConstants.ARAccountCode);
+            cmd.Parameters.AddWithValue("@APAccountCode", AppConstants.APAccountCode);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
