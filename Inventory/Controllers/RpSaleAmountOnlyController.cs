@@ -24,7 +24,7 @@ namespace Inventory.Controllers
         {
             saleAmountViewModel = new RpSaleAmountOnlyViewModel();
             List<RpSaleAmountOnlyViewModel.MasterSaleModels> lstSaleReport = GetSaleReport(fromDate, toDate);
-            List<RpSaleAmountOnlyViewModel.BankPayment> lstBankPayment = GetBankPayment(fromDate, toDate);
+            List<RpSaleAmountOnlyViewModel.BankPayment> lstBankPayment = GetBankPayment();
             saleAmountViewModel.FromDate = fromDate;
             saleAmountViewModel.ToDate = toDate;
             saleAmountViewModel.lstMasterSaleRpt = lstSaleReport;
@@ -32,14 +32,12 @@ namespace Inventory.Controllers
             return View(saleAmountViewModel);
         }
 
-        private List<RpSaleAmountOnlyViewModel.BankPayment> GetBankPayment(DateTime fromDate, DateTime toDate)
+        private List<RpSaleAmountOnlyViewModel.BankPayment> GetBankPayment()
         {
             List<RpSaleAmountOnlyViewModel.BankPayment> list = new List<RpSaleAmountOnlyViewModel.BankPayment>();
             RpSaleAmountOnlyViewModel.BankPayment item = new RpSaleAmountOnlyViewModel.BankPayment();
-            SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptBankPayment, (SqlConnection) getConnection());
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@fromDate", fromDate);
-            cmd.Parameters.AddWithValue("@toDate", toDate);
+            SqlCommand cmd = new SqlCommand(TextQuery.bankPaymentQuery, (SqlConnection) getConnection());
+            cmd.CommandType = CommandType.Text;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {

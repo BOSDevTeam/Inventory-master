@@ -186,6 +186,10 @@
                    </div>
                    foreach (var item in Model.lstBankPayment.Where(b => b.BankPaymentID != 0).ToList())
                    {
+                       if (Model.lstMasterPurchase.Where(m => m.PayMethodID == 2 && m.BankPaymentID == item.BankPaymentID).Count() == 0)
+                       {
+                           break;
+                       }
                        <div class="rpt-sub-group">
                            <label>@item.BankPaymentName</label>
                        </div>

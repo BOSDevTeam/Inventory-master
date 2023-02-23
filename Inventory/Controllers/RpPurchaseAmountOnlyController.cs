@@ -25,7 +25,7 @@ namespace Inventory.Controllers
             purchaseAmountViewModel.ToDate = toDate;
             List<RpPurchaseAmountOnlyViewModel.PayMethod> lstPayMethod = GetRptPayMethod(fromDate, toDate);
             purchaseAmountViewModel.lstPayMethod = lstPayMethod;
-            List<RpPurchaseAmountOnlyViewModel.BankPayment> lstBankPayment = GetBankPayment(fromDate, toDate);
+            List<RpPurchaseAmountOnlyViewModel.BankPayment> lstBankPayment = GetBankPayment();
             purchaseAmountViewModel.lstBankPayment = lstBankPayment;
             List<RpPurchaseAmountOnlyViewModel.MasterPurchaseModels> lstMasterPurchase = GetPurchaseReport(fromDate, toDate);
             purchaseAmountViewModel.lstMasterPurchase = lstMasterPurchase;
@@ -53,14 +53,12 @@ namespace Inventory.Controllers
             return payMethodList;
         }
 
-        private List<RpPurchaseAmountOnlyViewModel.BankPayment> GetBankPayment(DateTime fromDate, DateTime toDate)
+        private List<RpPurchaseAmountOnlyViewModel.BankPayment> GetBankPayment()
         {
             List<RpPurchaseAmountOnlyViewModel.BankPayment> list = new List<RpPurchaseAmountOnlyViewModel.BankPayment>();
             RpPurchaseAmountOnlyViewModel.BankPayment item = new RpPurchaseAmountOnlyViewModel.BankPayment();
-            SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptBankPaymentByPurchase, (SqlConnection)getConnection());
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@fromDate", fromDate);
-            cmd.Parameters.AddWithValue("@toDate", toDate);
+            SqlCommand cmd = new SqlCommand(TextQuery.bankPaymentQuery, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.Text;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {

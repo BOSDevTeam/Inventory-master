@@ -22,7 +22,7 @@ namespace Inventory.Controllers
         public ActionResult SaleAmountSummaryReport(DateTime fromDate, DateTime toDate)
         {
             saleViewModel = new RpSaleAmountSummaryViewModel();
-            List<RpSaleAmountSummaryViewModel.BankItem> lstBankItem = GetBankPayment(fromDate, toDate);
+            List<RpSaleAmountSummaryViewModel.BankItem> lstBankItem = GetBankPayment();
             List<RpSaleAmountSummaryViewModel.SaleItem> lstSaleItem = GetRptSale(fromDate, toDate);
             saleViewModel.FromDate = fromDate;
             saleViewModel.ToDate = toDate;
@@ -31,14 +31,12 @@ namespace Inventory.Controllers
             return View(saleViewModel);
         }
 
-        private List<RpSaleAmountSummaryViewModel.BankItem> GetBankPayment(DateTime fromDate, DateTime toDate)
+        private List<RpSaleAmountSummaryViewModel.BankItem> GetBankPayment()
         {
             List<RpSaleAmountSummaryViewModel.BankItem> list = new List<RpSaleAmountSummaryViewModel.BankItem>();
             RpSaleAmountSummaryViewModel.BankItem item = new RpSaleAmountSummaryViewModel.BankItem();
-            SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptBankPayment, (SqlConnection)getConnection());
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@fromDate", fromDate);
-            cmd.Parameters.AddWithValue("@toDate", toDate);
+            SqlCommand cmd = new SqlCommand(TextQuery.bankPaymentQuery, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.Text;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
