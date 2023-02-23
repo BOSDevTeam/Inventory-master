@@ -84,6 +84,7 @@
                                 <li id="subMenuSaleItemRp"><a href="#">@Resource.SaleItemReport</a></li>
                                 <li id="subMenuSaleAuditRp"><a href="#">@Resource.SaleAuditReport</a></li>
                                 <li id="subMenuSaleAmountByCustomerRp"><a href="#">@Resource.SaleAmountByCustomerReport</a></li>
+                                <li id="subMenuSaleAmountBySalePersonRp"><a href="#">@Resource.SaleAmountBySalePersonReport</a></li>
                                 <li id="subMenuSaleItemByCustomerRp"><a href="#">@Resource.SaleItemByCustomerReport</a></li>
                                 <li id="subMenuTopSaleItemRp"><a href="#">@Resource.TopSaleItemReport</a></li>
                                 <li id="subMenuBottomSaleItemRp"><a href="#">@Resource.BottomSaleItemReport</a></li>
@@ -158,6 +159,9 @@
             });
             $('#subMenuSaleAmountByCustomerRp').click(function () {
                 window.location.href = '@Url.Action("SaleAmountByCustomerReportFilter", "RpSaleAmountByCustomer")';
+            });
+            $('#subMenuSaleAmountBySalePersonRp').click(function () {
+                window.location.href = '@Url.Action("SaleAmountBySalePersonReportFilter", "RpSaleAmountBySalePerson")';
             });
             $('#subMenuSaleItemByCustomerRp').click(function () {
                 window.location.href = '@Url.Action("SaleItemByCustomerReportFilter", "RpSaleItemByCustomer")';

@@ -146,5 +146,18 @@ namespace Inventory.Common
         public const string PrcGetSupplierOutstanding = "PrcGetSupplierOutstanding";
         public const string PrcGetTranSupplierOutstanding = "PrcGetTranSupplierOutstanding";
         public const string PrcGetRptPurchaseAmountBySupplier = "PrcGetRptPurchaseAmountBySupplier";
+        public const string PrcGetRptMasterTransferItem = "PrcGetRptMasterTransferItem";
+        public const string PrcGetRptTranTransferItem = "PrcGetRptTranTransferItem";
+        public const string PrcGetRptMasterTransferList = "PrcGetRptMasterTransferList";
+        public const string PrcGetRptTranTransferList = "PrcGetRptTranTransferList";
+        public const string PrcGetTranSupplierOutstandingHistory = "PrcGetTranSupplierOutstandingHistory";
+        public const string PrcUpdateSupplierOutstandingPayment = "PrcUpdateSupplierOutstandingPayment";
+        public const string PrcGetRptMasterAdjustmentList = "PrcGetRptMasterAdjustmentList";
+        public const string PrcGetRptTranAdjustmentList = "PrcGetRptTranAdjustmentList";
+        public const string PrcGetRptAdjustmentItem = "PrcGetRptAdjustmentItem";
+        public const string PrcDeletePurchase = "PrcDeletePurchase";
+        public const string PrcCheckLedgerForPurchaseEdit = "PrcCheckLedgerForPurchaseEdit";
+        public const string PrcGetTopSaleProductByMonth = "PrcGetTopSaleProductByMonth";
+        public const string PrcGetTodaySaleQuantity = "PrcGetTodaySaleQuantity";
     }
 }

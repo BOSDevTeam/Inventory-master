@@ -198,6 +198,7 @@
     <Compile Include="Controllers\RpPurchaseItemBySupplierController.cs" />
     <Compile Include="Controllers\RpPurchaseItemSimpleController.cs" />
     <Compile Include="Controllers\RpSaleAmountByCustomerController.cs" />
+    <Compile Include="Controllers\RpSaleAmountBySalePersonController.cs" />
     <Compile Include="Controllers\RpSaleAmountOnlyController.cs" />
     <Compile Include="Controllers\RpSaleAmountSummaryController.cs" />
     <Compile Include="Controllers\RpSaleAuditController.cs" />
@@ -277,6 +278,7 @@
     <Compile Include="Models\TownshipModels.cs" />
     <Compile Include="Models\TranAdjustmentModels.cs" />
     <Compile Include="Models\TranCustomerConsignModels.cs" />
+    <Compile Include="Models\TranSaleLogModels.cs" />
     <Compile Include="Models\TranSupplierOpeningModels.cs" />
     <Compile Include="Models\TranCustomerOpeningModels.cs" />
     <Compile Include="Models\TranOpeningStockModels.cs" />
@@ -459,6 +461,7 @@
     <Compile Include="ViewModels\CustomerOpeningViewModel.cs" />
     <Compile Include="ViewModels\CustomerOutstandingHistoryViewModel.cs" />
     <Compile Include="ViewModels\CustomerOutstandingViewModel.cs" />
+    <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MasterAdjustmentViewModel.cs" />
     <Compile Include="ViewModels\MasterCustomerConsignViewModel.cs" />
     <Compile Include="ViewModels\MasterPurchaseReturnViewModel.cs" />
@@ -484,6 +487,7 @@
     <Compile Include="ViewModels\RpPurchaseItemBySupplierViewModel.cs" />
     <Compile Include="ViewModels\RpPurchaseItemSimpleViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAmountByCustomerViewModel.cs" />
+    <Compile Include="ViewModels\RpSaleAmountBySalePersonViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAmountOnlyViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAmountSummaryViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAuditViewModel.cs" />
@@ -750,6 +754,8 @@
     <Content Include="Views\SupplierOpening\ListSupplierOpening.cshtml" />
     <Content Include="Views\SupplierOutstanding\SupplierOutstanding.cshtml" />
     <Content Include="Views\SupplierOutstanding\_SupplierOutstandingPayment.cshtml" />
+    <Content Include="Views\RpSaleAmountBySalePerson\SaleAmountBySalePersonReportFilter.cshtml" />
+    <Content Include="Views\RpSaleAmountBySalePerson\SaleAmountBySalePersonReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

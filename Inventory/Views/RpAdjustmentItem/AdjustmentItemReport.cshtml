@@ -1,5 +1,57 @@
-﻿@{
+﻿@using Inventory.ViewModels;
+@model RpAdjustmentItemViewModel
+@{
     Layout = "~/Views/Shared/_LayoutReportDetail.cshtml";
 }
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            setReportTitle('@Resource.AdjustmentItemReport');
+            setDefaultFilter('@Model.FromDate.ToShortDateString()', '@Model.ToDate.ToShortDateString()', '');
+        });
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            document.write(result);
+        }
+    </script>
+</head>
+
+<div>
+    <div class="row table-header" style="padding:10px 15px;">
+        <div class="col-md-2 col-lg-2">@Resource.Code</div>
+        <div class="col-md-3 col-lg-3">@Resource.Product</div>
+        <div class="col-md-2 col-lg-2 aligh-right">@Resource.SalePrice</div>
+        <div class="col-md-3 col-lg-3 aligh-right">@Resource.PurchasePrice</div>
+        <div class="col-md-2 col-lg-2 aligh-right">@Resource.Qty</div>
+    </div>
+    @foreach(var AdjustType in Model.lstAdjustment as List<RpAdjustmentItemViewModel.AdjustmentTypeViewModel>)
+    {
+        <div  class="row rpt-main-group" style="background-color:#ffffec;">
+            <div class="col-md-12 col-lg-12 ml-10">@AdjustType.Sign @AdjustType.AdjustTypeName</div>
+        </div>
+        foreach(var item in AdjustType.lstAdjustmentItem as List<RpAdjustmentItemViewModel.AdjustmentItemViewModel>)
+        {
+            <div class="row rpt-item">
+                <div class="col-md-2 col-lg-2"><span class="ml-10">@item.Code</span></div>
+                <div class="col-md-3 col-lg-3">@item.ProductName @if (item.UnitID>0) { @Resource.OpenParenthesis @item.UnitKeyword @Resource.CloseParenthesis}</div>
+                <div class="col-md-2 col-lg-2 aligh-right">
+                    <script>
+                        separatedComma(@item.SalePrice)
+                    </script>
+                </div>
+                <div class="col-md-3 col-lg-3 aligh-right">
+                    <script>
+                        separatedComma(@item.PurchasePrice)
+                    </script>
+                </div>
+                <div class="col-md-2 col-lg-2 aligh-right"> <span class="mr-10">@item.Quantity</span></div>
+            </div>
+        }
+    }
+</div>
 
 
