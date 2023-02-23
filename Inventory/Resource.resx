@@ -678,4 +678,40 @@
   <data name="UserClientSalePersonFilter" xml:space="preserve">
     <value>User or Client SalePerson Filter</value>
   </data>
+  <data name="ClientEndUsers" xml:space="preserve">
+    <value>Client End Users</value>
+  </data>
+  <data name="ClientSalePersons" xml:space="preserve">
+    <value>Client Sale Persons</value>
+  </data>
+  <data name="Customers" xml:space="preserve">
+    <value>Customers</value>
+  </data>
+  <data name="NumberShortForm" xml:space="preserve">
+    <value>No.</value>
+  </data>
+  <data name="Suppliers" xml:space="preserve">
+    <value>Suppliers</value>
+  </data>
+  <data name="TodayClientOrder" xml:space="preserve">
+    <value>Today Client Order</value>
+  </data>
+  <data name="TodayCreditSale" xml:space="preserve">
+    <value>Today Credit Sale</value>
+  </data>
+  <data name="TodaySale" xml:space="preserve">
+    <value>Today Sale</value>
+  </data>
+  <data name="TodaySaleProduct" xml:space="preserve">
+    <value>Today Sale Product</value>
+  </data>
+  <data name="Top5" xml:space="preserve">
+    <value>Top 5</value>
+  </data>
+  <data name="TopSaleProduct" xml:space="preserve">
+    <value>Top Sale Product</value>
+  </data>
+  <data name="TodaySaleQuantity" xml:space="preserve">
+    <value>Today Sale Quantity</value>
+  </data>
 </root>

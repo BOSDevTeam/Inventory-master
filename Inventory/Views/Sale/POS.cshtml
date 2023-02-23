@@ -351,7 +351,7 @@
                        + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + separatedComma(item.Discount) + '</label></td>'
                        + '<td class="col-md-2 col-lg-2 value-right"><label class="control-label mb-0">' + separatedComma(item.Amount) + '</label></td>'
                        + '<td class="col-md-1 col-lg-1 value-right"><button class="btn-icon gray" title="Delete" onclick="tranSaleTableAction(3)"><i class="fa fa-remove"></i></button></td>'
-                       + '<td>' + item.Number + '</td>'
+                       + '<td style="display:none;">' + item.Number + '</td>'
                        + '</tr>';
                 $('#tblTranSale tbody').append(row);
             })

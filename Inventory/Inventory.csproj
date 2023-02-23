@@ -461,6 +461,7 @@
     <Compile Include="ViewModels\CustomerOpeningViewModel.cs" />
     <Compile Include="ViewModels\CustomerOutstandingHistoryViewModel.cs" />
     <Compile Include="ViewModels\CustomerOutstandingViewModel.cs" />
+    <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="ViewModels\MasterAdjustmentViewModel.cs" />
     <Compile Include="ViewModels\MasterCustomerConsignViewModel.cs" />
     <Compile Include="ViewModels\MasterPurchaseReturnViewModel.cs" />
