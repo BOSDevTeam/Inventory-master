@@ -278,6 +278,7 @@
     <Compile Include="Models\TownshipModels.cs" />
     <Compile Include="Models\TranAdjustmentModels.cs" />
     <Compile Include="Models\TranCustomerConsignModels.cs" />
+    <Compile Include="Models\TranPurchaseLogModels.cs" />
     <Compile Include="Models\TranSaleLogModels.cs" />
     <Compile Include="Models\TranSupplierOpeningModels.cs" />
     <Compile Include="Models\TranCustomerOpeningModels.cs" />

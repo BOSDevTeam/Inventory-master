@@ -159,5 +159,7 @@ namespace Inventory.Common
         public const string PrcCheckLedgerForPurchaseEdit = "PrcCheckLedgerForPurchaseEdit";
         public const string PrcGetTopSaleProductByMonth = "PrcGetTopSaleProductByMonth";
         public const string PrcGetTodaySaleQuantity = "PrcGetTodaySaleQuantity";
+        public const string PrcGetDashboardData = "PrcGetDashboardData";
+        public const string PrcGetRptSaleAmountBySalePerson = "PrcGetRptSaleAmountBySalePerson";
     }
 }

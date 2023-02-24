@@ -20,6 +20,7 @@ namespace Inventory.Controllers
         AppSetting setting = new AppSetting();
         AppSetting.Paging paging = new AppSetting.Paging();
         TextQuery textQuery = new TextQuery();
+        List<TranPurchaseLogModels> lstTranPurchaseLog = new List<TranPurchaseLogModels>();
 
         [SessionTimeoutAttribute]
         public ActionResult Purchase(int userId,int? purchaseId)
@@ -44,6 +45,7 @@ namespace Inventory.Controllers
                         totalQuantity += lstTranPurchase[i].Quantity;
                     }
                     Session["TranPurchaseData"] = lstTranPurchase;
+                    Session["PurchaseLog"] = lstTranPurchaseLog;
                     ViewBag.TotalItem = lstTranPurchase.Count();
                     ViewBag.UserVoucherNo = data.MasterPurchaseModel.UserVoucherNo;
                     DateTime date = setting.convertStringToDate(data.MasterPurchaseModel.PurchaseDateTime);
@@ -185,12 +187,12 @@ namespace Inventory.Controllers
             int price = appData.selectPurPriceByProduct(getConnection(), productId);
             return Json(price, JsonRequestBehavior.AllowGet);
         }
-        public JsonResult TranPurchaseAddEditAction(int productId, string productCode, string productName, int quantity, int price, int disPercent, int? unitId, string unitKeyword, int? currencyId, string currencyKeyword, bool isEdit, int? number, bool isItemFOC)
+        public JsonResult TranPurchaseAddEditAction(int productId, string productCode, string productName, int quantity, int price, int disPercent, int? unitId, string unitKeyword, int? currencyId, string currencyKeyword, bool isEdit, int? number, bool isItemFOC,bool IsVoucherEdit)
         {
             List<TranPurchaseModels> lstTranPurchase = new List<TranPurchaseModels>();
             TranPurchaseModels data = new TranPurchaseModels();
             int subtotal = 0, totalQuantity = 0, discount;
-            bool isRequestSuccess = true;
+            ResultDefaultData resultDefaultData = new ResultDefaultData();            
 
             data.Number = number;
             data.ProductID = productId;
@@ -209,6 +211,10 @@ namespace Inventory.Controllers
             data.Discount = discount;
             data.Amount = (quantity * price) - discount;
             data.IsFOC = isItemFOC;
+            if (IsVoucherEdit)
+            {
+                if(!isEdit)data.IsNewTran = true;
+            }
 
             if (!isEdit)
             {
@@ -218,16 +224,30 @@ namespace Inventory.Controllers
                     lstTranPurchase.Add(data);
                 }
                 else lstTranPurchase.Add(data);
+
+                resultDefaultData.IsRequestSuccess = true;
             }
             else
             {
                 if (Session["TranPurchaseData"] != null)
                 {
-                    lstTranPurchase = Session["TranPurchaseData"] as List<TranPurchaseModels>;
-                    int index = (int)number - 1;
-                    lstTranPurchase[index] = data;
+                    try
+                    {
+                        lstTranPurchase = Session["TranPurchaseData"] as List<TranPurchaseModels>;
+                        List<TranPurchaseModels> lstEditTran = lstTranPurchase.Where(x => x.Number == number).ToList();
+                        if (lstEditTran.Count() != 0) data.IsNewTran = lstEditTran[0].IsNewTran;
+                        int index = (int)number - 1;
+                        lstTranPurchase[index] = data;
+                        resultDefaultData.IsRequestSuccess = true;
+                    }
+                    catch(Exception ex)
+                    {
+                        resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                        resultDefaultData.Message = ex.Message;
+                    }
+                    
                 }
-                else isRequestSuccess = false;
+                else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             }
 
             for (int i = 0; i < lstTranPurchase.Count(); i++)
@@ -237,34 +257,75 @@ namespace Inventory.Controllers
             }
 
             Session["TranPurchaseData"] = lstTranPurchase;
+            if (IsVoucherEdit)
+            {
+                TranPurchaseLogModels dataLog = new TranPurchaseLogModels();
+                dataLog.Quantity = data.Quantity;
+                dataLog.PurPrice = data.PurchasePrice;
+                dataLog.Discount = data.Discount;
+                dataLog.Amount = data.Amount;
+                dataLog.ProductID = data.ProductID;
+                dataLog.UnitID = data.UnitID;
+                dataLog.CurrencyID = data.CurrencyID;
+                dataLog.DiscountPercent = data.DiscountPercent;
+                dataLog.IsFOC = data.IsFOC;
+                if (isEdit && !data.IsNewTran) setLog(AppConstants.EditActionCode, dataLog, data, number);
+            }
 
             var jsonResult = new
             {
                 LstTranPurchase = lstTranPurchase,
                 SubTotal = subtotal,
                 TotalQuantity = totalQuantity,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
         [HttpGet]
-        public JsonResult TranPurchaseDeleteAction(int number)
+        public JsonResult TranPurchaseDeleteAction(int number,bool isVoucherEdit)
         {
             List<TranPurchaseModels> lstTranPurchase = new List<TranPurchaseModels>();
             int subtotal = 0, totalQuantity = 0;
-            bool isRequestSuccess = true;
-
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            
             if (Session["TranPurchaseData"] != null)
             {
-                lstTranPurchase = Session["TranPurchaseData"] as List<TranPurchaseModels>;
-                lstTranPurchase.RemoveAt(number - 1);
+                try
+                {
+                    lstTranPurchase = Session["TranPurchaseData"] as List<TranPurchaseModels>;
+                    TranPurchaseModels data = lstTranPurchase[number - 1];
+                    if (isVoucherEdit)
+                    {
+                        TranPurchaseLogModels dataLog = new TranPurchaseLogModels();
+                        dataLog.Quantity = data.Quantity;
+                        dataLog.PurPrice = data.PurchasePrice;
+                        dataLog.Discount = data.Discount;
+                        dataLog.Amount = data.Amount;
+                        dataLog.ProductID = data.ProductID;
+                        dataLog.UnitID = data.UnitID;
+                        dataLog.CurrencyID = data.CurrencyID;
+                        dataLog.DiscountPercent = data.DiscountPercent;
+                        dataLog.IsFOC = data.IsFOC;
+                        if (!data.IsNewTran) setLog(AppConstants.DeleteActionCode, dataLog, data, number);
+                    }
+                    lstTranPurchase.RemoveAt(number - 1);
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch(Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }             
             }
-            else isRequestSuccess = false;
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
             for (int i = 0; i < lstTranPurchase.Count(); i++)
             {
+                TranPurchaseModels data = lstTranPurchase[i];
+                data.Number = i + 1;
+                lstTranPurchase[i] = data;
                 subtotal += lstTranPurchase[i].Amount;
                 totalQuantity += lstTranPurchase[i].Quantity;
             }
@@ -276,7 +337,7 @@ namespace Inventory.Controllers
                 LstTranPurchase = lstTranPurchase,
                 SubTotal = subtotal,
                 TotalQuantity = totalQuantity,
-                IsRequestSuccess = isRequestSuccess
+                ResultDefaultData = resultDefaultData
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -655,11 +716,44 @@ namespace Inventory.Controllers
                     dt.Columns.Add(new DataColumn("Discount", typeof(int)));
                     dt.Columns.Add(new DataColumn("Amount", typeof(int)));
                     dt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
+                    
+                    DataTable dtLog = new DataTable();
+                    dtLog.Columns.Add(new DataColumn("ProductID", typeof(int)));
+                    dtLog.Columns.Add(new DataColumn("Quantity", typeof(int)));
+                    dtLog.Columns.Add(new DataColumn("UnitID", typeof(int)));
+                    dtLog.Columns.Add(new DataColumn("PurPrice", typeof(int)));
+                    dtLog.Columns.Add(new DataColumn("CurrencyID", typeof(int)));
+                    dtLog.Columns.Add(new DataColumn("DiscountPercent", typeof(int)));
+                    dtLog.Columns.Add(new DataColumn("Discount", typeof(int)));
+                    dtLog.Columns.Add(new DataColumn("Amount", typeof(int)));
+                    dtLog.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
+                    dtLog.Columns.Add(new DataColumn("ActionCode", typeof(string)));
+                    dtLog.Columns.Add(new DataColumn("ActionName", typeof(string)));
 
                     for (int i = 0; i < list.Count; i++)
                     {
                         dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurchasePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
+                        if (list[i].IsNewTran)
+                        {
+                            dtLog.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurchasePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC, AppConstants.NewActionCode, AppConstants.NewActionName);
+                        }
                     }
+                    if (Session["PurchaseLog"] != null)
+                    {
+                        List<TranPurchaseLogModels> lstTranPurchaseLog = Session["PurchaseLog"] as List<TranPurchaseLogModels>;
+
+                        for (int i = 0; i < lstTranPurchaseLog.Count; i++)
+                        {
+                            if (lstTranPurchaseLog[i].ActionCode != null)
+                            {
+                                string actionName = "";
+                                if (lstTranPurchaseLog[i].ActionCode == AppConstants.EditActionCode) actionName = AppConstants.EditActionName;
+                                else if (lstTranPurchaseLog[i].ActionCode == AppConstants.DeleteActionCode) actionName = AppConstants.DeleteActionName;
+                                dtLog.Rows.Add(lstTranPurchaseLog[i].ProductID, lstTranPurchaseLog[i].Quantity, lstTranPurchaseLog[i].UnitID, lstTranPurchaseLog[i].PurPrice, lstTranPurchaseLog[i].CurrencyID, lstTranPurchaseLog[i].DiscountPercent, lstTranPurchaseLog[i].Discount, lstTranPurchaseLog[i].Amount, lstTranPurchaseLog[i].IsFOC, lstTranPurchaseLog[i].ActionCode, actionName);
+                            }
+                        }
+                    }
+
                     DateTime purchaseDateTime = DateTime.Parse(date);
                     SqlCommand cmd = new SqlCommand(Procedure.PrcUpdatePurchase, dataConnectorSQL.Connect());
                     cmd.Parameters.AddWithValue("@PurchaseID", purchaseId);
@@ -672,6 +766,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@Subtotal", subtotal);
                     cmd.Parameters.AddWithValue("@Total", total);
                     cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Parameters.AddWithValue("@temptbllog", dtLog);
                     cmd.Parameters.AddWithValue("@VoucherID", voucherId);
                     cmd.Parameters.AddWithValue("@AccountCode", AppConstants.PurchaseAccountCode);
                     cmd.Parameters.AddWithValue("@UpdatedUserID", userId);
@@ -946,7 +1041,9 @@ namespace Inventory.Controllers
         {
             List<TranPurchaseModels> list = new List<TranPurchaseModels>();
             TranPurchaseModels item = new TranPurchaseModels();
-
+            lstTranPurchaseLog = new List<TranPurchaseLogModels>();
+            TranPurchaseLogModels itemLog = new TranPurchaseLogModels();
+            int number = 0;
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetTranPurchaseByPurchaseID, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@PurchaseID", purchaseId);
@@ -954,6 +1051,8 @@ namespace Inventory.Controllers
             while (reader.Read())
             {
                 item = new TranPurchaseModels();
+                number++;
+                item.Number = number;
                 item.ProductName = Convert.ToString(reader["ProductName"]);
                 item.Quantity = Convert.ToInt32(reader["Quantity"]);
                 item.PurchasePrice = Convert.ToInt32(reader["PurPrice"]);
@@ -968,10 +1067,42 @@ namespace Inventory.Controllers
                 item.ProductCode = Convert.ToString(reader["Code"]);
                 item.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
                 list.Add(item);
+
+                itemLog = new TranPurchaseLogModels();
+                itemLog.Quantity = Convert.ToInt32(reader["Quantity"]);
+                itemLog.PurPrice = Convert.ToInt32(reader["PurPrice"]);
+                itemLog.Discount = Convert.ToInt32(reader["Discount"]);
+                itemLog.Amount = Convert.ToInt32(reader["Amount"]);
+                itemLog.ProductID = Convert.ToInt32(reader["ProductID"]);
+                itemLog.UnitID = Convert.ToInt32(reader["UnitID"]);
+                itemLog.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
+                itemLog.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
+                itemLog.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
+                lstTranPurchaseLog.Add(itemLog);
             }
             reader.Close();
 
             return list;
+        }
+
+        private void setLog(string actionCode, TranPurchaseLogModels dataLog, TranPurchaseModels data, int? number)
+        {
+            List<TranPurchaseLogModels> lstTranPurchaseLog = new List<TranPurchaseLogModels>();
+            if (Session["PurchaseLog"] != null)
+                lstTranPurchaseLog = Session["PurchaseLog"] as List<TranPurchaseLogModels>;
+
+            if (actionCode == AppConstants.EditActionCode)  // edit
+            {
+                dataLog.ActionCode = AppConstants.EditActionCode;
+                if (number != null) lstTranPurchaseLog[(int)number - 1] = dataLog;
+            }
+            else if (actionCode == AppConstants.DeleteActionCode)  // delete
+            {
+                dataLog.ActionCode = AppConstants.DeleteActionCode;
+                if (number != null) lstTranPurchaseLog[(int)number - 1] = dataLog;
+            }
+
+            Session["PurchaseLog"] = lstTranPurchaseLog;
         }
 
         #endregion

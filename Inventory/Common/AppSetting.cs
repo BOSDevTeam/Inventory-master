@@ -49,6 +49,18 @@ namespace Inventory.Common
             return MyanmarStd;
         }
 
+        public int getCurrentMonth()
+        {
+            DateTime MyanmarStd = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Myanmar Standard Time");
+            return MyanmarStd.Month;
+        }
+
+        public string getCurrentMonthName()
+        {
+            DateTime MyanmarStd = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Myanmar Standard Time");
+            return MyanmarStd.ToString("MMMM");
+        }
+
         public async Task<bool> sendPushNotification(string deviceToken, string title, string body, object data)
         {
             bool isSent = false;

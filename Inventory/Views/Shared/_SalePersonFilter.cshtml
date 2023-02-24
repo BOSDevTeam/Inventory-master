@@ -1,0 +1,109 @@
+﻿<div>
+    <div class="row padding-10">
+        <h4>@Resource.UserClientSalePersonFilter</h4>
+    </div>
+    <div id="divSalePersonFilter">
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    function createSalePersonFilter(userList,clientList) {        
+        let person = '';
+        $("#divSalePersonFilter").html("");
+        person += '<div class="row rpt-main-group" id="divMainUserMenu" style="background-color:#ffffec;">'
+                     + '<div class="col-md-10 col-lg-10 padding-5">'
+                     + '<span>' + 'All User' + '</span>'
+                     + '</div>'
+                     + '<div class="col-md-2 col-lg-2 aligh-right padding-5">'
+                     + '<input type="checkbox" name="AllUser" value="1" onchange="mainUserMenuChange(this)" class="aligh-right mr-10" />'
+                     + '</div>'
+                     + '</div>'
+                     + '<div class="row">'
+                     + '<div class="col-md-12 col-lg-12" id="divUserMenu"></div>'
+                     + '</div>'
+                +   '<div class="row rpt-main-group" id="divMainClientMenu" style="background-color:#ffffec;">'
+                     + '<div class="col-md-10 col-lg-10 padding-5">'
+                     + '<span>' + 'All Client SalePerson' + '</span>'
+                     + '</div>'
+                     + '<div class="col-md-2 col-lg-2 aligh-right padding-5">'
+                     + '<input type="checkbox" name="AllClient" value="2" onchange="mainClientMenuChange(this)" class="aligh-right mr-10" />'
+                     + '</div>'
+                     + '</div>'
+                     + '<div class="row">'
+                     + '<div class="col-md-12 col-lg-12" id="divClientMenu"></div>'
+                     + '</div>'
+        $("#divSalePersonFilter").append(person);
+        
+       let subuser = '';
+        $.each(userList, function (i, item) {
+            
+            subuser += '<div class="row rpt-item">'
+                    + '<div class="col-md-10 col-lg-10 padding-5"><span>' + item.UserName + '</span></div>'
+                    + '<div class="col-md-2 col-lg-2 padding-5 aligh-right">'
+                    + '<input type="checkbox" name="1" value="' + item.UserID + '" onchange="subUserMenuChange(this)" class="aligh-right mr-10" />'
+                    + '</div></div>'            
+        })
+        $("#divUserMenu").append(subuser);
+        let subClient = '';
+        $.each(clientList, function (i, item) {
+            subClient += '<div class="row rpt-item">'
+                    + '<div class="col-md-10 col-lg-10 padding-5"><span>' + item.ClientName + '</span></div>'
+                    + '<div class="col-md-2 col-lg-2 padding-5 aligh-right">'
+                    + '<input type="checkbox" name="2" value="' + item.ClientID + '" onchange="subClientMenuChange(this)" class="aligh-right mr-10" />'
+                    + '</div></div>'
+        })
+        $("#divClientMenu").append(subClient);
+    }
+
+    function mainUserMenuChange(mainMenu) {
+        var checkboxes = document.getElementsByName(1);
+        if (mainMenu.checked == true) {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = true;
+                if (!lstUserID.some(e=>e == checkbox.value)) {
+                    lstUserID.push(checkbox.value);
+                }
+            });
+        }
+        else {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = false;
+                lstUserID = lstUserID.filter(e=>e !== checkbox.value);
+            });
+        }
+    }
+    function mainClientMenuChange(mainMenu) {
+        var checkboxes = document.getElementsByName(2);
+        if (mainMenu.checked == true) {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = true;
+                if (!lstClientID.some(e=>e == checkbox.value)) {
+                    lstClientID.push(checkbox.value);
+                }
+            });
+        }
+        else {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.checked = false;
+                lstClientID = lstClientID.filter(e=>e !== checkbox.value);
+            });
+        }
+    }
+    function subUserMenuChange(subMenu) {
+        if (subMenu.checked == true) {
+            lstUserID.push(subMenu.value);
+        }
+        else {
+            lstUserID = lstUserID.filter(e=>e !== subMenu.value);
+        }
+    }
+    function subClientMenuChange(subMenu) {
+        if (subMenu.checked == true) {
+            lstClientID.push(subMenu.value);
+        }
+        else {
+            lstClientID = lstClientID.filter(e=>e !== subMenu.value);
+        }
+    }
+</script>

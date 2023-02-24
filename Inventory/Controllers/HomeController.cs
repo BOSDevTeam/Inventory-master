@@ -17,9 +17,34 @@ namespace Inventory.Controllers
 
         public ActionResult Dashboard()
         {
-            homeViewModel.lstTopSaleProduct = selectTopSaleProduct(2);
+            selectDashboardData(setting.getLocalDate());
+            ViewBag.Month = setting.getCurrentMonthName();
+            homeViewModel.lstTopSaleProduct = selectTopSaleProduct(setting.getCurrentMonth());
             homeViewModel.lstTodaySaleQuantity = selectTodaySaleQuantity(setting.getLocalDate());
             return View(homeViewModel);
+        }
+
+        public void selectDashboardData(DateTime todayDate)
+        {
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetDashboardData, setting.conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@TodayDate", todayDate);
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                ViewBag.TodaySale = Convert.ToInt32(reader["TodaySale"]);
+                ViewBag.TodayClientOrder = Convert.ToInt32(reader["TodayClientOrder"]);
+                ViewBag.TodaySaleProduct = Convert.ToInt32(reader["TodaySaleProduct"]);
+                ViewBag.TodayCreditSale = Convert.ToInt32(reader["TodayCreditSale"]);
+                ViewBag.Customer = Convert.ToInt32(reader["Customer"]);
+                ViewBag.Supplier = Convert.ToInt32(reader["Supplier"]);
+                ViewBag.ClientSalePerson = Convert.ToInt32(reader["ClientSalePerson"]);
+                ViewBag.ClientEndUser = Convert.ToInt32(reader["ClientEndUser"]);
+            }
+            reader.Close();
+            setting.conn.Close();
         }
 
         public List<HomeViewModel.TodaySaleQuantityView> selectTodaySaleQuantity(DateTime todayDate)
@@ -47,6 +72,7 @@ namespace Inventory.Controllers
                
                 list.Add(item);
             }
+            list[0].IsSummary = true;
             reader.Close();
             setting.conn.Close();
             return list;

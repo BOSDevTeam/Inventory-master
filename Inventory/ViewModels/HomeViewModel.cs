@@ -26,6 +26,7 @@ namespace Inventory.ViewModels
             public string Name { get; set; }
             public int Quantity { get; set; }
             public int Amount { get; set; }
+            public bool IsSummary { get; set; }
         }
     }
 }

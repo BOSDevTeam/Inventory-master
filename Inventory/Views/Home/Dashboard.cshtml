@@ -39,6 +39,12 @@
     localStorage.setItem("Tax", '@Session["Tax"]');
     localStorage.setItem("Charges", '@Session["ServiceCharges"]');
 
+    function separatedComma(value) {
+        let iVal = parseInt(value);
+        let result = iVal.toLocaleString('en-US');
+        document.write(result);
+    }
+
 </script>
 
 <div class="soft-gray-background">
@@ -55,7 +61,7 @@
                 <div class="col-md-8 col-lg-8 align-justify-center">
                     <div class="row">
                         <div class="col-md-12 col-lg-12">
-                            <h3>2,500,000</h3>
+                            <h3><script>separatedComma(@ViewBag.TodaySale);</script></h3>
                         </div>
                         <div class="col-md-12 col-lg-12">
                             <label class="control-label">@Resource.TodaySale</label>
@@ -75,7 +81,7 @@
                 <div class="col-md-8 col-lg-8 align-justify-center">
                     <div class="row">
                         <div class="col-md-12 col-lg-12">
-                            <h3>25</h3>
+                            <h3>@ViewBag.TodayClientOrder</h3>
                         </div>
                         <div class="col-md-12 col-lg-12">
                             <label class="control-label">@Resource.TodayClientOrder</label>
@@ -95,7 +101,7 @@
                 <div class="col-md-8 col-lg-8 align-justify-center">
                     <div class="row">
                         <div class="col-md-12 col-lg-12">
-                            <h3>50</h3>
+                            <h3>@ViewBag.TodaySaleProduct</h3>
                         </div>
                         <div class="col-md-12 col-lg-12">
                             <label class="control-label">@Resource.TodaySaleProduct</label>
@@ -115,7 +121,7 @@
                 <div class="col-md-8 col-lg-8 align-justify-center">
                     <div class="row">
                         <div class="col-md-12 col-lg-12">
-                            <h3>200,000</h3>
+                            <h3><script>separatedComma(@ViewBag.TodayCreditSale);</script></h3>
                         </div>
                         <div class="col-md-12 col-lg-12">
                             <label class="control-label">@Resource.TodayCreditSale</label>
@@ -134,7 +140,7 @@
                 <div class="col-md-8 col-lg-8 align-center">
                     <div class="row m-l-5">
                         <div class="col-md-12 col-lg-12">
-                            <h3 class="count" style="color:#fff;">100</h3>
+                            <h3 class="count" style="color:#fff;">@ViewBag.Customer</h3>
                         </div>
                         <div class="col-md-12 col-lg-12">
                             <label class="control-label" style="color:#fff;">@Resource.Customers</label>
@@ -152,7 +158,7 @@
                 <div class="col-md-8 col-lg-8 align-center">
                     <div class="row m-l-5">
                         <div class="col-md-12 col-lg-12">
-                            <h3 class="count" style="color:#fff;">10</h3>
+                            <h3 class="count" style="color:#fff;">@ViewBag.Supplier</h3>
                         </div>
                         <div class="col-md-12 col-lg-12">
                             <label class="control-label" style="color:#fff;">@Resource.Suppliers</label>
@@ -170,7 +176,7 @@
                 <div class="col-md-8 col-lg-8 align-center">
                     <div class="row  m-l-5">
                         <div class="col-md-12 col-lg-12">
-                            <h3 class="count" style="color:#fff;">15</h3>
+                            <h3 class="count" style="color:#fff;">@ViewBag.ClientSalePerson</h3>
                         </div>
                         <div class="col-md-12 col-lg-12">
                             <label class="control-label" style="color:#fff;">@Resource.ClientSalePersons</label>
@@ -188,7 +194,7 @@
                 <div class="col-md-8 col-lg-8 align-center">
                     <div class="row m-l-5">
                         <div class="col-md-12 col-lg-12">
-                            <h3 class="count" style="color:#fff;">500</h3>
+                            <h3 class="count" style="color:#fff;">@ViewBag.ClientEndUser</h3>
                         </div>
                         <div class="col-md-12 col-lg-12">
                             <label class="control-label" style="color:#fff;">@Resource.ClientEndUsers</label>
@@ -203,21 +209,21 @@
 
     </div>
 
-    <div class="row padding-10" style="height:500px">
+    <div class="row padding-10">
         <div class="col-md-8 col-lg-8">
 
         </div>
         <div class="col-md-4 col-lg-4">
             <div style="background-color:white;">
-                <div class="row padding-5" >
+                <div class="row padding-10" >
                     <div class="col-md-8 col-lg-8">
-                        <h5 class="mb-0">@Resource.TopSaleProduct<label class="control-label mb-0">&nbsp;(February)</label></h5>
+                        <h5 class="mb-0">@Resource.TopSaleProduct<label class="control-label mb-0">&nbsp;(@ViewBag.Month)</label></h5>
                     </div>
                     <div class="col-md-4 col-lg-4 align-center aligh-right">
                         <label class="control-label mb-0" style="background-color:#27ae61;padding:0px 10px;color:#FFF;">@Resource.Top5</label>
                     </div>
                 </div>
-                <table id="tblTopSaleProduct" class="row padding-5">
+                <table id="tblTopSaleProduct" class="row padding-10">
                     <thead class="col-md-12 col-lg-12">
                         <tr class="row table-header">
                             <th class="col-md-2 col-lg-2">@Resource.NumberShortForm</th>
@@ -239,12 +245,12 @@
             </div>
 
             <div class="m-t-10" style="background-color:white;">
-                <div class="row padding-5">
+                <div class="row padding-10">
                     <div class="col-md-12 col-lg-12">
                         <h5 class="mb-0">@Resource.TodaySaleQuantity</h5>
                     </div>                
                 </div>
-                <table id="tblTodaySaleQuantity" class="row padding-5">
+                <table id="tblTodaySaleQuantity" class="row padding-10">
                     <thead class="col-md-12 col-lg-12">
                         <tr class="row table-header">
                             <th class="col-md-6 col-lg-6"></th>
@@ -255,11 +261,25 @@
                     <tbody class="col-md-12 col-lg-12">
                         @foreach (var data in Model.lstTodaySaleQuantity as List<HomeViewModel.TodaySaleQuantityView>)
                         {
-                            <tr class="row table-item">
-                                <td class="col-md-6 col-lg-6">@data.Name</td>
-                                <td class="col-md-2 col-lg-2 aligh-right">@data.Quantity</td>
-                                <td class="col-md-4 col-lg-4 aligh-right">@data.Amount</td>
-                            </tr>
+                            if (data.IsSummary)
+                            {
+                                <tr class="row table-item">
+                                    <th class="col-md-6 col-lg-6">@data.Name</th>
+                                    <th class="col-md-2 col-lg-2 aligh-right">@data.Quantity</th>
+                                    <th class="col-md-4 col-lg-4 aligh-right">
+                                        <script>separatedComma(@data.Amount);</script>
+                                    </th>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr class="row table-item">
+                                    <td class="col-md-6 col-lg-6">@data.Name</td>
+                                    <td class="col-md-2 col-lg-2 aligh-right">@data.Quantity</td>
+                                    <td class="col-md-4 col-lg-4 aligh-right">
+                                    <script>separatedComma(@data.Amount);</script></td>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>
