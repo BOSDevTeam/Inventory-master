@@ -29,7 +29,31 @@ namespace Inventory.Controllers
             try
             {
                 Session["HSupplierOutstandingPaymentList"] = null;
-                lstSupplierOutstandingPayment = selectTranSupplierOutstanding(supplierId);
+                lstSupplierOutstandingPayment = selectTranSupplierOutstanding(supplierId,false);
+                resultDefaultData.IsRequestSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                resultDefaultData.Message = ex.Message;
+            }
+            var jsonResult = new
+            {
+                LstSupplierOutstandingPayment = lstSupplierOutstandingPayment,
+                ResultDefaultData = resultDefaultData
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult SearchAction(int supplierId, DateTime fromDate, DateTime toDate)
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            List<SupplierOutstandingHistoryViewModel.DetailViewModel> lstSupplierOutstandingPayment = new List<SupplierOutstandingHistoryViewModel.DetailViewModel>();
+            try
+            {
+                Session["HSupplierOutstandingPaymentList"] = null;
+                lstSupplierOutstandingPayment = selectTranSupplierOutstanding(supplierId,true,fromDate,toDate);
                 resultDefaultData.IsRequestSuccess = true;
             }
             catch (Exception ex)
@@ -183,7 +207,7 @@ namespace Inventory.Controllers
 
         #endregion
 
-        private List<SupplierOutstandingHistoryViewModel.DetailViewModel> selectTranSupplierOutstanding(int supplierId)
+        private List<SupplierOutstandingHistoryViewModel.DetailViewModel> selectTranSupplierOutstanding(int supplierId, bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate)
         {
             List<SupplierOutstandingHistoryViewModel.DetailViewModel> list = new List<SupplierOutstandingHistoryViewModel.DetailViewModel>();
             SupplierOutstandingHistoryViewModel.DetailViewModel item = new SupplierOutstandingHistoryViewModel.DetailViewModel();
@@ -194,6 +218,16 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@SupplierID", supplierId);
             cmd.Parameters.AddWithValue("@APAccountCode", AppConstants.APAccountCode);
+            if (!isSearch)
+            {
+                cmd.Parameters.AddWithValue("@FromDate", setting.getLocalDate());
+                cmd.Parameters.AddWithValue("@ToDate", setting.getLocalDate());
+            }
+            else
+            {
+                cmd.Parameters.AddWithValue("@FromDate", fromDate);
+                cmd.Parameters.AddWithValue("@ToDate", toDate);
+            }
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

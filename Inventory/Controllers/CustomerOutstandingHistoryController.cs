@@ -29,7 +29,7 @@ namespace Inventory.Controllers
             try
             {
                 Session["HCustomerOutstandingPaymentList"] = null;
-                lstCustomerOutstandingPayment = selectTranCustomerOutstanding(customerId);
+                lstCustomerOutstandingPayment = selectTranCustomerOutstanding(customerId,false);
                 resultDefaultData.IsRequestSuccess = true;
             }
             catch (Exception ex)
@@ -43,7 +43,31 @@ namespace Inventory.Controllers
                 ResultDefaultData = resultDefaultData
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
-        }                    
+        }
+
+        [HttpGet]
+        public JsonResult SearchAction(int customerId,DateTime fromDate, DateTime toDate)
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            List<CustomerOutstandingHistoryViewModel.DetailViewModel> lstCustomerOutstandingPayment = new List<CustomerOutstandingHistoryViewModel.DetailViewModel>();
+            try
+            {
+                Session["HCustomerOutstandingPaymentList"] = null;
+                lstCustomerOutstandingPayment = selectTranCustomerOutstanding(customerId, true,fromDate,toDate);
+                resultDefaultData.IsRequestSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                resultDefaultData.Message = ex.Message;
+            }
+            var jsonResult = new
+            {
+                LstCustomerOutstandingPayment = lstCustomerOutstandingPayment,
+                ResultDefaultData = resultDefaultData
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
 
         #endregion
 
@@ -183,7 +207,7 @@ namespace Inventory.Controllers
 
         #endregion
         
-        private List<CustomerOutstandingHistoryViewModel.DetailViewModel> selectTranCustomerOutstanding(int customerId)
+        private List<CustomerOutstandingHistoryViewModel.DetailViewModel> selectTranCustomerOutstanding(int customerId, bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate)
         {
             List<CustomerOutstandingHistoryViewModel.DetailViewModel> list = new List<CustomerOutstandingHistoryViewModel.DetailViewModel>();
             CustomerOutstandingHistoryViewModel.DetailViewModel item = new CustomerOutstandingHistoryViewModel.DetailViewModel();
@@ -194,6 +218,16 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@CustomerID", customerId);          
             cmd.Parameters.AddWithValue("@ARAccountCode", AppConstants.ARAccountCode);
+            if (!isSearch)
+            {
+                cmd.Parameters.AddWithValue("@FromDate", setting.getLocalDate());
+                cmd.Parameters.AddWithValue("@ToDate", setting.getLocalDate());              
+            }
+            else
+            {
+                cmd.Parameters.AddWithValue("@FromDate", fromDate);
+                cmd.Parameters.AddWithValue("@ToDate", toDate);
+            }
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

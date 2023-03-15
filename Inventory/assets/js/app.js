@@ -18,16 +18,17 @@ $(document).ready(function($) {
 
 	function init() {
 		var $this = Sidemenu;
-		$('#sidebar-menu a').on('click', function(e) {
-			if($(this).parent().hasClass('submenu')) {
+		$('#sidebar-menu a').on('click', function (e) {
+		  
+		    if ($(this).parent().hasClass('submenu')) {		     
 				e.preventDefault();
 			}
-			if(!$(this).hasClass('subdrop')) {
+		    if (!$(this).hasClass('subdrop')) {		      
 				$('ul', $(this).parents('ul:first')).slideUp(350);
 				$('a', $(this).parents('ul:first')).removeClass('subdrop');
 				$(this).next('ul').slideDown(350);
 				$(this).addClass('subdrop');
-			} else if($(this).hasClass('subdrop')) {
+		    } else if ($(this).hasClass('subdrop')) {		      
 				$(this).removeClass('subdrop');
 				$(this).next('ul').slideUp(350);
 			}

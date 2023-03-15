@@ -266,7 +266,7 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SaveAction(int payType, int allPayment, string allPayDate, int supplierId)
+        public JsonResult SaveAction(int payType, int allPayment, string allPayDate, int supplierId, int payMethodId, int bankPaymentId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
 
@@ -331,6 +331,8 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@PayType", payType);
                     cmd.Parameters.AddWithValue("@temptbl", dt);
                     cmd.Parameters.AddWithValue("@AccountCode", AppConstants.APAccountCode);
+                    cmd.Parameters.AddWithValue("@PayMethodID", payMethodId);
+                    cmd.Parameters.AddWithValue("@BankPaymentID", bankPaymentId);
                     cmd.Connection = setting.conn;
                     cmd.ExecuteNonQuery();
                     setting.conn.Close();
@@ -380,6 +382,34 @@ namespace Inventory.Controllers
                 TotalBalance = totalBalance,
                 ResultDefaultData = resultDefaultData
             };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetPayMethodAction()
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            List<PayMethodModels> lstPayMethod = new List<PayMethodModels>();
+            List<BankPaymentModels> lstBankPayment = new List<BankPaymentModels>();
+            try
+            {
+                lstPayMethod = appData.selectPayMethod();
+                lstBankPayment = appData.selectBankPayment();
+                resultDefaultData.IsRequestSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                resultDefaultData.Message = ex.Message;
+            }
+
+            var jsonResult = new
+            {
+                LstPayMethod = lstPayMethod,
+                LstBankPayment = lstBankPayment,
+                ResultDefaultData = resultDefaultData
+            };
+
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
@@ -519,7 +549,7 @@ namespace Inventory.Controllers
             while (reader.Read())
             {
                 item = new SupplierOutstandingViewModel.SupplierOutstandingPaymentViewModel();
-                item.Date = Convert.ToString(reader["Date"]);
+                item.Date = Convert.ToString(reader["OutstandingDate"]);
                 item.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
                 item.PayDate = setting.getLocalDate();
                 item.IsOpening = Convert.ToBoolean(reader["IsOpening"]);

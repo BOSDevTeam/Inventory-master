@@ -479,6 +479,7 @@
     <Compile Include="ViewModels\PurchaseOrderViewModel.cs" />
     <Compile Include="ViewModels\PurchaseReturnViewModel.cs" />
     <Compile Include="ViewModels\PurchaseViewModel.cs" />
+    <Compile Include="ViewModels\ReportViewModel.cs" />
     <Compile Include="ViewModels\RpAdjustmentItemViewModel.cs" />
     <Compile Include="ViewModels\RpAdjustmentVoucherViewModel.cs" />
     <Compile Include="ViewModels\RpBottomSaleItemViewModel.cs" />
@@ -757,6 +758,9 @@
     <Content Include="Views\SupplierOutstanding\_SupplierOutstandingPayment.cshtml" />
     <Content Include="Views\RpSaleAmountBySalePerson\SaleAmountBySalePersonReportFilter.cshtml" />
     <Content Include="Views\RpSaleAmountBySalePerson\SaleAmountBySalePersonReport.cshtml" />
+    <Content Include="Views\Shared\_SalePersonFilter.cshtml" />
+    <Content Include="Views\Shared\_PayMethodDialog.cshtml" />
+    <Content Include="Views\Report\Filter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

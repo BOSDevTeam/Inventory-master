@@ -11,10 +11,12 @@ namespace Inventory.ViewModels
         public SupplierOutstandingViewModel()
         {
             this.Suppliers = new List<SelectListItem>();
+            this.Payments = new PaymentViewModel();
         }
         public List<SelectListItem> Suppliers { get; set; }
 
         public int PayType { get; set; }
+        public PaymentViewModel Payments { get; set; }
 
         public class SupplierOutstandingListViewModel
         {

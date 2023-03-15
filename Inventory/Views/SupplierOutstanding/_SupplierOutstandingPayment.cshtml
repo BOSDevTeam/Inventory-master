@@ -73,15 +73,31 @@
 
                     <div class="modal-footer m-t-10">
                         <button id="btnClose" class="btn btn-white-outline-third">@Resource.Close</button>
-                        <button id="btnSave" class="btn btn-first plr-30">@Resource.Save</button>
+                        <button id="btnPayment" class="btn btn-first plr-30">@Resource.Payment</button>
                     </div>
                 </div>
 
                 <div id="History" class="tabcontent" style="border:1px solid #f3f3f3;background-color:#fff;padding:10px;">
 
                     <div class="row setup-title-layout search-div">
-                        <div class="col-md-12 col-lg-12 padding-10">
+                        <div class="col-md-2 col-lg-2">
                             <label id="lblHSupplier" class="control-label note mb-0">Supplier Name</label>
+                        </div>
+                        <div class="col-md-10 col-lg-10 db-border padding-5">
+                            <table class="width-100-percent">
+                                <tr>
+                                    <td class="control-label" style="text-align:center;">From Date</td>
+                                    <td><input id="inputHFromDate" type="date" class="form-control control-input" /></td>
+                                    <td class="control-label" style="text-align:center;">To Date</td>
+                                    <td><input id="inputHToDate" type="date" class="form-control control-input" /></td>
+                                    <td>
+                                        <div class="btn-group" style="float:right">
+                                            <button id="btnHSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                                            <button id="btnHRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
 
@@ -111,6 +127,12 @@
 
         </div>
     </div>
+</div>
+
+<div>
+    @{
+        Html.RenderPartial("_PayMethodDialog", Model.Payments);
+    }
 </div>
 
 <script type="text/javascript">
@@ -236,6 +258,13 @@
 
     function initializeHistoryControl(supplierId, supplierName) {
         $('#lblHSupplier').text(supplierName);
+        $('#inputHFromDate').val(getTodayDate());
+        $('#inputHToDate').val(getTodayDate());
+    }
+
+    function clearHistoryControl() {
+        $('#inputHFromDate').val(getTodayDate());
+        $('#inputHToDate').val(getTodayDate());
     }
 
     function createOutstandingHistoryData(response) {
@@ -261,6 +290,52 @@
             + '</tr>';
             $('#tblTranOutstandingHistoryList tbody').append(row);
         })
+    }
+
+    function createPayMethodData(response) {
+        let payMethod;
+        $("#ddlPayMethod").html("");
+        for (var i = 0; i < response.length; i++) {
+            payMethod += '<option value="' + response[i].PayMethodID + '">' + response[i].PayMethodName + '</option>';
+        }
+        $("#ddlPayMethod").append(payMethod);
+    }
+
+    function createBankPaymentData(response) {
+        let bankPayment;
+        $("#ddlBankPayment").html("");
+        for (var i = 0; i < response.length; i++) {
+            bankPayment += '<option value="' + response[i].BankPaymentID + '">' + response[i].Name + '</option>';
+        }
+        $("#ddlBankPayment").append(bankPayment);
+    }
+
+    function searchHistoryAction() {
+        let fromDate = $('#inputHFromDate').val();
+        let toDate = $('#inputHToDate').val();
+        let supplierId = $('#inputHidSupplierID').val();
+        showLoadingIcon();
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("SearchAction", "SupplierOutstandingHistory")',
+            data: { "supplierId": supplierId, "fromDate": fromDate, "toDate": toDate },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                hideLoadingIcon();
+                if (!response.ResultDefaultData.IsRequestSuccess)
+                    showAlertInDialog(0, response.ResultDefaultData.Message);
+                else createOutstandingHistoryData(response.LstSupplierOutstandingPayment);
+            },
+            failure: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            }
+        });
     }
 
     $(document).ready(function () {
@@ -414,7 +489,38 @@
             } else return true;
         }
 
-        $("#btnSave").click(function (e) {
+        $("#btnPayment").click(function (e) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetPayMethodAction", "SupplierOutstanding")',
+                data: {},
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        showAlertInDialog(0, response.ResultDefaultData.Message);
+                    else {
+                        $('#modalPayMethod').modal('show');
+                        createPayMethodData(response.LstPayMethod);
+                        createBankPaymentData(response.LstBankPayment);
+                        $('#ddlBankPayment').attr("disabled", true);
+                        $('#divBankPay').addClass('disabled_color');
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnSubmit").click(function (e) {
             let payType = $('.PayType').filter(':checked').val();
             let allPayDate = "";
             if (payType == 2) {
@@ -423,11 +529,14 @@
                 else allPayDate = $('#inputAllPayDate').val();
             }
             let supplierId = $('#inputHidSupplierID').val();
+            let payMethodId = $('#ddlPayMethod option:selected').val();
+            let bankPaymentId = 0;
+            if (payMethodId != 1) bankPaymentId = $('#ddlBankPayment option:selected').val();
             showLoadingIcon();
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("SaveAction", "SupplierOutstanding")',
-                data: { "payType": payType, "allPayment": allPayment, "allPayDate": allPayDate, "supplierId": supplierId },
+                data: { "payType": payType, "allPayment": allPayment, "allPayDate": allPayDate, "supplierId": supplierId, "payMethodId": payMethodId, "bankPaymentId": bankPaymentId },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -437,6 +546,7 @@
                     }
                     else {
                         showToast(1, response.ResultDefaultData.Message);
+                        $('#modalPayMethod').modal('hide');
                         $('#modalPayment').modal('hide');
                         searchAction();
                     }
@@ -565,6 +675,37 @@
 
         $("#btnHistoryClose").click(function (e) {
             $('#modalPayment').modal('hide');
+        });
+
+        $("#btnHSearch").click(function (e) {
+            searchHistoryAction();
+        });
+
+        $("#btnHRefresh").click(function (e) {
+            clearHistoryControl();
+            let supplierId = $('#inputHidSupplierID').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("PaymentAction", "SupplierOutstandingHistory")',
+                data: { "supplierId": supplierId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        showAlertInDialog(0, response.ResultDefaultData.Message);
+                    else createOutstandingHistoryData(response.LstSupplierOutstandingPayment);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
         });
 
     });

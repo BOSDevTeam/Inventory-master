@@ -25,6 +25,7 @@ namespace Inventory.ViewModels
             public string FromLocationName { get; set; }
             public int ToLocationID { get; set; }
             public string ToLocationName { get; set; }
+            public List<TranTransferModels> lstTransferItem { get; set; }
         }
 
         public class TranTransferModels

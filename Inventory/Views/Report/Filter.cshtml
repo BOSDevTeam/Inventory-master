@@ -1,0 +1,73 @@
+﻿@using Inventory.ViewModels;
+@model ReportViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutReport.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+
+    <script type="text/javascript">
+        document.getElementById('@Model.HtmlGroupElementID').className = 'block';
+        document.getElementById('@Model.HtmlActiveElementID').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <input id="inputHidHtmlGroupElementID" type="hidden" value="@Model.HtmlGroupElementID" />
+            <label class="page-title">@Model.ReportName</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnViewReport" class="btn btn-second" style="float:right">@Resource.ViewReport</button>
+        </div>
+    </div>
+
+    @{
+        Html.RenderPartial("_DateFilter");
+    }
+
+    @if (Model.IsShowMenuFilter)
+    {
+        <div>
+            @{
+                Html.RenderPartial("_MenuFilter");
+            }
+        </div>
+    }
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+
+        $('#btnViewReport').click(function () {
+            let fromDate = $('#inputFromDate').val();
+            let toDate = $('#inputToDate').val();
+            window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate;
+        })
+
+        $(document).ready(function () {
+
+            initializeControl();
+
+            function initializeControl() {
+                $('#inputFromDate').val(getTodayDate());
+                $('#inputToDate').val(getTodayDate());
+            }
+
+            $('#sidebar-menu a').on('click', function (e) {
+                if ($(this).parent().hasClass('submenu')) {
+                    e.preventDefault();
+                    let inputHidHtmlGroupElementID = $('#inputHidHtmlGroupElementID').val();                
+                    document.getElementById(inputHidHtmlGroupElementID).className = 'none';
+                }               
+            });
+        })
+    })
+</script>
+
+

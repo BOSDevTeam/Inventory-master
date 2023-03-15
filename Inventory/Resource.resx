@@ -714,4 +714,55 @@
   <data name="TodaySaleQuantity" xml:space="preserve">
     <value>Today Sale Quantity</value>
   </data>
+  <data name="Banking" xml:space="preserve">
+    <value>Banking</value>
+  </data>
+  <data name="CashByPayMethod" xml:space="preserve">
+    <value>Cash by Pay Method</value>
+  </data>
+  <data name="CashInHand" xml:space="preserve">
+    <value>Cash In Hand</value>
+  </data>
+  <data name="CashInHandMy" xml:space="preserve">
+    <value>(ငွေသား)</value>
+  </data>
+  <data name="CashMy" xml:space="preserve">
+    <value>(လက်ငင်း)</value>
+  </data>
+  <data name="CreditMy" xml:space="preserve">
+    <value>(အကြွေး)</value>
+  </data>
+  <data name="CustomerDue" xml:space="preserve">
+    <value>Customer Due</value>
+  </data>
+  <data name="CustomerOutstandingOverDue" xml:space="preserve">
+    <value>Customer Outstanding Overdue</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Detail</value>
+  </data>
+  <data name="Summary" xml:space="preserve">
+    <value>Summary</value>
+  </data>
+  <data name="TodayAmount" xml:space="preserve">
+    <value>Today Amount</value>
+  </data>
+  <data name="TotalDueVoucher" xml:space="preserve">
+    <value>Total Due Voucher</value>
+  </data>
+  <data name="Township" xml:space="preserve">
+    <value>Township</value>
+  </data>
+  <data name="Voucher" xml:space="preserve">
+    <value>Voucher</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>filter</value>
+  </data>
+  <data name="NoOverdueMessage" xml:space="preserve">
+    <value>No Overdue</value>
+  </data>
+  <data name="NoPaymentMessage" xml:space="preserve">
+    <value>Not found payment for selected day.</value>
+  </data>
 </root>

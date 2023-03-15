@@ -143,13 +143,13 @@
 
         $(function () {
             $('#subMenuSaleAmountOnlyRp').click(function () {
-                window.location.href = '@Url.Action("SaleAmountOnlyReportFilter", "RpSaleAmountOnly")';
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.SaleAmountOnlyReport })';
             });
             $('#subMenuSaleAmountSummaryRp').click(function () {
-                window.location.href = '@Url.Action("SaleAmountSummaryReportFilter", "RpSaleAmountSummary")';
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.SaleAmountSummaryReport })';
             });
             $('#subMenuSaleItemSimpleRp').click(function () {
-                window.location.href = '@Url.Action("SaleItemSimpleReportFilter", "RpSaleItemSimple")';
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.SaleItemSimpleReport })';
             });
             $('#subMenuSaleItemRp').click(function () {
                 window.location.href = '@Url.Action("SaleItemReportFilter", "RpSaleItem")';
@@ -173,7 +173,7 @@
                 window.location.href = '@Url.Action("BottomSaleItemReportFilter", "RpBottomSaleItem")';
             });
             $('#subMenuPurchaseAmountOnlyRp').click(function () {
-                window.location.href = '@Url.Action("PurchaseAmountOnlyReportFilter", "RpPurchaseAmountOnly")';
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.PurchaseAmountOnlyReport })';
             });
             $('#subMenuPurchaseItemSimpleRp').click(function () {
                 window.location.href = '@Url.Action("PurchaseItemSimpleReportFilter", "RpPurchaseItemSimple")';

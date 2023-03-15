@@ -45,7 +45,7 @@
                                     <th class="col-md-2 col-lg-2">@Resource.VoucherNo</th>
                                     <th class="col-md-2 col-lg-2 aligh-right">@Resource.Opening</th>
                                     <th class="col-md-2 col-lg-2 aligh-right">@Resource.Sale</th>
-                                    <th class="col-md-2 col-lg-2 text-center">@Resource.PayDate</th>
+                                    <th class="col-md-2 col-lg-2 text-center">@Resource.PayDate</th>                                   
                                     <th class="col-md-2 col-lg-2 text-center">@Resource.Payment</th>
                                 </tr>
                             </thead>
@@ -73,16 +73,31 @@
                     
                     <div class="modal-footer m-t-10">
                         <button id="btnClose" class="btn btn-white-outline-third">@Resource.Close</button>
-                        <button id="btnSave" class="btn btn-first plr-30">@Resource.Save</button>
+                        <button id="btnPayment" class="btn btn-first plr-30">@Resource.Payment</button>
                     </div>               
                 </div>
 
                  <div id="History" class="tabcontent" style="border:1px solid #f3f3f3;background-color:#fff;padding:10px;">
 
                         <div class="row setup-title-layout search-div">
-                            <div class="col-md-12 col-lg-12 padding-10">
-                                @*<input id="inputHidCustomerID" type="hidden" />*@
+                            <div class="col-md-2 col-lg-2">
                                 <label id="lblHCustomer" class="control-label note mb-0">Customer Name</label>
+                            </div>
+                            <div class="col-md-10 col-lg-10 db-border padding-5">
+                                <table class="width-100-percent">
+                                    <tr>
+                                        <td class="control-label" style="text-align:center;">From Date</td>
+                                        <td><input id="inputHFromDate" type="date" class="form-control control-input" /></td>
+                                        <td class="control-label" style="text-align:center;">To Date</td>
+                                        <td><input id="inputHToDate" type="date" class="form-control control-input" /></td>                                        
+                                        <td>
+                                            <div class="btn-group" style="float:right">
+                                                <button id="btnHSearch" class="btn btn-first setup-btn-search" title="Search"><i class="fa fa-search"></i></button>
+                                                <button id="btnHRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                         </div>
 
@@ -112,6 +127,12 @@
            
         </div>
     </div>
+</div>
+
+<div>
+    @{
+        Html.RenderPartial("_PayMethodDialog", Model.Payments);
+    }
 </div>
 
 <script type="text/javascript">
@@ -237,6 +258,13 @@
 
     function initializeHistoryControl(customerId, customerName) {
         $('#lblHCustomer').text(customerName);
+        $('#inputHFromDate').val(getTodayDate());
+        $('#inputHToDate').val(getTodayDate());
+    }
+
+    function clearHistoryControl() {
+        $('#inputHFromDate').val(getTodayDate());
+        $('#inputHToDate').val(getTodayDate());
     }
 
     function createOutstandingHistoryData(response) {
@@ -262,6 +290,52 @@
             + '</tr>';
             $('#tblTranOutstandingHistoryList tbody').append(row);
         })
+    }
+
+    function createPayMethodData(response) {
+        let payMethod;
+        $("#ddlPayMethod").html("");
+        for (var i = 0; i < response.length; i++) {
+            payMethod += '<option value="' + response[i].PayMethodID + '">' + response[i].PayMethodName + '</option>';
+        }
+        $("#ddlPayMethod").append(payMethod);
+    }
+
+    function createBankPaymentData(response) {
+        let bankPayment;
+        $("#ddlBankPayment").html("");
+        for (var i = 0; i < response.length; i++) {
+            bankPayment += '<option value="' + response[i].BankPaymentID + '">' + response[i].Name + '</option>';
+        }
+        $("#ddlBankPayment").append(bankPayment);
+    }
+
+    function searchHistoryAction() {
+        let fromDate = $('#inputHFromDate').val();
+        let toDate = $('#inputHToDate').val();
+        let customerId = $('#inputHidCustomerID').val();
+        showLoadingIcon();
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("SearchAction", "CustomerOutstandingHistory")',
+            data: { "customerId": customerId, "fromDate": fromDate, "toDate": toDate },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                hideLoadingIcon();
+                if (!response.ResultDefaultData.IsRequestSuccess)
+                    showAlertInDialog(0, response.ResultDefaultData.Message);
+                else createOutstandingHistoryData(response.LstCustomerOutstandingPayment);               
+            },
+            failure: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            }
+        });
     }
 
     $(document).ready(function () {
@@ -402,7 +476,7 @@
         $('#inputAllPayment').keydown(function (event) {
             if (event.which === 13) {
                 let payment = $(this).val();
-                validateAllPayment(payment);               
+                validateAllPayment(payment);
             }
         });
 
@@ -415,20 +489,54 @@
             } else return true;
         }
 
-        $("#btnSave").click(function (e) {
+        $("#btnPayment").click(function (e) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetPayMethodAction", "CustomerOutstanding")',
+                data: { },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        showAlertInDialog(0, response.ResultDefaultData.Message);
+                    else {
+                        $('#modalPayMethod').modal('show');
+                        createPayMethodData(response.LstPayMethod);
+                        createBankPaymentData(response.LstBankPayment);
+                        $('#ddlBankPayment').attr("disabled", true);
+                        $('#divBankPay').addClass('disabled_color');
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnSubmit").click(function (e) {
             let payType = $('.PayType').filter(':checked').val();
             let allPayDate = "";
             if (payType == 2) {
                 allPayment = $('#inputAllPayment').val();
-                if (!validateAllPayment(allPayment)) return;             
+                if (!validateAllPayment(allPayment)) return;
                 else allPayDate = $('#inputAllPayDate').val();
             }
             let customerId = $('#inputHidCustomerID').val();
+            let payMethodId = $('#ddlPayMethod option:selected').val();
+            let bankPaymentId = 0;
+            if (payMethodId != 1) bankPaymentId = $('#ddlBankPayment option:selected').val();
             showLoadingIcon();
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("SaveAction", "CustomerOutstanding")',
-                data: { "payType": payType, "allPayment": allPayment, "allPayDate": allPayDate, "customerId": customerId },
+                data: { "payType": payType, "allPayment": allPayment, "allPayDate": allPayDate, "customerId": customerId, "payMethodId": payMethodId, "bankPaymentId": bankPaymentId },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -438,6 +546,7 @@
                     }
                     else {
                         showToast(1, response.ResultDefaultData.Message);
+                        $('#modalPayMethod').modal('hide');
                         $('#modalPayment').modal('hide');
                         searchAction();
                     }
@@ -471,7 +580,7 @@
                 let payment = $(this).val();
                 if (payment == "") return;
                 let trId = $(this).closest('tr').attr('id'); // table row ID
-                let nextTrId = parseInt(trId) + 1;              
+                let nextTrId = parseInt(trId) + 1;
                 showLoadingIcon();
                 $.ajax({
                     type: "GET",
@@ -486,7 +595,7 @@
                                 showAlertInDialog(0, response.Message);
                             else responseUnSuccessful(response);
                         }
-                        else {                         
+                        else {
                             $('#tblTranOutstandingHistoryList tr').removeClass("selected");
                             $('#tblTranOutstandingHistoryList #' + nextTrId + '').addClass("selected");
                             $('#tblTranOutstandingHistoryList #' + nextTrId + ' .inputPayment').focus();
@@ -566,6 +675,37 @@
 
         $("#btnHistoryClose").click(function (e) {
             $('#modalPayment').modal('hide');
+        });
+
+        $("#btnHSearch").click(function (e) {
+            searchHistoryAction();
+        });
+
+        $("#btnHRefresh").click(function (e) {
+            clearHistoryControl();
+            let customerId = $('#inputHidCustomerID').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("PaymentAction", "CustomerOutstandingHistory")',
+                data: { "customerId": customerId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        showAlertInDialog(0, response.ResultDefaultData.Message);
+                    else createOutstandingHistoryData(response.LstCustomerOutstandingPayment);                    
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
         });
 
     });

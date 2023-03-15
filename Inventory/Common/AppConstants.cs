@@ -30,6 +30,8 @@ namespace Inventory.Common
         public const int SupplierOpeningAccountCode = 410;
         public const int PurchaseAccountCode = 510;
         public const int APAccountCode = 610;
+        public const int SaleReturnAccountCode = 710;
+        public const int PurchaseReturnAccountCode = 810;
 
         //Action Codes and Names
         public const string NewActionCode = "1";  //SysAction table value

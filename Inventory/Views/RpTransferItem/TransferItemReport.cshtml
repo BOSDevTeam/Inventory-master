@@ -12,12 +12,11 @@
     <script type="text/javascript">
         let filter;
         $(document).ready(function () {
-            let title = '@Resource.TransferItemReport';
-            let fromDate = '@Model.FromDate.ToShortDateString()';
-            let toDate = '@Model.ToDate.ToShortDateString()';
-            filter = "";
-            setReportTitle(title);
-            setDefaultFilter(fromDate, toDate, filter);
+            if ('@ViewBag.ErrorMessage'.length != 0) {
+                showToast(0, '@ViewBag.ErrorMessage');
+            }
+            setReportTitle('@Resource.TransferItemReport');
+            setDefaultFilter('@Model.FromDate.ToShortDateString()', '@Model.ToDate.ToShortDateString()', '');           
         });
         function separatedComma(value) {
             let iVal = parseInt(value);
@@ -27,33 +26,32 @@
     </script>
 </head>
 <div>
-    <div class="row table-header">
+    <div class="row table-header" style="padding:10px 15px;">
         <div class="col-md-3 col-lg-3">@Resource.Code</div>
         <div class="col-md-3 col-lg-3">@Resource.Product</div>
-        <div class="col-md-3 col-lg-3">@Resource.PurchasePrice</div>
-        <div class="col-md-3 col-lg-3">@Resource.Qty</div>
+        <div class="col-md-3 col-lg-3 aligh-right">@Resource.PurchasePrice</div>
+        <div class="col-md-2 col-lg-2 aligh-right">@Resource.Qty</div>
+        <div class="col-md-1 col-lg-1"></div>
     </div>
-    @foreach (var masterTransfer in Model.lstMasterTransfer as List<RpTransferItemViewModel.MasterTransferModels>)
+    @foreach (var Location in Model.lstMasterTransfer as List<RpTransferItemViewModel.MasterTransferModels>)
     {
         <div class="col-md-12 col-lg-12 rpt-main-group">
-            <span>@masterTransfer.FromLocationName</span> &nbsp; &nbsp; &nbsp; &nbsp;<span><i class="fa fa-long-arrow-right" aria-hidden="true"></i></span> &nbsp; &nbsp; &nbsp; &nbsp;<span> @masterTransfer.ToLocationName</span>
+            <span class="ml-10">@Location.FromLocationName</span> &nbsp; &nbsp; &nbsp; &nbsp;<span><i class="fa fa-long-arrow-right" aria-hidden="true"></i></span> &nbsp; &nbsp; &nbsp; &nbsp;<span> @Location.ToLocationName</span>
         </div>
 
-        foreach (var tranTransfer in Model.lstTranTransfer.Where(t => t.FromLocationID == masterTransfer.FromLocationID && t.ToLocationID == masterTransfer.ToLocationID ).ToList())
+        foreach (var item in Location.lstTransferItem as List<RpTransferItemViewModel.TranTransferModels>)
         {
             <div class="row rpt-item">
-                <div class="col-md-3 col-lg-3">@tranTransfer.ProductCode</div>
-                @if (@tranTransfer.UnitKeyword != "")
-                {
-                    <div class="col-md-3 col-lg-3">@tranTransfer.ProductName <span>(@tranTransfer.UnitKeyword)</span></div>
-                }
-                else
-                {
-                    <div class="col-md-3 col-lg-3">@tranTransfer.ProductName </div>
-                }
-
-                <div class="col-md-3 col-lg-3"><script>separatedComma(@tranTransfer.PurPrice)</script></div>
-                <div class="col-md-3 col-lg-3"><script>separatedComma(@tranTransfer.Quantity)</script> </div>
+                <div class="col-md-3 col-lg-3"><span class="ml-10"> @item.ProductCode </span></div>
+                <div class="col-md-3 col-lg-3">@item.ProductName
+                    @if (item.UnitKeyword != "")
+                    {
+                        <span>@Resource.OpenParenthesis @item.UnitKeyword @Resource.CloseParenthesis</span>
+                    }
+                </div>               
+                <div class="col-md-3 col-lg-3 aligh-right"><script>separatedComma(@item.PurPrice)</script></div>
+                <div class="col-md-2 col-lg-2 aligh-right"><span class="mr-10"><script>separatedComma(@item.Quantity)</script></span> </div>
+                <div class="col-md-1 col-lg-1"></div>
             </div>
 
         }

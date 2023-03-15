@@ -131,6 +131,9 @@ button:disabled:hover{background-color:#edeff1;cursor:default;color:#000;}
 span{font-size:13px;}
 .hideVerticalScrollbar{overflow-y: hidden!important;}
 .first-text-color{color:#27ae61;}
+.disabled_color{background-color:#f4f6f7;opacity:0.5;}
+.block{display:block;}
+.none{display:none;}
 /** end general */
 
 
@@ -334,6 +337,7 @@ b {margin-top: 8px;}
 /** dashboard **/
 .db-main-wrap{background-color:white;height:100px;margin:2px;border:1px solid #f3f3f3;}
 .db-main-icon-wrap{border-radius:50%;height:50px;width:50px;}
+.db-border{border:1px solid #eee;border-radius:5px;}
 
 
 

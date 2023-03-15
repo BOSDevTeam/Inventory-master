@@ -349,6 +349,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Banking.
+        /// </summary>
+        public static string Banking {
+            get {
+                return ResourceManager.GetString("Banking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bank/Pay.
         /// </summary>
         public static string BankPay {
@@ -381,6 +390,42 @@ namespace Inventory {
         public static string Cash {
             get {
                 return ResourceManager.GetString("Cash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cash by Pay Method.
+        /// </summary>
+        public static string CashByPayMethod {
+            get {
+                return ResourceManager.GetString("CashByPayMethod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cash In Hand.
+        /// </summary>
+        public static string CashInHand {
+            get {
+                return ResourceManager.GetString("CashInHand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (ငွေသား).
+        /// </summary>
+        public static string CashInHandMy {
+            get {
+                return ResourceManager.GetString("CashInHandMy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (လက်ငင်း).
+        /// </summary>
+        public static string CashMy {
+            get {
+                return ResourceManager.GetString("CashMy", resourceCulture);
             }
         }
         
@@ -493,6 +538,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (အကြွေး).
+        /// </summary>
+        public static string CreditMy {
+            get {
+                return ResourceManager.GetString("CreditMy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Currency.
         /// </summary>
         public static string Currency {
@@ -520,6 +574,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Customer Due.
+        /// </summary>
+        public static string CustomerDue {
+            get {
+                return ResourceManager.GetString("CustomerDue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Customer Opening List.
         /// </summary>
         public static string CustomerOpeningList {
@@ -534,6 +597,15 @@ namespace Inventory {
         public static string CustomerOutstanding {
             get {
                 return ResourceManager.GetString("CustomerOutstanding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Customer Outstanding Overdue.
+        /// </summary>
+        public static string CustomerOutstandingOverDue {
+            get {
+                return ResourceManager.GetString("CustomerOutstandingOverDue", resourceCulture);
             }
         }
         
@@ -570,6 +642,15 @@ namespace Inventory {
         public static string Date {
             get {
                 return ResourceManager.GetString("Date", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detail.
+        /// </summary>
+        public static string Detail {
+            get {
+                return ResourceManager.GetString("Detail", resourceCulture);
             }
         }
         
@@ -651,6 +732,15 @@ namespace Inventory {
         public static string EnterSaleVoucherNo {
             get {
                 return ResourceManager.GetString("EnterSaleVoucherNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to filter.
+        /// </summary>
+        public static string Filter {
+            get {
+                return ResourceManager.GetString("Filter", resourceCulture);
             }
         }
         
@@ -876,6 +966,24 @@ namespace Inventory {
         public static string MyProfile {
             get {
                 return ResourceManager.GetString("MyProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Overdue.
+        /// </summary>
+        public static string NoOverdueMessage {
+            get {
+                return ResourceManager.GetString("NoOverdueMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not found payment for selected day..
+        /// </summary>
+        public static string NoPaymentMessage {
+            get {
+                return ResourceManager.GetString("NoPaymentMessage", resourceCulture);
             }
         }
         
@@ -1510,6 +1618,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Summary.
+        /// </summary>
+        public static string Summary {
+            get {
+                return ResourceManager.GetString("Summary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Supplier.
         /// </summary>
         public static string Supplier {
@@ -1578,6 +1695,15 @@ namespace Inventory {
         public static string ToDate {
             get {
                 return ResourceManager.GetString("ToDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Today Amount.
+        /// </summary>
+        public static string TodayAmount {
+            get {
+                return ResourceManager.GetString("TodayAmount", resourceCulture);
             }
         }
         
@@ -1672,6 +1798,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Total Due Voucher.
+        /// </summary>
+        public static string TotalDueVoucher {
+            get {
+                return ResourceManager.GetString("TotalDueVoucher", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Total Items.
         /// </summary>
         public static string TotalItems {
@@ -1704,6 +1839,15 @@ namespace Inventory {
         public static string TotalSaleItems {
             get {
                 return ResourceManager.GetString("TotalSaleItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Township.
+        /// </summary>
+        public static string Township {
+            get {
+                return ResourceManager.GetString("Township", resourceCulture);
             }
         }
         
@@ -1794,6 +1938,15 @@ namespace Inventory {
         public static string ViewReport {
             get {
                 return ResourceManager.GetString("ViewReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Voucher.
+        /// </summary>
+        public static string Voucher {
+            get {
+                return ResourceManager.GetString("Voucher", resourceCulture);
             }
         }
         

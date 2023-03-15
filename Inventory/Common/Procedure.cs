@@ -146,8 +146,6 @@ namespace Inventory.Common
         public const string PrcGetSupplierOutstanding = "PrcGetSupplierOutstanding";
         public const string PrcGetTranSupplierOutstanding = "PrcGetTranSupplierOutstanding";
         public const string PrcGetRptPurchaseAmountBySupplier = "PrcGetRptPurchaseAmountBySupplier";
-        public const string PrcGetRptMasterTransferItem = "PrcGetRptMasterTransferItem";
-        public const string PrcGetRptTranTransferItem = "PrcGetRptTranTransferItem";
         public const string PrcGetRptMasterTransferList = "PrcGetRptMasterTransferList";
         public const string PrcGetRptTranTransferList = "PrcGetRptTranTransferList";
         public const string PrcGetTranSupplierOutstandingHistory = "PrcGetTranSupplierOutstandingHistory";
@@ -161,5 +159,11 @@ namespace Inventory.Common
         public const string PrcGetTodaySaleQuantity = "PrcGetTodaySaleQuantity";
         public const string PrcGetDashboardData = "PrcGetDashboardData";
         public const string PrcGetRptSaleAmountBySalePerson = "PrcGetRptSaleAmountBySalePerson";
+        public const string PrcGetTodayAmount = "PrcGetTodayAmount";
+        public const string PrcGetTodayAmountByBanking = "PrcGetTodayAmountByBanking";
+        public const string PrcGetCustomerOutstandingOverDue = "PrcGetCustomerOutstandingOverDue";
+        public const string PrcGetCustomerOutstandingPayment = "PrcGetCustomerOutstandingPayment";
+        public const string PrcGetCustomerOutstandingOverDueDetail = "PrcGetCustomerOutstandingOverDueDetail";
+        public const string PrcGetRptTransferItem = "PrcGetRptTransferItem";
     }
 }

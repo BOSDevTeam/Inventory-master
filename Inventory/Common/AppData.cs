@@ -551,5 +551,49 @@ namespace Inventory.Common
             setting.conn.Close();
             return list;
         }
+
+        public List<PayMethodModels> selectPayMethod()
+        {
+            List<PayMethodModels> list = new List<PayMethodModels>();
+            PayMethodModels item;
+
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(TextQuery.payMethodQuery, setting.conn);
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new PayMethodModels();
+                item.PayMethodID = Convert.ToInt32(reader["PayMethodID"]);
+                item.PayMethodName = Convert.ToString(reader["PayMethodName"]);
+                list.Add(item);
+            }
+            reader.Close();
+            setting.conn.Close();
+            return list;
+        }
+
+        public List<BankPaymentModels> selectBankPayment()
+        {
+            List<BankPaymentModels> list = new List<BankPaymentModels>();
+            BankPaymentModels item;
+
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(TextQuery.bankPaymentQuery, setting.conn);
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new BankPaymentModels();
+                item.BankPaymentID = Convert.ToInt32(reader["BankPaymentID"]);
+                item.Name = Convert.ToString(reader["BankPaymentName"]);
+                list.Add(item);
+            }
+            reader.Close();
+            setting.conn.Close();
+            return list;
+        }
     }
 }

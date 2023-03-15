@@ -15,8 +15,12 @@
 
 <script type="text/javascript">
 
+    let listActionValue;
+
     $(document).ready(function () {
         setModuleTitle('@Resource.Main', '@Resource.Dashboard');
+        initializeControl();
+        createCustomerOutstandingPaymentData('', false);
 
         $('.count').each(function () {
             $(this).prop('Counter', 0).animate({
@@ -29,6 +33,72 @@
                 }
             });
         });
+
+        $("#btnDateFilter").click(function (e) {
+            let date = $('#inputDate').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CustomerOutstandingPaymentDateAction", "Home")',
+                data: { "date": date },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess) responseUnSuccessful(response);                    
+                    else createCustomerOutstandingPaymentData(response.List, true);                    
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#tblCustomerOutstandingOverDue").on("click", "tbody tr", function (event) {
+            let customerName = $(this).find("td:first").text();
+            $(this).find("td:last").each(function () {
+                let customerId = $(this).text();
+                if (listActionValue == 1) {   // overdue detail
+                    clearTableAction();
+                    overDueDetailView(customerId, customerName);
+                }
+            });
+        });
+
+        function overDueDetailView(customerId,customerName) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("CustomerOutstandingOverDueDetailAction", "Home")',
+                data: { "customerId": customerId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else {
+                        $('#modalOverDueDetail').modal('show');
+                        $('#lblCustomer').text(customerName);                       
+                        createCustomerOutstandingOverDueDetail(response.List);                       
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        }
+
     });
 
     localStorage.setItem("UserID", '@Session["LoginUserID"]');
@@ -39,15 +109,59 @@
     localStorage.setItem("Tax", '@Session["Tax"]');
     localStorage.setItem("Charges", '@Session["ServiceCharges"]');
 
+    function initializeControl() {
+        $('#inputDate').val(getTodayDate());
+    }
+
     function separatedComma(value) {
         let iVal = parseInt(value);
         let result = iVal.toLocaleString('en-US');
         document.write(result);
     }
 
+    function createCustomerOutstandingPaymentData(response, isFromJson) {
+        var hasData=false;
+        $("#tblCustomerOutstandingPayment").find("tbody").empty();
+        if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstCustomerOutstandingPayment"]))');
+        $.each(response, function (i, item) {
+            hasData=true;
+            let row = '<tr class="row table-item align-center">'
+                    + '<td class="col-md-4 col-lg-4">' + item.CustomerName + '</td>'
+                    + '<td class="col-md-4 col-lg-4">' + item.TownshipName + '</td>'
+                    + '<td class="col-md-4 col-lg-4 aligh-right">' + separatedComma(item.Amount) + '</td>'
+                    + '</tr>';
+            $('#tblCustomerOutstandingPayment tbody').append(row);
+        })
+      
+        if (hasData) $('#divNoPayment').css('display', 'none');
+        else $('#divNoPayment').show();
+    }
+
+    function createCustomerOutstandingOverDueDetail(response) {      
+        $("#tblCustomerOutstandingOverDueDetail").find("tbody").empty();
+        $.each(response, function (i, item) {         
+            let row = '<tr class="row table-item align-center">'
+                    + '<td class="col-md-3 col-lg-3">' + item.DateTime + '</td>'
+                    + '<td class="col-md-3 col-lg-3">' + item.UserVoucherNo + '</td>'
+                    + '<td class="col-md-2 col-lg-2">' + item.LimitedDayName + '</td>'
+                    + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Amount) + '</td>'
+                    + '<td class="col-md-2 col-lg-2 aligh-right" style="color:#ef7971">' + 'late by ' + item.OverDueDay + ' days' + '</td>'
+                    + '</tr>';
+            $('#tblCustomerOutstandingOverDueDetail tbody').append(row);
+        })    
+    }
+
+    function listTableAction(value) {
+        listActionValue = value;
+    }
+
+    function clearTableAction() {
+        listActionValue = 0;
+    }
+
 </script>
 
-<div class="soft-gray-background">
+<div style="background-color:#f7f6f6;">
 
     <div class="row padding-10">
 
@@ -58,7 +172,7 @@
                         <i class="fa fa-calculator" style="font-size:20px;color:#27ae61;"></i>
                     </div>
                 </div>
-                <div class="col-md-8 col-lg-8 align-justify-center">
+                <div class="col-md-8 col-lg-8 align-center">
                     <div class="row">
                         <div class="col-md-12 col-lg-12">
                             <h3><script>separatedComma(@ViewBag.TodaySale);</script></h3>
@@ -78,7 +192,7 @@
                         <i class="fa fa-shopping-cart" style="font-size:20px;color:#FF9F43;"></i>
                     </div>
                 </div>
-                <div class="col-md-8 col-lg-8 align-justify-center">
+                <div class="col-md-8 col-lg-8 align-center">
                     <div class="row">
                         <div class="col-md-12 col-lg-12">
                             <h3>@ViewBag.TodayClientOrder</h3>
@@ -98,7 +212,7 @@
                         <i class="fa fa-cubes" style="font-size:20px;color:#00CFE8;"></i>
                     </div>
                 </div>
-                <div class="col-md-8 col-lg-8 align-justify-center">
+                <div class="col-md-8 col-lg-8 align-center">
                     <div class="row">
                         <div class="col-md-12 col-lg-12">
                             <h3>@ViewBag.TodaySaleProduct</h3>
@@ -118,7 +232,7 @@
                         <i class="fa fa-money" style="font-size:20px;color:#EA5455;"></i>
                     </div>
                 </div>
-                <div class="col-md-8 col-lg-8 align-justify-center">
+                <div class="col-md-8 col-lg-8 align-center">
                     <div class="row">
                         <div class="col-md-12 col-lg-12">
                             <h3><script>separatedComma(@ViewBag.TodayCreditSale);</script></h3>
@@ -209,85 +323,261 @@
 
     </div>
 
-    <div class="row padding-10">
-        <div class="col-md-8 col-lg-8">
+    <div style="background-color:white">
+      <div class="row padding-10">
+          <div class="col-md-8 col-lg-8 db-border">
+              <div style="background-color:#fefefe">
+                  <div class="row padding-10">
+                      <div class="col-md-12 col-lg-12">
+                          <h5 class="mb-0 control-title">@Resource.TodayAmount</h5>
+                      </div>
+                  </div>
+                  <table class="row" style="padding:0px 10px;">
+                      <tbody class="col-md-12 col-lg-12">
+                          <tr class="row table-item">
+                              <th class="col-md-6 col-lg-6">@Resource.Summary</th>
+                              <th class="col-md-6 col-lg-6 aligh-right">
+                                  <script>separatedComma(@ViewBag.Summary);</script>
+                              </th>
+                          </tr>
+                          <tr class="row table-item" style="background-color:aliceblue">
+                              <td class="col-md-6 col-lg-6">@Resource.Cash&nbsp;@Resource.CashMy</td>
+                              <td class="col-md-6 col-lg-6 aligh-right">
+                                  <script>separatedComma(@ViewBag.Cash);</script>
+                              </td>
+                          </tr>
+                          <tr class="row table-item" style="padding-left:30px;">
+                              <td class="col-md-6 col-lg-6">@Resource.Sale</td>
+                              <td class="col-md-6 col-lg-6 aligh-right">
+                                  <script>separatedComma(@ViewBag.Sale);</script>
+                              </td>
+                          </tr>
+                          <tr class="row table-item" style="padding-left:30px;">
+                              <td class="col-md-6 col-lg-6">@Resource.AdvancedPay</td>
+                              <td class="col-md-6 col-lg-6 aligh-right">
+                                  <script>separatedComma(@ViewBag.AdvancedPay);</script>
+                              </td>
+                          </tr>
+                          <tr class="row table-item" style="padding-left:30px;">
+                              <td class="col-md-6 col-lg-6">@Resource.CustomerOutstandingPayment</td>
+                              <td class="col-md-6 col-lg-6 aligh-right">
+                                  <script>separatedComma(@ViewBag.CustomerOutstandingPayment);</script>
+                              </td>
+                          </tr>
+                          <tr class="row table-item" style="background-color:aliceblue">
+                              <td class="col-md-6 col-lg-6">@Resource.Credit&nbsp;@Resource.CreditMy</td>
+                              <td class="col-md-6 col-lg-6 aligh-right">
+                                  <script>separatedComma(@ViewBag.Credit);</script>
+                              </td>
+                          </tr>
+                          <tr class="row table-item" style="margin-top:10px;color:gray">
+                              <td class="col-md-6 col-lg-6">@Resource.CashByPayMethod</td>
+                              <td class="col-md-6 col-lg-6 aligh-right">@Resource.Amount</td>
+                          </tr>
+                          <tr class="row table-item" style="padding-left:30px;">
+                              <td class="col-md-6 col-lg-6">@Resource.CashInHand&nbsp;@Resource.CashInHandMy</td>
+                              <td class="col-md-6 col-lg-6 aligh-right">
+                                  <script>separatedComma(@ViewBag.CashInHand);</script>
+                              </td>
+                          </tr>
+                          <tr class="row table-item" style="padding-left:30px;">
+                              <td class="col-md-6 col-lg-6">@Resource.Banking</td>
+                              <td class="col-md-6 col-lg-6 aligh-right">
+                                  <script>separatedComma(@ViewBag.Banking);</script>
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table>
+                  <table class="row" style="padding:0px 10px;">
+                      <tbody class="col-md-12 col-lg-12" style="max-height:120px;overflow-y:scroll;">
+                          @foreach (var data in Model.lstBankingAmount as List<HomeViewModel.BankingAmountView>)
+                          {
+                              <tr class="row table-item" style="padding-left:60px;color:#666;">
+                                  <td class="col-md-6 col-lg-6">@data.BankPaymentName</td>
+                                  <td class="col-md-6 col-lg-6 aligh-right">
+                                      <script>separatedComma(@data.Amount);</script>
+                                  </td>
+                              </tr>
+                          }
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+          <div class="col-md-4 col-lg-4">
+              <div class="db-border" style="background-color:#fefefe;">
+                  <div class="row padding-10">
+                      <div class="col-md-8 col-lg-8">
+                          <h5 class="mb-0 control-title">@Resource.TopSaleProduct<label class="control-label mb-0">&nbsp;(@ViewBag.Month)</label></h5>
+                      </div>
+                      <div class="col-md-4 col-lg-4 align-center aligh-right">
+                          <label class="control-label mb-0" style="background-color:#27ae61;padding:0px 10px;color:#FFF;">@Resource.Top5</label>
+                      </div>
+                  </div>
+                  <table id="tblTopSaleProduct" class="row padding-10">
+                      <thead class="col-md-12 col-lg-12">
+                          <tr class="row table-header">
+                              <th class="col-md-2 col-lg-2">@Resource.NumberShortForm</th>
+                              <th class="col-md-8 col-lg-8">@Resource.Product</th>
+                              <th class="col-md-2 col-lg-2 aligh-right">@Resource.Qty</th>
+                          </tr>
+                      </thead>
+                      <tbody class="col-md-12 col-lg-12">
+                          @foreach (var data in Model.lstTopSaleProduct as List<HomeViewModel.TopSaleProductView>)
+                          {
+                              <tr class="row table-item">
+                                  <td class="col-md-2 col-lg-2">@data.Number</td>
+                                  <td class="col-md-8 col-lg-8">@data.ProductName</td>
+                                  <td class="col-md-2 col-lg-2 aligh-right">@data.Quantity</td>
+                              </tr>
+                          }
+                      </tbody>
+                  </table>
+              </div>
 
-        </div>
-        <div class="col-md-4 col-lg-4">
-            <div style="background-color:white;">
-                <div class="row padding-10" >
-                    <div class="col-md-8 col-lg-8">
-                        <h5 class="mb-0">@Resource.TopSaleProduct<label class="control-label mb-0">&nbsp;(@ViewBag.Month)</label></h5>
-                    </div>
-                    <div class="col-md-4 col-lg-4 align-center aligh-right">
-                        <label class="control-label mb-0" style="background-color:#27ae61;padding:0px 10px;color:#FFF;">@Resource.Top5</label>
-                    </div>
-                </div>
-                <table id="tblTopSaleProduct" class="row padding-10">
-                    <thead class="col-md-12 col-lg-12">
-                        <tr class="row table-header">
-                            <th class="col-md-2 col-lg-2">@Resource.NumberShortForm</th>
-                            <th class="col-md-8 col-lg-8">@Resource.Product</th>
-                            <th class="col-md-2 col-lg-2 aligh-right">@Resource.Qty</th>
-                        </tr>
-                    </thead>
-                    <tbody class="col-md-12 col-lg-12">
-                            @foreach (var data in Model.lstTopSaleProduct as List<HomeViewModel.TopSaleProductView>)
-                            {
-                                <tr class="row table-item">
-                                    <td class="col-md-2 col-lg-2">@data.Number</td>
-                                    <td class="col-md-8 col-lg-8">@data.ProductName</td>
-                                    <td class="col-md-2 col-lg-2 aligh-right">@data.Quantity</td>
-                                </tr>
-                            }
-                    </tbody>
-                </table>                  
-            </div>
+              <div class="m-t-10 db-border" style="background-color:#fefefe;">
+                  <div class="row padding-10">
+                      <div class="col-md-12 col-lg-12">
+                          <h5 class="mb-0 control-title">@Resource.TodaySaleQuantity</h5>
+                      </div>
+                  </div>
+                  <table id="tblTodaySaleQuantity" class="row padding-10">
+                      <thead class="col-md-12 col-lg-12">
+                          <tr class="row table-header">
+                              <th class="col-md-6 col-lg-6"></th>
+                              <th class="col-md-2 col-lg-2 aligh-right">@Resource.Qty</th>
+                              <th class="col-md-4 col-lg-4 aligh-right">@Resource.Amount</th>
+                          </tr>
+                      </thead>
+                      <tbody class="col-md-12 col-lg-12" style="max-height:120px;overflow-y:scroll;">
+                          @foreach (var data in Model.lstTodaySaleQuantity as List<HomeViewModel.TodaySaleQuantityView>)
+                          {
+                              if (data.IsSummary)
+                              {
+                                  <tr class="row table-item">
+                                      <th class="col-md-6 col-lg-6">@data.Name</th>
+                                      <th class="col-md-2 col-lg-2 aligh-right">@data.Quantity</th>
+                                      <th class="col-md-4 col-lg-4 aligh-right">
+                                          <script>separatedComma(@data.Amount);</script>
+                                      </th>
+                                  </tr>
+                              }
+                              else
+                              {
+                                  <tr class="row table-item">
+                                      <td class="col-md-6 col-lg-6">@data.Name</td>
+                                      <td class="col-md-2 col-lg-2 aligh-right">@data.Quantity</td>
+                                      <td class="col-md-4 col-lg-4 aligh-right">
+                                          <script>separatedComma(@data.Amount);</script>
+                                      </td>
+                                  </tr>
+                              }
+                          }
+                      </tbody>
+                  </table>
+              </div>
 
-            <div class="m-t-10" style="background-color:white;">
-                <div class="row padding-10">
-                    <div class="col-md-12 col-lg-12">
-                        <h5 class="mb-0">@Resource.TodaySaleQuantity</h5>
-                    </div>                
-                </div>
-                <table id="tblTodaySaleQuantity" class="row padding-10">
-                    <thead class="col-md-12 col-lg-12">
-                        <tr class="row table-header">
-                            <th class="col-md-6 col-lg-6"></th>
-                            <th class="col-md-2 col-lg-2 aligh-right">@Resource.Qty</th>
-                            <th class="col-md-4 col-lg-4 aligh-right">@Resource.Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody class="col-md-12 col-lg-12">
-                        @foreach (var data in Model.lstTodaySaleQuantity as List<HomeViewModel.TodaySaleQuantityView>)
-                        {
-                            if (data.IsSummary)
-                            {
-                                <tr class="row table-item">
-                                    <th class="col-md-6 col-lg-6">@data.Name</th>
-                                    <th class="col-md-2 col-lg-2 aligh-right">@data.Quantity</th>
-                                    <th class="col-md-4 col-lg-4 aligh-right">
-                                        <script>separatedComma(@data.Amount);</script>
-                                    </th>
-                                </tr>
-                            }
-                            else
-                            {
-                                <tr class="row table-item">
-                                    <td class="col-md-6 col-lg-6">@data.Name</td>
-                                    <td class="col-md-2 col-lg-2 aligh-right">@data.Quantity</td>
-                                    <td class="col-md-4 col-lg-4 aligh-right">
-                                    <script>separatedComma(@data.Amount);</script></td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
+          </div>
+      </div>
+    </div>
+       
+    <div style="background-color:white;" class="m-t-10 db-border">
+        <div class="row padding-10">
+            <div class="col-md-8 col-lg-8 align-center">
+                <h5 class="mb-0 control-title">@Resource.CustomerOutstandingOverDue</h5>
             </div>
-          
+            <div class="col-md-4 col-lg-4 align-center aligh-right">
+                <label class="control-label mb-0" style="background-color:#ef7971;padding:0px 10px;color:#FFF;">@Model.lstCustomerOutstandingOverDue.Count&nbsp;@Resource.CustomerDue</label>
+            </div>
         </div>
+        <table id="tblCustomerOutstandingOverDue" class="row padding-10">
+            <thead class="col-md-12 col-lg-12">
+                <tr class="row table-header">
+                    <th class="col-md-4 col-lg-4">@Resource.Customer</th>
+                    <th class="col-md-3 col-lg-3">@Resource.Township</th>
+                    <th class="col-md-4 col-lg-4">@Resource.TotalDueVoucher</th>
+                    <th class="col-md-1 col-lg-1"></th>
+                </tr>
+            </thead>
+            <tbody class="col-md-12 col-lg-12" style="max-height:500px;overflow-y:scroll;">
+                @foreach (var data in Model.lstCustomerOutstandingOverDue as List<HomeViewModel.CustomerOutstandingOverDue>)
+                {
+                    <tr class="row table-item align-center">                      
+                        <td class="col-md-4 col-lg-4">@data.CustomerName</td>
+                        <td class="col-md-3 col-lg-3">@data.TownshipName</td>
+                        <td class="col-md-4 col-lg-4">@data.TotalDueVoucher&nbsp;@Resource.Voucher</td>
+                        <td class="col-md-1 col-lg-1">
+                            <button title="Detail" class="btn btn-sm btn-primary" onclick="listTableAction(1)">@Resource.Detail</button>
+                        </td>
+                        <td style="display:none">@data.CustomerID</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (Model.lstCustomerOutstandingOverDue.Count() == 0)
+        {
+            <div class="padding-10">
+                <label class="control-label">@Resource.NoOverdueMessage</label>
+            </div>
+        }
     </div>
 
+    <div style="background-color:white;" class="m-t-10 db-border">
+        <div class="row padding-10">
+            <div class="col-md-9 col-lg-9 align-center">
+                <h5 class="mb-0 control-title">@Resource.CustomerOutstandingPayment</h5>
+            </div>
+            <div class="col-md-3 col-lg-3 align-center aligh-right">
+                <input id="inputDate" type="date" class="form-control control-input" />
+                <button id="btnDateFilter" class="form-control btn btn-first" title="@Resource.Filter" style="width:50px;">
+                    <i class="fa fa-filter"></i>
+                </button>
+            </div>
+        </div>
+        <table id="tblCustomerOutstandingPayment" class="row padding-10">
+            <thead class="col-md-12 col-lg-12">
+                <tr class="row table-header">
+                    <th class="col-md-4 col-lg-4">@Resource.Customer</th>
+                    <th class="col-md-4 col-lg-4">@Resource.Township</th>
+                    <th class="col-md-4 col-lg-4 aligh-right">@Resource.Payment</th>
+                </tr>
+            </thead>
+            <tbody class="col-md-12 col-lg-12" style="max-height:500px;overflow-y:scroll;">
+            </tbody>
+        </table>
+        <div id="divNoPayment" class="padding-10">
+            <label class="control-label">@Resource.NoPaymentMessage</label>
+        </div>
+    </div>
+     
 </div>
+
+<div class="modal fade" id="modalOverDueDetail" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:1000px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">@Resource.Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label id="lblCustomer" class="control-label note mb-0">Customer Name</label>
+                <table id="tblCustomerOutstandingOverDueDetail" class="col-md-12 col-lg-12" role="grid">
+                    <thead>
+                        <tr class="row table-header">
+                            <th class="col-md-3 col-lg-3">@Resource.Date</th>
+                            <th class="col-md-3 col-lg-3">@Resource.VoucherNo</th>                         
+                            <th class="col-md-2 col-lg-2 ">@Resource.LimitedDay</th>
+                            <th class="col-md-2 col-lg-2 aligh-right">@Resource.Amount</th>
+                            <th class="col-md-2 col-lg-2"></th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>                         
+            </div>
+        </div>
+    </div>
+</div>
+
 
    

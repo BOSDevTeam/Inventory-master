@@ -660,7 +660,7 @@ namespace Inventory.Controllers
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterANDTranSaleByPaymentID, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@keyword", keyword);
-            cmd.Parameters.AddWithValue("@PaymentID", paymentId);
+            //cmd.Parameters.AddWithValue("@PaymentID", paymentId);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
