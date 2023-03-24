@@ -24,39 +24,49 @@ namespace Inventory.Controllers
         public ActionResult SaleReturn(int userId, int? saleReturnId)
         {
             if (checkConnection()) {
-                ViewBag.PaymentID = 
-                ViewBag.UserVoucherNo = getUserVoucherNo(userId);
+                //ViewBag.PaymentID =                
                 clearTranSaleReturn();
-                int totalQuantity = 0;
-                int saleId = 0;
+                
                 if (saleReturnId != null) // saleReturn edit
                 {
                     ViewBag.IsEdit = true;
+                    int totalQuantity = 0;
+                    int saleId = 0;
                     MasterSaleReturnViewModel data = selectMasterSaleReturnBySaleReturnID((int)saleReturnId);
                     List<TranSaleReturnModels> lstTranSaleReturn = selectTranSaleReturnBySaleReturnID((int)saleReturnId);
-                    List<TranSaleModels> lstTranSale = selectSale(1,data.ReturnVoucherNo);
-                    for (int i = 0; i < lstTranSale.Count(); i++)
+                    if (data.ReturnVoucherNo != null)
                     {
-                        totalQuantity += lstTranSale[i].Quantity;
-                        saleId = lstTranSale[i].SaleID;
+                        //return by voucher
+                        List<TranSaleModels> lstTranSale = selectSale(data.ReturnVoucherNo);
+                        for (int i = 0; i < lstTranSale.Count(); i++)
+                        {
+                            totalQuantity += lstTranSale[i].Quantity;
+                            saleId = lstTranSale[i].SaleID;
+                        }
+                        Session["TranSaleReturnData"] = lstTranSaleReturn;
+                        Session["TranSaleData"] = lstTranSale;
+                        ViewBag.LocationID = data.LocationID;
+                        ViewBag.TotalQuantity = totalQuantity;
+                        ViewBag.SaleID = saleId;
                     }
-                    Session["TranSaleReturnData"] = lstTranSaleReturn;
+                    
+                    Session["TranSaleReturnByProductData"] = lstTranSaleReturn;
                     ViewBag.UserVoucherNo = data.UserVoucherNo;
                     DateTime date = appSetting.convertStringToDate(data.ReturnDateTime);
                     ViewBag.Date = appSetting.convertDateToString(date);
-                    ViewBag.VoucherID = data.MasterSaleReturnModel.VoucherID;
-                    ViewBag.LocationID = data.LocationID;
-                    ViewBag.Total = data.Total;
-                    ViewBag.TotalQuantity = totalQuantity;
+                    ViewBag.VoucherID = data.MasterSaleReturnModel.VoucherID;                    
+                    ViewBag.Total = data.Total;                   
                     ViewBag.SaleReturnID = saleReturnId;                   
-                    ViewBag.ReturnVoucherNo = data.ReturnVoucherNo;
-                    ViewBag.SaleID = saleId;
-                    ViewBag.Remark = data.Remark;
-                    Session["TranSaleData"] = lstTranSale;
+                    ViewBag.ReturnVoucherNo = data.ReturnVoucherNo;                   
+                    ViewBag.Remark = data.Remark;                   
+                }
+                else
+                {
+                    ViewBag.UserVoucherNo = getUserVoucherNo(userId);
                 }
 
             }
-            return View();
+            return View(saleReturnViewModel);
         }
 
         public ActionResult ListSaleReturn(int userId)
@@ -106,43 +116,18 @@ namespace Inventory.Controllers
     
         #region Action
         [HttpPost]
-        public JsonResult SaveAction(int saleId, string returnVoucherNo, string userVoucherNo, string date, string voucherId, int userId, int locationId, int totalAmount, string remark)
+        public JsonResult SaveAction(string returnVoucherNo, string userVoucherNo, string date, string voucherId, int userId, int? locationId, int totalAmount, string remark,bool isReturnByVoucher)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
-            if (Session["TranSaleReturnData"] != null)
+            if (Session["TranSaleReturnData"] != null || Session["TranSaleReturnByProductData"]!=null)
             {
                 try
                 {
-                    resultDefaultData.IsRequestSuccess = true;
-                    List<TranSaleReturnModels> list = Session["TranSaleReturnData"] as List<TranSaleReturnModels>;
-                    //List<TranSaleModels> saleList = Session["TranSaleData"] as List<TranSaleModels>;
-                    //List<TranSaleModels> saleRemainList = new List<TranSaleModels>();
-                    //for (int i = 0; i < list.Count; i++)
-                    //{
-                    //    foreach (var sale in saleList.Where(s => s.ID == list[i].ID))
-                    //    {
-                    //        sale.Quantity -= list[i].Quantity;
-                    //        sale.Discount -= list[i].Discount;
-                    //        sale.Amount -= list[i].Amount;
-                    //    }
-                    //}
-                    //// For transale table
-                    //saleRemainList = saleList.Where(s => s.Quantity !=0).ToList();
-                    //DataTable remainDt = new DataTable();
-                    //remainDt.Columns.Add("ProductID", typeof(int));
-                    //remainDt.Columns.Add("Quantity", typeof(int));
-                    //remainDt.Columns.Add("UnitID", typeof(int));
-                    //remainDt.Columns.Add("SalePrice", typeof(int));
-                    //remainDt.Columns.Add("CurrencyID", typeof(int));
-                    //remainDt.Columns.Add("DiscountPercent", typeof(int));
-                    //remainDt.Columns.Add("Discount", typeof(int));
-                    //remainDt.Columns.Add("Amount", typeof(int));
-                    //remainDt.Columns.Add("IsFOC", typeof(bool));
-                    //for (int i = 0; i < saleRemainList.Count; i++)
-                    //{
-                    //    remainDt.Rows.Add(saleRemainList[i].ProductID, saleRemainList[i].Quantity, saleRemainList[i].UnitID, saleRemainList[i].SalePrice,
-                    //        saleRemainList[i].CurrencyID, saleRemainList[i].DiscountPercent, saleRemainList[i].Discount, saleRemainList[i].Amount, saleRemainList[i].IsFOC);
-                    //}
+                    MasterSaleModels MasterSale = new MasterSaleModels();
+                    if (isReturnByVoucher)MasterSale= Session["MasterSaleData"] as MasterSaleModels;   
+                    List<TranSaleReturnModels> list = new List<TranSaleReturnModels>();
+                    if (isReturnByVoucher) list = Session["TranSaleReturnData"] as List<TranSaleReturnModels>;
+                    else list = Session["TranSaleReturnByProductData"] as List<TranSaleReturnModels>;
 
                     // For transalereturn talbe
                     DataTable dt = new DataTable();
@@ -161,30 +146,49 @@ namespace Inventory.Controllers
                     }
 
                     DateTime saleReturnDateTime = DateTime.Parse(date);
-                    SqlCommand cmd = new SqlCommand(Procedure.PrcInsertSaleReturn, dataConnectorSQL.Connect());
-
-                    cmd.Parameters.AddWithValue("@SaleID", saleId);
-                    cmd.Parameters.AddWithValue("@ReturnVoucherNo", returnVoucherNo);
+                    appSetting.conn.Open();
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcInsertSaleReturn, appSetting.conn);
+                    cmd.Connection = appSetting.conn;
+                    if (isReturnByVoucher)
+                    {
+                        cmd.Parameters.AddWithValue("@LimitedDayID", MasterSale.LimitedDayID);
+                        cmd.Parameters.AddWithValue("@ReturnVoucherNo", returnVoucherNo);
+                        cmd.Parameters.AddWithValue("@LocationID", locationId);
+                        cmd.Parameters.AddWithValue("@PaymentID", MasterSale.PaymentID);
+                        cmd.Parameters.AddWithValue("@CustomerID", MasterSale.CustomerID);
+                        cmd.Parameters.AddWithValue("@CurrencyID", MasterSale.CurrencyID);
+                    }
+                    else {
+                        cmd.Parameters.AddWithValue("@LimitedDayID", DBNull.Value);
+                        cmd.Parameters.AddWithValue("@ReturnVoucherNo", DBNull.Value);
+                        cmd.Parameters.AddWithValue("@LocationID", DBNull.Value);
+                        cmd.Parameters.AddWithValue("@PaymentID", DBNull.Value);
+                        cmd.Parameters.AddWithValue("@CustomerID", DBNull.Value);
+                        cmd.Parameters.AddWithValue("@CurrencyID", DBNull.Value);
+                    } 
+                    
                     cmd.Parameters.AddWithValue("@ReturnDateTime", saleReturnDateTime);
                     cmd.Parameters.AddWithValue("@UserVoucherNo", userVoucherNo);
                     cmd.Parameters.AddWithValue("@VoucherID", voucherId);
                     cmd.Parameters.AddWithValue("@UserID", userId);
-                    cmd.Parameters.AddWithValue("@LocationID", locationId);
+                    
                     cmd.Parameters.AddWithValue("@Remark", remark);
                     cmd.Parameters.AddWithValue("@Total", totalAmount);
                     cmd.Parameters.AddWithValue("@temptbl", dt);
                     //cmd.Parameters.AddWithValue("@temptblSale", remainDt);
                     cmd.Parameters.AddWithValue("@ModuleCode", AppConstants.SaleReturnModule);
+                    cmd.Parameters.AddWithValue("@AccountCode", AppConstants.SaleReturnAccountCode);
                     cmd.CommandType = CommandType.StoredProcedure;
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
                     {
                         userVoucherNo = Convert.ToString(reader[0]);
                     }
-
                     reader.Close();
-                    dataConnectorSQL.Close();
+                    appSetting.conn.Close();
                     clearTranSaleReturn();
+                    resultDefaultData.IsRequestSuccess = true;
+                    resultDefaultData.Message = AppConstants.Message.SaveSuccess;
                 }
                 catch (Exception ex)
                 {
@@ -204,16 +208,18 @@ namespace Inventory.Controllers
         }
 
         [HttpPost]
-        public JsonResult EditAction(int saleRetunrId, string date, string voucherId,int totalAmount, string remark)
+        public JsonResult EditAction(int saleRetunrId, string date, string voucherId,int totalAmount, string remark,bool isReturnByVoucher)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
-            if (Session["TranSaleReturnData"] != null)
+            if (Session["TranSaleReturnData"] != null || Session["TranSaleReturnByProductData"]!=null)
             {
                 try
                 {
-                    resultDefaultData.IsRequestSuccess = true;
-                    List<TranSaleReturnModels> list = Session["TranSaleReturnData"] as List<TranSaleReturnModels>;
-
+                    MasterSaleModels masterSale = new MasterSaleModels();
+                    if (isReturnByVoucher) masterSale = Session["MasterSaleData"] as MasterSaleModels;
+                    List<TranSaleReturnModels> list = new List<TranSaleReturnModels>();
+                    if (isReturnByVoucher) list = Session["TranSaleReturnData"] as List<TranSaleReturnModels>;
+                    else list = Session["TranSaleReturnByProductData"] as List<TranSaleReturnModels>;
                     // For transalereturn talbe
                     DataTable dt = new DataTable();
                     dt.Columns.Add("ProductID", typeof(int));
@@ -239,9 +245,30 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@Remark", remark);
                     cmd.Parameters.AddWithValue("@Total", totalAmount);
                     cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Parameters.AddWithValue("@AccountCode", AppConstants.SaleReturnAccountCode);
+                    if (isReturnByVoucher)
+                    {
+                        cmd.Parameters.AddWithValue("@LimitedDayID", masterSale.LimitedDayID);
+                        cmd.Parameters.AddWithValue("@ReturnVoucherNo", masterSale.UserVoucherNo);
+                        cmd.Parameters.AddWithValue("@LocationID", masterSale.LocationID);
+                        cmd.Parameters.AddWithValue("@PaymentID", masterSale.PaymentID);
+                        cmd.Parameters.AddWithValue("@CustomerID", masterSale.CustomerID);
+                        cmd.Parameters.AddWithValue("@CurrencyID", masterSale.CurrencyID);
+                    }
+                    else
+                    {
+                        cmd.Parameters.AddWithValue("@LimitedDayID", DBNull.Value);
+                        cmd.Parameters.AddWithValue("@ReturnVoucherNo", DBNull.Value);
+                        cmd.Parameters.AddWithValue("@LocationID", DBNull.Value);
+                        cmd.Parameters.AddWithValue("@PaymentID", DBNull.Value);
+                        cmd.Parameters.AddWithValue("@CustomerID", DBNull.Value);
+                        cmd.Parameters.AddWithValue("@CurrencyID", DBNull.Value);
+                    }
+
                     cmd.ExecuteNonQuery();
                     dataConnectorSQL.Close();
                     clearTranSaleReturn();
+                    resultDefaultData.IsRequestSuccess = true;
                 }
                 catch (Exception ex)
                 {
@@ -288,33 +315,44 @@ namespace Inventory.Controllers
                 item.Amount = Convert.ToInt32(reader["Amount"]);
                 item.Discount = Convert.ToInt32(reader["Discount"]);
                 item.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
-                item.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
-                data.LocationID = Convert.ToInt32(reader["LocationID"]);
+                item.IsFOC = Convert.ToBoolean(reader["IsFOC"]);               
                 item.SaleID = Convert.ToInt32(reader["SaleID"]);
+
+                data.SaleID = item.SaleID;
+                data.LocationID = Convert.ToInt32(reader["LocationID"]);
                 data.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
                 data.PaymentID = Convert.ToInt32(reader["PaymentID"]);
+                data.CustomerID = Convert.ToInt32(reader["CustomerID"]);
+                data.LimitedDayID = Convert.ToInt32(reader["LimitedDayID"]);
+                data.CurrencyID = Convert.ToInt32(reader["MCurrencyID"]);
+                data.UserVoucherNo = keyword;
                 list.Add(item);
             }
             reader.Close();
 
-            if (item.SaleID > 0)
+            if (data.SaleID > 0)
             {
-                if (data.PaymentID == 2)
+                //if (data.PaymentID == 2)
+                //{
+                //    resultDefaultData.Message = AppConstants.Message.NoReturnCreditVoucher;
+                //    isPayment = true;
+                //}
+                //else
+                //{
+                //    if (data.IsVouFOC == false)
+                //    {
+                //    }
+                //    else
+                //    {
+                //        resultDefaultData.Message = AppConstants.Message.NoReturnFOCVoucher;
+                //        isVoucherFOC = true;
+                //    }
+                //}
+                if (data.IsVouFOC)
                 {
-                    resultDefaultData.Message = AppConstants.Message.NoReturnCreditVoucher;
-                    isPayment = true;
-                }
-                else
-                {
-                    if (data.IsVouFOC == false)
-                    {
-                    }
-                    else
-                    {
-                        resultDefaultData.Message = AppConstants.Message.NoReturnFOCVoucher;
-                        isVoucherFOC = true;
-                    }
-                }
+                    resultDefaultData.Message = AppConstants.Message.NoReturnFOCVoucher;
+                    isVoucherFOC = true;
+                }                
 
             }
             else isExistPurchase = false;
@@ -323,8 +361,9 @@ namespace Inventory.Controllers
             {
                 totalQuantity += list[i].Quantity;
             }
-
+            Session["TranSaleData"] = null;
             Session["TranSaleData"] = list;
+            Session["MasterSaleData"] = null;
             Session["MasterSaleData"] = data;
             var jsonResult = new
             {
@@ -421,6 +460,10 @@ namespace Inventory.Controllers
             discount = ((inputQuantity * price) * Convert.ToInt32(disPercent)) / 100;
             data.Discount = discount;
             data.Amount = (inputQuantity * price) - discount;
+            if (price <= 0 && discount <= 0 && data.Amount <= 0)
+            {
+                data.IsFOC = true;
+            }
             if (!isEdit)
             {
                 if (Session["TranSaleReturnData"] != null)
@@ -649,10 +692,205 @@ namespace Inventory.Controllers
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult GetProductByKeywordAction(string keyword)
+        {
+            List<ProductModels.ProductModel> list = appData.selectProductByKeyword(getConnection(), keyword);
+            Session["SearchProductData"] = null;
+            Session["SearchProductData"] = list;
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult SearchProductClickAction(int productID, bool isMultiUnit, bool isMultiCurrency)
+        {
+            List<UnitModels> lstUnit = new List<UnitModels>();
+            List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
+            ProductModels.ProductModel product = new ProductModels.ProductModel();
+            bool isRequestSuccess = false;
+            if (Session["SearchProductData"] != null)
+            {
+                List<ProductModels.ProductModel> list = Session["SearchProductData"] as List<ProductModels.ProductModel>;
+                product = list.Where(c => c.ProductID == productID).SingleOrDefault();
+                if (product.ProductID != 0)
+                {
+                    if (isMultiUnit) lstUnit = getUnit();
+                    if (isMultiCurrency) lstCurrency = getCurrency();
+                    isRequestSuccess = true;
+                }
+            }
+            var jsonResult = new
+            {
+                Product = product,
+                LstUnit = lstUnit,
+                LstCurrency = lstCurrency,
+                IsRequestSuccess = isRequestSuccess
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetProductByCodeAction(string productCode, bool isMultiUnit, bool isMultiCurrency)
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            ProductModels.ProductModel product = new ProductModels.ProductModel();
+            List<UnitModels> lstUnit = new List<UnitModels>();
+            List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
+            bool isExistProduct = true;
+            try
+            {
+                product = appData.selectProductByCode(getConnection(), productCode);
+                if (product.ProductID != 0)
+                {
+                    if (isMultiUnit) lstUnit = getUnit();
+                    if (isMultiCurrency) lstCurrency = getCurrency();
+                }
+                else isExistProduct = false;
+                resultDefaultData.IsRequestSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                resultDefaultData.Message = ex.Message;
+            }
+            var jsonResult = new
+            {
+                Product = product,
+                LstUnit = lstUnit,
+                LstCurrency = lstCurrency,
+                IsExistProduct = isExistProduct,
+                ResultDefaultData = resultDefaultData
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult TranSaleReturnByProductAddEditAction(int productID, string productName, string code, int quantity, int salePrice,
+            int disPercent, int unitID, string unitKeyword, int currencyId, string currencyKeyword, bool isEdit, bool isItemFOC)
+        {
+            List<TranSaleReturnModels> lstTranSaleReturn = new List<TranSaleReturnModels>();
+            TranSaleReturnModels data = new TranSaleReturnModels();
+            int subtotal = 0, discount;
+            bool isRequestSuccess = true;           
+            data.ProductID = productID;
+            data.ProductCode = code;
+            data.ProductName = productName;
+            data.Quantity = quantity;
+            data.SalePrice = salePrice;
+            data.DiscountPercent = disPercent;
+            data.UnitID = unitID;
+            data.CurrencyID = currencyId;
+            if (unitKeyword != null) data.UnitKeyword = unitKeyword;
+            else data.UnitKeyword = "";
+            if (currencyKeyword != null) data.CurrencyKeyword = currencyKeyword;
+            else data.CurrencyKeyword = "";
+            discount = ((salePrice * quantity) * disPercent) / 100;
+            data.Discount = discount;
+            data.Amount = (quantity * salePrice) - discount;
+            data.IsFOC = isItemFOC;
+            if (isEdit)
+            {
+                if (Session["TranSaleReturnByProductData"] != null)
+                {
+                    lstTranSaleReturn = Session["TranSaleReturnByProductData"] as List<TranSaleReturnModels>;
+                    foreach (var saleReturn in lstTranSaleReturn.Where(m => m.ProductID == productID))
+                    {
+                        saleReturn.Quantity = data.Quantity;
+                        saleReturn.Discount = data.Discount;
+                        saleReturn.Amount = data.Amount;
+                    }
+                }
+                else isRequestSuccess = false;
+            }
+            else
+            {
+                if (Session["TranSaleReturnByProductData"] != null)
+                {
+                    lstTranSaleReturn = Session["TranSaleReturnByProductData"] as List<TranSaleReturnModels>;
+                    if (lstTranSaleReturn.Where(m => m.ProductID == productID).Count() > 0)
+                    {
+                        foreach (var saleReturn in lstTranSaleReturn.Where(m => m.ProductID == productID))
+                        {
+                            saleReturn.Quantity = data.Quantity;
+                            saleReturn.Discount = data.Discount;
+                            saleReturn.Amount = data.Amount;
+                        }
+                    }
+                    else
+                    {
+                        lstTranSaleReturn.Add(data);
+                    }
+                }
+                else lstTranSaleReturn.Add(data);
+            }
+            for (int i = 0; i < lstTranSaleReturn.Count(); i++)
+            {
+                subtotal += lstTranSaleReturn[i].Amount;
+            }
+            Session["TranSaleReturnByProductData"] = lstTranSaleReturn;
+            var jsonResult = new
+            {
+                LstTranSaleReturn = lstTranSaleReturn,
+                SubTotal = subtotal,
+                IsRequestSuccess = isRequestSuccess
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult TranSaleReturnByProductDeleteAction(int number)
+        {
+            List<TranSaleReturnModels> lstTranSaleReturn = new List<TranSaleReturnModels>();
+            int subtotal = 0; bool isRequestSuccess = true;
+            if (Session["TranSaleReturnByProductData"] != null)
+            {
+                lstTranSaleReturn = Session["TranSaleReturnByProductData"] as List<TranSaleReturnModels>;
+                lstTranSaleReturn.Remove(lstTranSaleReturn.Where(m => m.ProductID == number).First());
+                for (int i = 0; i < lstTranSaleReturn.Count(); i++)
+                {
+                    subtotal += lstTranSaleReturn[i].Amount;
+                }
+                Session["TranSaleReturnByProductData"] = lstTranSaleReturn;
+            }
+            else isRequestSuccess = false;
+            var jsonResult = new
+            {
+                LstTranSaleReturn = lstTranSaleReturn,
+                SubTotal = subtotal,
+                IsRequestSuccess = isRequestSuccess
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult PrepareToEditTranSaleReturnByProductAction(int number, bool isMultiUnit, bool isMultiCurrency)
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            List<TranSaleReturnModels> lstTranSaleReturn = new List<TranSaleReturnModels>();
+            TranSaleReturnModels data = new TranSaleReturnModels();
+            List<UnitModels> lstUnit = new List<UnitModels>();
+            List<CurrencyModels> lstCurrency = new List<CurrencyModels>();
+            if (Session["TranSaleReturnByProductData"] != null)
+            {
+                lstTranSaleReturn = Session["TranSaleReturnByProductData"] as List<TranSaleReturnModels>;
+                if (lstTranSaleReturn.Count() != 0)
+                {
+                    data = lstTranSaleReturn.Where(m => m.ProductID == number).First();
+                    if (data != null)
+                    {
+                        resultDefaultData.IsRequestSuccess = true;
+                        if (isMultiUnit) lstUnit = getUnit();
+                        if (isMultiCurrency) lstCurrency = getCurrency();
+                    }
+                }
+            }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
+
+            var jsonResult = new
+            {
+                Product = data,
+                LstUnit = lstUnit,
+                LstCurrency = lstCurrency,
+                ResultDefaultData = resultDefaultData
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+
         #endregion
 
         #region Method
-        private List<TranSaleModels> selectSale(int paymentId, string keyword)
+        private List<TranSaleModels> selectSale(string keyword)
         {
             MasterSaleModels data = new MasterSaleModels();
             List<TranSaleModels> list = new List<TranSaleModels>();
@@ -677,14 +915,22 @@ namespace Inventory.Controllers
                 item.Amount = Convert.ToInt32(reader["Amount"]);
                 item.Discount = Convert.ToInt32(reader["Discount"]);
                 item.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
-                item.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
-                data.LocationID = Convert.ToInt32(reader["LocationID"]);
-                item.SaleID = Convert.ToInt32(reader["SaleID"]);
-                data.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
+                item.IsFOC = Convert.ToBoolean(reader["IsFOC"]);                
+                item.SaleID = Convert.ToInt32(reader["SaleID"]);              
                 list.Add(item);
 
+                data.SaleID = item.SaleID;
+                data.LocationID = Convert.ToInt32(reader["LocationID"]);
+                data.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
+                data.PaymentID = Convert.ToInt32(reader["PaymentID"]);
+                data.CustomerID = Convert.ToInt32(reader["CustomerID"]);
+                data.LimitedDayID = Convert.ToInt32(reader["LimitedDayID"]);
+                data.CurrencyID = Convert.ToInt32(reader["MCurrencyID"]);
+                data.UserVoucherNo = keyword;
             }
             reader.Close();
+            Session["MasterSaleData"] = null;
+            Session["MasterSaleData"] = data;
             return list;
         }
 
@@ -773,6 +1019,7 @@ namespace Inventory.Controllers
             {
                 data = new TranSaleReturnModels();
                 data.ProductID = Convert.ToInt32(reader["ProductID"]);
+                data.ProductCode = Convert.ToString(reader["Code"]);
                 data.ProductName = Convert.ToString(reader["ProductName"]);
                 data.Quantity = Convert.ToInt32(reader["Quantity"]);
                 data.InputQuantity = Convert.ToInt32(reader["Quantity"]);
@@ -836,7 +1083,7 @@ namespace Inventory.Controllers
         private void clearTranSaleReturn()
         {
             Session["TranSaleReturnData"] = null;
-
+            Session["TranSaleReturnByProductData"] = null;
         }
 
         private string getUserVoucherNo(int userId)
@@ -858,6 +1105,28 @@ namespace Inventory.Controllers
         private bool checkConnection() {
             if (Session[AppConstants.SQLConnection] != null) return true;
             else return false;
+        }
+        private List<UnitModels> getUnit()
+        {
+            List<UnitModels> list = new List<UnitModels>();
+            if (Session["UnitData"] == null)
+            {
+                list = appData.selectUnit(getConnection());
+                Session["UnitData"] = list;
+            }
+            else list = Session["UnitData"] as List<UnitModels>;
+            return list;
+        }
+        private List<CurrencyModels> getCurrency()
+        {
+            List<CurrencyModels> list = new List<CurrencyModels>();
+            if (Session["CurrencyData"] == null)
+            {
+                list = appData.selectCurrency(getConnection());
+                Session["CurrencyData"] = list;
+            }
+            else list = Session["CurrencyData"] as List<CurrencyModels>;
+            return list;
         }
 
         #endregion

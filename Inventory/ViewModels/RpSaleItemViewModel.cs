@@ -21,6 +21,7 @@ namespace Inventory.ViewModels
         public bool IsAll { get; set; }
         public bool IsCash { get; set; }
         public bool IsCredit { get; set; }
+        public int paymentType { get; set; }
         public class MasterSaleViewModel
         {
             public string Code { get; set; }

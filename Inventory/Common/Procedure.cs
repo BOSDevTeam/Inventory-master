@@ -165,5 +165,7 @@ namespace Inventory.Common
         public const string PrcGetCustomerOutstandingPayment = "PrcGetCustomerOutstandingPayment";
         public const string PrcGetCustomerOutstandingOverDueDetail = "PrcGetCustomerOutstandingOverDueDetail";
         public const string PrcGetRptTransferItem = "PrcGetRptTransferItem";
+        public const string PrcUpdateSetupModuleUserRight = "PrcUpdateSetupModuleUserRight";
+        public const string PrcUpdateEntryModuleUserRight = "PrcUpdateEntryModuleUserRight";
     }
 }

@@ -1,7 +1,7 @@
 ﻿@using Inventory.Models
 @model UserModels.UserModel
 @{
-    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+    Layout = Model.Layout;
 }
 
 <head>
@@ -14,7 +14,7 @@
 </head>
 
 <div>
-
+    <input id="inputHidIsTechnician" type="hidden" value="@Model.IsTechnician" />
     <div class="row">
         <div class="col-md-8 col-lg-8">
             <div class="row setup-title-layout">
@@ -22,7 +22,7 @@
                     <label class="page-title">Create User</label>
                 </div>
                 <div class="col-md-6 col-lg-6">
-                    <button id="btnAll" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("UserList", "User")'">ALL</button>
+                    <button id="btnAll" class="btn btn-primary" style="float:right">ALL</button>
                 </div>
             </div>
             <div class="row setup-entry-border margin-20">
@@ -92,6 +92,12 @@
 <script type="text/javascript">
     var vldOk,isDefaultLocation = false;
     $(function () {
+
+        $('#btnAll').click(function () {
+            let isTechnician = $('#inputHidIsTechnician').val();
+            window.location.href = '@Url.Action("UserList", "User")?isTechnician=' + isTechnician;
+        });
+
         $('#btnSave').click(function () {
             var userName = $('#UserName').val();
             var password = $('#Password').val();
@@ -146,6 +152,7 @@
             var userName = $('#UserName').val();
             var password = $('#Password').val();
             var locationId = $('#LocationID option:selected').val();
+            let isTechnician = $('#inputHidIsTechnician').val();
 
             if (userName.length == 0) {
                 $("#vldName").show();
@@ -166,8 +173,8 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        showToast(1, "Edited Successfully!");                      
-                        window.location.href = '@Url.Action("UserList", "User")';
+                        showToast(1, "Edited Successfully!");
+                        window.location.href = '@Url.Action("UserList", "User")?isTechnician=' + isTechnician;
                     },
                     failure: function (response) {
                         hideLoadingIcon();

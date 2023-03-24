@@ -75,11 +75,11 @@ namespace Inventory.Controllers
                 else customerModel.Credit = "Not Allow Credit";
                 customerModel.IsDefault = customer.IsDefault;
                 customerModel.Address = customer.Address;
-                customerModel.Email = customer.Email;             
+                customerModel.Email = customer.Email;
                 customerModel.TownshipID = customer.TownshipID;
                 customerModel.TownshipName = customer.TownshipName;
                 customerModel.DivisionID = Convert.ToInt32(customer.DivisionID);
-                GetTownshipByDivision(customer.DivisionID);
+                //GetTownshipByDivision(customer.DivisionID);
                 customerModel.DivisionName = customer.DivisionName;
 
                 model.LstCustomer.Add(customerModel);
@@ -279,12 +279,29 @@ namespace Inventory.Controllers
         {
             TownshipModels.TownshipModel town = new TownshipModels.TownshipModel();
             List<TownshipModels.TownshipModel> lstwon = new List<TownshipModels.TownshipModel>();
-            foreach (var township in Entities.PrcGetTownshipByDivision(divisionId))
+            if (divisionId > 0)
+            {
+                foreach (var township in Entities.PrcGetTownshipByDivision(divisionId))
+                {
+                    town = new TownshipModels.TownshipModel();
+                    town.TownshipID = township.TownshipID;
+                    town.TownshipName = township.TownshipName;
+                    lstwon.Add(town);
+                }
+            }
+            else
             {
                 town = new TownshipModels.TownshipModel();
-                town.TownshipID = township.TownshipID;
-                town.TownshipName = township.TownshipName;
-                lstwon.Add(town);              
+                town.TownshipID = 0;
+                town.TownshipName = "Township";
+                lstwon.Add(town);
+                foreach(var township in Entities.PrcGetTownship())
+                {
+                    town = new TownshipModels.TownshipModel();
+                    town.TownshipID = township.TownshipID;
+                    town.TownshipName = township.TownshipName;
+                    lstwon.Add(town);
+                }
             }
 
             if (lstwon.Count == 0)

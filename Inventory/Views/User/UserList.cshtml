@@ -1,7 +1,7 @@
 ﻿@using Inventory.Models
 @model UserModels.UserModel
 @{
-    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+    Layout = Model.Layout;
 }
 
 <head>
@@ -14,6 +14,7 @@
 </head>
 
 <div>
+    <input id="inputHidIsTechnician" type="hidden" value="@Model.IsTechnician" />
     <div class="row setup-title-layout">
         <div class="col-md-6 col-lg-6">
             <label class="page-title">User</label>
@@ -95,7 +96,8 @@
     $(function () {
 
         $('#btnAdd').click(function () {
-            window.location.href = '@Url.Action("UserEntry", "User")?userId=0';
+            let isTechnician = $('#inputHidIsTechnician').val();
+            window.location.href = '@Url.Action("UserEntry", "User")?userId=0&isTechnician='+isTechnician;
         });
 
         $("#tblUser").on("click", "tbody tr", function (event) {
@@ -103,7 +105,8 @@
             $(this).find("td:last").each(function () {
                 userId = $(this).text();
                 if (actionValue == 2) { // edit
-                    window.location.href = '@Url.Action("UserEntry", "User")?userId=' + userId;
+                    let isTechnician = $('#inputHidIsTechnician').val();
+                    window.location.href = '@Url.Action("UserEntry", "User")?userId=' + userId + '&isTechnician='+ isTechnician;
                 } else if (actionValue == 3) { // delete
                     $('#modalConfirm').modal('show');
                 }

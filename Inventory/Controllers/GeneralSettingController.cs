@@ -10,13 +10,13 @@ using Inventory.Common;
 
 namespace Inventory.Controllers
 {
-    public class TechnicianController : MyController
+    public class GeneralSettingController : MyController
     {
         DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
         TechnicianSettingModels model = new TechnicianSettingModels();
         Procedure procedure = new Procedure();
 
-        public ActionResult TechnicianSetting()
+        public ActionResult GeneralSetting()
         {
             getShopType();
             getCompanySetting();

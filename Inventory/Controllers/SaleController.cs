@@ -48,7 +48,9 @@ namespace Inventory.Controllers
                         totalQuantity += lstTranSale[i].Quantity;
                     }
                     Session["TranSaleData"] = lstTranSale;
+                    //log
                     Session["Log"] = lstTranSaleLog;
+
                     ViewBag.TotalItem = lstTranSale.Count();
                     ViewBag.UserVoucherNo = data.MasterSaleModel.UserVoucherNo;
                     DateTime date = setting.convertStringToDate(data.MasterSaleModel.SaleDateTime);
@@ -240,7 +242,8 @@ namespace Inventory.Controllers
             }
 
             Session["TranSaleData"] = lstTranSale;         
-                
+            
+            // log    
             if (isVoucherEdit)
             {
                 TranSaleLogModels dataLog = new TranSaleLogModels();
@@ -275,7 +278,8 @@ namespace Inventory.Controllers
 
             if (actionCode == AppConstants.EditActionCode)  // edit
             {             
-                dataLog.ActionCode = AppConstants.EditActionCode;               
+                dataLog.ActionCode = AppConstants.EditActionCode;
+                dataLog.OrginalQuantity = lstTranSaleLog[(int)number - 1].OrginalQuantity;
                 if (number != null) lstTranSaleLog[(int)number - 1] = dataLog;                          
             }
             else if (actionCode == AppConstants.DeleteActionCode)  // delete
@@ -548,13 +552,14 @@ namespace Inventory.Controllers
                     dtLog.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
                     dtLog.Columns.Add(new DataColumn("ActionCode", typeof(string)));
                     dtLog.Columns.Add(new DataColumn("ActionName", typeof(string)));
+                    dtLog.Columns.Add(new DataColumn("OrginalQuantity", typeof(int)));
 
                     for (int i = 0; i < list.Count; i++)
                     {
                         dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
                         if (list[i].IsNewTran)
                         {
-                            dtLog.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC, AppConstants.NewActionCode, AppConstants.NewActionName);
+                            dtLog.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC, AppConstants.NewActionCode, AppConstants.NewActionName,0);
                         }
                     }
 
@@ -568,7 +573,7 @@ namespace Inventory.Controllers
                                 string actionName = "";                               
                                 if (lstTranSaleLog[i].ActionCode == AppConstants.EditActionCode) actionName = AppConstants.EditActionName;
                                 else if (lstTranSaleLog[i].ActionCode == AppConstants.DeleteActionCode) actionName = AppConstants.DeleteActionName;
-                                dtLog.Rows.Add(lstTranSaleLog[i].ProductID, lstTranSaleLog[i].Quantity, lstTranSaleLog[i].UnitID, lstTranSaleLog[i].SalePrice, lstTranSaleLog[i].CurrencyID, lstTranSaleLog[i].DiscountPercent, lstTranSaleLog[i].Discount, lstTranSaleLog[i].Amount, lstTranSaleLog[i].IsFOC, lstTranSaleLog[i].ActionCode, actionName);
+                                dtLog.Rows.Add(lstTranSaleLog[i].ProductID, lstTranSaleLog[i].Quantity, lstTranSaleLog[i].UnitID, lstTranSaleLog[i].SalePrice, lstTranSaleLog[i].CurrencyID, lstTranSaleLog[i].DiscountPercent, lstTranSaleLog[i].Discount, lstTranSaleLog[i].Amount, lstTranSaleLog[i].IsFOC, lstTranSaleLog[i].ActionCode, actionName, lstTranSaleLog[i].OrginalQuantity);
                             }                            
                         }
                     }
@@ -1339,8 +1344,10 @@ namespace Inventory.Controllers
                 item.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
                 list.Add(item);
 
+                // log
                 itemLog = new TranSaleLogModels();
                 itemLog.Quantity = Convert.ToInt32(reader["Quantity"]);
+                itemLog.OrginalQuantity = Convert.ToInt32(reader["Quantity"]);
                 itemLog.SalePrice = Convert.ToInt32(reader["SalePrice"]);
                 itemLog.Discount = Convert.ToInt32(reader["Discount"]);
                 itemLog.Amount = Convert.ToInt32(reader["Amount"]);

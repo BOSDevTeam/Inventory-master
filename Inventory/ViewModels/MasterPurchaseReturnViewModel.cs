@@ -15,7 +15,9 @@ namespace Inventory.ViewModels
         public MasterPurchaseReturnModels MasterPurchaseReturnModel { get; set; }
         public string UserName { get; set; }
         public string ReturnDateTime { get; set; }
+        public int LocationID { get; set; }
         public string LocationName { get; set; }
+        public int PaymentID { get; set; }
         public string Payment { get; set; }
         public string PayMethod { get; set; }
         public string BankPayment { get; set; }

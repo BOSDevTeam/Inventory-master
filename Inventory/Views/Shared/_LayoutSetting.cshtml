@@ -1,6 +1,5 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-
 <!-- settings23:07-->
 <head>
     <meta charset="utf-8">
@@ -29,7 +28,7 @@
             </div>
             <a id="toggle_btn" href="javascript:void(0);"><i class="fa fa-bars"></i></a>
             <div class="page-title-box float-left">
-                <h3>QuickInventory</h3>
+                <h3>@Resource.QuickInventory</h3>
             </div>
             <div class="toast" data-autohide="true" style="position:absolute;right:0;">
                 <div class="toast-header">
@@ -50,20 +49,20 @@
                         <span id="loginUser"></span>
                     </a>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">My Profile</a>
-                        <a class="dropdown-item" href="#">Edit Profile</a>
-                        <a class="dropdown-item" href="~/CompanySetting/CompanySettingEntry">Settings</a>
-                        <a class="dropdown-item" href="~/User/Login">Logout</a>
+                        <a class="dropdown-item" href="#">@Resource.MyProfile</a>
+                        <a class="dropdown-item" href="#">@Resource.EditProfile</a>
+                        <a class="dropdown-item" href="#">@Resource.Settings</a>
+                        <a class="dropdown-item" href="~/User/Login">@Resource.Logout</a>
                     </div>
                 </li>
             </ul>
             <div class="dropdown mobile-user-menu float-right">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
                 <div class="dropdown-menu dropdown-menu-right">
-                    <a class="dropdown-item" href="#">My Profile</a>
-                    <a class="dropdown-item" href="#">Edit Profile</a>
-                    <a class="dropdown-item" href="~/CompanySetting/CompanySettingEntry">Settings</a>
-                    <a class="dropdown-item" href="~/User/Login">Logout</a>
+                    <a class="dropdown-item" href="#">@Resource.MyProfile</a>
+                    <a class="dropdown-item" href="#">@Resource.EditProfile</a>
+                    <a class="dropdown-item" href="#">@Resource.Settings</a>
+                    <a class="dropdown-item" href="~/User/Login">@Resource.Logout</a>
                 </div>
             </div>
         </div>
@@ -71,61 +70,49 @@
             <div class="sidebar-inner slimscroll">
                 <div class="sidebar-menu">
                     <ul>
-                        <li>
-                            <a href="~/Home/Dashboard"><i class="fa fa-home back-icon"></i> <span>Back to Home</span></a>
+                        <li id="linkBackHome">
+                            <a href="#"><i class="fa fa-home back-icon"></i> <span>@Resource.BackToHome</span></a>
                         </li>
-                        <li class="menu-title">Settings</li>
-                        <li id="menuCompanySetting">
-                            <a href="~/CompanySetting/CompanySettingEntry"><i class="fa fa-building"></i> <span>Company Setting</span></a>
-                        </li>   
-                        <li id="menuLocation">
-                            <a href="~/Location/LocationList?p=1"><i class="fa fa-map-marker"></i> <span>Location</span></a>
-                        </li>
+                        <li class="menu-title">@Resource.Settings</li>                        
+                        <li id="menuUser">
+                            <a href="~/User/UserList"><i class="fa fa-user"></i> <span>@Resource.User</span></a>
+                        </li> 
+                        <li id="menuUserRight">
+                            <a href="#"><i class="fa fa-key"></i> <span>@Resource.UserRight</span></a>
+                        </li>    
                         <li id="menuDivision">
-                            <a href="~/Division/DivisionList?p=1"><i class="fa fa-th"></i> <span>Division</span></a>
+                            <a href="~/Division/DivisionList?p=1"><i class="fa fa-th"></i> <span>@Resource.Division</span></a>
                         </li> 
                         <li id="menuTownship">
-                            <a href="~/Township/TownshipList?p=1"><i class="fa fa-th"></i> <span>Township</span></a>
+                            <a href="~/Township/TownshipList?p=1"><i class="fa fa-th"></i> <span>@Resource.Township</span></a>
                         </li> 
                         <li id="menuCustomer">
-                            <a href="~/Customer/CustomerList?p=1"><i class="fa fa-user"></i> <span>Customer</span></a>
+                            <a href="~/Customer/CustomerList?p=1"><i class="fa fa-user"></i> <span>@Resource.Customer</span></a>
                         </li> 
                         <li id="menuSupplier">
-                            <a href="~/Supplier/SupplierList?p=1"><i class="fa fa-user"></i> <span>Supplier</span></a>
+                            <a href="~/Supplier/SupplierList?p=1"><i class="fa fa-user"></i> <span>@Resource.Supplier</span></a>
                         </li> 
                         <li id="menuMainMenu">
-                            <a href="~/MainMenu/MainMenuList?p=1"><i class="fa fa-file-text-o"></i> <span>Main Menu</span></a>
+                            <a href="~/MainMenu/MainMenuList?p=1"><i class="fa fa-file-text-o"></i> <span>@Resource.MainMenu</span></a>
                         </li>  
                         <li id="menuSubMenu">
-                            <a href="~/SubMenu/SubMenuList?p=1"><i class="fa fa-file-text-o"></i> <span>Sub Menu</span></a>
+                            <a href="~/SubMenu/SubMenuList?p=1"><i class="fa fa-file-text-o"></i> <span>@Resource.SubMenu</span></a>
                         </li>    
                         <li id="menuProduct">
-                            <a href="~/Product/ProductList?p=1"><i class="fa fa-cube"></i> <span>Product</span></a>
+                            <a href="~/Product/ProductList?p=1"><i class="fa fa-cube"></i> <span>@Resource.Product</span></a>
                         </li>    
                         <li id="menuBank">
-                            <a href="~/Bank/BankList?p=1"><i class="fa fa-bank"></i> <span>Bank</span></a>
+                            <a href="~/Bank/BankList?p=1"><i class="fa fa-bank"></i> <span>@Resource.Bank</span></a>
                         </li>
                         <li id="menuBankPayment">
-                            <a href="~/BankPayment/BankPaymentList?p=1"><i class="fa fa-money"></i> <span>Bank Payment</span></a>
-                        </li>                                                                  
-                        <li id="menuUser">
-                            <a href="~/User/UserList?p=1"><i class="fa fa-user"></i> <span>User</span></a>
-                        </li> 
+                            <a href="~/BankPayment/BankPaymentList?p=1"><i class="fa fa-money"></i> <span>@Resource.BankPayment</span></a>
+                        </li>                                                                                         
                         <li id="menuClient">
-                            <a href="~/Client/ClientList"><i class="fa fa-user"></i> <span>Client</span></a>
+                            <a href="~/Client/ClientList"><i class="fa fa-user"></i> <span>@Resource.Client</span></a>
                         </li> 
                         <li id="menuAdjustType">
-                            <a href="~/AdjustType/AdjustTypeList?p=1"><i class="fa fa-adjust"></i> <span>Adjust Type</span></a>
-                        </li> 
-                        <li id="menuVoucherFormat">
-                            <a href="~/VoucherFormat/VoucherFormatList"><i class="fa fa-file-text-o"></i> <span>Voucher Format</span></a>
-                        </li> 
-                        <li id="menuVoucherSetting">
-                            <a href="~/VoucherSetting/VoucherSettingList"><i class="fa fa-file-text-o"></i> <span>Voucher Setting</span></a>
-                        </li> 
-                        <li id="menuTechnicianSetting">
-                            <a href="~/Technician/TechnicianSetting"><i class="fa fa-desktop"></i> <span>Technician Setting</span></a>
-                        </li>                      
+                            <a href="~/AdjustType/AdjustTypeList?p=1"><i class="fa fa-adjust"></i> <span>@Resource.AdjustType</span></a>
+                        </li>                                    
                     </ul>
                 </div>
             </div>
@@ -148,21 +135,33 @@
     <script src="~/assets/js/bootstrap-datetimepicker.min.js"></script>
     <script src="~/Scripts/Site.js"></script>
 
-    <script>      
+    <script>
         var isMultiCurrency = false, isMultiUnit = false, isBankPayment = false,
-            userId = 0, userName;
-      
+            userId = 0, userName, isTechnician = 0;
+
         isMultiCurrency = localStorage.getItem("IsMultiCurrency");
         isMultiUnit = localStorage.getItem("IsMultiUnit");
-        isBankPayment = localStorage.getItem("IsBankPayment");      
+        isBankPayment = localStorage.getItem("IsBankPayment");
         userId = localStorage.getItem("UserID");
-        userName = localStorage.getItem("UserName");     
+        userName = localStorage.getItem("UserName");
+        isTechnician = localStorage.getItem("IsTechnician");
 
         $("#loginUser").text(userName);
+
+        if (isTechnician == 0) showHideModule();
 
         $(function () {
             $('.toast').toast({
                 delay: 3000
+            });
+
+            $('#menuUserRight').click(function () {
+                window.location.href = '@Url.Action("UserRight", "UserRight")?userId=' + userId + '&isTechnician=' + isTechnician;
+            });
+
+            $('#linkBackHome').click(function () {
+                if(isTechnician == 1)window.location.href = '@Url.Action("Dashboard", "Home")';
+                else window.location.href = '@Url.Action("Index", "Entry")?userId=' + userId + '&isTechnician=' + isTechnician;
             });
         });
 
@@ -178,6 +177,36 @@
                 $('.toast-header').addClass("toast-error");
             }
             $('#lblToastMessage').text(message);
+        }
+
+        function showHideModule() {  // to delete show functions
+            let isShowUserModule = localStorage.getItem("UserModule");
+            let isShowUserRightModule = localStorage.getItem("UserRightModule");
+            let isShowDivisionModule = localStorage.getItem("DivisionModule");
+            let isShowTownshipModule = localStorage.getItem("TownshipModule");
+            let isShowCustomerModule = localStorage.getItem("CustomerModule");
+            let isShowSupplierModule = localStorage.getItem("SupplierModule");
+            let isShowMainMenuModule = localStorage.getItem("MainMenuModule");
+            let isShowSubMenuModule = localStorage.getItem("SubMenuModule");
+            let isShowProductModule = localStorage.getItem("ProductModule");
+            let isShowBankModule = localStorage.getItem("BankModule");
+            let isShowBankPaymentModule = localStorage.getItem("BankPaymentModule");
+            let isShowClientModule = localStorage.getItem("ClientModule");
+            let isShowAdjustTypeModule = localStorage.getItem("AdjustTypeModule");
+
+            if (isShowUserModule != 'True') $("#menuUser").css('display', 'none');
+            if (isShowUserRightModule != 'True') $("#menuUserRight").css('display', 'none');
+            if (isShowDivisionModule != 'True') $("#menuDivision").css('display', 'none');
+            if (isShowTownshipModule != 'True') $("#menuTownship").css('display', 'none');
+            if (isShowCustomerModule != 'True') $("#menuCustomer").css('display', 'none');
+            if (isShowSupplierModule != 'True') $("#menuSupplier").css('display', 'none');
+            if (isShowMainMenuModule != 'True') $("#menuMainMenu").css('display', 'none');
+            if (isShowSubMenuModule != 'True') $("#menuSubMenu").css('display', 'none');
+            if (isShowProductModule != 'True') $("#menuProduct").css('display', 'none');
+            if (isShowBankModule != 'True') $("#menuBank").css('display', 'none');
+            if (isShowBankPaymentModule != 'True') $("#menuBankPayment").css('display', 'none');
+            if (isShowClientModule != 'True') $("#menuClient").css('display', 'none');
+            if (isShowAdjustTypeModule != 'True') $("#menuAdjustType").css('display', 'none');
         }
 
     </script>

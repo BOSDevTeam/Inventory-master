@@ -1,0 +1,70 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+</head>
+<script type="text/javascript">
+
+    if ('@ViewBag.IsTechnician' == 0) setModuleVisibility();
+
+    function setModuleVisibility() {
+        if ('@ViewBag.IsAllowDashboardModule' == 'True') localStorage.setItem('DashboardModule', 'True');
+        else localStorage.setItem('DashboardModule', 'False');
+
+        if ('@ViewBag.IsAllowSaleModule' == 'True') localStorage.setItem('SaleModule', 'True');
+        else localStorage.setItem('SaleModule', 'False');
+
+        if ('@ViewBag.IsAllowClientSaleOrderModule' == 'True') localStorage.setItem('ClientSaleOrderModule', 'True');
+        else localStorage.setItem('ClientSaleOrderModule', 'False');
+
+        if ('@ViewBag.IsAllowSaleOrderModule' == 'True') localStorage.setItem('SaleOrderModule', 'True');
+        else localStorage.setItem('SaleOrderModule', 'False');
+
+        if ('@ViewBag.IsAllowSaleReturnModule' == 'True') localStorage.setItem('SaleReturnModule', 'True');
+        else localStorage.setItem('SaleReturnModule', 'False');
+
+        if ('@ViewBag.IsAllowPurchaseModule' == 'True') localStorage.setItem('PurchaseModule', 'True');
+        else localStorage.setItem('PurchaseModule', 'False');
+
+        if ('@ViewBag.IsAllowPurchaseOrderModule' == 'True') localStorage.setItem('PurchaseOrderModule', 'True');
+        else localStorage.setItem('PurchaseOrderModule', 'False');
+
+        if ('@ViewBag.IsAllowPurchaseReturnModule' == 'True') localStorage.setItem('PurchaseReturnModule', 'True');
+        else localStorage.setItem('PurchaseReturnModule', 'False');
+
+        if ('@ViewBag.IsAllowAdjustmentModule' == 'True') localStorage.setItem('AdjustmentModule', 'True');
+        else localStorage.setItem('AdjustmentModule', 'False');
+
+        if ('@ViewBag.IsAllowTransferModule' == 'True') localStorage.setItem('TransferModule', 'True');
+        else localStorage.setItem('TransferModule', 'False');
+
+        if ('@ViewBag.IsAllowConsignmentModule' == 'True') localStorage.setItem('ConsignmentModule', 'True');
+        else localStorage.setItem('ConsignmentModule', 'False');
+
+        if ('@ViewBag.IsAllowCustomerOpeningModule' == 'True') localStorage.setItem('CustomerOpeningModule', 'True');
+        else localStorage.setItem('CustomerOpeningModule', 'False');
+
+        if ('@ViewBag.IsAllowCustomerOutstandingModule' == 'True') localStorage.setItem('CustomerOutstandingModule', 'True');
+        else localStorage.setItem('CustomerOutstandingModule', 'False');
+
+        if ('@ViewBag.IsAllowSupplierOpeningModule' == 'True') localStorage.setItem('SupplierOpeningModule', 'True');
+        else localStorage.setItem('SupplierOpeningModule', 'False');
+
+        if ('@ViewBag.IsAllowSupplierOutstandingModule' == 'True') localStorage.setItem('SupplierOutstandingModule', 'True');
+        else localStorage.setItem('SupplierOutstandingModule', 'False');
+
+        if ('@ViewBag.IsAllowOpeningStockModule' == 'True') localStorage.setItem('OpeningStockModule', 'True');
+        else localStorage.setItem('OpeningStockModule', 'False');
+
+        if ('@ViewBag.IsAllowStockStatusModule' == 'True') localStorage.setItem('StockStatusModule', 'True');
+        else localStorage.setItem('StockStatusModule', 'False');
+    }
+
+</script>
+
+
+

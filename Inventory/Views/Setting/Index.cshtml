@@ -1,0 +1,58 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+</head>
+
+<script type="text/javascript">
+
+    if ('@ViewBag.IsTechnician' == 0) setModuleVisibility();
+
+    function setModuleVisibility() {       
+        if ('@ViewBag.IsAllowUserModule' == 'True') localStorage.setItem('UserModule', 'True');
+        else localStorage.setItem('UserModule', 'False');
+
+        if ('@ViewBag.IsAllowUserRightModule' == 'True') localStorage.setItem('UserRightModule', 'True');
+        else localStorage.setItem('UserRightModule', 'False');
+
+        if ('@ViewBag.IsAllowDivisionModule' == 'True') localStorage.setItem('DivisionModule', 'True');
+        else localStorage.setItem('DivisionModule', 'False');
+
+        if ('@ViewBag.IsAllowTownshipModule' == 'True') localStorage.setItem('TownshipModule', 'True');
+        else localStorage.setItem('TownshipModule', 'False');
+
+        if ('@ViewBag.IsAllowCustomerModule' == 'True') localStorage.setItem('CustomerModule', 'True');
+        else localStorage.setItem('CustomerModule', 'False');
+
+        if ('@ViewBag.IsAllowSupplierModule' == 'True') localStorage.setItem('SupplierModule', 'True');
+        else localStorage.setItem('SupplierModule', 'False');
+
+        if ('@ViewBag.IsAllowMainMenuModule' == 'True') localStorage.setItem('MainMenuModule', 'True');
+        else localStorage.setItem('MainMenuModule', 'False');
+
+        if ('@ViewBag.IsAllowSubMenuModule' == 'True') localStorage.setItem('SubMenuModule', 'True');
+        else localStorage.setItem('SubMenuModule', 'False');
+
+        if ('@ViewBag.IsAllowProductModule' == 'True') localStorage.setItem('ProductModule', 'True');
+        else localStorage.setItem('ProductModule', 'False');
+
+        if ('@ViewBag.IsAllowBankModule' == 'True') localStorage.setItem('BankModule', 'True');
+        else localStorage.setItem('BankModule', 'False');
+
+        if ('@ViewBag.IsAllowBankPaymentModule' == 'True') localStorage.setItem('BankPaymentModule', 'True');
+        else localStorage.setItem('BankPaymentModule', 'False');
+
+        if ('@ViewBag.IsAllowClientModule' == 'True') localStorage.setItem('ClientModule', 'True');
+        else localStorage.setItem('ClientModule', 'False');
+
+        if ('@ViewBag.IsAllowAdjustTypeModule' == 'True') localStorage.setItem('AdjustTypeModule', 'True');
+        else localStorage.setItem('AdjustTypeModule', 'False');
+    }
+
+</script>
+
+

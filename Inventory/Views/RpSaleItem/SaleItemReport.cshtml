@@ -19,8 +19,8 @@
             }
             setReportTitle('@Resource.SaleItemReport');
  
-            if ('@Model.IsAll' == 'True') filter = '@Resource.All';
-            else if ('@Model.IsCash' == 'True') filter = '@Resource.Cash';
+            if ('@Model.paymentType' == 1) filter = '@Resource.All';
+            else if ('@Model.paymentType' == 2) filter = '@Resource.Cash';
             else filter = '@Resource.Credit';           
             setDefaultFilter('@Model.FromDate.ToShortDateString()', '@Model.ToDate.ToShortDateString()', filter);
         });

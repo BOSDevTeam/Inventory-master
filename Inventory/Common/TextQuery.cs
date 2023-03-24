@@ -20,7 +20,11 @@ namespace Inventory.Common
         public const string adjustTypeQuery = "Select AdjustTypeID,ShortName From SAdjustType";
         public const string divisionQuery = "Select DivisionID,DivisionName From SDivision";
         public const string clientSalePersonQuery = "Select ClientID,ClientName From SClient Where IsSalePerson=1";
-        public const string clientTokenQuery = "Select Token From SClient";
+        public const string clientTokenQuery = "Select Token From SClient";     
+        public const string allUserQuery = "Select UserID,UserName,isnull(IsTechnician,0) AS IsTechnician From SUser Order by IsTechnician";
+        public const string userQuery = "Select UserID,UserName From SUser Where IsTechnician!=1";
+        public const string setupModuleQuery = "Select SetupModuleID,SetupModuleName From SysSetupModule";
+        public const string entryModuleQuery = "Select EntryModuleID,EntryModuleName From SysEntryModule";
 
         public string getSubMenuQuery(int mainMenuId)
         {
@@ -58,11 +62,6 @@ namespace Inventory.Common
             + " From SVoucherSetting Where LocationID=" + locationId;
         }
 
-        //public string deleteSaleQuery(int saleId)
-        //{
-        //    return "Delete From TTranSale Where SaleID=" + saleId + " Delete From TMasterSale Where SaleID=" + saleId + " Delete From TMasterLedger Where TranID=" + saleId +" And AccountCode=" +AppConstants.SaleAccountCode;           
-        //}
-
         public string deleteOpenBillQuery(int openBillId)
         {
             return "Delete From TTranOpenBill Where OpenBillID=" + openBillId + " Delete From TMasterOpenBill Where OpenBillID=" + openBillId;
@@ -90,11 +89,6 @@ namespace Inventory.Common
         public string deleteSaleOrderQuery(int saleOrderId)
         {
             return "Delete From TTranSaleOrder Where SaleOrderID=" + saleOrderId + " Delete From TMasterSaleOrder Where SaleOrderID=" + saleOrderId;
-        }
-
-        public string deletePurchaseQuery(int purchaseId)
-        {
-            return "Delete From TTranPurchase Where PurchaseID=" + purchaseId + " Delete From TMasterPurchase Where PurchaseID=" + purchaseId;
         }
 
         public string deletePurchaseOrderQuery(int purchaseOrderId)
@@ -140,6 +134,18 @@ namespace Inventory.Common
         public string deleteSupplierOpeningQuery(int supplierOpeningId)
         {
             return "Delete From TTranSupplierOpening Where SupplierOpeningID=" + supplierOpeningId + " Delete From TMasterSupplierOpening Where SupplierOpeningID=" + supplierOpeningId + " Delete From TMasterLedger Where TranID=" + supplierOpeningId + " And AccountCode=" + AppConstants.SupplierOpeningAccountCode;
+        }
+
+        public string getSetupModuleQuery(int userId)
+        {
+            return "Select ur.SetupModuleID,SetupModuleName,IsAllow"
+            + " From SSetupUserRight ur Inner Join SysSetupModule sm ON ur.SetupModuleID=sm.SetupModuleID Where UserID=" + userId;
+        }
+
+        public string getEntryModuleQuery(int userId)
+        {
+            return "Select ur.EntryModuleID,EntryModuleName,IsAllow"
+            + " From SEntryUserRight ur Inner Join SysEntryModule sm ON ur.EntryModuleID=sm.EntryModuleID Where UserID=" + userId;
         }
     }
 }

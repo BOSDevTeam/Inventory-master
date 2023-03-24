@@ -88,6 +88,8 @@
                                 <li id="subMenuSaleItemByCustomerRp"><a href="#">@Resource.SaleItemByCustomerReport</a></li>
                                 <li id="subMenuTopSaleItemRp"><a href="#">@Resource.TopSaleItemReport</a></li>
                                 <li id="subMenuBottomSaleItemRp"><a href="#">@Resource.BottomSaleItemReport</a></li>
+                                <li id="subMenuSaleItemProfitRp"><a href="#">@Resource.SaleItemProfitReport</a></li>
+                                <li id="subMenuSaleLogRp"><a href="#">@Resource.SaleLogReport</a></li>
                             </ul>
                             <a href=""><i class="fa fa-flag"></i> <span> @Resource.PurchaseReport </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuPurchaseRpGp">      
@@ -95,7 +97,8 @@
                                 <li id="subMenuPurchaseItemSimpleRp"><a href="#">@Resource.PurchaseItemSimpleReport</a></li>                             
                                 <li id="subMenuPurchaseAuditRp"><a href="#">@Resource.PurchaseAuditReport</a></li>   
                                 <li id="subMenuPurchaseAmountBySupplierRp"><a href="#">@Resource.PurchaseAmountBySupplierReport</a></li>                            
-                                <li id="subMenuPurchaseItemBySupplierRp"><a href="#">@Resource.PurchaseItemBySupplierReport</a></li>                             
+                                <li id="subMenuPurchaseItemBySupplierRp"><a href="#">@Resource.PurchaseItemBySupplierReport</a></li> 
+                                <li id="subMenuPurchaseLogRp"><a href="#">@Resource.PurchaseLogReport</a></li>                            
                             </ul>
                             <a href=""><i class="fa fa-flag"></i> <span> @Resource.AdjustmentReport </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuAdjustmentRpGp">
@@ -152,52 +155,61 @@
                 window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.SaleItemSimpleReport })';
             });
             $('#subMenuSaleItemRp').click(function () {
-                window.location.href = '@Url.Action("SaleItemReportFilter", "RpSaleItem")';
+                window.location.href = '@Url.Action("Filter", "Report", new { reportName = Resource.SaleItemReport} )';
             });
             $('#subMenuSaleAuditRp').click(function () {
-                window.location.href = '@Url.Action("SaleAuditReportFilter", "RpSaleAudit")';
+                window.location.href = '@Url.Action("Filter","Report",new { reportName = Resource.SaleAuditReport})';
             });
             $('#subMenuSaleAmountByCustomerRp').click(function () {
-                window.location.href = '@Url.Action("SaleAmountByCustomerReportFilter", "RpSaleAmountByCustomer")';
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.SaleAmountByCustomerReport})';
             });
             $('#subMenuSaleAmountBySalePersonRp').click(function () {
-                window.location.href = '@Url.Action("SaleAmountBySalePersonReportFilter", "RpSaleAmountBySalePerson")';
+                window.location.href = '@Url.Action("Filter","Report",new { reportName = Resource.SaleAmountBySalePersonReport})';
             });
             $('#subMenuSaleItemByCustomerRp').click(function () {
-                window.location.href = '@Url.Action("SaleItemByCustomerReportFilter", "RpSaleItemByCustomer")';
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.SaleItemByCustomerReport})';
             });
             $('#subMenuTopSaleItemRp').click(function () {
-                window.location.href = '@Url.Action("TopSaleItemReportFilter", "RpTopSaleItem")';
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.TopSaleItemReport})';
             });
             $('#subMenuBottomSaleItemRp').click(function () {
-                window.location.href = '@Url.Action("BottomSaleItemReportFilter", "RpBottomSaleItem")';
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.BottomSaleItemReport})';
             });
             $('#subMenuPurchaseAmountOnlyRp').click(function () {
                 window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.PurchaseAmountOnlyReport })';
             });
             $('#subMenuPurchaseItemSimpleRp').click(function () {
-                window.location.href = '@Url.Action("PurchaseItemSimpleReportFilter", "RpPurchaseItemSimple")';
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.PurchaseItemSimpleReport})';
             });
             $('#subMenuPurchaseAuditRp').click(function () {
-                window.location.href = '@Url.Action("PurchaseAuditReportFilter", "RpPurchaseAudit")';
+                window.location.href = '@Url.Action("Filter", "Report", new { reportName = Resource.PurchaseAuditReport})';
             });
             $('#subMenuPurchaseAmountBySupplierRp').click(function () {
-                window.location.href = '@Url.Action("PurchaseAmountBySupplierReportFilter", "RpPurchaseAmountBySupplier")';
+                window.location.href = '@Url.Action("Filter", "Report", new { reportName = Resource.PurchaseAmountBySupplierReport})';
             });
             $('#subMenuPurchaseItemBySupplierRp').click(function () {
-                window.location.href = '@Url.Action("PurchaseItemBySupplierReportFilter", "RpPurchaseItemBySupplier")';
+                window.location.href = '@Url.Action("Filter", "Report", new { reportName = Resource.PurchaseItemBySupplierReport})';
             });
             $('#subMenuAdjustmentVoucherRp').click(function () {
-                window.location.href = '@Url.Action("AdjustmentVoucherReportFilter", "RpAdjustmentVoucher")';
+                window.location.href = '@Url.Action("Filter", "Report", new { reportName = Resource.AdjustmentVoucherReport })';
             });
             $('#subMenuAdjustmentItemRp').click(function () {
-                window.location.href = '@Url.Action("AdjustmentItemReportFilter", "RpAdjustmentItem")';
+                window.location.href = '@Url.Action("Filter", "Report", new { reportName = Resource.AdjustmentItemReport } )';
             });
             $('#subMenuTransferVoucherRp').click(function () {
-                window.location.href = '@Url.Action("TransferVoucherReportFilter", "RpTransferVoucher")';
+                window.location.href = '@Url.Action("Filter", "Report", new { reportName = Resource.TransferVoucherReport })';
             });
             $('#subMenuTransferItemRp').click(function () {
-                window.location.href = '@Url.Action("TransferItemReportFilter", "RpTransferItem")';
+                window.location.href = '@Url.Action("Filter", "Report", new { reportName = Resource.TransferItemReport})';
+            });
+            $('#subMenuSaleItemProfitRp').click(function () {
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.SaleItemProfitReport })';
+            });
+            $('#subMenuSaleLogRp').click(function () {
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.SaleLogReport })';
+            });
+            $('#subMenuPurchaseLogRp').click(function () {
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.PurchaseLogReport })';
             });
             $('.toast').toast({
                 delay: 3000

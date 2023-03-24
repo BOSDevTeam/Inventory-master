@@ -15,5 +15,6 @@ namespace Inventory.ViewModels
         public bool IsShowMenuFilter { get; set; }
         public bool IsShowPaymentFilter { get; set; }
         public bool IsShowUserClientFilter { get; set; }
+        public bool IsShowLogFilter { get; set; }
     }
 }

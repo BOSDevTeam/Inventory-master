@@ -37,7 +37,7 @@ namespace Inventory.Controllers
         public ActionResult SaleItemSimpleReport(DateTime FromDate,DateTime ToDate)
         {
             try
-            {
+            {               
                 string getVal = Request.QueryString["SubMenuID"];
                 string concat = @"{""data"":" + getVal + "}";
                 ValList vl = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);

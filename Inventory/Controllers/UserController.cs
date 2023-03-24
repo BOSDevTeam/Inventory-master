@@ -17,6 +17,7 @@ namespace Inventory.Controllers
         static List<UserModels.UserModel> lstUserList = new List<UserModels.UserModel>();    
         DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
         Procedure procedure = new Procedure();
+        AppSetting setting = new AppSetting();
 
         public ActionResult ChangeLanguage(string lang)
         {
@@ -26,55 +27,83 @@ namespace Inventory.Controllers
 
         public ActionResult Login()
         {
-            getAllUser();
+            Session["LstUser"] = getLoginUser();
             return View(model);
         }
 
-        [HttpPost]
-        public ActionResult Login(int userId, string userPassword, string userName,bool clickedLogin)
+        [HttpGet]
+        public JsonResult LoginAction(int userId, string userName, string userPassword)
         {
-            if (clickedLogin)
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            short result = 0, isTechnician = 0;
+            bool isMultiCurrency = false, isMultiUnit = false, isBankPayment = false;
+            int tax = 0, serviceCharges = 0;
+
+            if (Session["LstUser"] != null)
             {
-                int result = -1;
-                if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-                SqlCommand cmd = new SqlCommand(Procedure.PrcValidateUser, (SqlConnection)Session["SQLConnection"]);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@UserID", userId);
-                cmd.Parameters.AddWithValue("@UserPassword", userPassword);
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
+                try
                 {
-                    result = Convert.ToInt16(reader[0]);
-                    switch (result)
+                    List<UserModels.UserModel> lstUser = Session["LstUser"] as List<UserModels.UserModel>;
+                    UserModels.UserModel userModel = lstUser.Where(x => x.UserID == userId).Where(x => x.UserName == userName).SingleOrDefault();
+
+                    setting.conn.Open();
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcValidateUser, setting.conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@UserName", userName);
+                    cmd.Parameters.AddWithValue("@UserPassword", userPassword);
+                    cmd.Connection = setting.conn;
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
                     {
-                        case 1:
-                            Session["LoginUserID"] = userId;
-                            Session["LoginUserName"] = userName;                        
-                            Session["IsMultiCurrency"] = Convert.ToBoolean(reader["IsMultiCurrency"]);
-                            Session["IsMultiUnit"] = Convert.ToBoolean(reader["IsMultiUnit"]);                          
-                            Session["IsBankPayment"] = Convert.ToBoolean(reader["IsBankPayment"]);
-                            Session["Tax"] = Convert.ToInt32(reader["Tax"]);
-                            Session["ServiceCharges"] = Convert.ToInt32(reader["ServiceCharges"]);
-                            reader.Close();
-                            dataConnectorSQL.Close();
-                            return RedirectToAction("Dashboard", "Home");
-
-                        case -1:
-                            ViewBag.Message = "Password is incorrect.";
-                            break;
-
-                        default: break;
+                        result = Convert.ToInt16(reader[0]);
+                        switch (result)
+                        {
+                            case 1:
+                                Session["LoginUserID"] = userId;
+                                Session[AppConstants.SQLConnection] = dataConnectorSQL.Connect();
+                                isTechnician = userModel.IsTechnician;
+                                isMultiCurrency = Convert.ToBoolean(reader["IsMultiCurrency"]);
+                                isMultiUnit = Convert.ToBoolean(reader["IsMultiUnit"]);
+                                isBankPayment = Convert.ToBoolean(reader["IsBankPayment"]);
+                                tax = Convert.ToInt32(reader["Tax"]);
+                                serviceCharges = Convert.ToInt32(reader["ServiceCharges"]);
+                                resultDefaultData.IsRequestSuccess = true;
+                                break;
+                            case 0:
+                                resultDefaultData.Message = "Invalid User!";
+                                break;
+                            default: break;
+                        }
                     }
+                    reader.Close();
+                    setting.conn.Close();
+
                 }
-                reader.Close();
-                dataConnectorSQL.Close();
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
             }
-            getAllUser();
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
-            return View(model);
+            var jsonResult = new
+            {
+                ResultDefaultData = resultDefaultData,
+                UserID = userId,
+                UserName = userName,
+                IsTechnician = isTechnician,
+                isMultiCurrency = isMultiCurrency,
+                isMultiUnit = isMultiUnit,
+                isBankPayment = isBankPayment,
+                Tax = tax,
+                ServiceCharges = serviceCharges
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
-
-        public ActionResult UserEntry(int userId)
+       
+        public ActionResult UserEntry(int userId,short? isTechnician)
         {                  
             if (userId != 0)
             {
@@ -99,10 +128,16 @@ namespace Inventory.Controllers
                 Session["IsEdit"] = 0;              
                 getAllLocation();               
             }
+            if (isTechnician == 1)
+            {
+                model.IsTechnician = 1;
+                model.Layout = "~/Views/Shared/_LayoutTechnicianSetting.cshtml";
+            }
+            else model.Layout = "~/Views/Shared/_LayoutSetting.cshtml";
             return View(model);
         }
 
-        public ActionResult UserList()
+        public ActionResult UserList(short? isTechnician)
         {                    
             UserModels.UserModel userModel = new UserModels.UserModel();
             model.LstUser = new List<UserModels.UserModel>();
@@ -128,7 +163,12 @@ namespace Inventory.Controllers
             }
             reader.Close();
             dataConnectorSQL.Close();
-
+            if (isTechnician == 1)
+            {
+                model.IsTechnician = 1;
+                model.Layout = "~/Views/Shared/_LayoutTechnicianSetting.cshtml";
+            }
+            else model.Layout = "~/Views/Shared/_LayoutSetting.cshtml";
             return View(model);
         }       
 
@@ -243,16 +283,28 @@ namespace Inventory.Controllers
             reader.Close();
             dataConnectorSQL.Close();          
         }     
-      
-        private void getAllUser()
+
+        private List<UserModels.UserModel> getLoginUser()
         {
-            if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
-            SqlCommand cmd = new SqlCommand("Select UserID,UserName From SUser", (SqlConnection)Session["SQLConnection"]);
+            List<UserModels.UserModel> lstUser = new List<UserModels.UserModel>();
+            UserModels.UserModel userModel = new UserModels.UserModel();
+
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(TextQuery.allUserQuery, setting.conn);
             cmd.CommandType = CommandType.Text;
+            cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read()) model.Users.Add(new SelectListItem { Text = Convert.ToString(reader["UserName"]), Value = Convert.ToString(reader["UserID"]) });
-            reader.Close();
-            dataConnectorSQL.Close();              
-        }                 
+            while (reader.Read())
+            {
+                userModel = new UserModels.UserModel();
+                userModel.UserID = Convert.ToInt32(reader["UserID"]);
+                userModel.UserName = Convert.ToString(reader["UserName"]);
+                userModel.IsTechnician = Convert.ToInt16(reader["IsTechnician"]);
+                lstUser.Add(userModel);
+            }
+            reader.Close();         
+            setting.conn.Close();
+            return lstUser;
+        }     
     }
 }

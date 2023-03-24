@@ -23,27 +23,44 @@ namespace Inventory.Controllers
         {
             return View();
         }
-
         [SessionTimeoutAttribute]
-        public ActionResult SaleItemReport(DateTime fromDate,DateTime toDate, bool isAll, bool isCash,bool isCredit)
+        public ActionResult SaleItemReport(DateTime fromDate, DateTime toDate, int paymentType)
         {
             try
             {
-                List<RpSaleItemViewModel.MasterSaleViewModel> lstSaleItemRpt = GetSaleItemReport(fromDate, toDate, isAll, isCash, isCredit);
+                List<RpSaleItemViewModel.MasterSaleViewModel> lstSaleItemRpt = GetSaleItemReport(fromDate, toDate, paymentType);
                 saleItemViewModel.lstMasterSaleRpt = lstSaleItemRpt;
                 saleItemViewModel.FromDate = fromDate;
                 saleItemViewModel.ToDate = toDate;
-                saleItemViewModel.IsAll = isAll;
-                saleItemViewModel.IsCash = isCash;
-                saleItemViewModel.IsCredit = isCredit;
+                saleItemViewModel.paymentType = paymentType;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ViewBag.ErrorMessage = ex.Message;
-            }                   
+            }
             return View(saleItemViewModel);
         }
-        public List<RpSaleItemViewModel.MasterSaleViewModel>GetSaleItemReport(DateTime fromDate,DateTime toDate,bool isAll,bool isCash,bool isCredit)
+
+        //[SessionTimeoutAttribute]
+        //public ActionResult SaleItemReport(DateTime fromDate,DateTime toDate, bool isAll, bool isCash,bool isCredit)
+        //{
+        //    try
+        //    {
+        //        List<RpSaleItemViewModel.MasterSaleViewModel> lstSaleItemRpt = GetSaleItemReport(fromDate, toDate, isAll, isCash, isCredit);
+        //        saleItemViewModel.lstMasterSaleRpt = lstSaleItemRpt;
+        //        saleItemViewModel.FromDate = fromDate;
+        //        saleItemViewModel.ToDate = toDate;
+        //        saleItemViewModel.IsAll = isAll;
+        //        saleItemViewModel.IsCash = isCash;
+        //        saleItemViewModel.IsCredit = isCredit;
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        ViewBag.ErrorMessage = ex.Message;
+        //    }                   
+        //    return View(saleItemViewModel);
+        //}
+        public List<RpSaleItemViewModel.MasterSaleViewModel>GetSaleItemReport(DateTime fromDate,DateTime toDate,int paymentType)
         {
             string code = "", productName = "", unitKeyword = "";
             int unitID = 0;
@@ -55,9 +72,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@fromDate", fromDate);
             cmd.Parameters.AddWithValue("@toDate", toDate);
-            cmd.Parameters.AddWithValue("@isAll", isAll);
-            cmd.Parameters.AddWithValue("@isCash", isCash);
-            cmd.Parameters.AddWithValue("@isCredit", isCredit);
+            cmd.Parameters.AddWithValue("@paymentType", paymentType);           
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

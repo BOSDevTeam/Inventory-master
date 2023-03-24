@@ -595,5 +595,27 @@ namespace Inventory.Common
             setting.conn.Close();
             return list;
         }
+
+        public List<UserModels.UserModel> selectUser()
+        {
+            List<UserModels.UserModel> list = new List<UserModels.UserModel>();
+            UserModels.UserModel item;
+
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(TextQuery.userQuery, setting.conn);
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new UserModels.UserModel();
+                item.UserID = Convert.ToInt32(reader["UserID"]);
+                item.UserName = Convert.ToString(reader["UserName"]);
+                list.Add(item);
+            }
+            reader.Close();
+            setting.conn.Close();
+            return list;
+        }
     }
 }

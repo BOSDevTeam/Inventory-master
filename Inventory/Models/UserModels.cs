@@ -36,6 +36,8 @@ namespace Inventory.Models
             [Required(ErrorMessage = "Please enter Password.")]
             [DataType(DataType.Password)]
             public string AdminPassword { get; set; }
+            public string Layout { get; set; }
+            public short IsTechnician { get; set; }
         }
     }
 }

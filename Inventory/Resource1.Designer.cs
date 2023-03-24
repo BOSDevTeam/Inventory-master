@@ -61,6 +61,24 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Access All.
+        /// </summary>
+        public static string AccessAll {
+            get {
+                return ResourceManager.GetString("AccessAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Access All Module.
+        /// </summary>
+        public static string AccessAllModule {
+            get {
+                return ResourceManager.GetString("AccessAllModule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Account Opening.
         /// </summary>
         public static string AccountOpening {
@@ -241,6 +259,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Adjust Type.
+        /// </summary>
+        public static string AdjustType {
+            get {
+                return ResourceManager.GetString("AdjustType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Advanced Pay.
         /// </summary>
         public static string AdvancedPay {
@@ -363,6 +390,15 @@ namespace Inventory {
         public static string BankPay {
             get {
                 return ResourceManager.GetString("BankPay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bank Payment.
+        /// </summary>
+        public static string BankPayment {
+            get {
+                return ResourceManager.GetString("BankPayment", resourceCulture);
             }
         }
         
@@ -511,6 +547,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Company Setting.
+        /// </summary>
+        public static string CompanySetting {
+            get {
+                return ResourceManager.GetString("CompanySetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Consignment.
         /// </summary>
         public static string Consignment {
@@ -646,6 +691,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string Delete {
+            get {
+                return ResourceManager.GetString("Delete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Detail.
         /// </summary>
         public static string Detail {
@@ -709,6 +763,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Qty.
+        /// </summary>
+        public static string EditQty {
+            get {
+                return ResourceManager.GetString("EditQty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter a Note.
         /// </summary>
         public static string EnterNote {
@@ -732,6 +795,24 @@ namespace Inventory {
         public static string EnterSaleVoucherNo {
             get {
                 return ResourceManager.GetString("EnterSaleVoucherNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entry Module Access.
+        /// </summary>
+        public static string EntryModuleAccess {
+            get {
+                return ResourceManager.GetString("EntryModuleAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entry User.
+        /// </summary>
+        public static string EntryUser {
+            get {
+                return ResourceManager.GetString("EntryUser", resourceCulture);
             }
         }
         
@@ -768,6 +849,15 @@ namespace Inventory {
         public static string FromLocation {
             get {
                 return ResourceManager.GetString("FromLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to General Setting.
+        /// </summary>
+        public static string GeneralSetting {
+            get {
+                return ResourceManager.GetString("GeneralSetting", resourceCulture);
             }
         }
         
@@ -925,6 +1015,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log Filter.
+        /// </summary>
+        public static string LogFilter {
+            get {
+                return ResourceManager.GetString("LogFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         public static string Login {
@@ -952,6 +1051,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Main Menu.
+        /// </summary>
+        public static string MainMenu {
+            get {
+                return ResourceManager.GetString("MainMenu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Menu Filter.
         /// </summary>
         public static string MenuFilter {
@@ -961,11 +1069,29 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Module Access.
+        /// </summary>
+        public static string ModuleAccess {
+            get {
+                return ResourceManager.GetString("ModuleAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to My Profile.
         /// </summary>
         public static string MyProfile {
             get {
                 return ResourceManager.GetString("MyProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New.
+        /// </summary>
+        public static string New {
+            get {
+                return ResourceManager.GetString("New", resourceCulture);
             }
         }
         
@@ -1060,6 +1186,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Orginal Qty.
+        /// </summary>
+        public static string OrginalQty {
+            get {
+                return ResourceManager.GetString("OrginalQty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Outstanding.
         /// </summary>
         public static string Outstanding {
@@ -1119,6 +1254,15 @@ namespace Inventory {
         public static string Payment {
             get {
                 return ResourceManager.GetString("Payment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Payment Filter.
+        /// </summary>
+        public static string PaymentFilter {
+            get {
+                return ResourceManager.GetString("PaymentFilter", resourceCulture);
             }
         }
         
@@ -1267,6 +1411,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Purchase Log Report.
+        /// </summary>
+        public static string PurchaseLogReport {
+            get {
+                return ResourceManager.GetString("PurchaseLogReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Purchase Order.
         /// </summary>
         public static string PurchaseOrder {
@@ -1339,6 +1492,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Report Module Access.
+        /// </summary>
+        public static string ReportModuleAccess {
+            get {
+                return ResourceManager.GetString("ReportModuleAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reports.
         /// </summary>
         public static string Reports {
@@ -1353,6 +1515,24 @@ namespace Inventory {
         public static string Reset {
             get {
                 return ResourceManager.GetString("Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Return by Product.
+        /// </summary>
+        public static string ReturnByProduct {
+            get {
+                return ResourceManager.GetString("ReturnByProduct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Return by Voucher.
+        /// </summary>
+        public static string ReturnByVoucher {
+            get {
+                return ResourceManager.GetString("ReturnByVoucher", resourceCulture);
             }
         }
         
@@ -1447,6 +1627,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sale Item Profit Report.
+        /// </summary>
+        public static string SaleItemProfitReport {
+            get {
+                return ResourceManager.GetString("SaleItemProfitReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sale Item Report.
         /// </summary>
         public static string SaleItemReport {
@@ -1470,6 +1659,15 @@ namespace Inventory {
         public static string SaleList {
             get {
                 return ResourceManager.GetString("SaleList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sale Log Report.
+        /// </summary>
+        public static string SaleLogReport {
+            get {
+                return ResourceManager.GetString("SaleLogReport", resourceCulture);
             }
         }
         
@@ -1555,6 +1753,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select User.
+        /// </summary>
+        public static string SelectUser {
+            get {
+                return ResourceManager.GetString("SelectUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Session Expired.
         /// </summary>
         public static string SessionExpired {
@@ -1569,6 +1776,15 @@ namespace Inventory {
         public static string Settings {
             get {
                 return ResourceManager.GetString("Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Setup Module Access.
+        /// </summary>
+        public static string SetupModuleAccess {
+            get {
+                return ResourceManager.GetString("SetupModuleAccess", resourceCulture);
             }
         }
         
@@ -1596,6 +1812,15 @@ namespace Inventory {
         public static string StockStatusByLocation {
             get {
                 return ResourceManager.GetString("StockStatusByLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sub Menu.
+        /// </summary>
+        public static string SubMenu {
+            get {
+                return ResourceManager.GetString("SubMenu", resourceCulture);
             }
         }
         
@@ -1686,6 +1911,15 @@ namespace Inventory {
         public static string Tax {
             get {
                 return ResourceManager.GetString("Tax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Technician Settings.
+        /// </summary>
+        public static string TechnicianSettings {
+            get {
+                return ResourceManager.GetString("TechnicianSettings", resourceCulture);
             }
         }
         
@@ -1906,6 +2140,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Updated User.
+        /// </summary>
+        public static string UpdatedUser {
+            get {
+                return ResourceManager.GetString("UpdatedUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User.
         /// </summary>
         public static string User {
@@ -1920,6 +2163,15 @@ namespace Inventory {
         public static string UserClientSalePersonFilter {
             get {
                 return ResourceManager.GetString("UserClientSalePersonFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Right.
+        /// </summary>
+        public static string UserRight {
+            get {
+                return ResourceManager.GetString("UserRight", resourceCulture);
             }
         }
         
@@ -1969,6 +2221,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Voucher Format.
+        /// </summary>
+        public static string VoucherFormat {
+            get {
+                return ResourceManager.GetString("VoucherFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to VoucherID.
         /// </summary>
         public static string VoucherID {
@@ -1983,6 +2244,15 @@ namespace Inventory {
         public static string VoucherNo {
             get {
                 return ResourceManager.GetString("VoucherNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Voucher Setting.
+        /// </summary>
+        public static string VoucherSetting {
+            get {
+                return ResourceManager.GetString("VoucherSetting", resourceCulture);
             }
         }
         

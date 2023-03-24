@@ -45,8 +45,8 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    if (!response.ResultDefaultData.IsRequestSuccess) responseUnSuccessful(response);                    
-                    else createCustomerOutstandingPaymentData(response.List, true);                    
+                    if (!response.ResultDefaultData.IsRequestSuccess) responseUnSuccessful(response);
+                    else createCustomerOutstandingPaymentData(response.List, true);
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -84,8 +84,8 @@
                         responseUnSuccessful(response);
                     else {
                         $('#modalOverDueDetail').modal('show');
-                        $('#lblCustomer').text(customerName);                       
-                        createCustomerOutstandingOverDueDetail(response.List);                       
+                        $('#lblCustomer').text(customerName);
+                        createCustomerOutstandingOverDueDetail(response.List);
                     }
                 },
                 failure: function (response) {
@@ -101,13 +101,14 @@
 
     });
 
-    localStorage.setItem("UserID", '@Session["LoginUserID"]');
+    @*localStorage.setItem("UserID", '@Session["LoginUserID"]');
     localStorage.setItem("UserName", '@Session["LoginUserName"]');
+    localStorage.setItem("IsTechnician", '@Session["IsTechnician"]');
     localStorage.setItem("IsMultiCurrency", '@Session["IsMultiCurrency"]');
     localStorage.setItem("IsMultiUnit", '@Session["IsMultiUnit"]');
     localStorage.setItem("IsBankPayment", '@Session["IsBankPayment"]');
     localStorage.setItem("Tax", '@Session["Tax"]');
-    localStorage.setItem("Charges", '@Session["ServiceCharges"]');
+    localStorage.setItem("Charges", '@Session["ServiceCharges"]');*@
 
     function initializeControl() {
         $('#inputDate').val(getTodayDate());
@@ -132,14 +133,14 @@
                     + '</tr>';
             $('#tblCustomerOutstandingPayment tbody').append(row);
         })
-      
+
         if (hasData) $('#divNoPayment').css('display', 'none');
         else $('#divNoPayment').show();
     }
 
-    function createCustomerOutstandingOverDueDetail(response) {      
+    function createCustomerOutstandingOverDueDetail(response) {
         $("#tblCustomerOutstandingOverDueDetail").find("tbody").empty();
-        $.each(response, function (i, item) {         
+        $.each(response, function (i, item) {
             let row = '<tr class="row table-item align-center">'
                     + '<td class="col-md-3 col-lg-3">' + item.DateTime + '</td>'
                     + '<td class="col-md-3 col-lg-3">' + item.UserVoucherNo + '</td>'
@@ -148,7 +149,7 @@
                     + '<td class="col-md-2 col-lg-2 aligh-right" style="color:#ef7971">' + 'late by ' + item.OverDueDay + ' days' + '</td>'
                     + '</tr>';
             $('#tblCustomerOutstandingOverDueDetail tbody').append(row);
-        })    
+        })
     }
 
     function listTableAction(value) {

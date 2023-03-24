@@ -31,14 +31,11 @@
                 <div class="account-box">                  
                     <div class="account-logo">
                         <a href="#"><img src="~/assets/img/logo-dark.png" alt=""></a>
-                    </div> 
-                    @using (Html.BeginForm("Login", "User", FormMethod.Post))
-                    {                      
+                    </div>                                         
                         <div class="row" style="padding:10px 30px 0 30px">
                             <div class="col-md-12 col-sm-12">
-                                <div class="form-group">
-                                    @Html.HiddenFor(m => m.UserName)
-                                    @Html.DropDownListFor(m => m.UserID, Model.Users, new { @class = "form-control" })
+                                <div class="form-group">                                  
+                                    @Html.DropDownList("User", Model.Users, new { @id = "ddlUser", @class = "form-control control-input" })                                    
                                 </div>
                             </div>
                         </div>
@@ -53,41 +50,11 @@
                         </div>
 
                         <div class="row" style="padding:30px 30px 0 30px">
-                            <div class="col-md-12 col-sm-12">
-                                @Html.HiddenFor(m => m.ClickedLogin)
+                            <div class="col-md-12 col-sm-12">                             
                                 <button id="btnLogin" class="btn btn-lg btn-block btn-first">@Resource.Login</button>
                             </div>
                         </div>
-
-                    }
-
-                    @*<div class="row">
-                        <div class="col-md-12 col-sm-12" style="align-self:center;width:100%;text-align:center;padding-top:30px">
-                            @{
-                                foreach (var i in Inventory.LanguageMang.AvailableLanguages)
-                                {
-                                    @Html.ActionLink(i.LanguageFullName, "ChangeLanguage", "User", new { lang = i.LanguageCultureName }, null) <text> </text>
-                                }
-                            }
-                        </div>
-                    </div>*@   
-                    @*<div class="form-group">
-                        <label>Username</label>
-                        <input type="text" class="form-control">
-                    </div>            
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" class="form-control">
-                    </div>
-                    <div class="form-group text-right">
-                        <a href="~/User/ForgotPassword">Forgot your password?</a>
-                    </div>
-                    <div class="form-group text-center">
-                        <button id="btnLogin" class="btn btn-success account-btn">Login</button>
-                    </div>
-                    <div class="text-center register-link">
-                        Don’t have an account? <a href="#">Register Now</a>
-                    </div>*@                  
+                                           
                 </div>
             </div>
         </div>
@@ -99,26 +66,72 @@
     <script src="~/assets/js/select2.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/Site.js"></script>
     <script type="text/javascript">
 
         $(document).ready(function () {
-            $("#UserID").change(function () {
-                var userName = $("#UserID option:selected").text();
-                $("#UserName").val(userName);
-            });
+
+            createUser();
 
             $("#btnLogin").click(function () {
-                var userName = $("#UserID option:selected").text();
-                $("#UserName").val(userName);
-                $("#ClickedLogin").val(true);
+                let userId = $("#ddlUser option:selected").val();
+                let userName = $("#ddlUser option:selected").text();
+                let password = $("#UserPassword").val();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("LoginAction", "User")',
+                    data: { "userId": userId, "userName": userName, "userPassword": password },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess) {
+                            if (response.ResultDefaultData.UnSuccessfulReason == '@Inventory.Common.AppConstants.RequestUnSuccessful.SessionExpired') {
+                                alert('@Resource.SessionExpired');
+                                location.reload();
+                            } else {
+                                alert(response.ResultDefaultData.Message);
+                            }
+                        }
+                        else {
+                            localStorage.setItem("UserID", response.UserID);
+                            localStorage.setItem("UserName", response.UserName);
+                            localStorage.setItem("IsTechnician", response.IsTechnician);
+                            localStorage.setItem("IsMultiCurrency", response.isMultiCurrency);
+                            localStorage.setItem("IsMultiUnit", response.isMultiUnit);
+                            localStorage.setItem("IsBankPayment", response.isBankPayment);
+                            localStorage.setItem("Tax", response.Tax);
+                            localStorage.setItem("Charges", response.ServiceCharges);
+
+                            let isTechnician = localStorage.getItem("IsTechnician");
+                            let userId = localStorage.getItem("UserID");
+                            if(isTechnician == 1)window.location.href = '@Url.Action("Dashboard", "Home")';
+                            else window.location.href = '@Url.Action("Index", "Entry")?userId=' + userId + '&isTechnician=' + isTechnician;
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
             });
 
-            $(".alert").delay(4000).slideUp(200, function () {
-                $(this).alert('close');
-                $("#ClickedLogin").val(false);
-            });
+        })
 
-        }) 
+        function createUser() {
+            let response = JSON.parse('@Html.Raw(Json.Encode(Session["LstUser"]))');
+            let user;
+            $("#ddlUser").html("");
+            for (var i = 0; i < response.length; i++) {
+                user += '<option value="' + response[i].UserID + '">' + response[i].UserName + '</option>';
+            }
+            $("#ddlUser").append(user);
+        }
 
     </script>
 

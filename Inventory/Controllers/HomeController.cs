@@ -13,10 +13,10 @@ namespace Inventory.Controllers
     public class HomeController : MyController
     {
         AppSetting setting = new AppSetting();
-        HomeViewModel homeViewModel = new HomeViewModel();
+        HomeViewModel homeViewModel = new HomeViewModel();      
 
         public ActionResult Dashboard()
-        {
+        {           
             selectDashboardData(setting.getLocalDate());
             ViewBag.Month = setting.getCurrentMonthName();
             homeViewModel.lstTopSaleProduct = selectTopSaleProduct(setting.getCurrentMonth());

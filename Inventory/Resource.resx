@@ -765,4 +765,94 @@
   <data name="NoPaymentMessage" xml:space="preserve">
     <value>Not found payment for selected day.</value>
   </data>
+  <data name="ReturnByProduct" xml:space="preserve">
+    <value>Return by Product</value>
+  </data>
+  <data name="ReturnByVoucher" xml:space="preserve">
+    <value>Return by Voucher</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="EditQty" xml:space="preserve">
+    <value>Edit Qty</value>
+  </data>
+  <data name="EntryUser" xml:space="preserve">
+    <value>Entry User</value>
+  </data>
+  <data name="LogFilter" xml:space="preserve">
+    <value>Log Filter</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="OrginalQty" xml:space="preserve">
+    <value>Orginal Qty</value>
+  </data>
+  <data name="PaymentFilter" xml:space="preserve">
+    <value>Payment Filter</value>
+  </data>
+  <data name="PurchaseLogReport" xml:space="preserve">
+    <value>Purchase Log Report</value>
+  </data>
+  <data name="SaleItemProfitReport" xml:space="preserve">
+    <value>Sale Item Profit Report</value>
+  </data>
+  <data name="SaleLogReport" xml:space="preserve">
+    <value>Sale Log Report</value>
+  </data>
+  <data name="UpdatedUser" xml:space="preserve">
+    <value>Updated User</value>
+  </data>
+  <data name="TechnicianSettings" xml:space="preserve">
+    <value>Technician Settings</value>
+  </data>
+  <data name="GeneralSetting" xml:space="preserve">
+    <value>General Setting</value>
+  </data>
+  <data name="MainMenu" xml:space="preserve">
+    <value>Main Menu</value>
+  </data>
+  <data name="SubMenu" xml:space="preserve">
+    <value>Sub Menu</value>
+  </data>
+  <data name="AdjustType" xml:space="preserve">
+    <value>Adjust Type</value>
+  </data>
+  <data name="BankPayment" xml:space="preserve">
+    <value>Bank Payment</value>
+  </data>
+  <data name="CompanySetting" xml:space="preserve">
+    <value>Company Setting</value>
+  </data>
+  <data name="UserRight" xml:space="preserve">
+    <value>User Right</value>
+  </data>
+  <data name="VoucherFormat" xml:space="preserve">
+    <value>Voucher Format</value>
+  </data>
+  <data name="VoucherSetting" xml:space="preserve">
+    <value>Voucher Setting</value>
+  </data>
+  <data name="AccessAll" xml:space="preserve">
+    <value>Access All</value>
+  </data>
+  <data name="AccessAllModule" xml:space="preserve">
+    <value>Access All Module</value>
+  </data>
+  <data name="EntryModuleAccess" xml:space="preserve">
+    <value>Entry Module Access</value>
+  </data>
+  <data name="ModuleAccess" xml:space="preserve">
+    <value>Module Access</value>
+  </data>
+  <data name="ReportModuleAccess" xml:space="preserve">
+    <value>Report Module Access</value>
+  </data>
+  <data name="SelectUser" xml:space="preserve">
+    <value>Select User</value>
+  </data>
+  <data name="SetupModuleAccess" xml:space="preserve">
+    <value>Setup Module Access</value>
+  </data>
 </root>

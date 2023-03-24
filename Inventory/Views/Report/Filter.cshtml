@@ -38,34 +38,85 @@
             }
         </div>
     }
+    @if (Model.IsShowPaymentFilter)
+    {
+        <div>
+            @{ 
+                Html.RenderPartial("_PaymentFilter");
+            }
+        </div>
+    }
+    @if (Model.IsShowUserClientFilter)
+    {
+        <div>
+            @{ 
+                Html.RenderPartial("_SalePersonFilter");
+            }
+        </div>
+    }           
 
 </div>
 
 <script type="text/javascript">
+    let paymentType = 1;
+    var isShowPayment = false, isShowMenu = false,isShowUserClient=false;
+    var subMenuIDArray = [];
+    var lstUserID = [], lstClientID = [];
     $(function () {
 
         $('#btnViewReport').click(function () {
             let fromDate = $('#inputFromDate').val();
             let toDate = $('#inputToDate').val();
-            window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate;
+            if (isShowPayment==true)
+            {
+                window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate +'&paymentType=' + paymentType;
+            }
+            else if (isShowMenu == true) {
+                //$("#divMenuFilter").load("#divMenuFilter");
+                window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate + '&SubMenuID=' + JSON.stringify(subMenuIDArray);               
+            }
+            else if (isShowUserClient == true) {
+                window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate + '&lstUserID=' + JSON.stringify(lstUserID) + '&lstClientID=' + JSON.stringify(lstClientID);
+            }
+            else
+            {
+                window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate;
+            }
+
         })
 
         $(document).ready(function () {
 
             initializeControl();
-
             function initializeControl() {
                 $('#inputFromDate').val(getTodayDate());
                 $('#inputToDate').val(getTodayDate());
+                isShowPayment = '@ViewBag.isShowPayment';
+                isShowMenu = '@ViewBag.isShowMenu';
+                if (isShowMenu == true) {
+                    let menuList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.MenuData))');
+                    createMenuFilter(menuList);
+                }
+                isShowUserClient = '@ViewBag.isShowUserClient';
+                if (isShowUserClient == true) {
+                    let userList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.UserData))');
+                    let clientList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ClientData))');
+                    createSalePersonFilter(userList, clientList);
+                }
             }
 
             $('#sidebar-menu a').on('click', function (e) {
                 if ($(this).parent().hasClass('submenu')) {
                     e.preventDefault();
-                    let inputHidHtmlGroupElementID = $('#inputHidHtmlGroupElementID').val();                
+                    let inputHidHtmlGroupElementID = $('#inputHidHtmlGroupElementID').val();
                     document.getElementById(inputHidHtmlGroupElementID).className = 'none';
-                }               
+                }
             });
+            $("input[name='rdoPayType']").change(function (e) {
+                let target = e.target;
+                paymentType = target.value;
+            })
+
         })
     })
 </script>
