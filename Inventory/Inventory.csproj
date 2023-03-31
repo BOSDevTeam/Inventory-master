@@ -209,6 +209,7 @@
     <Compile Include="Controllers\RpSaleItemProfitController.cs" />
     <Compile Include="Controllers\RpSaleItemSimpleController.cs" />
     <Compile Include="Controllers\RpSaleLogController.cs" />
+    <Compile Include="Controllers\RpStockStatusByModuleController.cs" />
     <Compile Include="Controllers\RpTopSaleItemController.cs" />
     <Compile Include="Controllers\RpTransferItemController.cs" />
     <Compile Include="Controllers\RpTransferVoucherController.cs" />
@@ -259,6 +260,7 @@
     <Compile Include="Models\CurrencyModels.cs" />
     <Compile Include="Models\CustomerModels.cs" />
     <Compile Include="Models\DivisionModels.cs" />
+    <Compile Include="Models\ReportModuleModels.cs" />
     <Compile Include="Models\LocationModels.cs" />
     <Compile Include="Models\MainMenuModels.cs" />
     <Compile Include="Models\CLMasterSaleOrderModels.cs" />
@@ -508,6 +510,7 @@
     <Compile Include="ViewModels\RpSaleItemSimpleViewModel.cs" />
     <Compile Include="ViewModels\RpSaleItemViewModel.cs" />
     <Compile Include="ViewModels\RpSaleLogViewModel.cs" />
+    <Compile Include="ViewModels\RpStockStatusByModuleViewModel.cs" />
     <Compile Include="ViewModels\RpTopSaleItemViewModel.cs" />
     <Compile Include="ViewModels\RpTransferItemViewModel.cs" />
     <Compile Include="ViewModels\RpTransferVoucherViewModel.cs" />
@@ -762,6 +765,8 @@
     <Content Include="Views\UserRight\UserRight.cshtml" />
     <Content Include="Views\Entry\Index.cshtml" />
     <Content Include="Views\Shared\_PaymentFilter.cshtml" />
+    <Content Include="Views\RpStockStatusByModule\StockStatusByModuleReport.cshtml" />
+    <Content Include="Views\Shared\_LogFilter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

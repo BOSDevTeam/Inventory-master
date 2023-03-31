@@ -148,7 +148,7 @@
 
         $("#loginUser").text(userName);
 
-        if (isTechnician == 0) showHideModule();
+        if (isTechnician == 0) hideModule();
 
         $(function () {
             $('.toast').toast({
@@ -179,7 +179,7 @@
             $('#lblToastMessage').text(message);
         }
 
-        function showHideModule() {  // to delete show functions
+        function hideModule() {  
             let isShowUserModule = localStorage.getItem("UserModule");
             let isShowUserRightModule = localStorage.getItem("UserRightModule");
             let isShowDivisionModule = localStorage.getItem("DivisionModule");

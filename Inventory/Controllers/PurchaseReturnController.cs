@@ -777,7 +777,7 @@ namespace Inventory.Controllers
         }
 
         public JsonResult TranPurchaseReturnByProductAddEditAction(int productID,string productName,string code,int quantity,int purPrice,
-            int disPercent,int unitID,string unitKeyword,int currencyId,string currencyKeyword,bool isEdit,bool isItemFOC,int number)
+            int disPercent,int? unitID,string unitKeyword,int? currencyId,string currencyKeyword,bool isEdit,bool isItemFOC,int number)
         {
             List<TranPurchaseReturnModels> lstTranPurchaseReturn = new List<TranPurchaseReturnModels>();
             TranPurchaseReturnModels data = new TranPurchaseReturnModels();

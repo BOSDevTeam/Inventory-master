@@ -17,5 +17,6 @@ namespace Inventory.Models
         public int Discount { get; set; }
         public int DiscountPercent { get; set; }
         public string ActionCode { get; set; }
+        public int OriginalQuantity { get; set; }
     }
 }

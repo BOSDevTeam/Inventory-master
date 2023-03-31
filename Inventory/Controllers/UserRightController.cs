@@ -20,8 +20,9 @@ namespace Inventory.Controllers
         public ActionResult UserRight(short isTechnician,int userId)
         {
             getUser();
-            ViewData["SetupModuleAccess"] = getSetupModule(0);
-            ViewData["EntryModuleAccess"] = getEntryModule(0);
+            ViewData["SetupModuleAccess"] = getSetupModule(0, isTechnician, userId);
+            ViewData["EntryModuleAccess"] = getEntryModule(0, isTechnician, userId);
+            ViewData["ReportModuleAccess"] = getReportModule(0,isTechnician,userId);
             if (isTechnician == 1)
             {
                 model.IsTechnician = 1;
@@ -32,18 +33,55 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult UserClickAction(int userId)
+        public JsonResult ResetAction()
+        {
+            if (Session["LstSetupModuleAccess"] != null)
+            {
+                List<SetupModuleModels> lstSetupModuleAccess = Session["LstSetupModuleAccess"] as List<SetupModuleModels>;
+                for (int i = 0; i < lstSetupModuleAccess.Count(); i++)
+                {
+                    lstSetupModuleAccess[i].IsAllow = false;
+                }
+                Session["LstSetupModuleAccess"] = lstSetupModuleAccess;               
+            }
+            if (Session["LstEntryModuleAccess"] != null)
+            {
+                List<EntryModuleModels> lstEntryModuleAccess = Session["LstEntryModuleAccess"] as List<EntryModuleModels>;
+                for (int i = 0; i < lstEntryModuleAccess.Count(); i++)
+                {
+                    lstEntryModuleAccess[i].IsAllow = false;
+                }
+                Session["LstEntryModuleAccess"] = lstEntryModuleAccess;
+            }
+            if (Session["LstReportModuleAccess"] != null)
+            {
+                List<ReportModuleModels> lstReportModuleAccess = Session["LstReportModuleAccess"] as List<ReportModuleModels>;
+                for (int i = 0; i < lstReportModuleAccess.Count(); i++)
+                {
+                    lstReportModuleAccess[i].IsAllow = false;
+                }
+                Session["LstReportModuleAccess"] = lstReportModuleAccess;
+            }
+
+            return Json("", JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult UserClickAction(int userId, short isTechnician, int loginUserId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
             List<SetupModuleModels> lstSetupModuleAccess = new List<SetupModuleModels>();
             List<EntryModuleModels> lstEntryModuleAccess = new List<EntryModuleModels>();
+            List<ReportModuleModels> lstReportModuleAccess = new List<ReportModuleModels>();
 
             try
             {
-                lstSetupModuleAccess = getSetupModule(userId);
-                lstEntryModuleAccess = getEntryModule(userId);
+                lstSetupModuleAccess = getSetupModule(userId, isTechnician, loginUserId);
+                lstEntryModuleAccess = getEntryModule(userId, isTechnician, loginUserId);
+                lstReportModuleAccess = getReportModule(userId,isTechnician,loginUserId);
                 Session["LstSetupModuleAccess"] = lstSetupModuleAccess;
                 Session["LstEntryModuleAccess"] = lstEntryModuleAccess;
+                Session["LstReportModuleAccess"] = lstReportModuleAccess;
                 resultDefaultData.IsRequestSuccess = true;
             }
             catch(Exception ex)
@@ -56,7 +94,8 @@ namespace Inventory.Controllers
             {
                 ResultDefaultData = resultDefaultData,
                 LstSetupModuleAccess = lstSetupModuleAccess,
-                LstEntryModuleAccess = lstEntryModuleAccess
+                LstEntryModuleAccess = lstEntryModuleAccess,
+                LstReportModuleAccess = lstReportModuleAccess
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -68,6 +107,7 @@ namespace Inventory.Controllers
             ResultDefaultData resultDefaultData = new ResultDefaultData();
             List<SetupModuleModels> lstSetupModuleAccess = new List<SetupModuleModels>();
             List<EntryModuleModels> lstEntryModuleAccess = new List<EntryModuleModels>();
+            List<ReportModuleModels> lstReportModuleAccess = new List<ReportModuleModels>();
 
             if (moduleType == 1)
             {
@@ -98,14 +138,25 @@ namespace Inventory.Controllers
             }
             else if(moduleType == 3)
             {
-
+                if (Session["LstReportModuleAccess"] != null)
+                {
+                    lstReportModuleAccess = Session["LstReportModuleAccess"] as List<ReportModuleModels>;
+                    for (int i = 0; i < lstReportModuleAccess.Count(); i++)
+                    {
+                        lstReportModuleAccess[i].IsAllow = isChecked;
+                    }
+                    Session["LstReportModuleAccess"] = lstReportModuleAccess;
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             }
 
             var jsonResult = new
             {
                 ResultDefaultData = resultDefaultData,
                 LstSetupModuleAccess = lstSetupModuleAccess,
-                LstEntryModuleAccess = lstEntryModuleAccess
+                LstEntryModuleAccess = lstEntryModuleAccess,
+                LstReportModuleAccess = lstReportModuleAccess
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -162,6 +213,34 @@ namespace Inventory.Controllers
             {
                 ResultDefaultData = resultDefaultData,
                 LstEntryModuleAccess = lstEntryModuleAccess
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult AccessReportModuleAction(int userId, bool isChecked, int reportModuleId)
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            List<ReportModuleModels> lstReportModuleAccess = new List<ReportModuleModels>();
+
+            if (Session["LstReportModuleAccess"] != null)
+            {
+                lstReportModuleAccess = Session["LstReportModuleAccess"] as List<ReportModuleModels>;
+                ReportModuleModels reportModuleModel = lstReportModuleAccess.Where(x => x.ReportModuleID == reportModuleId).SingleOrDefault();
+                reportModuleModel.IsAllow = isChecked;
+                int index = lstReportModuleAccess.FindIndex(x => x.ReportModuleID == reportModuleId);
+                lstReportModuleAccess[index] = reportModuleModel;
+
+                Session["LstReportModuleAccess"] = lstReportModuleAccess;
+                resultDefaultData.IsRequestSuccess = true;
+            }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
+
+            var jsonResult = new
+            {
+                ResultDefaultData = resultDefaultData,
+                LstReportModuleAccess = lstReportModuleAccess
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -230,7 +309,31 @@ namespace Inventory.Controllers
             }
             else if (moduleType == 3)
             {
+                if (Session["LstReportModuleAccess"] != null)
+                {
+                    List<ReportModuleModels> lstReportModuleAccess = Session["LstReportModuleAccess"] as List<ReportModuleModels>;
 
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("ModuleID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("IsAllow", typeof(bool)));
+
+                    for (int i = 0; i < lstReportModuleAccess.Count; i++)
+                    {
+                        dt.Rows.Add(lstReportModuleAccess[i].ReportModuleID, lstReportModuleAccess[i].IsAllow);
+                    }
+
+                    setting.conn.Open();
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateReportModuleUserRight, setting.conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Connection = setting.conn;
+                    cmd.ExecuteNonQuery();
+                    setting.conn.Close();
+
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             }
 
             var jsonResult = new
@@ -241,16 +344,41 @@ namespace Inventory.Controllers
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
-        private List<SetupModuleModels> getSetupModule(int selectedUserId)
+        private List<SetupModuleModels> getSetupModule(int selectedUserId, short isTechnician, int loginUserId)
         {
             List<SetupModuleModels> list = new List<SetupModuleModels>();
             SetupModuleModels item;
 
             setting.conn.Open();
             SqlCommand cmd;
-            if(selectedUserId == 0)cmd = new SqlCommand(TextQuery.setupModuleQuery, setting.conn);
-            else cmd = new SqlCommand(textQuery.getSetupModuleQuery(selectedUserId), setting.conn);
-            cmd.CommandType = CommandType.Text;                     
+            if (isTechnician == 1)
+            {
+                if (selectedUserId == 0)
+                {
+                    cmd = new SqlCommand(TextQuery.setupModuleQuery, setting.conn);
+                    cmd.CommandType = CommandType.Text;
+                }
+                else
+                {
+                    cmd = new SqlCommand(textQuery.getSetupModuleAccessQuery(selectedUserId), setting.conn);
+                    cmd.CommandType = CommandType.Text;
+                }
+            }
+            else
+            {
+                if (selectedUserId == 0)
+                {
+                    cmd = new SqlCommand(textQuery.getAllowSetupModuleQuery(loginUserId), setting.conn);
+                    cmd.CommandType = CommandType.Text;
+                }
+                else
+                {
+                    cmd = new SqlCommand(Procedure.PrcGetAccessAllowedSetupModule, setting.conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@LoginUserID", loginUserId);
+                    cmd.Parameters.AddWithValue("@SelectedUserID", selectedUserId);
+                }
+            }
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -266,16 +394,41 @@ namespace Inventory.Controllers
             return list;
         }
 
-        private List<EntryModuleModels> getEntryModule(int selectedUserId)
+        private List<EntryModuleModels> getEntryModule(int selectedUserId, short isTechnician, int loginUserId)
         {
             List<EntryModuleModels> list = new List<EntryModuleModels>();
             EntryModuleModels item;
 
             setting.conn.Open();
             SqlCommand cmd;
-            if (selectedUserId == 0) cmd = new SqlCommand(TextQuery.entryModuleQuery, setting.conn);
-            else cmd = new SqlCommand(textQuery.getEntryModuleQuery(selectedUserId), setting.conn);
-            cmd.CommandType = CommandType.Text;
+            if (isTechnician == 1)
+            {
+                if (selectedUserId == 0)
+                {
+                    cmd = new SqlCommand(TextQuery.entryModuleQuery, setting.conn);
+                    cmd.CommandType = CommandType.Text;
+                }
+                else
+                {
+                    cmd = new SqlCommand(textQuery.getEntryModuleAccessQuery(selectedUserId), setting.conn);
+                    cmd.CommandType = CommandType.Text;
+                }
+            }
+            else
+            {
+                if (selectedUserId == 0)
+                {
+                    cmd = new SqlCommand(textQuery.getAllowEntryModuleQuery(loginUserId), setting.conn);
+                    cmd.CommandType = CommandType.Text;
+                }
+                else
+                {
+                    cmd = new SqlCommand(Procedure.PrcGetAccessAllowedEntryModule, setting.conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@LoginUserID", loginUserId);
+                    cmd.Parameters.AddWithValue("@SelectedUserID", selectedUserId);
+                }
+            }
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -283,6 +436,55 @@ namespace Inventory.Controllers
                 item = new EntryModuleModels();
                 item.EntryModuleID = Convert.ToInt32(reader["EntryModuleID"]);
                 item.EntryModuleName = Convert.ToString(reader["EntryModuleName"]);
+                if (selectedUserId != 0) item.IsAllow = Convert.ToBoolean(reader["IsAllow"]);
+                list.Add(item);
+            }
+            reader.Close();
+            setting.conn.Close();
+            return list;
+        }
+
+        private List<ReportModuleModels> getReportModule(int selectedUserId,short isTechnician,int loginUserId)
+        {
+            List<ReportModuleModels> list = new List<ReportModuleModels>();
+            ReportModuleModels item;
+
+            setting.conn.Open();
+            SqlCommand cmd;
+            if(isTechnician == 1)
+            {
+                if (selectedUserId == 0)
+                {
+                    cmd = new SqlCommand(TextQuery.reportModuleQuery, setting.conn);
+                    cmd.CommandType = CommandType.Text;
+                }
+                else
+                {
+                    cmd = new SqlCommand(textQuery.getReportModuleAccessQuery(selectedUserId), setting.conn);
+                    cmd.CommandType = CommandType.Text;
+                }
+            }else
+            {
+                if (selectedUserId == 0)
+                {
+                    cmd = new SqlCommand(textQuery.getAllowReportModuleQuery(loginUserId), setting.conn);
+                    cmd.CommandType = CommandType.Text;
+                }
+                else
+                {
+                    cmd = new SqlCommand(Procedure.PrcGetAccessAllowedReportModule, setting.conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@LoginUserID", loginUserId);
+                    cmd.Parameters.AddWithValue("@SelectedUserID", selectedUserId);
+                }
+            }                       
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new ReportModuleModels();
+                item.ReportModuleID = Convert.ToInt32(reader["ReportModuleID"]);
+                item.ReportModuleName = Convert.ToString(reader["ReportModuleName"]);
                 if (selectedUserId != 0) item.IsAllow = Convert.ToBoolean(reader["IsAllow"]);
                 list.Add(item);
             }

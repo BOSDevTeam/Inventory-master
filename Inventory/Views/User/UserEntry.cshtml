@@ -133,7 +133,8 @@
                         $('#Password').val("");
                         $("#vldName").hide();
                         $("#vldPassword").hide();
-                        showToast(1, response.Message);
+                        if (response.IsSuccess) showToast(1, response.Message);
+                        else showToast(0, response.Message);
                     },
                     failure: function (response) {
                         hideLoadingIcon();

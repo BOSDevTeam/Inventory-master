@@ -648,6 +648,7 @@ namespace Inventory.Controllers
                 List = item,
                 UserVoucherNo = item.UserVoucherNo,
                 VoucherID = item.MasterSaleReturnModel.VoucherID,
+                ReturnVoucherNo = item.ReturnVoucherNo,
                 LocationName = item.ShortName,
                 ReturnDateTime = item.ReturnDateTime,
                 User = item.UserName,
@@ -760,7 +761,7 @@ namespace Inventory.Controllers
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
         public JsonResult TranSaleReturnByProductAddEditAction(int productID, string productName, string code, int quantity, int salePrice,
-            int disPercent, int unitID, string unitKeyword, int currencyId, string currencyKeyword, bool isEdit, bool isItemFOC)
+            int disPercent, int? unitID, string unitKeyword, int? currencyId, string currencyKeyword, bool isEdit, bool isItemFOC)
         {
             List<TranSaleReturnModels> lstTranSaleReturn = new List<TranSaleReturnModels>();
             TranSaleReturnModels data = new TranSaleReturnModels();

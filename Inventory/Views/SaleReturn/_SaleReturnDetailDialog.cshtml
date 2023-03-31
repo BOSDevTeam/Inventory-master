@@ -10,20 +10,22 @@
             <div class="modal-body">
                 <table class="width-100-percent light-background">
                     <tr>
-                        <td class="padding-5"><label class="control-label mb-0">Voucher No.</label></td>
+                        <td class="padding-5"><label class="control-label mb-0">@Resource.VoucherNo</label></td>
                         <td class="aligh-right padding-5"><label id="lblUserVoucherNo" class="control-input mb-0"></label></td>
-                        <td class="padding-5"><label class="control-label mb-0">VoucherID</label></td>
+                        <td class="padding-5"><label class="control-label mb-0">@Resource.VoucherID</label></td>
                         <td class="aligh-right padding-5"><label id="lblVoucherID" class="control-input mb-0"></label></td>
                     </tr>
-                    <tr>
-                        <td class="padding-5"><label class="control-label mb-0">Location</label></td>
-                        <td class="aligh-right padding-5"><label id="lblLocation" class="control-input mb-0"></label></td>
-                        <td class="padding-5"><label class="control-label mb-0">Date Time</label></td>
+                    <tr>                        
+                        <td class="padding-5"><label class="control-label mb-0">@Resource.Date</label></td>
                         <td class="aligh-right padding-5"><label id="lblSaleReturnDateTime" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">@Resource.ReturnVoucherNo</label></td>
+                        <td class="aligh-right padding-5"><label id="lblReturnVoucherNo" class="control-input mb-0"></label></td>                                                
                     </tr>
                     <tr>
-                        <td class="padding-5"><label class="control-label mb-0">User Name</label></td>
+                        <td class="padding-5"><label class="control-label mb-0">@Resource.User</label></td>
                         <td class="aligh-right padding-5"><label id="lblUserName" class="control-input mb-0"></label></td>
+                        <td class="padding-5"><label class="control-label mb-0">@Resource.Location</label></td>
+                        <td class="aligh-right padding-5"><label id="lblLocation" class="control-input mb-0"></label></td>
                     </tr>
                 </table>
 
@@ -61,10 +63,13 @@
 
     function createMasterSaleReturnDetail(response) {
         $('#lblUserVoucherNo').text(response.UserVoucherNo);
-        $('#lblLocation').text(response.LocationName);
+        if (response.LocationName.length != 0) $('#lblLocation').text(response.LocationName);
+        else $('#lblLocation').text('-');
         if (response.VoucherID.length != 0) $('#lblVoucherID').text(response.VoucherID);
         else $('#lblVoucherID').text('-');
         $('#lblSaleReturnDateTime').text(response.ReturnDateTime);
+        if (response.ReturnVoucherNo.length != 0) $('#lblReturnVoucherNo').text(response.ReturnVoucherNo);
+        else $('#lblReturnVoucherNo').text('-');
         $('#lblUserName').text(response.User);
         $('#lblTotal').text(separatedComma(response.Total));
         if (response.Remark.length == 0) $('#remark').hide();

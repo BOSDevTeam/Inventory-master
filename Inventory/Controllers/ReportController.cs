@@ -16,8 +16,12 @@ namespace Inventory.Controllers
     {
         ReportViewModel reportViewModel = new ReportViewModel();
         AppSetting setting = new AppSetting();
-        public ActionResult Index()
+        TextQuery textQuery = new TextQuery();
+
+        public ActionResult Index(int userId, short isTechnician)
         {
+            ViewBag.IsTechnician = isTechnician;
+            if (isTechnician == 0) selectReportModule(userId);
             return View();
         }
 
@@ -170,6 +174,38 @@ namespace Inventory.Controllers
                 reportViewModel.HtmlGroupElementID = "subMenuTransferRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuTransferItemRp";
             }
+            else if (reportName.Equals(Resource.SaleItemProfitReport))
+            {
+                reportViewModel.ControllerName = "RpSaleItemProfit";
+                reportViewModel.ActionName = "SaleItemProfitReport";
+                reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
+                reportViewModel.HtmlActiveElementID = "subMenuSaleItemProfitRp";
+            }
+            else if (reportName.Equals(Resource.SaleLogReport))
+            {
+                reportViewModel.ControllerName = "RpSaleLog";
+                reportViewModel.ActionName = "SaleLogReport";
+                reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
+                reportViewModel.HtmlActiveElementID = "subMenuSaleLogRp";
+                reportViewModel.IsShowLogFilter = true;
+                ViewBag.isShowLog = 1;
+            }
+            else if (reportName.Equals(Resource.PurchaseLogReport))
+            {
+                reportViewModel.ControllerName = "RpPurchaseLog";
+                reportViewModel.ActionName = "PurchaseLogReport";
+                reportViewModel.HtmlGroupElementID = "subMenuPurchaseRpGp";
+                reportViewModel.HtmlActiveElementID = "subMenuPurchaseLogRp";
+                reportViewModel.IsShowLogFilter = true;
+                ViewBag.isShowLog = 1;
+            }
+            else if (reportName.Equals(Resource.StockStatusDetailReport))
+            {
+                reportViewModel.ControllerName = "RpStockStatusByModule";
+                reportViewModel.ActionName = "StockStatusByModuleReport";
+                reportViewModel.HtmlGroupElementID = "subMenuStockStatusRpGp";
+                reportViewModel.HtmlActiveElementID = "subMenuStockStatusDetailRp";
+            }
             return View(reportViewModel);
         }
 
@@ -195,6 +231,7 @@ namespace Inventory.Controllers
             setting.conn.Close();
             ViewBag.MenuData = lst;
         }
+
         private void GetUserList()
         {
             List<UserModels.UserModel> lstUser = new List<UserModels.UserModel>();
@@ -215,6 +252,7 @@ namespace Inventory.Controllers
             setting.conn.Close();
             ViewBag.UserData= lstUser;
         }
+
         private void GetClientList()
         {
             List<ClientModels> lstClient = new List<ClientModels>();
@@ -234,6 +272,92 @@ namespace Inventory.Controllers
             reader.Close();
             setting.conn.Close();
             ViewBag.ClientData= lstClient;
+        }
+
+        public void selectReportModule(int userId)
+        {
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(textQuery.getReportModuleAccessQuery(userId), setting.conn);
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                switch (Convert.ToString(reader["ReportModuleName"]))
+                {
+                    case "Sale Amount Only Report":
+                        ViewBag.IsAllowSaleAmountOnly = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Sale Amount Summary Report":
+                        ViewBag.IsAllowSaleAmountSummary = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Sale Item Simple Report":
+                        ViewBag.IsAllowSaleItemSimple = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Sale Item Report":
+                        ViewBag.IsAllowSaleItem = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Sale Audit Report":
+                        ViewBag.IsAllowSaleAudit = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Sale Amount by Customer Report":
+                        ViewBag.IsAllowSaleAmountByCustomer = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Sale Amount by SalePerson Report":
+                        ViewBag.IsAllowSaleAmountBySalePerson = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Sale Item by Customer Report":
+                        ViewBag.IsAllowSaleItemByCustomer = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Top Sale Item Report":
+                        ViewBag.IsAllowTopSaleItem = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Bottom Sale Item Report":
+                        ViewBag.IsAllowBottomSaleItem = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Sale Item Profit Report":
+                        ViewBag.IsAllowSaleItemProfit = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Sale Log Report":
+                        ViewBag.IsAllowSaleLog = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Purchase Amount Only Report":
+                        ViewBag.IsAllowPurchaseAmountOnly = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Purchase Item Simple Report":
+                        ViewBag.IsAllowPurchaseItemSimple = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Purchase Audit Report":
+                        ViewBag.IsAllowPurchaseAudit = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Purchase Amount by Supplier Report":
+                        ViewBag.IsAllowPurchaseAmountBySupplier = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Purchase Item By Supplier Report":
+                        ViewBag.IsAllowPurchaseItemBySupplier = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Purchase Log Report":
+                        ViewBag.IsAllowPurchaseLog = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Adjustment Voucher Report":
+                        ViewBag.IsAllowAdjustmentVoucher = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Adjustment Item Report":
+                        ViewBag.IsAllowAdjustmentItem = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Transfer Voucher Report":
+                        ViewBag.IsAllowTransferVoucher = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Transfer Item Report":
+                        ViewBag.IsAllowTransferItem = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Stock Status Detail Report":
+                        ViewBag.IsAllowStockStatusDetail = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                }
+            }
+            reader.Close();
+            setting.conn.Close();
         }
     }
 }

@@ -71,11 +71,11 @@
             <div class="sidebar-inner slimscroll">
                 <div id="sidebar-menu" class="sidebar-menu">
                     <ul>
-                        <li>
-                            <a href="~/Home/Dashboard"><i class="fa fa-home back-icon"></i> <span>@Resource.BackToHome</span></a>
+                        <li id="linkBackHome">
+                            <a href="#"><i class="fa fa-home back-icon"></i> <span>@Resource.BackToHome</span></a>
                         </li>
                         <li class="menu-title">@Resource.Reports</li>
-                        <li class="submenu">
+                        <li id="menuSale"  class="submenu">
                             <a href=""><i class="fa fa-flag"></i> <span> @Resource.SaleReport </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuSaleRpGp">
                                 <li id="subMenuSaleAmountOnlyRp"><a href="#">@Resource.SaleAmountOnlyReport</a></li>
@@ -91,25 +91,37 @@
                                 <li id="subMenuSaleItemProfitRp"><a href="#">@Resource.SaleItemProfitReport</a></li>
                                 <li id="subMenuSaleLogRp"><a href="#">@Resource.SaleLogReport</a></li>
                             </ul>
+                        </li>
+                        <li id="menuPurchase" class="submenu">
                             <a href=""><i class="fa fa-flag"></i> <span> @Resource.PurchaseReport </span> <span class="menu-arrow"></span></a>
-                            <ul id="subMenuPurchaseRpGp">      
-                                <li id="subMenuPurchaseAmountOnlyRp"><a href="#">@Resource.PurchaseAmountOnlyReport</a></li>                    
-                                <li id="subMenuPurchaseItemSimpleRp"><a href="#">@Resource.PurchaseItemSimpleReport</a></li>                             
-                                <li id="subMenuPurchaseAuditRp"><a href="#">@Resource.PurchaseAuditReport</a></li>   
-                                <li id="subMenuPurchaseAmountBySupplierRp"><a href="#">@Resource.PurchaseAmountBySupplierReport</a></li>                            
-                                <li id="subMenuPurchaseItemBySupplierRp"><a href="#">@Resource.PurchaseItemBySupplierReport</a></li> 
-                                <li id="subMenuPurchaseLogRp"><a href="#">@Resource.PurchaseLogReport</a></li>                            
+                            <ul id="subMenuPurchaseRpGp">
+                                <li id="subMenuPurchaseAmountOnlyRp"><a href="#">@Resource.PurchaseAmountOnlyReport</a></li>
+                                <li id="subMenuPurchaseItemSimpleRp"><a href="#">@Resource.PurchaseItemSimpleReport</a></li>
+                                <li id="subMenuPurchaseAuditRp"><a href="#">@Resource.PurchaseAuditReport</a></li>
+                                <li id="subMenuPurchaseAmountBySupplierRp"><a href="#">@Resource.PurchaseAmountBySupplierReport</a></li>
+                                <li id="subMenuPurchaseItemBySupplierRp"><a href="#">@Resource.PurchaseItemBySupplierReport</a></li>
+                                <li id="subMenuPurchaseLogRp"><a href="#">@Resource.PurchaseLogReport</a></li>
                             </ul>
+                        </li>
+                        <li id="menuAdjustment" class="submenu">
                             <a href=""><i class="fa fa-flag"></i> <span> @Resource.AdjustmentReport </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuAdjustmentRpGp">
                                 <li id="subMenuAdjustmentVoucherRp"><a href="#">@Resource.AdjustmentVoucherReport</a></li>
                                 <li id="subMenuAdjustmentItemRp"><a href="#">@Resource.AdjustmentItemReport</a></li>
                             </ul>
+                        </li>    
+                        <li id="menuTransfer" class="submenu">
                             <a href=""><i class="fa fa-flag"></i> <span> @Resource.TransferReport </span> <span class="menu-arrow"></span></a>
                             <ul id="subMenuTransferRpGp">
                                 <li id="subMenuTransferVoucherRp"><a href="#">@Resource.TransferVoucherReport</a></li>
-                                <li id="subMenuTransferItemRp"><a href="#">@Resource.TransferItemReport</a></li>                               
-                            </ul>               
+                                <li id="subMenuTransferItemRp"><a href="#">@Resource.TransferItemReport</a></li>
+                            </ul>
+                        </li>    
+                        <li id="menuStockStatus" class="submenu">
+                            <a href=""><i class="fa fa-flag"></i> <span> @Resource.StockStatusReport </span> <span class="menu-arrow"></span></a>
+                            <ul id="subMenuStockStatusRpGp">
+                                <li id="subMenuStockStatusDetailRp"><a href="#">@Resource.StockStatusDetailReport</a></li>
+                            </ul>
                         </li>                                                                    
                     </ul>
                 </div>
@@ -134,15 +146,18 @@
     <script src="~/Scripts/Site.js"></script>
 
     <script>
-        var userId = 0, userName, isMultiUnit = false, isMultiCurrency = false, isBankPayment = false;
+        var userId = 0, userName, isMultiUnit = false, isMultiCurrency = false, isBankPayment = false, isTechnician = 0;
 
         userId = localStorage.getItem("UserID");
         userName = localStorage.getItem("UserName");
         isMultiUnit = localStorage.getItem("IsMultiUnit");
         isMultiCurrency = localStorage.getItem("IsMultiCurrency");
         isBankPayment = localStorage.getItem("IsBankPayment");
+        isTechnician = localStorage.getItem("IsTechnician");
 
         $("#loginUser").text(userName);
+
+        if (isTechnician == 0) hideModule();
 
         $(function () {
             $('#subMenuSaleAmountOnlyRp').click(function () {
@@ -211,8 +226,15 @@
             $('#subMenuPurchaseLogRp').click(function () {
                 window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.PurchaseLogReport })';
             });
+            $('#subMenuStockStatusDetailRp').click(function () {
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.StockStatusDetailReport })';
+            });
             $('.toast').toast({
                 delay: 3000
+            });
+            $('#linkBackHome').click(function () {
+                if (isTechnician == 1) window.location.href = '@Url.Action("Dashboard", "Home")';
+                else window.location.href = '@Url.Action("Index", "Entry")?userId=' + userId + '&isTechnician=' + isTechnician;
             });
         });
 
@@ -242,6 +264,76 @@
             let month = ("0" + (date.getMonth() + 1)).slice(-2);
             let today = date.getFullYear() + "-" + (month) + "-" + (day);
             return today;
+        }
+
+        function hideModule() {
+            let isShowSaleAmountOnly = localStorage.getItem("SaleAmountOnly");
+            let isShowSaleAmountSummary = localStorage.getItem("SaleAmountSummary");
+            let isShowSaleItemSimple = localStorage.getItem("SaleItemSimple");
+            let isShowSaleItem = localStorage.getItem("SaleItem");
+            let isShowSaleAudit = localStorage.getItem("SaleAudit");
+            let isShowSaleAmountByCustomer = localStorage.getItem("SaleAmountByCustomer");
+            let isShowSaleAmountBySalePerson = localStorage.getItem("SaleAmountBySalePerson");
+            let isShowSaleItemByCustomer = localStorage.getItem("SaleItemByCustomer");
+            let isShowTopSaleItem = localStorage.getItem("TopSaleItem");
+            let isShowBottomSaleItem = localStorage.getItem("BottomSaleItem");
+            let isShowSaleItemProfit = localStorage.getItem("SaleItemProfit");
+            let isShowSaleLog = localStorage.getItem("SaleLog");
+            let isShowPurchaseAmountOnly = localStorage.getItem("PurchaseAmountOnly");
+            let isShowPurchaseItemSimple = localStorage.getItem("PurchaseItemSimple");
+            let isShowPurchaseAudit = localStorage.getItem("PurchaseAudit");
+            let isShowPurchaseAmountBySupplier = localStorage.getItem("PurchaseAmountBySupplier");
+            let isShowPurchaseItemBySupplier = localStorage.getItem("PurchaseItemBySupplier");
+            let isShowPurchaseLog = localStorage.getItem("PurchaseLog");
+            let isShowAdjustmentVoucher = localStorage.getItem("AdjustmentVoucher");
+            let isShowAdjustmentItem = localStorage.getItem("AdjustmentItem");
+            let isShowTransferVoucher = localStorage.getItem("TransferVoucher");
+            let isShowTransferItem = localStorage.getItem("TransferItem");
+            let isShowStockStatusDetail = localStorage.getItem("StockStatusDetail");
+
+            if (isShowSaleAmountOnly != 'True') $("#subMenuSaleAmountOnlyRp").css('display', 'none');
+            if (isShowSaleAmountSummary != 'True') $("#subMenuSaleAmountSummaryRp").css('display', 'none');
+            if (isShowSaleItemSimple != 'True') $("#subMenuSaleItemSimpleRp").css('display', 'none');
+            if (isShowSaleItem != 'True') $("#subMenuSaleItemRp").css('display', 'none');
+            if (isShowSaleAudit != 'True') $("#subMenuSaleAuditRp").css('display', 'none');
+            if (isShowSaleAmountByCustomer != 'True') $("#subMenuSaleAmountByCustomerRp").css('display', 'none');
+            if (isShowSaleAmountBySalePerson != 'True') $("#subMenuSaleAmountBySalePersonRp").css('display', 'none');
+            if (isShowSaleItemByCustomer != 'True') $("#subMenuSaleItemByCustomerRp").css('display', 'none');
+            if (isShowTopSaleItem != 'True') $("#subMenuTopSaleItemRp").css('display', 'none');
+            if (isShowBottomSaleItem != 'True') $("#subMenuBottomSaleItemRp").css('display', 'none');
+            if (isShowSaleItemProfit != 'True') $("#subMenuSaleItemProfitRp").css('display', 'none');
+            if (isShowSaleLog != 'True') $("#subMenuSaleLogRp").css('display', 'none');
+            if (isShowPurchaseAmountOnly != 'True') $("#subMenuPurchaseAmountOnlyRp").css('display', 'none');
+            if (isShowPurchaseItemSimple != 'True') $("#subMenuPurchaseItemSimpleRp").css('display', 'none');
+            if (isShowPurchaseAudit != 'True') $("#subMenuPurchaseAuditRp").css('display', 'none');
+            if (isShowPurchaseAmountBySupplier != 'True') $("#subMenuPurchaseAmountBySupplierRp").css('display', 'none');
+            if (isShowPurchaseItemBySupplier != 'True') $("#subMenuPurchaseItemBySupplierRp").css('display', 'none');
+            if (isShowPurchaseLog != 'True') $("#subMenuPurchaseLogRp").css('display', 'none');
+            if (isShowAdjustmentVoucher != 'True') $("#subMenuAdjustmentVoucherRp").css('display', 'none');
+            if (isShowAdjustmentItem != 'True') $("#subMenuAdjustmentItemRp").css('display', 'none');
+            if (isShowTransferVoucher != 'True') $("#subMenuTransferVoucherRp").css('display', 'none');
+            if (isShowTransferItem != 'True') $("#subMenuTransferItemRp").css('display', 'none');
+            if (isShowStockStatusDetail != 'True') {
+                $("#subMenuStockStatusDetailRp").css('display', 'none');
+                $("#menuStockStatus").css('display', 'none');
+            }
+
+            // show hide group menu
+            if (isShowSaleAmountOnly == 'False' && isShowSaleAmountSummary == 'False' && isShowSaleItemSimple == 'False' && isShowSaleItem == 'False' && 
+                isShowSaleAudit == 'False' && isShowSaleAmountByCustomer == 'False' && isShowSaleAmountBySalePerson == 'False' && isShowSaleItemByCustomer == 'False' &&
+                isShowTopSaleItem == 'False' && isShowBottomSaleItem == 'False' && isShowSaleItemProfit == 'False' && isShowSaleLog == 'False') {
+                $("#menuSale").css('display', 'none');
+            }
+            if (isShowPurchaseAmountOnly == 'False' && isShowPurchaseItemSimple == 'False' && isShowPurchaseAudit == 'False' && isShowPurchaseAmountBySupplier == 'False' &&
+                isShowPurchaseItemBySupplier == 'False' && isShowPurchaseLog == 'False' ) {
+                $("#menuPurchase").css('display', 'none');
+            }
+            if (isShowAdjustmentVoucher == 'False' && isShowAdjustmentItem == 'False') {
+                $("#menuAdjustment").css('display', 'none');
+            }
+            if (isShowTransferVoucher == 'False' && isShowTransferItem == 'False') {
+                $("#menuTransfer").css('display', 'none');
+            }
         }
 
     </script>

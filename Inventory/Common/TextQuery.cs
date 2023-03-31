@@ -25,6 +25,7 @@ namespace Inventory.Common
         public const string userQuery = "Select UserID,UserName From SUser Where IsTechnician!=1";
         public const string setupModuleQuery = "Select SetupModuleID,SetupModuleName From SysSetupModule";
         public const string entryModuleQuery = "Select EntryModuleID,EntryModuleName From SysEntryModule";
+        public const string reportModuleQuery = "Select ReportModuleID,ReportModuleName From SysReportModule Order by ReportModuleGroupCode";
 
         public string getSubMenuQuery(int mainMenuId)
         {
@@ -136,16 +137,40 @@ namespace Inventory.Common
             return "Delete From TTranSupplierOpening Where SupplierOpeningID=" + supplierOpeningId + " Delete From TMasterSupplierOpening Where SupplierOpeningID=" + supplierOpeningId + " Delete From TMasterLedger Where TranID=" + supplierOpeningId + " And AccountCode=" + AppConstants.SupplierOpeningAccountCode;
         }
 
-        public string getSetupModuleQuery(int userId)
+        public string getSetupModuleAccessQuery(int userId)
         {
             return "Select ur.SetupModuleID,SetupModuleName,IsAllow"
             + " From SSetupUserRight ur Inner Join SysSetupModule sm ON ur.SetupModuleID=sm.SetupModuleID Where UserID=" + userId;
         }
 
-        public string getEntryModuleQuery(int userId)
+        public string getAllowSetupModuleQuery(int loginUserId)
+        {
+            return "Select rm.SetupModuleID,SetupModuleName"
+            + " From SysSetupModule rm Inner Join SSetupUserRight ur On rm.SetupModuleID=ur.SetupModuleID Where UserID=" + loginUserId + " And IsAllow=1";
+        }
+
+        public string getEntryModuleAccessQuery(int userId)
         {
             return "Select ur.EntryModuleID,EntryModuleName,IsAllow"
             + " From SEntryUserRight ur Inner Join SysEntryModule sm ON ur.EntryModuleID=sm.EntryModuleID Where UserID=" + userId;
+        }
+
+        public string getAllowEntryModuleQuery(int loginUserId)
+        {
+            return "Select rm.EntryModuleID,EntryModuleName"
+            + " From SysEntryModule rm Inner Join SEntryUserRight ur On rm.EntryModuleID=ur.EntryModuleID Where UserID=" + loginUserId + " And IsAllow=1";
+        }
+
+        public string getReportModuleAccessQuery(int userId)
+        {
+            return "Select ur.ReportModuleID,ReportModuleName,IsAllow"
+            + " From SReportUserRight ur Inner Join SysReportModule sm ON ur.ReportModuleID=sm.ReportModuleID Where UserID=" + userId + " Order by ReportModuleGroupCode";
+        }
+
+        public string getAllowReportModuleQuery(int loginUserId)
+        {
+            return "Select rm.ReportModuleID,ReportModuleName"
+            + " From SysReportModule rm Inner Join SReportUserRight ur On rm.ReportModuleID=ur.ReportModuleID Where UserID=" + loginUserId + " And IsAllow=1 Order by ReportModuleGroupCode";
         }
     }
 }

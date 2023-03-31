@@ -174,7 +174,10 @@ namespace Inventory.Controllers
 
         [HttpGet]
         public JsonResult SaveAction(string userName, string password, bool isDefaultLocation, int? locationId)
-        {         
+        {
+            bool isSuccess = false;
+            string message = "";
+
             if (!isDefaultLocation) locationId = 0;
             
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
@@ -184,12 +187,18 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@UserPassword", password);           
             cmd.Parameters.AddWithValue("@IsDefaultLocation", isDefaultLocation);
             cmd.Parameters.AddWithValue("@LocationID", locationId);
-            cmd.ExecuteNonQuery();
+            SqlDataReader reder = cmd.ExecuteReader();
+            if (reder.Read())isSuccess = Convert.ToBoolean(reder["IsSuccess"]);           
+            reder.Close();
             dataConnectorSQL.Close();
+
+            if (isSuccess) message = Common.AppConstants.Message.SaveSuccess;
+            else message = Common.AppConstants.Message.UserLimitOver;
 
             var Result = new
             {
-                Message = "Saved Successfully!"
+                Message = message,
+                IsSuccess = isSuccess
             };
             return Json(Result, JsonRequestBehavior.AllowGet);
         }

@@ -66,9 +66,15 @@
                         <div class="form-group">
                             @Html.CheckBoxFor(m => m.IsBankPayment, new { @class = "control-input", onchange = "IsBankPaymentCheck(this.checked)", id = "chkBankPayment" }) <label class="control-label">Allow Payment by Banking</label>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="display:none">
                             @Html.CheckBoxFor(m => m.IsClientPhoneVerify, new { @class = "control-input", onchange = "IsClientPhoneVerifyCheck(this.checked)", id = "chkClientPhoneVerify" }) <label class="control-label">Allow to Verify Client Phone</label>
-                        </div>                      
+                        </div>          
+                        <div class="form-group">
+                            @Html.CheckBoxFor(m => m.IsLimitUser, new { @class = "control-input", onchange = "IsLimitUserCheck(this.checked)", id = "chkLimitUser" }) <label class="control-label">@Resource.LimitUser</label>
+                        </div>   
+                        <div id="divLimitedUserCount" class="form-group">
+                            <input id="inputLimitedUserCount" type="number" class="form-control control-input" placeholder="@Resource.EnterLimitedUser" /> 
+                        </div>         
                     </div>
                     <button id="btnSaveOtherSetting" class="btn btn-first setup-btn-save-edit mt-2" style="float:left">Save</button>
                 </div>
@@ -79,7 +85,7 @@
 
 <script type="text/javascript">
 
-    var isMultiUnit = false, isMultiCurrency = false, isClientPhoneVerify = false, isBankPayment = false;
+    var isMultiUnit = false, isMultiCurrency = false, isClientPhoneVerify = false, isBankPayment = false, isLimitUser = false;
     var shopTypeId = 0;
 
     $(function () {
@@ -88,7 +94,7 @@
             showLoadingIcon();
             $.ajax({
                 type: "POST",
-                url: '@Url.Action("SaveShopTypeAction", "Technician")',
+                url: '@Url.Action("SaveShopTypeAction", "GeneralSetting")',
                 data: JSON.stringify({ "shopTypeId": shopTypeId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -108,11 +114,19 @@
         });
 
         $('#btnSaveOtherSetting').click(function () {
+            let limitedUserCount = 0;
+            if (isLimitUser == true) {
+                limitedUserCount = $("#inputLimitedUserCount").val();
+                if (limitedUserCount.length == 0 || limitedUserCount == 0) {
+                    showToast(0, '@Resource.EnterLimitedUser');
+                    return;
+                }
+            }
             showLoadingIcon();
             $.ajax({
                 type: "POST",
-                url: '@Url.Action("SaveOtherSettingAction", "Technician")',
-                data: JSON.stringify({ "isMultiCurrency": isMultiCurrency, "isMultiUnit": isMultiUnit, "isBankPayment": isBankPayment, "isClientPhoneVerify": isClientPhoneVerify }),
+                url: '@Url.Action("SaveOtherSettingAction", "GeneralSetting")',
+                data: JSON.stringify({ "isMultiCurrency": isMultiCurrency, "isMultiUnit": isMultiUnit, "isBankPayment": isBankPayment, "isClientPhoneVerify": isClientPhoneVerify, "isLimitUser": isLimitUser, "limitedUserCount": limitedUserCount }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -133,7 +147,7 @@
         $('.rdoShopType').click(function () {
             shopTypeId = $(this).val();
         });
-    
+
         if ('@ViewBag.IsMultiUnit' == 'True') {
             $("#chkIsMultiUnit").prop("checked", true);
             isMultiUnit = true;
@@ -164,8 +178,18 @@
         } else {
             $("#chkClientPhoneVerify").prop("checked", false);
             isClientPhoneVerify = false;
-        }       
-    });  
+        }
+
+        if ('@ViewBag.IsLimitUser' == 'True') {
+            $("#chkLimitUser").prop("checked", true);
+            isLimitUser = true;
+            $("#inputLimitedUserCount").val('@ViewBag.LimitedUserCount');
+        } else {
+            $("#chkLimitUser").prop("checked", false);
+            isLimitUser = false;
+            $("#divLimitedUserCount").css('display', 'none');
+        }
+    });
     function IsMultiUnitCheck(checked) {
         if (checked == true) {
             isMultiUnit = true;
@@ -196,6 +220,17 @@
         }
         else {
             isClientPhoneVerify = false;
+        }
+    }
+    function IsLimitUserCheck(checked) {
+        if (checked == true) {
+            isLimitUser = true;
+            $("#divLimitedUserCount").show();
+        }
+        else {
+            isLimitUser = false;
+            $("#divLimitedUserCount").css('display', 'none');
+            $("#inputLimitedUserCount").val("");
         }
     }
 

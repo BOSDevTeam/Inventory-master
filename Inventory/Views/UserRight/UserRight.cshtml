@@ -81,7 +81,7 @@
 
 <script type="text/javascript">
 
-    let userId = 0, moduleType = 1;
+    let selectedUserId = 0, moduleType = 1;
 
     document.getElementById("defaultOpen").click();
 
@@ -89,17 +89,18 @@
 
         createSetupModuleAccess('', false);
         createEntryModuleAccess('', false);
+        createReportModuleAccess('', false);
 
         $('#btnSave').click(function () {
             if (!validateUser()) {
-                alert("select user");
+                showToast(0, '@Resource.SelectUser');
                 return;
             }
             showLoadingIcon();
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("SaveAction", "UserRight")',
-                data: { "userId": userId, "moduleType": moduleType },
+                data: { "userId": selectedUserId, "moduleType": moduleType },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -107,8 +108,7 @@
                     if (!response.ResultDefaultData.IsRequestSuccess)
                         responseUnSuccessful(response);
                     else {
-                        alert("success");
-                        //showToast(1, @Inventory.Common.AppConstants.Message.SaveSuccess);
+                        showToast(1, '@Inventory.Common.AppConstants.Message.SaveSuccess');
                     }
                 },
                 failure: function (response) {
@@ -122,13 +122,36 @@
             });
         });
 
+        $("#btnReset").click(function (e) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("ResetAction", "UserRight")',
+                data: {},
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    reset();
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
         $(document).on('click', '.btnUser', function (e) {
-            userId = $(this).val();
+            selectedUserId = $(this).val();
             showLoadingIcon();
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("UserClickAction", "UserRight")',
-                data: { "userId": userId },
+                data: { "userId": selectedUserId, "isTechnician": isTechnician, "loginUserId": userId },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -137,10 +160,11 @@
                         responseUnSuccessful(response);
                     else {
                         $(".btnUser").css('background-color', '#fff');
-                        $("#btnUser" + userId).css('background-color', '#36b4e5');
+                        $("#btnUser" + selectedUserId).css('background-color', '#36b4e5');
                         if (moduleType != 1) document.getElementById("defaultOpen").click();
                         createSetupModuleAccess(response.LstSetupModuleAccess, true);
                         createEntryModuleAccess(response.LstEntryModuleAccess, true);
+                        createReportModuleAccess(response.LstReportModuleAccess, true);
                         $("#chkSetupAccessAll").prop('checked', false);
                         $("#chkEntryAccessAll").prop('checked', false);
                         $("#chkReportAccessAll").prop('checked', false);
@@ -180,7 +204,7 @@
 
         $(document).on('change', '.chkSetupModule', function (e) {
             if (!validateUser()) {
-                alert("select user");
+                showToast(0, '@Resource.SelectUser');
                 $(".chkSetupModule").prop('checked', false);
                 return;
             }
@@ -192,7 +216,7 @@
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("AccessSetupModuleAction", "UserRight")',
-                data: { "userId": userId, "isChecked": isChecked, "setupModuleId": setupModuleId },
+                data: { "userId": selectedUserId, "isChecked": isChecked, "setupModuleId": setupModuleId },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -214,7 +238,7 @@
 
         $(document).on('change', '.chkEntryModule', function (e) {
             if (!validateUser()) {
-                alert("select user");
+                showToast(0, '@Resource.SelectUser');
                 $(".chkEntryModule").prop('checked', false);
                 return;
             }
@@ -226,7 +250,41 @@
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("AccessEntryModuleAction", "UserRight")',
-                data: { "userId": userId, "isChecked": isChecked, "entryModuleId": entryModuleId },
+                data: { "userId": selectedUserId, "isChecked": isChecked, "entryModuleId": entryModuleId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else createEntryModuleAccess(response.LstEntryModuleAccess, true);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $(document).on('change', '.chkReportModule', function (e) {
+            if (!validateUser()) {
+                showToast(0, '@Resource.SelectUser');
+                $(".chkReportModule").prop('checked', false);
+                return;
+            }
+            let reportModuleId = $(this).val();
+            let isChecked = false;
+            if (this.checked) isChecked = true;
+            else isChecked = false;
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("AccessReportModuleAction", "UserRight")',
+                data: { "userId": selectedUserId, "isChecked": isChecked, "reportModuleId": reportModuleId },
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -250,8 +308,7 @@
 
     function accessAllModuleByGroup(isChecked) {
         if (!validateUser()) {
-            alert("select user");
-            //showToast(0, "select user");
+            showToast(0, '@Resource.SelectUser');
             if (moduleType == 1) $("#chkSetupAccessAll").prop('checked', false);
             else if (moduleType == 2) $("#chkEntryAccessAll").prop('checked', false);
             else if (moduleType == 3) $("#chkReportAccessAll").prop('checked', false);
@@ -261,7 +318,7 @@
         $.ajax({
             type: "GET",
             url: '@Url.Action("AccessAllModuleAction", "UserRight")',
-            data: { "userId": userId, "isChecked": isChecked, "moduleType": moduleType },
+            data: { "userId": selectedUserId, "isChecked": isChecked, "moduleType": moduleType },
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
@@ -271,9 +328,7 @@
                 else {
                     if (moduleType == 1) createSetupModuleAccess(response.LstSetupModuleAccess, true);
                     else if (moduleType == 2) createEntryModuleAccess(response.LstEntryModuleAccess, true);
-                    else if (moduleType == 3) {
-
-                    }
+                    else if (moduleType == 3) createReportModuleAccess(response.LstReportModuleAccess, true);
                 }
             },
             failure: function (response) {
@@ -325,9 +380,43 @@
         });
     }
 
+    function createReportModuleAccess(response, isFromJson) {
+        $('#divReportGroup').empty();
+        if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["ReportModuleAccess"]))');
+        $.each(response, function (index, item) {
+            let html = '<div id="divReportModuleAccess" class="row border-bottom-white m-t-5">'
+                    + '<div id="divReportModuleName" class="col-md-6 col-lg-6">'
+                    + '<label>' + item.ReportModuleName + '</label>'
+                    + '</div>'
+                    + '<div id="divReportModuleCheck" class="col-md-6 col-lg-6 aligh-right">'
+            if (item.IsAllow) {
+                html += '<input class="chkReportModule" type="checkbox" value="' + item.ReportModuleID + '" checked />'
+            } else {
+                html += '<input class="chkReportModule" type="checkbox" value="' + item.ReportModuleID + '" />'
+            }
+            html += '</div></div>'
+            $('#divReportGroup').append(html);
+        });
+    }
+
     function validateUser() {
-        if (userId == 0) return false;
+        if (selectedUserId == 0) return false;
         return true;
+    }
+
+    function reset() {
+        selectedUserId = 0;
+        $(".btnUser").css('background-color', '#fff');
+        if (moduleType != 1) {
+            document.getElementById("defaultOpen").click();
+            moduleType = 1;
+        }
+        $("#chkSetupAccessAll").prop('checked', false);
+        $("#chkEntryAccessAll").prop('checked', false);
+        $("#chkReportAccessAll").prop('checked', false);
+        $(".chkSetupModule").prop('checked', false);
+        $(".chkEntryModule").prop('checked', false);
+        $(".chkReportModule").prop('checked', false);
     }
 
     function openModuleGroup(evt, moduleGroup) {

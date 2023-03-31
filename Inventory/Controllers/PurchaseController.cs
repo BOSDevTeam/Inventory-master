@@ -729,13 +729,14 @@ namespace Inventory.Controllers
                     dtLog.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
                     dtLog.Columns.Add(new DataColumn("ActionCode", typeof(string)));
                     dtLog.Columns.Add(new DataColumn("ActionName", typeof(string)));
+                    dtLog.Columns.Add(new DataColumn("OriginalQuantity", typeof(string)));
 
                     for (int i = 0; i < list.Count; i++)
                     {
                         dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurchasePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
                         if (list[i].IsNewTran)
                         {
-                            dtLog.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurchasePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC, AppConstants.NewActionCode, AppConstants.NewActionName);
+                            dtLog.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurchasePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC, AppConstants.NewActionCode, AppConstants.NewActionName,0);
                         }
                     }
                     if (Session["PurchaseLog"] != null)
@@ -749,7 +750,7 @@ namespace Inventory.Controllers
                                 string actionName = "";
                                 if (lstTranPurchaseLog[i].ActionCode == AppConstants.EditActionCode) actionName = AppConstants.EditActionName;
                                 else if (lstTranPurchaseLog[i].ActionCode == AppConstants.DeleteActionCode) actionName = AppConstants.DeleteActionName;
-                                dtLog.Rows.Add(lstTranPurchaseLog[i].ProductID, lstTranPurchaseLog[i].Quantity, lstTranPurchaseLog[i].UnitID, lstTranPurchaseLog[i].PurPrice, lstTranPurchaseLog[i].CurrencyID, lstTranPurchaseLog[i].DiscountPercent, lstTranPurchaseLog[i].Discount, lstTranPurchaseLog[i].Amount, lstTranPurchaseLog[i].IsFOC, lstTranPurchaseLog[i].ActionCode, actionName);
+                                dtLog.Rows.Add(lstTranPurchaseLog[i].ProductID, lstTranPurchaseLog[i].Quantity, lstTranPurchaseLog[i].UnitID, lstTranPurchaseLog[i].PurPrice, lstTranPurchaseLog[i].CurrencyID, lstTranPurchaseLog[i].DiscountPercent, lstTranPurchaseLog[i].Discount, lstTranPurchaseLog[i].Amount, lstTranPurchaseLog[i].IsFOC, lstTranPurchaseLog[i].ActionCode, actionName,lstTranPurchaseLog[i].OriginalQuantity);
                             }
                         }
                     }
@@ -1070,6 +1071,7 @@ namespace Inventory.Controllers
 
                 itemLog = new TranPurchaseLogModels();
                 itemLog.Quantity = Convert.ToInt32(reader["Quantity"]);
+                itemLog.OriginalQuantity = Convert.ToInt32(reader["Quantity"]);
                 itemLog.PurPrice = Convert.ToInt32(reader["PurPrice"]);
                 itemLog.Discount = Convert.ToInt32(reader["Discount"]);
                 itemLog.Amount = Convert.ToInt32(reader["Amount"]);
@@ -1094,6 +1096,7 @@ namespace Inventory.Controllers
             if (actionCode == AppConstants.EditActionCode)  // edit
             {
                 dataLog.ActionCode = AppConstants.EditActionCode;
+                dataLog.OriginalQuantity = lstTranPurchaseLog[(int)number - 1].OriginalQuantity;
                 if (number != null) lstTranPurchaseLog[(int)number - 1] = dataLog;
             }
             else if (actionCode == AppConstants.DeleteActionCode)  // delete

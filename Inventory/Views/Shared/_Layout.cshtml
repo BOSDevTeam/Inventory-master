@@ -160,8 +160,8 @@
                                 <li id="subMenuStockStatusByLocation"><a href="#">@Resource.StockStatusByLocation</a></li>
                             </ul>
                         </li>     
-                        <li>
-                            <a href="~/Report/Index"><i class="fa fa-flag"></i> <span>@Resource.Reports</span></a>
+                        <li id="subMenuReport">
+                            <a href="#"><i class="fa fa-flag"></i> <span>@Resource.Reports</span></a>
                         </li>          
                         <li id="subMenuSetting">
                             <a href="#"><i class="fa fa-cog"></i> <span>@Resource.Settings</span></a>
@@ -304,6 +304,9 @@
             });
             $('#subMenuSetting').click(function () {
                 window.location.href = '@Url.Action("Index", "Setting")?userId=' + userId + '&isTechnician=' + isTechnician;
+            });
+            $('#subMenuReport').click(function () {
+                window.location.href = '@Url.Action("Index", "Report")?userId=' + userId + '&isTechnician=' + isTechnician;
             });
 
             $('.toast').toast({

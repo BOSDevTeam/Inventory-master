@@ -98,9 +98,9 @@
                             localStorage.setItem("UserID", response.UserID);
                             localStorage.setItem("UserName", response.UserName);
                             localStorage.setItem("IsTechnician", response.IsTechnician);
-                            localStorage.setItem("IsMultiCurrency", response.isMultiCurrency);
-                            localStorage.setItem("IsMultiUnit", response.isMultiUnit);
-                            localStorage.setItem("IsBankPayment", response.isBankPayment);
+                            if (response.isMultiCurrency == true) localStorage.setItem("IsMultiCurrency", "True");
+                            if (response.isMultiUnit == true) localStorage.setItem("IsMultiUnit", "True");
+                            if (response.isBankPayment == true) localStorage.setItem("IsBankPayment", "True");
                             localStorage.setItem("Tax", response.Tax);
                             localStorage.setItem("Charges", response.ServiceCharges);
 

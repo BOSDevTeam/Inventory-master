@@ -1,5 +1,149 @@
-﻿@{
+﻿@using Inventory.ViewModels;
+@model RpPurchaseLogViewModel
+@{
     Layout = "~/Views/Shared/_LayoutReportDetail.cshtml";
 }
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+
+    <script type="text/javascript">
+        let filter;
+
+        $(document).ready(function () {
+            if ('@ViewBag.ErrorMessage'.length != 0) {
+                showToast(0, '@ViewBag.ErrorMessage');
+            }
+            setReportTitle('@Resource.PurchaseLogReport');
+
+            if ('@Model.LogType' == 1) filter = '@Resource.New';
+            else if ('@Model.LogType' == 2) filter = '@Resource.Edit';
+            else filter = '@Resource.Delete';
+            setDefaultFilter('@Model.FromDate.ToShortDateString()', '@Model.ToDate.ToShortDateString()', filter);
+        });
+
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            document.write(result);
+        }
+    </script>
+</head>
+<div>
+    <div class="row table-header font-weight-500">
+        <div class="col-md-3 col-lg-3" style="padding-left:10px;">
+            <span>@Resource.Date</span>
+        </div>
+        <div class="col-md-3 col-lg-3">
+            <span> @Resource.VoucherNo</span>
+        </div>
+        <div class="col-md-3 col-lg-3">
+            <span>@Resource.EntryUser</span>
+        </div>
+        <div class="col-md-3 col-lg-3 aligh-right">
+            <span class="mr-10">@Resource.UpdatedUser</span>
+        </div>
+    </div>
+    <div class="row table-header font-weight-500">
+        <div class="col-md-3 col-lg-3" style="padding-left:10px;"></div>
+        @if (Model.LogType == 2)
+        {
+            <div class="col-md-1 col-lg-1">
+                <span> @Resource.Code</span>
+            </div>
+            <div class="col-md-2 col-lg-2">
+                <span>@Resource.Product</span>
+            </div>
+            <div class="col-md-2 col-lg-2">
+                <span>@Resource.OrginalQty</span>
+            </div>
+            <div class="col-md-2 col-lg-2 aligh-right">
+                <span>@Resource.EditQty</span>
+            </div>
+            <div class="col-md-2 col-lg-2 aligh-right">
+                <span class="mr-10">@Resource.Amount</span>
+            </div>
+        }
+        else
+        {
+
+            <div class="col-md-3 col-lg-3">
+                <span> @Resource.Code</span>
+            </div>
+            <div class="col-md-2 col-lg-2">
+                <span>@Resource.Product</span>
+            </div>
+            <div class="col-md-2 col-lg-2 aligh-right">
+                <span>@Resource.Qty</span>
+            </div>
+            <div class="col-md-2 col-lg-2 aligh-right">
+                <span class="mr-10">@Resource.Amount</span>
+            </div>
+        }
+    </div>
+    @foreach (var master in Model.lstMasterPurchaseLog as List<RpPurchaseLogViewModel.MasterPurchaseLogViewModel>)
+    {
+        <div class="row rpt-main-group">
+            <div class="col-md-3 col-lg-3" style="padding-left:10px;">@master.PurchaseDateTime.ToShortDateString()</div>
+            <div class="col-md-3 col-lg-3">@master.UserVoucherNo</div>
+            <div class="col-md-3 col-lg-3">@master.EntryUserName</div>
+            <div class="col-md-3 col-lg-3 aligh-right"><span class="mr-10">@master.UpdateUserName</span></div>
+        </div>
+        foreach (var item in master.lstPurchaseLog as List<RpPurchaseLogViewModel.PurchaseLogViewModel>)
+        {
+            <div class="row rpt-item">
+                <div class="col-md-3 col-lg-3"></div>
+                @if (Model.LogType == 2)
+                {
+                    <div class="col-md-1 col-lg-1">
+                        <span> @item.Code</span>
+                    </div>
+                    <div class="col-md-2 col-lg-2">
+                        <span>@item.ProductName
+                        @if (item.IsFOC)
+                        {
+                            <span>[@Resource.FOC]</span>
+                        }
+                        </span>
+                    </div>
+                    <div class="col-md-2 col-lg-2">
+                        <span>@item.OrginalQuantity @item.UnitKeyword</span>
+                    </div>
+                    <div class="col-md-2 col-lg-2 aligh-right">
+                        <span>@item.Quantity @item.UnitKeyword</span>
+                    </div>
+                    <div class="col-md-2 col-lg-2 aligh-right">
+                        <span class="mr-10">@item.Amount</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-3 col-lg-3">
+                        <span>@item.Code</span>
+                    </div>
+                    <div class="col-md-2 col-lg-2">
+                        <span>@item.ProductName 
+                            @if (item.IsFOC)
+                            {
+                                <span>[@Resource.FOC]</span>
+                            }
+                        </span>
+                    </div>
+                    <div class="col-md-2 col-lg-2 aligh-right">
+                        <span>@item.Quantity @item.UnitKeyword</span>
+                    </div>
+                    <div class="col-md-2 col-lg-2 aligh-right">
+                        <span class="mr-10">
+                        <script>separatedComma(@item.Amount);</script></span>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+
 
 

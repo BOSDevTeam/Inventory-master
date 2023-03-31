@@ -102,7 +102,7 @@
                     <div class="col-md-5 col-lg-5">
                         <input id="inputReturnProductName" type="text" class="form-control control-input" placeholder="@Resource.ProductName" disabled />
                     </div>
-                    <div class="col-md-2 col-lg-2" id="">
+                    <div class="col-md-2 col-lg-2" id="divReturnQuantity">
                         <input id="inputReturnProductQuantity" type="text" class="form-control control-input numberonly" placeholder="@Resource.ReturnQty" />
                     </div>
                     <div id="divddlUnit" class="col-md-2 col-lg-2">
@@ -308,8 +308,24 @@
                 $("#divTranSaleReturnByProduct").css("display", "block");
                 $("#divReturnByVoucher").css("display", 'none');
                 $("#divTranSaleReturn").css("display", "none");
-                if (isMultiUnit) createDefaultUnit();
-                if (isMultiCurrency) createDefaultCurrency();
+                if (isMultiUnit=="True")
+                {
+                    createDefaultUnit();
+                    $("#divddlUnit").css("display", "block");
+                }
+                else {
+                    $("#divddlUnit").css("display", "none");
+                    $("#divReturnQuantity").addClass("col-md-4 col-lg-4");
+                }
+                if (isMultiCurrency == "True") {
+                    createDefaultCurrency();
+                    $("#divddlCurrency").css("display", "block");
+
+                }
+                else {
+                    $("#divddlCurrency").css("display", "none");
+                    $("#divReturnProductTranBtn").addClass("col-md-5 col-lg-5");
+                }
                 showHideTranSaleReturnAddEditByProduct(false);
                 isReturnByVoucher = false;
             }

@@ -166,6 +166,14 @@ namespace Inventory.Common
         public const string PrcGetCustomerOutstandingOverDueDetail = "PrcGetCustomerOutstandingOverDueDetail";
         public const string PrcGetRptTransferItem = "PrcGetRptTransferItem";
         public const string PrcUpdateSetupModuleUserRight = "PrcUpdateSetupModuleUserRight";
+        public const string PrcGetAccessAllowedSetupModule = "PrcGetAccessAllowedSetupModule";
         public const string PrcUpdateEntryModuleUserRight = "PrcUpdateEntryModuleUserRight";
+        public const string PrcGetAccessAllowedEntryModule = "PrcGetAccessAllowedEntryModule";
+        public const string PrcUpdateReportModuleUserRight = "PrcUpdateReportModuleUserRight";
+        public const string PrcGetAccessAllowedReportModule = "PrcGetAccessAllowedReportModule";
+        public const string PrcGetRptStockStatusByModule = "PrcGetRptStockStatusByModule";
+        public const string PrcGetRptSaleLog = "PrcGetRptSaleLog";
+        public const string PrcGetRptPurchaseLog = "PrcGetRptPurchaseLog";
+        public const string PrcGetRptSaleItemProfit = "PrcGetRptSaleItemProfit";
     }
 }

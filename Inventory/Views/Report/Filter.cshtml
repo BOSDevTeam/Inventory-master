@@ -53,13 +53,21 @@
                 Html.RenderPartial("_SalePersonFilter");
             }
         </div>
-    }           
+    } 
+    @if (Model.IsShowLogFilter)
+    {
+        <div>
+            @{ 
+                Html.RenderPartial("_LogFilter");
+            }
+        </div>
+    }
 
 </div>
 
 <script type="text/javascript">
-    let paymentType = 1;
-    var isShowPayment = false, isShowMenu = false,isShowUserClient=false;
+    let paymentType = 1,logType=1;
+    var isShowPayment = false, isShowMenu = false,isShowUserClient=false,isShowLog=false;
     var subMenuIDArray = [];
     var lstUserID = [], lstClientID = [];
     $(function () {
@@ -71,12 +79,14 @@
             {
                 window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate +'&paymentType=' + paymentType;
             }
-            else if (isShowMenu == true) {
-                //$("#divMenuFilter").load("#divMenuFilter");
+            else if (isShowMenu == true) {               
                 window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate + '&SubMenuID=' + JSON.stringify(subMenuIDArray);               
             }
             else if (isShowUserClient == true) {
                 window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate + '&lstUserID=' + JSON.stringify(lstUserID) + '&lstClientID=' + JSON.stringify(lstClientID);
+            }
+            else if (isShowLog == true) {
+                window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate + '&logType=' + logType;
             }
             else
             {
@@ -92,7 +102,8 @@
                 $('#inputFromDate').val(getTodayDate());
                 $('#inputToDate').val(getTodayDate());
                 isShowPayment = '@ViewBag.isShowPayment';
-                isShowMenu = '@ViewBag.isShowMenu';
+                isShowMenu = '@ViewBag.isShowMenu';   
+                isShowLog = '@ViewBag.isShowLog';
                 if (isShowMenu == true) {
                     let menuList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.MenuData))');
                     createMenuFilter(menuList);
@@ -115,6 +126,10 @@
             $("input[name='rdoPayType']").change(function (e) {
                 let target = e.target;
                 paymentType = target.value;
+            })
+            $("input[name='rdoLogType']").change(function (e) {
+                let target = e.target;
+                logType = target.value;
             })
 
         })

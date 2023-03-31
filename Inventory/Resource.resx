@@ -855,4 +855,28 @@
   <data name="SetupModuleAccess" xml:space="preserve">
     <value>Setup Module Access</value>
   </data>
+  <data name="StockStatusDetailReport" xml:space="preserve">
+    <value>Stock Status Detail Report</value>
+  </data>
+  <data name="StockStatusReport" xml:space="preserve">
+    <value>Stock Status Report</value>
+  </data>
+  <data name="EnterLimitedUser" xml:space="preserve">
+    <value>Enter Limited User</value>
+  </data>
+  <data name="LimitUser" xml:space="preserve">
+    <value>Limit User</value>
+  </data>
+  <data name="AdjustmentDecrease" xml:space="preserve">
+    <value>- Adjustment</value>
+  </data>
+  <data name="AdjustmentIncrease" xml:space="preserve">
+    <value>+ Adjustment</value>
+  </data>
+  <data name="PurchaseReturn" xml:space="preserve">
+    <value>Purchase Return</value>
+  </data>
+  <data name="SaleReturn" xml:space="preserve">
+    <value>Sale Return</value>
+  </data>
 </root>

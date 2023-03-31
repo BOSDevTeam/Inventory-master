@@ -24,7 +24,7 @@ namespace Inventory.Controllers
         public void selectEntryModule(int userId)
         {
             setting.conn.Open();
-            SqlCommand cmd = new SqlCommand(textQuery.getEntryModuleQuery(userId), setting.conn);
+            SqlCommand cmd = new SqlCommand(textQuery.getEntryModuleAccessQuery(userId), setting.conn);
             cmd.CommandType = CommandType.Text;
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();

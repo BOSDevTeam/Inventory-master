@@ -223,6 +223,24 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to - Adjustment.
+        /// </summary>
+        public static string AdjustmentDecrease {
+            get {
+                return ResourceManager.GetString("AdjustmentDecrease", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to + Adjustment.
+        /// </summary>
+        public static string AdjustmentIncrease {
+            get {
+                return ResourceManager.GetString("AdjustmentIncrease", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Adjustment Item Report.
         /// </summary>
         public static string AdjustmentItemReport {
@@ -772,6 +790,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter Limited User.
+        /// </summary>
+        public static string EnterLimitedUser {
+            get {
+                return ResourceManager.GetString("EnterLimitedUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter a Note.
         /// </summary>
         public static string EnterNote {
@@ -894,6 +921,15 @@ namespace Inventory {
         public static string LimitedDay {
             get {
                 return ResourceManager.GetString("LimitedDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Limit User.
+        /// </summary>
+        public static string LimitUser {
+            get {
+                return ResourceManager.GetString("LimitUser", resourceCulture);
             }
         }
         
@@ -1456,6 +1492,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Purchase Return.
+        /// </summary>
+        public static string PurchaseReturn {
+            get {
+                return ResourceManager.GetString("PurchaseReturn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Purchase Return List.
         /// </summary>
         public static string PurchaseReturnList {
@@ -1726,6 +1771,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sale Return.
+        /// </summary>
+        public static string SaleReturn {
+            get {
+                return ResourceManager.GetString("SaleReturn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sale Return List.
         /// </summary>
         public static string SaleReturnList {
@@ -1812,6 +1866,24 @@ namespace Inventory {
         public static string StockStatusByLocation {
             get {
                 return ResourceManager.GetString("StockStatusByLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stock Status Detail Report.
+        /// </summary>
+        public static string StockStatusDetailReport {
+            get {
+                return ResourceManager.GetString("StockStatusDetailReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stock Status Report.
+        /// </summary>
+        public static string StockStatusReport {
+            get {
+                return ResourceManager.GetString("StockStatusReport", resourceCulture);
             }
         }
         

@@ -37,7 +37,7 @@ namespace Inventory.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveOtherSettingAction(string isMultiCurrency, string isMultiUnit, string isBankPayment,string isClientPhoneVerify)
+        public JsonResult SaveOtherSettingAction(string isMultiCurrency, string isMultiUnit, string isBankPayment,string isClientPhoneVerify, string isLimitUser, short limitedUserCount)
         {
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
             SqlCommand cmd = new SqlCommand(Procedure.PrcSaveOtherSetting, (SqlConnection)Session["SQLConnection"]);
@@ -46,6 +46,8 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@IsMultiUnit", Convert.ToBoolean(isMultiUnit));
             cmd.Parameters.AddWithValue("@IsBankPayment", Convert.ToBoolean(isBankPayment));
             cmd.Parameters.AddWithValue("@IsClientPhoneVerify", Convert.ToBoolean(isClientPhoneVerify));
+            cmd.Parameters.AddWithValue("@IsLimitUser", Convert.ToBoolean(isLimitUser));
+            cmd.Parameters.AddWithValue("@LimitedUserCount", Convert.ToInt16(limitedUserCount));
             cmd.ExecuteNonQuery();
             dataConnectorSQL.Close();
 
@@ -81,6 +83,8 @@ namespace Inventory.Controllers
                 ViewBag.IsBankPayment = reader["IsBankPayment"];
                 ViewBag.IsClientPhoneVerify = reader["IsClientPhoneVerify"];              
                 ViewBag.ShopTypeID = reader["ShopTypeID"].ToString();
+                ViewBag.IsLimitUser = reader["IsLimitUser"];
+                ViewBag.LimitedUserCount = reader["LimitedUserCount"];
             }
             reader.Close();
             dataConnectorSQL.Close();

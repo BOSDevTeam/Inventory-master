@@ -25,7 +25,7 @@ namespace Inventory.Controllers
         public void selectSetupModule(int userId)
         {
             setting.conn.Open();
-            SqlCommand cmd = new SqlCommand(textQuery.getSetupModuleQuery(userId), setting.conn);
+            SqlCommand cmd = new SqlCommand(textQuery.getSetupModuleAccessQuery(userId), setting.conn);
             cmd.CommandType = CommandType.Text;
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();

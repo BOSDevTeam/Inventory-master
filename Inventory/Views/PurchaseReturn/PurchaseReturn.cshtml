@@ -97,7 +97,7 @@
                     <div class="col-md-5 col-lg-5">
                         <input id="inputReturnProductName" type="text" class="form-control control-input" placeholder="@Resource.ProductName" disabled />
                     </div>
-                    <div class="col-md-2 col-lg-2" id="">
+                    <div class="col-md-2 col-lg-2" id="divReturnQuantity">
                         <input id="inputReturnProductQuantity" type="text" class="form-control control-input numberonly" placeholder="@Resource.ReturnQty" />
                     </div>
                     <div id="divddlUnit" class="col-md-2 col-lg-2">
@@ -278,7 +278,7 @@
                 $("#divReturnByProduct").css("display", 'none');
                 $("#divPurchaseReturnByProductTran").css("display", "none");
                 $("#divPurchaseReturnTran").css("display", "block");
-                isPurchaseReturnByVoucher = true;
+                isPurchaseReturnByVoucher = true;               
             }
             else
             {
@@ -289,12 +289,28 @@
                 $("#divReturnByVoucher").prop("disabled", true);
                 $("#divTranReturnByVoucher").css("display", 'none');
                 $("#divReturnByProduct").css("display", 'block');
-                showHideTranPurchaseReturnAddEditByProduct(false);
-                createDefaultCurrency();
-                createDefaultUnit();
+                showHideTranPurchaseReturnAddEditByProduct(false);                              
                 $("#divPurchaseReturnByProductTran").css("display", "block");
                 $("#divPurchaseReturnTran").css("display", "none");
                 isPurchaseReturnByVoucher = false;
+                if (isMultiUnit=="True") {
+                    $("#divddlUnit").css("display", "block");
+                    createDefaultUnit();
+                }
+                else
+                {
+                    $('#divddlUnit').css("display", "none");
+                    $('#divReturnQuantity').addClass("col-md-4 col-lg-4");
+                }
+                if (isMultiCurrency=="True") {
+                    createDefaultCurrency();
+                    $("#divddlCurrency").css("display", "block");
+                }
+                else
+                {                  
+                    $("#divddlCurrency").css("display", "none");
+                    $('#divReturnProductTranBtn').addClass("col-md-5 col-lg-5");
+                }
             }
         })
         function createDefaultUnit() {
@@ -315,7 +331,7 @@
             if (isMultiUnit == "True") {
                 $("#divUnit").show();
             } else {
-                $('#divUnit').css("display", "none");
+                $('#divUnit').css("display", "none");               
                 $('#divQuantity').addClass("col-md-4 col-lg-4");
             }
         }

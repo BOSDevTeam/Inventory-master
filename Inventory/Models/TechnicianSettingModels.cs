@@ -18,5 +18,7 @@ namespace Inventory.Models
         public bool IsClientPhoneVerify { get; set; }
         public List<SelectListItem> ShopTypes { get; set; }
         public int ShopTypeID { get; set; }
+        public bool IsLimitUser { get; set; }
+        public short LimitedUserCount { get; set; }
     }
 }
