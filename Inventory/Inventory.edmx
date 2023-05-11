@@ -44,6 +44,7 @@
           <Property Name="TownshipID" Type="int" />
           <Property Name="Address" Type="nvarchar" MaxLength="1000" />
           <Property Name="IsSalePerson" Type="bit" />
+          <Property Name="Token" Type="varchar" MaxLength="1000" />
         </EntityType>
         <EntityType Name="SCompanySetting">
           <Key>
@@ -64,6 +65,8 @@
           <Property Name="IsBankPayment" Type="bit" />
           <Property Name="ShopTypeID" Type="int" />
           <Property Name="IsClientPhoneVerify" Type="bit" />
+          <Property Name="IsLimitUser" Type="bit" />
+          <Property Name="LimitedUserCount" Type="smallint" />
         </EntityType>
         <EntityType Name="SCustomer">
           <Key>
@@ -188,6 +191,7 @@
           <Property Name="UserPassword" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="IsDefaultLocation" Type="bit" Nullable="false" />
           <Property Name="LocationID" Type="int" />
+          <Property Name="IsTechnician" Type="bit" />
         </EntityType>
         <EntityType Name="SVoucherFormat">
           <Key>
@@ -216,6 +220,8 @@
           <Property Name="FooterMessage2" Type="nvarchar" MaxLength="200" />
           <Property Name="FooterMessage3" Type="nvarchar" MaxLength="200" />
           <Property Name="VoucherLogoUrl" Type="varchar" MaxLength="200" />
+          <Property Name="HeaderName2" Type="nvarchar" MaxLength="200" />
+          <Property Name="HeaderDesp2" Type="nvarchar" MaxLength="200" />
         </EntityType>
         <EntityType Name="SysModule">
           <Key>
@@ -224,6 +230,7 @@
           <Property Name="ModuleID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ModuleName" Type="nvarchar" MaxLength="200" />
           <Property Name="ModuleCode" Type="varchar" MaxLength="50" />
+          <Property Name="VoucherPrefix" Type="nvarchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="TCLMasterSaleOrder">
           <Key>
@@ -350,6 +357,8 @@
           <Parameter Name="IsMultiUnit" Type="bit" Mode="In" />
           <Parameter Name="IsBankPayment" Type="bit" Mode="In" />
           <Parameter Name="IsClientPhoneVerify" Type="bit" Mode="In" />
+          <Parameter Name="IsLimitUser" Type="bit" Mode="In" />
+          <Parameter Name="LimitedUserCount" Type="smallint" Mode="In" />
         </Function>
         <Function Name="PrcSaveShopType" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ShopTypeID" Type="int" Mode="In" />
@@ -439,6 +448,7 @@
           <Parameter Name="TaxAmt" Type="int" Mode="In" />
           <Parameter Name="ChargesAmt" Type="int" Mode="In" />
           <Parameter Name="Total" Type="int" Mode="In" />
+          <Parameter Name="CurrentDateTime" Type="datetime" Mode="In" />
         </Function>
         <Function Name="PrcUpdateCustomer" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="CustomerID" Type="int" Mode="In" />
@@ -511,12 +521,9 @@
           <Parameter Name="PostFormat" Type="int" Mode="In" />
           <Parameter Name="Module" Type="varchar" Mode="In" />
         </Function>
-        <Function Name="PrcValidateAdmin" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="AdminName" Type="nvarchar" Mode="In" />
-          <Parameter Name="AdminPassword" Type="varchar" Mode="In" />
-        </Function>
         <Function Name="PrcValidateUser" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="UserID" Type="int" Mode="In" />
+          <Parameter Name="UserName" Type="nvarchar" Mode="In" />
           <Parameter Name="UserPassword" Type="varchar" Mode="In" />
         </Function>
         <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -617,6 +624,8 @@
             <Parameter Name="IsMultiUnit" Mode="In" Type="Boolean" />
             <Parameter Name="IsBankPayment" Mode="In" Type="Boolean" />
             <Parameter Name="IsClientPhoneVerify" Mode="In" Type="Boolean" />
+            <Parameter Name="IsLimitUser" Mode="In" Type="Boolean" />
+            <Parameter Name="LimitedUserCount" Mode="In" Type="Int16" />
           </FunctionImport>
           <FunctionImport Name="PrcSaveShopType">
           <Parameter Name="ShopTypeID" Mode="In" Type="Int32" />
@@ -708,6 +717,7 @@
           </FunctionImport>
           <FunctionImport Name="PrcValidateUser" ReturnType="Collection(Int32)">
             <Parameter Name="UserID" Mode="In" Type="Int32" />
+            <Parameter Name="UserName" Mode="In" Type="String" />
             <Parameter Name="UserPassword" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sp_alterdiagram">
@@ -812,7 +822,6 @@
             <Parameter Name="DivisionID" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="PrcGetLocation" ReturnType="Collection(InventoryDBModel.PrcGetLocation_Result)" />
-          <FunctionImport Name="PrcGetVoucherSetting" ReturnType="Collection(InventoryDBModel.PrcGetVoucherSetting_Result)" />
           <FunctionImport Name="PrcUpdateCLMasterSaleOrder">
             <Parameter Name="SaleOrderID" Mode="In" Type="Int32" />
             <Parameter Name="ID" Mode="In" Type="Int32" />
@@ -827,6 +836,7 @@
             <Parameter Name="TaxAmt" Mode="In" Type="Int32" />
             <Parameter Name="ChargesAmt" Mode="In" Type="Int32" />
             <Parameter Name="Total" Mode="In" Type="Int32" />
+            <Parameter Name="CurrentDateTime" Mode="In" Type="DateTime" />
           </FunctionImport>
           <FunctionImport Name="PrcGetCLMasterSaleOrder" ReturnType="Collection(InventoryDBModel.PrcGetCLMasterSaleOrder_Result)" />
           <FunctionImport Name="PrcGetCLTranSaleOrderBySaleOrderID" ReturnType="Collection(InventoryDBModel.PrcGetCLTranSaleOrderBySaleOrderID_Result)">
@@ -895,6 +905,7 @@
           <EntitySet Name="SysModules" EntityType="InventoryDBModel.SysModule" />
           <EntitySet Name="TCLMasterSaleOrders" EntityType="InventoryDBModel.TCLMasterSaleOrder" />
           <EntitySet Name="TCLTranSaleOrders" EntityType="InventoryDBModel.TCLTranSaleOrder" />
+          <FunctionImport Name="PrcGetVoucherSetting" ReturnType="Collection(InventoryDBModel.PrcGetVoucherSetting_Result)" />
         </EntityContainer>
         <ComplexType Name="PrcGetCompanySetting_Result">
           <Property Type="Boolean" Name="IsMultiCurrency" Nullable="false" />
@@ -1090,21 +1101,6 @@
           <Property Type="String" Name="Address" Nullable="true" MaxLength="1000" />
           <Property Type="String" Name="Email" Nullable="true" MaxLength="200" />
         </ComplexType>
-        <ComplexType Name="PrcGetVoucherSetting_Result">
-          <Property Type="Int32" Name="LocationID" Nullable="false" />
-          <Property Type="String" Name="LocationName" Nullable="true" MaxLength="200" />
-          <Property Type="String" Name="HeaderName" Nullable="false" MaxLength="200" />
-          <Property Type="String" Name="HeaderDesp" Nullable="true" MaxLength="200" />
-          <Property Type="String" Name="HeaderPhone" Nullable="true" MaxLength="50" />
-          <Property Type="String" Name="HeaderAddress" Nullable="true" MaxLength="200" />
-          <Property Type="String" Name="OtherHeader1" Nullable="true" MaxLength="200" />
-          <Property Type="String" Name="OtherHeader2" Nullable="true" MaxLength="200" />
-          <Property Type="String" Name="FooterMessage1" Nullable="true" MaxLength="200" />
-          <Property Type="String" Name="FooterMessage2" Nullable="true" MaxLength="200" />
-          <Property Type="String" Name="FooterMessage3" Nullable="true" MaxLength="200" />
-          <Property Type="Binary" Name="VoucherLogo" Nullable="true" MaxLength="Max" />
-          <Property Type="Int32" Name="ID" Nullable="false" />
-        </ComplexType>
         <ComplexType Name="PrcGetCLMasterSaleOrder_Result">
           <Property Type="String" Name="OrderNumber" Nullable="true" MaxLength="50" />
           <Property Type="Int32" Name="SaleOrderID" Nullable="false" />
@@ -1293,6 +1289,7 @@
           <Property Name="TownshipID" Type="Int32" />
           <Property Name="Address" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
           <Property Name="IsSalePerson" Type="Boolean" />
+          <Property Name="Token" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="SCompanySetting">
           <Key>
@@ -1313,6 +1310,8 @@
           <Property Name="IsBankPayment" Type="Boolean" />
           <Property Name="ShopTypeID" Type="Int32" />
           <Property Name="IsClientPhoneVerify" Type="Boolean" />
+          <Property Name="IsLimitUser" Type="Boolean" />
+          <Property Name="LimitedUserCount" Type="Int16" />
         </EntityType>
         <EntityType Name="SCustomer">
           <Key>
@@ -1437,6 +1436,7 @@
           <Property Name="UserPassword" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="IsDefaultLocation" Type="Boolean" Nullable="false" />
           <Property Name="LocationID" Type="Int32" />
+          <Property Name="IsTechnician" Type="Boolean" />
         </EntityType>
         <EntityType Name="SVoucherFormat">
           <Key>
@@ -1465,6 +1465,8 @@
           <Property Name="FooterMessage2" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="FooterMessage3" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="VoucherLogoUrl" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="HeaderName2" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="HeaderDesp2" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SysModule">
           <Key>
@@ -1473,6 +1475,7 @@
           <Property Name="ModuleID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ModuleName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="ModuleCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VoucherPrefix" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="TCLMasterSaleOrder">
           <Key>
@@ -1504,6 +1507,23 @@
           <Property Name="Amount" Type="Int32" />
           <Property Name="SysProductID" Type="Int32" />
         </EntityType>
+        <ComplexType Name="PrcGetVoucherSetting_Result">
+          <Property Type="Int32" Name="LocationID" Nullable="false" />
+          <Property Type="String" Name="LocationName" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="HeaderName" Nullable="false" MaxLength="200" />
+          <Property Type="String" Name="HeaderDesp" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="HeaderPhone" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="HeaderAddress" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="OtherHeader1" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="OtherHeader2" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="FooterMessage1" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="FooterMessage2" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="FooterMessage3" Nullable="true" MaxLength="200" />
+          <Property Type="Binary" Name="VoucherLogo" Nullable="true" MaxLength="Max" />
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="HeaderName2" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="HeaderDesp2" Nullable="true" MaxLength="200" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1715,7 +1735,6 @@
           <FunctionImportMapping FunctionImportName="PrcUpdateSubMenu" FunctionName="InventoryDBModel.Store.PrcUpdateSubMenu" />
           <FunctionImportMapping FunctionImportName="PrcUpdateTownship" FunctionName="InventoryDBModel.Store.PrcUpdateTownship" />
           <FunctionImportMapping FunctionImportName="PrcUpdateUser" FunctionName="InventoryDBModel.Store.PrcUpdateUser" />
-          <FunctionImportMapping FunctionImportName="PrcValidateAdmin" FunctionName="InventoryDBModel.Store.PrcValidateAdmin" />
           <FunctionImportMapping FunctionImportName="PrcValidateUser" FunctionName="InventoryDBModel.Store.PrcValidateUser" />
           <FunctionImportMapping FunctionImportName="sp_alterdiagram" FunctionName="InventoryDBModel.Store.sp_alterdiagram" />
           <FunctionImportMapping FunctionImportName="sp_creatediagram" FunctionName="InventoryDBModel.Store.sp_creatediagram" />
@@ -1773,25 +1792,6 @@
                 <ScalarProperty Name="Phone" ColumnName="Phone" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="PrcGetVoucherSetting" FunctionName="InventoryDBModel.Store.PrcGetVoucherSetting">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="InventoryDBModel.PrcGetVoucherSetting_Result">
-                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
-                <ScalarProperty Name="LocationName" ColumnName="LocationName" />
-                <ScalarProperty Name="HeaderName" ColumnName="HeaderName" />
-                <ScalarProperty Name="HeaderDesp" ColumnName="HeaderDesp" />
-                <ScalarProperty Name="HeaderPhone" ColumnName="HeaderPhone" />
-                <ScalarProperty Name="HeaderAddress" ColumnName="HeaderAddress" />
-                <ScalarProperty Name="OtherHeader1" ColumnName="OtherHeader1" />
-                <ScalarProperty Name="OtherHeader2" ColumnName="OtherHeader2" />
-                <ScalarProperty Name="FooterMessage1" ColumnName="FooterMessage1" />
-                <ScalarProperty Name="FooterMessage2" ColumnName="FooterMessage2" />
-                <ScalarProperty Name="FooterMessage3" ColumnName="FooterMessage3" />
-                <ScalarProperty Name="VoucherLogo" ColumnName="VoucherLogo" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -2028,6 +2028,7 @@
           <EntitySetMapping Name="SClients">
             <EntityTypeMapping TypeName="InventoryDBModel.SClient">
               <MappingFragment StoreEntitySet="SClient">
+                <ScalarProperty Name="Token" ColumnName="Token" />
                 <ScalarProperty Name="IsSalePerson" ColumnName="IsSalePerson" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="TownshipID" ColumnName="TownshipID" />
@@ -2043,6 +2044,8 @@
           <EntitySetMapping Name="SCompanySettings">
             <EntityTypeMapping TypeName="InventoryDBModel.SCompanySetting">
               <MappingFragment StoreEntitySet="SCompanySetting">
+                <ScalarProperty Name="LimitedUserCount" ColumnName="LimitedUserCount" />
+                <ScalarProperty Name="IsLimitUser" ColumnName="IsLimitUser" />
                 <ScalarProperty Name="IsClientPhoneVerify" ColumnName="IsClientPhoneVerify" />
                 <ScalarProperty Name="ShopTypeID" ColumnName="ShopTypeID" />
                 <ScalarProperty Name="IsBankPayment" ColumnName="IsBankPayment" />
@@ -2187,6 +2190,7 @@
           <EntitySetMapping Name="SUsers">
             <EntityTypeMapping TypeName="InventoryDBModel.SUser">
               <MappingFragment StoreEntitySet="SUser">
+                <ScalarProperty Name="IsTechnician" ColumnName="IsTechnician" />
                 <ScalarProperty Name="LocationID" ColumnName="LocationID" />
                 <ScalarProperty Name="IsDefaultLocation" ColumnName="IsDefaultLocation" />
                 <ScalarProperty Name="UserPassword" ColumnName="UserPassword" />
@@ -2209,6 +2213,8 @@
           <EntitySetMapping Name="SVoucherSettings">
             <EntityTypeMapping TypeName="InventoryDBModel.SVoucherSetting">
               <MappingFragment StoreEntitySet="SVoucherSetting">
+                <ScalarProperty Name="HeaderDesp2" ColumnName="HeaderDesp2" />
+                <ScalarProperty Name="HeaderName2" ColumnName="HeaderName2" />
                 <ScalarProperty Name="VoucherLogoUrl" ColumnName="VoucherLogoUrl" />
                 <ScalarProperty Name="FooterMessage3" ColumnName="FooterMessage3" />
                 <ScalarProperty Name="FooterMessage2" ColumnName="FooterMessage2" />
@@ -2228,6 +2234,7 @@
           <EntitySetMapping Name="SysModules">
             <EntityTypeMapping TypeName="InventoryDBModel.SysModule">
               <MappingFragment StoreEntitySet="SysModule">
+                <ScalarProperty Name="VoucherPrefix" ColumnName="VoucherPrefix" />
                 <ScalarProperty Name="ModuleCode" ColumnName="ModuleCode" />
                 <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
                 <ScalarProperty Name="ModuleID" ColumnName="ModuleID" />
@@ -2266,6 +2273,27 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="PrcGetVoucherSetting" FunctionName="InventoryDBModel.Store.PrcGetVoucherSetting">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="InventoryDBModel.PrcGetVoucherSetting_Result">
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="LocationName" ColumnName="LocationName" />
+                <ScalarProperty Name="HeaderName" ColumnName="HeaderName" />
+                <ScalarProperty Name="HeaderDesp" ColumnName="HeaderDesp" />
+                <ScalarProperty Name="HeaderPhone" ColumnName="HeaderPhone" />
+                <ScalarProperty Name="HeaderAddress" ColumnName="HeaderAddress" />
+                <ScalarProperty Name="OtherHeader1" ColumnName="OtherHeader1" />
+                <ScalarProperty Name="OtherHeader2" ColumnName="OtherHeader2" />
+                <ScalarProperty Name="FooterMessage1" ColumnName="FooterMessage1" />
+                <ScalarProperty Name="FooterMessage2" ColumnName="FooterMessage2" />
+                <ScalarProperty Name="FooterMessage3" ColumnName="FooterMessage3" />
+                <ScalarProperty Name="VoucherLogo" ColumnName="VoucherLogo" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="HeaderName2" ColumnName="HeaderName2" />
+                <ScalarProperty Name="HeaderDesp2" ColumnName="HeaderDesp2" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

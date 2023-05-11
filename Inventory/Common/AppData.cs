@@ -354,6 +354,8 @@ namespace Inventory.Common
             {
                 item.HeaderName = Convert.ToString(reader["HeaderName"]);
                 item.HeaderDesp = Convert.ToString(reader["HeaderDesp"]);
+                item.HeaderName2 = Convert.ToString(reader["HeaderName2"]);
+                item.HeaderDesp2 = Convert.ToString(reader["HeaderDesp2"]);
                 item.HeaderPhone = Convert.ToString(reader["HeaderPhone"]);
                 item.HeaderAddress = Convert.ToString(reader["HeaderAddress"]);
                 item.OtherHeader1 = Convert.ToString(reader["OtherHeader1"]);

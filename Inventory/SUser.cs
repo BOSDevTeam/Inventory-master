@@ -19,5 +19,6 @@ namespace Inventory
         public string UserPassword { get; set; }
         public bool IsDefaultLocation { get; set; }
         public Nullable<int> LocationID { get; set; }
+        public Nullable<bool> IsTechnician { get; set; }
     }
 }

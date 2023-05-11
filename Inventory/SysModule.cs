@@ -17,5 +17,6 @@ namespace Inventory
         public int ModuleID { get; set; }
         public string ModuleName { get; set; }
         public string ModuleCode { get; set; }
+        public string VoucherPrefix { get; set; }
     }
 }

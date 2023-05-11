@@ -27,5 +27,7 @@ namespace Inventory
         public string FooterMessage2 { get; set; }
         public string FooterMessage3 { get; set; }
         public string VoucherLogoUrl { get; set; }
+        public string HeaderName2 { get; set; }
+        public string HeaderDesp2 { get; set; }
     }
 }

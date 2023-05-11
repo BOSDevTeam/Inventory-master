@@ -26,7 +26,7 @@
                 <button id="btnBack" class="btn btn-second ml-10">@Resource.BackToPOS</button>
             </div>
 
-            <div class="padding-10" style="border:1px dashed #e53f34;margin:10px;background-color:#fff;">
+            <div id="divVoucher" class="padding-10" style="border:1px dashed #e53f34;margin:10px;background-color:#fff;">
 
                 <table class="width-100-percent" style="text-align:center;">
                     <tr>
@@ -108,6 +108,7 @@
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/Scripts/Site.js"></script>
+    <script src="~/Scripts/printThis.js"></script>
     <script type="text/javascript">
 
         $(document).ready(function () {
@@ -120,17 +121,21 @@
                 window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId;
             });
 
+            $("#btnPrint").click(function () {
+                $("#divVoucher").printThis();
+            });
+
             function createTranSaleData() {
                 $("#tblTranSale").find("tbody").empty();
                 let tranSaleList = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstTranSale"]))');
                 $.each(tranSaleList, function (index, item) {
-                    let row = '<tr class="row voucher-table-item">'
-                    if (item.IsFOC == true) row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '(FOC)' + '</td>'
-                    else row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '</td>'
-                    row += '<td class="col-md-2 col-lg-2">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
-                      + '<td class="col-md-2 col-lg-2">' + separatedComma(item.SalePrice) + '<span class="control-span-sm">' + item.CurrencyKeyword + '</span></td>'
-                      + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Discount) + '</td>'
-                      + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Amount) + '</td>'
+                    let row = '<tr class="row voucher-table-item" style="width:100%">'
+                    if (item.IsFOC == true) row += '<td class="text-overflow" style="width:40%;float:left;">' + item.ProductName + '(FOC)' + '</td>'
+                    else row += '<td class="text-overflow" style="width:40%;float:left;">' + item.ProductName + '</td>'
+                    row += '<td style="width:10%;float:left;">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
+                      + '<td style="width:20%;float:left;">' + separatedComma(item.SalePrice) + '<span class="control-span-sm">' + item.CurrencyKeyword + '</span></td>'
+                      + '<td style="width:10%;float:left;">' + separatedComma(item.Discount) + '</td>'
+                      + '<td style="width:20%;float:left;" class="aligh-right">' + separatedComma(item.Amount) + '</td>'
                       + "</tr>";
                     $('#tblTranSale tbody').append(row);
                 });

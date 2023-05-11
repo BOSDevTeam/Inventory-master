@@ -286,7 +286,7 @@
             showHideMainButton(false, false, false);
             defaultCustomerId = $('#ddlCustomer option:selected').val();
             defaultLocationId = $('#ddlLocation option:selected').val();
-            defaultCurrencyId = $('#ddlMCurrency option:selected').val();          
+            defaultCurrencyId = $('#ddlMCurrency option:selected').val();
             $("#ddlCustomer").chosen();
         }
 
@@ -859,8 +859,10 @@
                     hideLoadingIcon();
                     if (!response.ResultDefaultData.IsRequestSuccess)
                         responseUnSuccessful(response);
-                    else
-                       window.location.href = '@Url.Action("SaleVoucher", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
+                    else {
+                        @*window.location.href = '@Url.Action("SaleVoucher", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;*@
+                        window.location.href = '@Url.Action("SaleVoucherDesign1", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
+                    }
                 },
                 failure: function (response) {
                     hideLoadingIcon();

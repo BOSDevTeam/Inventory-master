@@ -701,7 +701,7 @@ textarea.form-control {
 -----------------------*/
 
 .header {
-	background-color: #27ae61;
+	background-color: #299697;
 	left: 0;
 	position: fixed;
 	right: 0;
@@ -861,10 +861,10 @@ textarea.form-control {
 	padding: 0 20px;
 }
 .sidebar-menu li a:hover {
-	color: #27ae61;
+	color: #299697;
 }
 .sidebar-menu li.active a {
-	color: #27ae61;
+	color: #299697;
 	background-color: #f3f3f3;
 }
 .menu-title {

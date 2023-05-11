@@ -1,6 +1,6 @@
 ﻿/** main color code */
 /*
-first color:#27ae61   green
+first color:#299697   primary
 second color:#36b4e5  blue
 third color:#ef7971   red
 accent color:#e5e53e  yellow
@@ -24,15 +24,15 @@ light color:#ecedef
 div.paging{background-color:#d8dee3;border-top:1px solid #e9ecef;padding:2px;align-items:center;}
 .page-num{font-size:12px;color:#000;margin-bottom:0;background-color:#ffffcc;border-radius:5px;padding:5px;}
 div.paging-item{display:flex;justify-content:right;color:transparent;font-size:0;}
-.btn-paging{font-size:12px;background-color:#eee;color:#27ae61;padding:5px 10px;margin:2px;border:1px solid #27ae61;font-family:'Rubik',sans-serif;}
-.btn-paging:hover{background-color:#27ae61;color:#fff;}
+.btn-paging{font-size:12px;background-color:#eee;color:#299697;padding:5px 10px;margin:2px;border:1px solid #299697;font-family:'Rubik',sans-serif;}
+.btn-paging:hover{background-color:#299697;color:#fff;}
 /** end paging */
 
 
 
 /** buttons */
-.btn-first{color:#ffffff;background-color:#27ae61;font-size:13px;}
-.btn-first:hover{color:#ffffff;background-color:#1a924e;}
+.btn-first{color:#ffffff;background-color:#299697;font-size:13px;}
+.btn-first:hover{color:#ffffff;background-color:#1e7b7c;}
 .btn-second{color:#ffffff;background-color:#36b4e5;font-size:13px;}
 .btn-second:hover{color:#ffffff;background-color:#2895bf;}
 .btn-third{color:#ffffff;background-color:#ef7971;font-size:13px;}
@@ -43,8 +43,8 @@ div.paging-item{display:flex;justify-content:right;color:transparent;font-size:0
 .btn-gray:hover{background-color:#C6CACE;}
 .btn-white-outline-third{color:#3E445C;background-color:#fff;border:1px solid #ef7971;font-size:13px;}
 .btn-white-outline-third:hover{color:#fff;background-color:#f7685f;}
-.btn-dialog-ok{background-color:#1a924e;color:#fff;font-size:13px;}
-.btn-dialog-ok:hover{background-color:#27ae61;color:#fff;}
+.btn-dialog-ok{background-color:#1e7b7c;color:#fff;font-size:13px;}
+.btn-dialog-ok:hover{background-color:#299697;color:#fff;}
 .btn-dialog-cancel{background-color:#DEE2E6;color:#444c57;font-size:13px;}
 .btn-dialog-cancel:hover{background-color:#C6CACE;}
 .btn-list-action{font-size: 10px;font-family: 'Rubik',sans-serif;}
@@ -84,7 +84,7 @@ div.paging-item{display:flex;justify-content:right;color:transparent;font-size:0
   background-clip: padding-box;border: 1px solid #cdd6df;border-radius: 0.20rem;transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   font-family:'Rubik',sans-serif;}
 .forword-icon{color:#444c57;}
-.refresh-icon{color:#0FCA5B;}
+.refresh-icon{color:#299697;}
 .general-text-title {color:#000;font-size:13px;font-weight:bold;font-family:'Rubik',sans-serif;}
 .important-text{color:#336699;}
 .font-weight-500{font-weight:500;}
@@ -113,12 +113,12 @@ div.note{background-color:#ffffcc;padding:5px;}
 .tran-table-item-row{background-color:#fff;margin-bottom:1px;padding:2px 5px;}
 .tran-table-item-row:hover{background-color:#ecedef;cursor:pointer;}
 .div-return{border:1px solid #f3f3f3;background-color:#fff;}
-.return-table-header-row{background-color:#27ae61;color:#fff;padding:5px;position:sticky;top:0;z-index:999;border-bottom:1px solid #d7dadf;}
+.return-table-header-row{background-color:#299697;color:#fff;padding:5px;position:sticky;top:0;z-index:999;border-bottom:1px solid #d7dadf;}
 .text-link{color:#0582b3;}
 .text-link:hover{color:#36b4e5;cursor:pointer;}
 button.discount{padding:5px 10px;background-color:#DEE2E6;font-size:13px;font-family: 'Rubik',sans-serif;color:#666;border:none;}
-button.discount:hover{cursor:pointer;color:#27ae61;}
-button.discount-active{padding:5px 10px;background-color:#27ae61;font-size:13px;font-family: 'Rubik',sans-serif;color:#fff;border:none;}
+button.discount:hover{cursor:pointer;color:#299697;}
+button.discount-active{padding:5px 10px;background-color:#299697;font-size:13px;font-family: 'Rubik',sans-serif;color:#fff;border:none;}
 .soft-gray-background{background-color:#edeff1;}
 .light-background{background-color:#ecedef;}
 table tr td.text-overflow{text-overflow:ellipsis;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;}
@@ -130,7 +130,7 @@ button:disabled{background-color:#edeff1;}
 button:disabled:hover{background-color:#edeff1;cursor:default;color:#000;}
 span{font-size:13px;}
 .hideVerticalScrollbar{overflow-y: hidden!important;}
-.first-text-color{color:#27ae61;}
+.first-text-color{color:#299697;}
 .disabled_color{background-color:#f4f6f7;opacity:0.5;}
 .block{display:block;}
 .none{display:none;}
@@ -141,15 +141,16 @@ span{font-size:13px;}
 /** amount and voucher */
 table tr th.value-right{text-align:right;}
 table tr td.value-right{text-align:right;padding-right:15px;}
-.total-amount-label{color:#27ae61;font-size:16px;font-family: 'Rubik',sans-serif;}
-.total-amount-value{font-size:16px;color:#27ae61;font-family: 'Rubik',sans-serif;}
-.voucher-header-name{font-size:18px;color:#000;font-family:'Rubik',sans-serif;}
+.total-amount-label{color:#299697;font-size:16px;font-family: 'Rubik',sans-serif;}
+.total-amount-value{font-size:16px;color:#299697;font-family: 'Rubik',sans-serif;}
+.voucher-header-name{font-size:20px;color:#000;font-family:'Rubik',sans-serif;font-weight:bold;}
 .voucher-header{font-size:15px;color:#000;font-family:'Rubik',sans-serif;}
 .voucher-sub-header{font-size:13px;color:#000;font-family:'Rubik',sans-serif;}
 .voucher-sub-footer{font-size:13px;color:#000;font-family:'Rubik',sans-serif;}
-.voucher-table-header{color:#000;border-bottom:1px solid #F3F3F3;padding:5px;font-size:13px;font-family:'Rubik',sans-serif;}
+.voucher-table-header{color:#fff;padding:5px;font-size:13px;font-family:'Rubik',sans-serif;background-color:#666;}
 .voucher-table-item{color:#000;padding:5px;font-size:13px;font-family:'Rubik',sans-serif;}
 .voucher-divider{border-top:1px solid #F3F3F3;}
+.voucher-table-border{border:1px solid #999;}
 /** end amount and voucher */
 
 
@@ -196,16 +197,16 @@ table tr td.value-right{text-align:right;padding-right:15px;}
 
 
 /** product menu */
-div.mainmenu{background-color:#27ae61;overflow-x:auto;padding:5px;}
-.menu-main{background-color:#27ae61;font-size:13px;color:#fff;border:1px solid #20f262;border-radius:5px;
+div.mainmenu{background-color:#299697;overflow-x:auto;padding:5px;}
+.menu-main{background-color:#299697;font-size:13px;color:#fff;border:1px solid #e5e53e;border-radius:5px;
               font-family:'Rubik',sans-serif;height:50px;width:150px;text-overflow:ellipsis;overflow:hidden;}
-.menu-main:hover{background-color:#1a924e;cursor:pointer;color:#ecedef;}
+.menu-main:hover{background-color:#1e7b7c;cursor:pointer;color:#ecedef;}
 div.submenu{background-color:#fff;overflow-y:auto;padding:5px;}
 .menu-sub{color:#000;background-color:#fff;border:1px solid #DEE2E6;border-radius:3px;font-size:13px;
             width:100%;height:50px;font-family:'Rubik',sans-serif;text-overflow:ellipsis;overflow:hidden;}
-.menu-sub:hover{background-color:#ecedef;color:#1a924e;cursor:pointer;}
-div.product{background-color:#1a924e;overflow-y:auto;padding:5px;}
-.menu-product{color:#1a924e;background-color:#fff;border:1px solid #27ae61;border-radius:3px;margin:2px;
+.menu-sub:hover{background-color:#ecedef;color:#299697;cursor:pointer;}
+div.product{background-color:#636363;overflow-y:auto;padding:5px;}
+.menu-product{color:#299697;background-color:#fff;border:1px solid #299697;border-radius:3px;margin:2px;
             width:48%;height:50px;font-size:13px;font-family:'Rubik',sans-serif;text-overflow:ellipsis;overflow:hidden;float:left;}
 .menu-product:hover{background-color:#ecedef;cursor:pointer;}
 /** end product menu */
@@ -288,7 +289,7 @@ label1 {display:block; text-align:right;margin-right:20px}
 }  
 .rpt-total{
     padding: 5px;
-    background-color:#27ae61;    
+    background-color:#299697;    
     font-weight:bold;  
     color:#fff;      
     border-top:2px solid #DEE2E6;
@@ -319,7 +320,7 @@ label1 {display:block; text-align:right;margin-right:20px}
   background-color: #ddd;
 }
 .tab button.active {
-  background-color: #27ae61;
+  background-color: #299697;
   color:#FFF;
 }
 .tabcontent {

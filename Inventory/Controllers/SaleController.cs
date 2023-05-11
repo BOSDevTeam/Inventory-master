@@ -117,12 +117,12 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult ListSale(int userId)
+        public ActionResult ListSale()
         {
             if (checkConnection())
             {
                 getCustomer(true);
-                List<SaleViewModel.MasterSaleViewModel> tempList = selectMasterSale(userId,false);
+                List<SaleViewModel.MasterSaleViewModel> tempList = selectMasterSale(false);
                 PagingViewModel pagingViewModel = calcMasterSalePaging(tempList);
                 List<SaleViewModel.MasterSaleViewModel> lstMasterSale = getMasterSaleByPaging(tempList,pagingViewModel.StartItemIndex,pagingViewModel.EndItemIndex);
                 ViewData["LstMasterSale"] = lstMasterSale;
@@ -134,12 +134,12 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult ListOpenBill(int userId)
+        public ActionResult ListOpenBill()
         {
             if (checkConnection())
             {
                 getCustomer(true);
-                List<SaleViewModel.MasterOpenBillViewModel> tempList = selectMasterOpenBill(userId, false);
+                List<SaleViewModel.MasterOpenBillViewModel> tempList = selectMasterOpenBill(false);
                 PagingViewModel pagingViewModel = calcMasterOpenBillPaging(tempList);
                 List<SaleViewModel.MasterOpenBillViewModel> lstMasterOpenBill = getMasterOpenBillByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
                 ViewData["LstMasterOpenBill"] = lstMasterOpenBill;
@@ -160,6 +160,19 @@ namespace Inventory.Controllers
             setMasterSaleDataToViewBag(masterSaleVoucherViewModel);           
             List<TranSaleModels> lstTranSale = selectTranSaleBySaleID(masterSaleVoucherViewModel.MasterSaleModel.SaleID);                    
             ViewData["LstTranSale"]= lstTranSale;         
+            return View(saleViewModel);
+        }
+
+        [SessionTimeoutAttribute]
+        public ActionResult SaleVoucherDesign1(string systemVoucherNo, int locationId)
+        {
+            VoucherSettingModels voucherSettingModel = appData.selectVoucherSettingByLocation(getConnection(), locationId);
+            saleViewModel.VoucherSettings = voucherSettingModel;
+            ViewBag.Base64Photo = voucherSettingModel.Base64Photo;
+            MasterSaleVoucherViewModel masterSaleVoucherViewModel = selectMasterSale(systemVoucherNo);
+            setMasterSaleDataToViewBag(masterSaleVoucherViewModel);
+            List<TranSaleModels> lstTranSale = selectTranSaleBySaleID(masterSaleVoucherViewModel.MasterSaleModel.SaleID);
+            ViewData["LstTranSale"] = lstTranSale;
             return View(saleViewModel);
         }
 
@@ -722,7 +735,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult SearchAction(int userId,DateTime fromDate,DateTime toDate,string userVoucherNo,int customerId)
         {
-            List<SaleViewModel.MasterSaleViewModel> tempList = selectMasterSale(userId, true, fromDate, toDate, userVoucherNo, customerId);
+            List<SaleViewModel.MasterSaleViewModel> tempList = selectMasterSale(true, fromDate, toDate, userVoucherNo, customerId);
             PagingViewModel pagingViewModel = calcMasterSalePaging(tempList);
             List<SaleViewModel.MasterSaleViewModel> lstMasterSale = getMasterSaleByPaging(tempList,pagingViewModel.StartItemIndex,pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -737,7 +750,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult RefreshAction(int userId)
         {            
-            List<SaleViewModel.MasterSaleViewModel> tempList = selectMasterSale(userId, false);
+            List<SaleViewModel.MasterSaleViewModel> tempList = selectMasterSale(false);
             PagingViewModel pagingViewModel = calcMasterSalePaging(tempList);
             List<SaleViewModel.MasterSaleViewModel> lstMasterSale = getMasterSaleByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -1012,7 +1025,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult SearchOpenBillAction(int userId, DateTime fromDate, DateTime toDate, string userVoucherNo, int customerId)
         {
-            List<SaleViewModel.MasterOpenBillViewModel> tempList = selectMasterOpenBill(userId, true, fromDate, toDate, userVoucherNo, customerId);
+            List<SaleViewModel.MasterOpenBillViewModel> tempList = selectMasterOpenBill(true, fromDate, toDate, userVoucherNo, customerId);
             PagingViewModel pagingViewModel = calcMasterOpenBillPaging(tempList);
             List<SaleViewModel.MasterOpenBillViewModel> lstMasterOpenBill = getMasterOpenBillByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -1027,7 +1040,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult RefreshOpenBillAction(int userId)
         {
-            List<SaleViewModel.MasterOpenBillViewModel> tempList = selectMasterOpenBill(userId, false);
+            List<SaleViewModel.MasterOpenBillViewModel> tempList = selectMasterOpenBill(false);
             PagingViewModel pagingViewModel = calcMasterOpenBillPaging(tempList);
             List<SaleViewModel.MasterOpenBillViewModel> lstMasterOpenBill = getMasterOpenBillByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -1146,6 +1159,8 @@ namespace Inventory.Controllers
                 item.MasterSaleModel.VouDisPercent = Convert.ToInt32(reader["VouDisPercent"]);
                 item.MasterSaleModel.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
                 item.MasterSaleModel.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
+                item.MasterSaleModel.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
+                item.Payment = Convert.ToString(reader["Payment"]);
             }
             reader.Close();         
 
@@ -1195,14 +1210,13 @@ namespace Inventory.Controllers
             return item;
         }
 
-        private List<SaleViewModel.MasterSaleViewModel> selectMasterSale(int userId, bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo, [Optional]int customerId)
+        private List<SaleViewModel.MasterSaleViewModel> selectMasterSale(bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo, [Optional]int customerId)
         {           
             List<SaleViewModel.MasterSaleViewModel> tempList = new List<SaleViewModel.MasterSaleViewModel>();
             SaleViewModel.MasterSaleViewModel item = new SaleViewModel.MasterSaleViewModel();
 
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterSaleList, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@UserID", userId);
             cmd.Parameters.AddWithValue("@IsSearch", isSearch);
             if (!isSearch)
             {
@@ -1310,6 +1324,8 @@ namespace Inventory.Controllers
             if (item.MasterSaleModel.PayPercentAmt != 0)
                 ViewBag.GrandTotalNotPayPercent = item.MasterSaleModel.Total - (item.MasterSaleModel.VoucherDiscount + item.MasterSaleModel.AdvancedPay);
             ViewBag.IsVouFOC = item.MasterSaleModel.IsVouFOC;
+            ViewBag.UserVoucherNo = item.MasterSaleModel.UserVoucherNo;
+            ViewBag.Payment = item.Payment;
         }
 
         private List<TranSaleModels> selectTranSaleBySaleID(int saleId)
@@ -1387,14 +1403,13 @@ namespace Inventory.Controllers
             return item;
         }
 
-        private List<SaleViewModel.MasterOpenBillViewModel> selectMasterOpenBill(int userId, bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo, [Optional]int customerId)
+        private List<SaleViewModel.MasterOpenBillViewModel> selectMasterOpenBill(bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo, [Optional]int customerId)
         {
             List<SaleViewModel.MasterOpenBillViewModel> tempList = new List<SaleViewModel.MasterOpenBillViewModel>();
             SaleViewModel.MasterOpenBillViewModel item = new SaleViewModel.MasterOpenBillViewModel();
 
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterOpenBill, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@UserID", userId);
             cmd.Parameters.AddWithValue("@IsSearch", isSearch);
             if (!isSearch)
             {

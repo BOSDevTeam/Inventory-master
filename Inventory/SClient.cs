@@ -23,5 +23,6 @@ namespace Inventory
         public Nullable<int> TownshipID { get; set; }
         public string Address { get; set; }
         public Nullable<bool> IsSalePerson { get; set; }
+        public string Token { get; set; }
     }
 }

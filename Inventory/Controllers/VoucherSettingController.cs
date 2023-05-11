@@ -28,6 +28,8 @@ namespace Inventory.Controllers
                     Session["EditLocationID"] = e.LocationID;
                     Session["EditHeaderName"] = e.HeaderName;
                     Session["EditHeaderDesp"] = e.HeaderDesp;
+                    Session["EditHeaderName2"] = e.HeaderName2;
+                    Session["EditHeaderDesp2"] = e.HeaderDesp2;
                     Session["EditPhone"] = e.HeaderPhone;
                     Session["EditAddress"] = e.HeaderAddress;
                     Session["EditOtherHeader1"] = e.OtherHeader1;
@@ -75,6 +77,8 @@ namespace Inventory.Controllers
                 vouSettingModel.LocationName = vou.LocationName;
                 vouSettingModel.HeaderName = vou.HeaderName;
                 vouSettingModel.HeaderDesp = vou.HeaderDesp;
+                vouSettingModel.HeaderName2 = vou.HeaderName2;
+                vouSettingModel.HeaderDesp2 = vou.HeaderDesp2;
                 vouSettingModel.HeaderPhone = vou.HeaderPhone;
                 vouSettingModel.HeaderAddress = vou.HeaderAddress;
                 vouSettingModel.OtherHeader1 = vou.OtherHeader1;
@@ -111,6 +115,8 @@ namespace Inventory.Controllers
                 vouSettingModel.LocationName = vou.LocationName;
                 vouSettingModel.HeaderName = vou.HeaderName;
                 vouSettingModel.HeaderDesp = vou.HeaderDesp;
+                vouSettingModel.HeaderName2 = vou.HeaderName2;
+                vouSettingModel.HeaderDesp2 = vou.HeaderDesp2;
                 vouSettingModel.HeaderPhone = vou.HeaderPhone;
                 vouSettingModel.HeaderAddress = vou.HeaderAddress;
                 vouSettingModel.OtherHeader1 = vou.OtherHeader1;
@@ -133,7 +139,7 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult SaveAction(string headerName, string headerDesp, string headerPhone, string headerAddress, string otherHeader1, string otherHeader2, string footerMessage1, string footerMessage2, string footerMessage3, int locationId)
+        public JsonResult SaveAction(string headerName, string headerDesp, string headerPhone, string headerAddress, string otherHeader1, string otherHeader2, string footerMessage1, string footerMessage2, string footerMessage3, int locationId, string headerName2, string headerDesp2)
         {
             string message;
             int saveOk;
@@ -144,6 +150,8 @@ namespace Inventory.Controllers
                 SVoucherSetting table = new SVoucherSetting();
                 table.HeaderName = headerName;
                 table.HeaderDesp = headerDesp;
+                table.HeaderName2 = headerName2;
+                table.HeaderDesp2 = headerDesp2;
                 table.HeaderPhone = headerPhone;
                 table.HeaderAddress = headerAddress;
                 table.OtherHeader1 = otherHeader1;
@@ -188,7 +196,7 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
-        public JsonResult EditAction(string headerName, string headerDesp, string headerPhone, string headerAddress, string otherHeader1, string otherHeader2, string footerMessage1, string footerMessage2, string footerMessage3, int locationId)
+        public JsonResult EditAction(string headerName, string headerDesp, string headerPhone, string headerAddress, string otherHeader1, string otherHeader2, string footerMessage1, string footerMessage2, string footerMessage3, int locationId, string headerName2, string headerDesp2)
         {
             string message = "";
             int editOk = 0;
@@ -201,6 +209,8 @@ namespace Inventory.Controllers
                 {
                     result.HeaderName = headerName;
                     result.HeaderDesp = headerDesp;
+                    result.HeaderName2 = headerName2;
+                    result.HeaderDesp2 = headerDesp2;
                     result.HeaderPhone = headerPhone;
                     result.HeaderAddress = headerAddress;
                     result.OtherHeader1 = otherHeader1;
@@ -247,13 +257,15 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult ViewAction(int Id)
         {
-            string locationName = "", headerName = "", headerDesp = "", headerPhone = "", headerAddress = "", otherHeader1 = "", otherHeader2 = "", footerMessage1 = "", footerMessage2 = "", footerMessage3 = "", base64Photo = "";
+            string locationName = "", headerName = "", headerDesp = "", headerPhone = "", headerAddress = "", otherHeader1 = "", otherHeader2 = "", footerMessage1 = "", footerMessage2 = "", footerMessage3 = "", base64Photo = "", headerName2 = "", headerDesp2 = "";
             var viewVouSetting = lstVouSettingList.Where(c => c.ID == Id);
             foreach (var e in viewVouSetting)
             {              
                 locationName = e.LocationName;
                 headerName = e.HeaderName;
                 headerDesp = e.HeaderDesp;
+                headerName2 = e.HeaderName2;
+                headerDesp2 = e.HeaderDesp2;
                 headerPhone = e.HeaderPhone;
                 headerAddress = e.HeaderAddress;
                 
@@ -271,6 +283,8 @@ namespace Inventory.Controllers
                 LocationName = locationName,
                 HeaderName = headerName,
                 HeaderDesp = headerDesp,
+                HeaderName2 = headerName2,
+                HeaderDesp2 = headerDesp2,
                 HeaderPhone = headerPhone,
                 HeaderAddress = headerAddress,
                 OtherHeader1 = otherHeader1,

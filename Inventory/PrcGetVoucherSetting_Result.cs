@@ -26,5 +26,7 @@ namespace Inventory
         public string FooterMessage3 { get; set; }
         public byte[] VoucherLogo { get; set; }
         public int ID { get; set; }
+        public string HeaderName2 { get; set; }
+        public string HeaderDesp2 { get; set; }
     }
 }

@@ -51,13 +51,13 @@
     function createTranSaleDetail(response) {
         $("#tblTranSale").find("tbody").empty();
         $.each(response.LstTranSale, function (index, item) {
-            let row = '<tr class="row voucher-table-item">'
-            if (item.IsFOC == true) row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '(FOC)' + '</td>'
-            else row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '</td>'
-            row += '<td class="col-md-2 col-lg-2">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
-               + '<td class="col-md-2 col-lg-2">' + separatedComma(item.SalePrice) + '<span class="control-span-sm">' + item.CurrencyKeyword + '</span></td>'
-               + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Discount) + '</td>'
-               + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Amount) + '</td>'
+            let row = '<tr class="row voucher-table-item" style="width:100%">'
+            if (item.IsFOC == true) row += '<td style="width:40%;float:left;">' + item.ProductName + '(FOC)' + '</td>'
+            else row += '<td style="width:40%;float:left;">' + item.ProductName + '</td>'
+            row += '<td style="width:10%;float:left;">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
+               + '<td style="width:20%;float:left;">' + separatedComma(item.SalePrice) + '<span class="control-span-sm">' + item.CurrencyKeyword + '</span></td>'
+               + '<td style="width:10%;float:left;">' + separatedComma(item.Discount) + '</td>'
+               + '<td style="width:20%;float:left;" class="aligh-right">' + separatedComma(item.Amount) + '</td>'
                + "</tr>";
             $('#tblTranSale tbody').append(row);
         });

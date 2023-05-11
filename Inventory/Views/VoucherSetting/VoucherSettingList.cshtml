@@ -105,6 +105,14 @@
                             <label id="lblHeaderDesp" class="control-input"></label>
                         </div>
                         <div class="form-group">
+                            <label class="control-label">Header Name (2):</label> <span id="name2" style="display:none;">---</span>
+                            <label id="lblHeaderName2" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Header Description (2):</label> <span id="desp2" style="display:none;">---</span>
+                            <label id="lblHeaderDesp2" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
                             <label class="control-label">Header Phone:</label> <span id="phone" style="display:none;">---</span>
                             <label id="lblHeaderPhone" class="control-input"></label>
                         </div>
@@ -191,7 +199,26 @@
                             else {
                                 $('#desp').show();
                                 $('#lblHeaderDesp').text(response.HeaderDesp).hide();
-                            }                         
+                            }
+
+                            if (response.HeaderName2 != '') {
+                                $('#name2').hide();
+                                $('#lblHeaderName2').text(response.HeaderName2).show();
+                            }
+                            else {
+                                $('#name2').show();
+                                $('#lblHeaderName2').text(response.HeaderName2).hide();
+                            }
+
+                            if (response.HeaderDesp2 != '') {
+                                $('#desp2').hide();
+                                $('#lblHeaderDesp2').text(response.HeaderDesp2).show();
+                            }
+                            else {
+                                $('#desp2').show();
+                                $('#lblHeaderDesp2').text(response.HeaderDesp2).hide();
+                            }
+
                             if (response.HeaderPhone != 0) {
                                 $('#phone').hide();
                                 $('#lblHeaderPhone').text(response.HeaderPhone).show();

@@ -29,5 +29,7 @@ namespace Inventory
         public Nullable<bool> IsBankPayment { get; set; }
         public Nullable<int> ShopTypeID { get; set; }
         public Nullable<bool> IsClientPhoneVerify { get; set; }
+        public Nullable<bool> IsLimitUser { get; set; }
+        public Nullable<short> LimitedUserCount { get; set; }
     }
 }

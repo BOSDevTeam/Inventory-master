@@ -52,11 +52,11 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult ListOpeningStock(int userId)
+        public ActionResult ListOpeningStock()
         {
             if (checkConnection())
             {              
-                List<OpeningStockViewModel.MasterOpeningStockViewModel> tempList = selectMasterOpeningStock(userId);
+                List<OpeningStockViewModel.MasterOpeningStockViewModel> tempList = selectMasterOpeningStock();
                 PagingViewModel pagingViewModel = calcMasterOpeningStockPaging(tempList);
                 List<OpeningStockViewModel.MasterOpeningStockViewModel> lstMasterOpeningStock = getMasterOpeningStockByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
                 ViewData["LstMasterOpeningStock"] = lstMasterOpeningStock;
@@ -335,14 +335,13 @@ namespace Inventory.Controllers
             return item;
         }
 
-        private List<OpeningStockViewModel.MasterOpeningStockViewModel> selectMasterOpeningStock(int userId)
+        private List<OpeningStockViewModel.MasterOpeningStockViewModel> selectMasterOpeningStock()
         {
             List<OpeningStockViewModel.MasterOpeningStockViewModel> tempList = new List<OpeningStockViewModel.MasterOpeningStockViewModel>();
             OpeningStockViewModel.MasterOpeningStockViewModel item = new OpeningStockViewModel.MasterOpeningStockViewModel();
 
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterOpeningStockList, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@UserID", userId);
 
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

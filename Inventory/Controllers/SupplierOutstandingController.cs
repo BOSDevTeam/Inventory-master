@@ -330,9 +330,10 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@SupplierID", supplierId);
                     cmd.Parameters.AddWithValue("@PayType", payType);
                     cmd.Parameters.AddWithValue("@temptbl", dt);
-                    cmd.Parameters.AddWithValue("@AccountCode", AppConstants.APAccountCode);
+                    cmd.Parameters.AddWithValue("@APAccountCode", AppConstants.APAccountCode);
                     cmd.Parameters.AddWithValue("@PayMethodID", payMethodId);
                     cmd.Parameters.AddWithValue("@BankPaymentID", bankPaymentId);
+                    cmd.Parameters.AddWithValue("@PurchaseAccountCode", AppConstants.PurchaseAccountCode);
                     cmd.Connection = setting.conn;
                     cmd.ExecuteNonQuery();
                     setting.conn.Close();
@@ -448,6 +449,7 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@PurchaseAccountCode", AppConstants.PurchaseAccountCode);
             cmd.Parameters.AddWithValue("@SupplierOpeningAccountCode", AppConstants.SupplierOpeningAccountCode);
             cmd.Parameters.AddWithValue("@APAccountCode", AppConstants.APAccountCode);
+            cmd.Parameters.AddWithValue("@PurchaseReturnAccountCode", AppConstants.PurchaseReturnAccountCode);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -463,7 +465,8 @@ namespace Inventory.Controllers
                 item.AccountOpening = accountOpening + (accountOpeningPayment);
                 int purchase = Convert.ToInt32(reader["Purchase"]);
                 int purchasePayment = Convert.ToInt32(reader["PurchasePayment"]);
-                item.Purchase = purchase + (purchasePayment);
+                int purchaseReturn = Convert.ToInt32(reader["PurchaseReturn"]);
+                item.Purchase = purchase + (purchasePayment) - purchaseReturn;
                 item.Balance = Convert.ToInt32(reader["Balance"]);
                 tempList.Add(item);
             }
@@ -544,6 +547,7 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@PurchaseAccountCode", AppConstants.PurchaseAccountCode);
             cmd.Parameters.AddWithValue("@SupplierOpeningAccountCode", AppConstants.SupplierOpeningAccountCode);
             cmd.Parameters.AddWithValue("@APAccountCode", AppConstants.APAccountCode);
+            cmd.Parameters.AddWithValue("@PurchaseReturnAccountCode", AppConstants.PurchaseReturnAccountCode);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

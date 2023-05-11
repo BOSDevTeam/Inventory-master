@@ -219,10 +219,10 @@
 			    window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId;
 			});
             $('#subMenuSaleList').click(function () {
-                window.location.href = '@Url.Action("ListSale", "Sale")?userId=' + userId;
+                window.location.href = '@Url.Action("ListSale", "Sale")';
             });
             $('#subMenuOpenBill').click(function () {
-                window.location.href = '@Url.Action("ListOpenBill", "Sale")?userId=' + userId;
+                window.location.href = '@Url.Action("ListOpenBill", "Sale")';
             });
             $('#subMenuPurchase').click(function () {
                 window.location.href = '@Url.Action("Purchase", "Purchase")?userId=' + userId;
@@ -273,7 +273,7 @@
                 window.location.href = '@Url.Action("CustomerConsign", "CustomerConsign")?userId=' + userId;
             });
             $('#subMenuOpeningStockList').click(function () {
-                window.location.href = '@Url.Action("ListOpeningStock", "OpeningStock")?userId=' + userId;
+                window.location.href = '@Url.Action("ListOpeningStock", "OpeningStock")';
             });
             $('#subMenuOpeningStock').click(function () {
                 window.location.href = '@Url.Action("OpeningStock", "OpeningStock")?userId=' + userId;

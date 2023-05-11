@@ -176,7 +176,7 @@ namespace Inventory
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcInsertUser", userNameParameter, userPasswordParameter, isDefaultLocationParameter, locationIDParameter);
         }
     
-        public virtual int PrcSaveOtherSetting(Nullable<bool> isMultiCurrency, Nullable<bool> isMultiUnit, Nullable<bool> isBankPayment, Nullable<bool> isClientPhoneVerify)
+        public virtual int PrcSaveOtherSetting(Nullable<bool> isMultiCurrency, Nullable<bool> isMultiUnit, Nullable<bool> isBankPayment, Nullable<bool> isClientPhoneVerify, Nullable<bool> isLimitUser, Nullable<short> limitedUserCount)
         {
             var isMultiCurrencyParameter = isMultiCurrency.HasValue ?
                 new ObjectParameter("IsMultiCurrency", isMultiCurrency) :
@@ -194,7 +194,15 @@ namespace Inventory
                 new ObjectParameter("IsClientPhoneVerify", isClientPhoneVerify) :
                 new ObjectParameter("IsClientPhoneVerify", typeof(bool));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcSaveOtherSetting", isMultiCurrencyParameter, isMultiUnitParameter, isBankPaymentParameter, isClientPhoneVerifyParameter);
+            var isLimitUserParameter = isLimitUser.HasValue ?
+                new ObjectParameter("IsLimitUser", isLimitUser) :
+                new ObjectParameter("IsLimitUser", typeof(bool));
+    
+            var limitedUserCountParameter = limitedUserCount.HasValue ?
+                new ObjectParameter("LimitedUserCount", limitedUserCount) :
+                new ObjectParameter("LimitedUserCount", typeof(short));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcSaveOtherSetting", isMultiCurrencyParameter, isMultiUnitParameter, isBankPaymentParameter, isClientPhoneVerifyParameter, isLimitUserParameter, limitedUserCountParameter);
         }
     
         public virtual int PrcSaveShopType(Nullable<int> shopTypeID)
@@ -492,17 +500,21 @@ namespace Inventory
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("PrcValidateAdmin", adminNameParameter, adminPasswordParameter);
         }
     
-        public virtual ObjectResult<Nullable<int>> PrcValidateUser(Nullable<int> userID, string userPassword)
+        public virtual ObjectResult<Nullable<int>> PrcValidateUser(Nullable<int> userID, string userName, string userPassword)
         {
             var userIDParameter = userID.HasValue ?
                 new ObjectParameter("UserID", userID) :
                 new ObjectParameter("UserID", typeof(int));
     
+            var userNameParameter = userName != null ?
+                new ObjectParameter("UserName", userName) :
+                new ObjectParameter("UserName", typeof(string));
+    
             var userPasswordParameter = userPassword != null ?
                 new ObjectParameter("UserPassword", userPassword) :
                 new ObjectParameter("UserPassword", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("PrcValidateUser", userIDParameter, userPasswordParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("PrcValidateUser", userIDParameter, userNameParameter, userPasswordParameter);
         }
     
         public virtual int sp_alterdiagram(string diagramname, Nullable<int> owner_id, Nullable<int> version, byte[] definition)
@@ -873,11 +885,6 @@ namespace Inventory
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetLocation_Result>("PrcGetLocation");
         }
     
-        public virtual ObjectResult<PrcGetVoucherSetting_Result> PrcGetVoucherSetting()
-        {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetVoucherSetting_Result>("PrcGetVoucherSetting");
-        }
-    
         public virtual int PrcUpdateCLMasterSaleOrder(Nullable<int> saleOrderID, Nullable<int> iD, Nullable<int> subtotal, Nullable<int> taxAmt, Nullable<int> chargesAmt, Nullable<int> total)
         {
             var saleOrderIDParameter = saleOrderID.HasValue ?
@@ -907,7 +914,7 @@ namespace Inventory
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcUpdateCLMasterSaleOrder", saleOrderIDParameter, iDParameter, subtotalParameter, taxAmtParameter, chargesAmtParameter, totalParameter);
         }
     
-        public virtual int PrcUpdateCLTranSaleOrder(Nullable<int> saleOrderID, Nullable<int> subtotal, Nullable<int> taxAmt, Nullable<int> chargesAmt, Nullable<int> total)
+        public virtual int PrcUpdateCLTranSaleOrder(Nullable<int> saleOrderID, Nullable<int> subtotal, Nullable<int> taxAmt, Nullable<int> chargesAmt, Nullable<int> total, Nullable<System.DateTime> currentDateTime)
         {
             var saleOrderIDParameter = saleOrderID.HasValue ?
                 new ObjectParameter("SaleOrderID", saleOrderID) :
@@ -929,7 +936,11 @@ namespace Inventory
                 new ObjectParameter("Total", total) :
                 new ObjectParameter("Total", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcUpdateCLTranSaleOrder", saleOrderIDParameter, subtotalParameter, taxAmtParameter, chargesAmtParameter, totalParameter);
+            var currentDateTimeParameter = currentDateTime.HasValue ?
+                new ObjectParameter("CurrentDateTime", currentDateTime) :
+                new ObjectParameter("CurrentDateTime", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcUpdateCLTranSaleOrder", saleOrderIDParameter, subtotalParameter, taxAmtParameter, chargesAmtParameter, totalParameter, currentDateTimeParameter);
         }
     
         public virtual ObjectResult<PrcGetCLMasterSaleOrder_Result> PrcGetCLMasterSaleOrder()
@@ -1096,6 +1107,11 @@ namespace Inventory
                 new ObjectParameter("SearchKeywords", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcSearchCLMasterSaleOrder_Result>("PrcSearchCLMasterSaleOrder", searchKeywordsParameter);
+        }
+    
+        public virtual ObjectResult<PrcGetVoucherSetting_Result> PrcGetVoucherSetting()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetVoucherSetting_Result>("PrcGetVoucherSetting");
         }
     }
 }

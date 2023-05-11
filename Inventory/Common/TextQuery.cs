@@ -59,7 +59,7 @@ namespace Inventory.Common
 
         public string getVoucherSettingQuery(int locationId)
         {
-            return "Select HeaderName,HeaderDesp,HeaderPhone,HeaderAddress,OtherHeader1,OtherHeader2,FooterMessage1,FooterMessage2,FooterMessage3,isnull(VoucherLogo,'') AS VoucherLogo"
+            return "Select HeaderName,HeaderDesp,HeaderName2,HeaderDesp2,HeaderPhone,HeaderAddress,OtherHeader1,OtherHeader2,FooterMessage1,FooterMessage2,FooterMessage3,isnull(VoucherLogo,'') AS VoucherLogo"
             + " From SVoucherSetting Where LocationID=" + locationId;
         }
 

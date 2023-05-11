@@ -421,6 +421,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bill To:.
+        /// </summary>
+        public static string BillTo {
+            get {
+                return ResourceManager.GetString("BillTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bottom Sale Item Report.
         /// </summary>
         public static string BottomSaleItemReport {
@@ -718,6 +727,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Detail.
         /// </summary>
         public static string Detail {
@@ -732,6 +750,15 @@ namespace Inventory {
         public static string Dis {
             get {
                 return ResourceManager.GetString("Dis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discount.
+        /// </summary>
+        public static string Discount {
+            get {
+                return ResourceManager.GetString("Discount", resourceCulture);
             }
         }
         
@@ -912,6 +939,15 @@ namespace Inventory {
         public static string Hold {
             get {
                 return ResourceManager.GetString("Hold", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invoice No.
+        /// </summary>
+        public static string InvoiceNo {
+            get {
+                return ResourceManager.GetString("InvoiceNo", resourceCulture);
             }
         }
         
@@ -1128,6 +1164,15 @@ namespace Inventory {
         public static string New {
             get {
                 return ResourceManager.GetString("New", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        public static string No {
+            get {
+                return ResourceManager.GetString("No", resourceCulture);
             }
         }
         
@@ -1785,6 +1830,15 @@ namespace Inventory {
         public static string SaleReturnList {
             get {
                 return ResourceManager.GetString("SaleReturnList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sale Voucher.
+        /// </summary>
+        public static string SaleVoucher {
+            get {
+                return ResourceManager.GetString("SaleVoucher", resourceCulture);
             }
         }
         
