@@ -1843,6 +1843,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sale Voucher Design.
+        /// </summary>
+        public static string SaleVoucherDesign {
+            get {
+                return ResourceManager.GetString("SaleVoucherDesign", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save.
         /// </summary>
         public static string Save {
@@ -2347,7 +2356,7 @@ namespace Inventory {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Voucher Format.
+        ///   Looks up a localized string similar to System Voucher Format.
         /// </summary>
         public static string VoucherFormat {
             get {

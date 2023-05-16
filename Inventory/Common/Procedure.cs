@@ -175,5 +175,6 @@ namespace Inventory.Common
         public const string PrcGetRptSaleLog = "PrcGetRptSaleLog";
         public const string PrcGetRptPurchaseLog = "PrcGetRptPurchaseLog";
         public const string PrcGetRptSaleItemProfit = "PrcGetRptSaleItemProfit";
+        public const string PrcDeleteSupplier = "PrcDeleteSupplier";
     }
 }

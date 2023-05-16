@@ -103,6 +103,7 @@
                             if (response.isBankPayment == true) localStorage.setItem("IsBankPayment", "True");
                             localStorage.setItem("Tax", response.Tax);
                             localStorage.setItem("Charges", response.ServiceCharges);
+                            localStorage.setItem("SaleVoucherDesignType", response.SaleVoucherDesignType);
 
                             let isTechnician = localStorage.getItem("IsTechnician");
                             let userId = localStorage.getItem("UserID");

@@ -329,14 +329,13 @@
                     dataType: "json",
                     success: function (response) {
                         hideLoadingIcon();
-                        if (response.DELOK == 1) {
-                            if (selectedRow != null) {
-                                selectedRow.remove();
-                                location.reload();
-                                showToast(1, "Deleted Successfully!");                          
-                            }
-                        } else if (response.DELOK == 0) {
-                            showToast(0, "This supplier is using! Cannot Delete!");                         
+                        if (!response.ResultDefaultData.IsRequestSuccess) {
+                            responseUnSuccessful(response);
+                        }
+                        else {
+                            selectedRow.remove();
+                            location.reload();
+                            showToast(1, response.ResultDefaultData.Message);
                         }
                     },
                     failure: function (response) {

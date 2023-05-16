@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Data;
+using System.Data.SqlClient;
 using Inventory.Models;
 using Inventory.Common;
 
@@ -14,7 +16,7 @@ namespace Inventory.Controllers
         SupplierModels.SupplierModel model = new SupplierModels.SupplierModel();
         static List<SupplierModels.SupplierModel> lstSupplierList = new List<SupplierModels.SupplierModel>();
         static int editSupplierID;
-
+        AppSetting setting = new AppSetting();
         public ActionResult SupplierEntry(int supplierId)
         {         
             GetDivision();
@@ -243,25 +245,47 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult DeleteAction(int supplierId)
         {
-            int delOk;
-            //var mssale = (from ms in Entities.T_MasterSale where ms.CustomerID == customerId select ms).ToList();
-            //if (mssale.Count == 0)
+            //int delOk;            
+            //SSupplier supplier = Entities.SSuppliers.Where(x => x.SupplierID == supplierId).Single<SSupplier>();
+            //Entities.SSuppliers.Remove(supplier);
+            //Entities.SaveChanges();
+            //delOk = 1;
+            //var myResult = new
             //{
-            SSupplier supplier = Entities.SSuppliers.Where(x => x.SupplierID == supplierId).Single<SSupplier>();
-            Entities.SSuppliers.Remove(supplier);
-            Entities.SaveChanges();
-            delOk = 1;
-            //}
-            //else
-            //{
-            //    delOk = 0;
-            //}
-
+            //    DELOK = delOk
+            //};
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            try
+            {
+                int isExist = 0;
+                setting.conn.Open();
+                SqlCommand cmd = new SqlCommand(Procedure.PrcDeleteSupplier, setting.conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@SupplierID", supplierId);
+                cmd.Connection = setting.conn;
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read()) isExist = Convert.ToInt32(reader[0]);
+                reader.Close();
+                setting.conn.Close();
+                resultDefaultData.IsRequestSuccess = true;
+                if (isExist > 0)
+                {                   
+                    resultDefaultData.Message = AppConstants.Message.NoDelete;
+                }
+                else
+                {
+                    resultDefaultData.Message = AppConstants.Message.DeleteSuccess;
+                }
+            }
+            catch(Exception ex)
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                resultDefaultData.Message = ex.Message;
+            }
             var myResult = new
             {
-                DELOK = delOk
+                ResultDefaultData = resultDefaultData
             };
-
             return Json(myResult, JsonRequestBehavior.AllowGet);
         }
 

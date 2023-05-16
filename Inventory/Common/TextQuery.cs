@@ -172,5 +172,10 @@ namespace Inventory.Common
             return "Select rm.ReportModuleID,ReportModuleName"
             + " From SysReportModule rm Inner Join SReportUserRight ur On rm.ReportModuleID=ur.ReportModuleID Where UserID=" + loginUserId + " And IsAllow=1 Order by ReportModuleGroupCode";
         }
+
+        public string updateSaleVoucherDesignQuery(short saleVoucherDesignType)
+        {
+            return "Update SCompanySetting Set SaleVoucherDesignType=" + saleVoucherDesignType;
+        }
     }
 }

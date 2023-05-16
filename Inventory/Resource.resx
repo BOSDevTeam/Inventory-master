@@ -829,7 +829,7 @@
     <value>User Right</value>
   </data>
   <data name="VoucherFormat" xml:space="preserve">
-    <value>Voucher Format</value>
+    <value>System Voucher Format</value>
   </data>
   <data name="VoucherSetting" xml:space="preserve">
     <value>Voucher Setting</value>
@@ -896,5 +896,8 @@
   </data>
   <data name="SaleVoucher" xml:space="preserve">
     <value>Sale Voucher</value>
+  </data>
+  <data name="SaleVoucherDesign" xml:space="preserve">
+    <value>Sale Voucher Design</value>
   </data>
 </root>

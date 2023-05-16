@@ -176,6 +176,19 @@ namespace Inventory.Controllers
             return View(saleViewModel);
         }
 
+        [SessionTimeoutAttribute]
+        public ActionResult SaleVoucherDesign2(string systemVoucherNo, int locationId)
+        {
+            VoucherSettingModels voucherSettingModel = appData.selectVoucherSettingByLocation(getConnection(), locationId);
+            saleViewModel.VoucherSettings = voucherSettingModel;
+            ViewBag.Base64Photo = voucherSettingModel.Base64Photo;
+            MasterSaleVoucherViewModel masterSaleVoucherViewModel = selectMasterSale(systemVoucherNo);
+            setMasterSaleDataToViewBag(masterSaleVoucherViewModel);
+            List<TranSaleModels> lstTranSale = selectTranSaleBySaleID(masterSaleVoucherViewModel.MasterSaleModel.SaleID);
+            ViewData["LstTranSale"] = lstTranSale;
+            return View(saleViewModel);
+        }
+
         #endregion
 
         #region SaleAction     
@@ -1161,6 +1174,7 @@ namespace Inventory.Controllers
                 item.MasterSaleModel.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
                 item.MasterSaleModel.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
                 item.Payment = Convert.ToString(reader["Payment"]);
+                item.Remark = Convert.ToString(reader["Remark"]);
             }
             reader.Close();         
 
@@ -1326,6 +1340,7 @@ namespace Inventory.Controllers
             ViewBag.IsVouFOC = item.MasterSaleModel.IsVouFOC;
             ViewBag.UserVoucherNo = item.MasterSaleModel.UserVoucherNo;
             ViewBag.Payment = item.Payment;
+            ViewBag.Remark = item.Remark;
         }
 
         private List<TranSaleModels> selectTranSaleBySaleID(int saleId)

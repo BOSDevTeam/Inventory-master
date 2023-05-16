@@ -35,7 +35,7 @@ namespace Inventory.Controllers
         public JsonResult LoginAction(int userId, string userName, string userPassword)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
-            short result = 0, isTechnician = 0;
+            short result = 0, isTechnician = 0, saleVoucherDesignType = 0;
             bool isMultiCurrency = false, isMultiUnit = false, isBankPayment = false;
             int tax = 0, serviceCharges = 0;
 
@@ -68,6 +68,7 @@ namespace Inventory.Controllers
                                 isBankPayment = Convert.ToBoolean(reader["IsBankPayment"]);
                                 tax = Convert.ToInt32(reader["Tax"]);
                                 serviceCharges = Convert.ToInt32(reader["ServiceCharges"]);
+                                saleVoucherDesignType = Convert.ToInt16(reader["SaleVoucherDesignType"]);
                                 resultDefaultData.IsRequestSuccess = true;
                                 break;
                             case 0:
@@ -98,7 +99,8 @@ namespace Inventory.Controllers
                 isMultiUnit = isMultiUnit,
                 isBankPayment = isBankPayment,
                 Tax = tax,
-                ServiceCharges = serviceCharges
+                ServiceCharges = serviceCharges,
+                SaleVoucherDesignType = saleVoucherDesignType
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }

@@ -21,5 +21,6 @@ namespace Inventory.ViewModels
         public string PayMethod { get; set; }
         public string BankPayment { get; set; }
         public string LimitedDay { get; set; }
+        public string Remark { get; set; }
     }
 }

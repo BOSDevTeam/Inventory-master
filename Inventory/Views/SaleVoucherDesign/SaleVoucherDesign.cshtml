@@ -1,0 +1,106 @@
+﻿@using Inventory.Models
+@model CompanySettingModels
+@{
+    Layout = "~/Views/Shared/_LayoutTechnicianSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuSaleVoucherDesign').className = 'active';
+    </script>
+    <style>
+        .divImg{
+            padding:10px;border:1px solid #ccc;
+        }
+        .divImg:hover{
+            background-color:#edeff1;
+        }
+        img{
+            width:inherit;cursor:pointer;
+        }
+    </style>
+</head>
+
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-12 col-lg-12">
+            <label class="page-title">@Resource.SaleVoucherDesign</label>
+        </div>
+    </div>
+    <div class="row" style="margin-top:10px;">
+        <div id="divSaleVoucherDesign1" class="divImg col-md-6 col-lg-6">
+            <img src="~/assets/img/SaleVoucherDesign1.png"/>
+        </div>
+        <div id="divSaleVoucherDesign2" class="divImg col-md-6 col-lg-6">
+            <img src="~/assets/img/SaleVoucherDesign2.png"/>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(function () {
+
+        initializeControl();
+
+        $('#divSaleVoucherDesign1').click(function () {
+            $('.divImg').css('background-color', 'transparent');
+            $('#divSaleVoucherDesign1').css('background-color', '#299697');
+            saveSaleVoucherDesign(1);
+
+        });
+
+        $('#divSaleVoucherDesign2').click(function () {
+            $('.divImg').css('background-color', 'transparent');
+            $('#divSaleVoucherDesign2').css('background-color', '#299697');
+            saveSaleVoucherDesign(2);
+
+        });
+
+        function initializeControl() {
+            let saleVoucherDesignType = localStorage.getItem("SaleVoucherDesignType");
+            if (saleVoucherDesignType == 1) {
+                $('#divSaleVoucherDesign1').css('background-color', '#299697');
+            } else if (saleVoucherDesignType == 2) {
+                $('#divSaleVoucherDesign2').css('background-color', '#299697');
+            }
+        }
+
+        function saveSaleVoucherDesign(saleVoucherDesignType) {
+            showLoadingIcon();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveSaleVoucherDesignAction", "SaleVoucherDesign")',
+                data: JSON.stringify({ "saleVoucherDesignType": saleVoucherDesignType }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else {
+                        localStorage.setItem("SaleVoucherDesignType", saleVoucherDesignType);
+                        showToast(1, response.ResultDefaultData.Message);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        }
+
+    });
+
+</script>
+
+
+
+

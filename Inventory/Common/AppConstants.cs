@@ -88,6 +88,7 @@ namespace Inventory.Common
             public const string NoEditByOutstanding = "Not allow to edit! This voucher has payments in outstanding!";
             public const string AlreadyAddSupplier = "Already added supplier!";
             public const string UserLimitOver = "Cannot add more that user limit full!";
+            public const string NoDelete = "Not Allow to Delete! It is using in others!";
         }
     }
 }

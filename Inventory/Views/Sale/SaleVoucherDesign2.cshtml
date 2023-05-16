@@ -29,35 +29,21 @@
             <div id="divVoucher" class="padding-10" style="background-color:#fff;">
 
                 <div class="width-100-percent" style="overflow:auto;display:flex;align-items:center;">
-                    <div style="width:20%;float:left;">
+                    <div style="width:30%;float:left;text-align:center;">
                         <img id="imgLogo" src="~/assets/img/logo.png" style="width:50px;height:50px;" />
                     </div>
-                    <div style="width:80%;float:left;">
-                        <div style="width:40%;float:left;text-align:center;">
-                            <div>
-                                <label class="voucher-header-name">@Model.VoucherSettings.HeaderName</label>
-                            </div>
-                            <div>
-                                <label class="voucher-header">@Model.VoucherSettings.HeaderDesp</label>
-                            </div>
-                            <div>
-                                <label class="voucher-header" style="font-weight:bold;">@Model.VoucherSettings.HeaderName2</label>
-                                <label class="voucher-header">@Model.VoucherSettings.HeaderDesp2</label>
-                            </div>
+                    <div style="width:70%;float:left;text-align:center;">
+                        <div>
+                            <label class="voucher-header">@Model.VoucherSettings.HeaderAddress</label>
                         </div>
-                        <div style="width:60%;float:left;">
-                            <div>
-                                <label class="voucher-header">@Model.VoucherSettings.HeaderAddress</label>
-                            </div>
-                            <div>
-                                <label class="voucher-header">@Model.VoucherSettings.OtherHeader1</label>
-                            </div>
+                        <div>
+                            <label class="voucher-header">@Model.VoucherSettings.OtherHeader1</label>
                         </div>
                     </div>                    
                 </div>
 
                 <div class="width-100-percent" style="overflow:auto;display:flex;align-items:center;">
-                    <div style="width:30%;float:left;">
+                    <div style="width:30%;float:left;text-align:center;">
                         <label class="voucher-header">@Resource.SaleVoucher</label>
                     </div>
                     <div style="width:70%;float:left;">
@@ -82,6 +68,10 @@
                     </div>
                 </div>
 
+                <div class="width-100-percent aligh-right">
+                    <label id="lblPrintDate" class="voucher-sub-header mb-0"></label>
+                </div>
+
                 <table id="tblTranSale" class="width-100-percent m-t-10">
                     <thead>
                         <tr class="voucher-table-header" style="width:100%">
@@ -103,18 +93,21 @@
                             <td style="width:25%;float:left;" class="voucher-table-border aligh-right"><label class="voucher-sub-footer mb-0">@Resource.Subtotal@Resource.ColonSign</label></td>
                             <td style="width:30%;float:left;" class="aligh-right voucher-table-border"><label id="lblSubtotal" class="voucher-sub-footer mb-0"></label></td>
                         </tr>
-                        <tr class="width-100-percent">
-                            <td style="width:45%;float:left;"></td>
+                        <tr class="width-100-percent">                           
+                            <td style="width:15%;float:left;"><label class="voucher-sub-footer mb-0">Bank Name</label></td>
+                            <td style="width:30%;float:left;"><label class="voucher-sub-footer mb-0">:&nbsp;&nbsp;&nbsp;Cash Down</label></td>
                             <td style="width:25%;float:left;" class="voucher-table-border aligh-right"><label class="voucher-sub-footer mb-0">@Resource.Tax@Resource.ColonSign</label></td>
                             <td style="width:30%;float:left;" class="aligh-right voucher-table-border"><label id="lblTaxValue" class="voucher-sub-footer mb-0"></label></td>
                         </tr>
                         <tr class="width-100-percent">
-                            <td style="width:45%;float:left;"></td>
+                            <td style="width:15%;float:left;"><label class="voucher-sub-footer mb-0">Bank No</label></td>
+                            <td style="width:30%;float:left;"><label class="voucher-sub-footer mb-0">:&nbsp;&nbsp;&nbsp;0</label></td>
                             <td style="width:25%;float:left;" class="voucher-table-border aligh-right"><label class="voucher-sub-footer mb-0">@Resource.Charges@Resource.ColonSign</label></td>
                             <td style="width:30%;float:left;" class="aligh-right voucher-table-border"><label id="lblChargesValue" class="voucher-sub-footer mb-0"></label></td>
                         </tr>
                         <tr class="width-100-percent">
-                            <td style="width:45%;float:left;"></td>
+                            <td style="width:15%;float:left;"><label class="voucher-sub-footer mb-0">Name</label></td>
+                            <td style="width:30%;float:left;"><label class="voucher-sub-footer mb-0">:&nbsp;&nbsp;&nbsp;0</label></td>
                             <td style="width:25%;float:left;" class="voucher-table-border aligh-right"><label class="voucher-sub-footer mb-0">@Resource.Total@Resource.ColonSign</label></td>
                             <td style="width:30%;float:left;" class="aligh-right voucher-table-border"><label id="lblTotal" class="voucher-sub-footer mb-0"></label></td>
                         </tr>
@@ -156,20 +149,12 @@
                     </thead>
                 </table>
 
-                <div class="width-100-percent" style="padding-top:50px;overflow:auto;">
-                    <div style="width:50%;float:left;">
-                        <div style="width:50%;border-top:1px solid #ccc;text-align:center;">
-                            <label class="voucher-sub-header mb-0">Authorised By</label>
-                        </div>
-                    </div>
-                    <div style="width:50%;float:left;display:flex;justify-content:right;">
-                        <div style="width:50%;border-top:1px solid #ccc;text-align:center;">
-                            <label class="voucher-sub-header mb-0">Sale Promoter</label>
-                        </div>
-                    </div>
+                <div class="width-100-percent" style="margin-top:20px;">
+                    <label class="voucher-sub-footer">မှတ်ချက်။&nbsp;&nbsp;&nbsp;။</label>
+                    <label id="lblRemark" class="voucher-sub-footer"></label>
                 </div>
 
-                <table class="width-100-percent">
+                <table class="width-100-percent" style="text-align:center;margin-top:30px;">
                     @if (Model.VoucherSettings.FooterMessage1 != null && Model.VoucherSettings.FooterMessage1.Length != 0)
                 {
                         <tr>
@@ -248,12 +233,15 @@
                 $('#lblSaleDateTime').text('@ViewBag.SaleDateTime');
                 $('#lblCustomerName').text('@ViewBag.CustomerName');
                 $('#lblPayment').text('@ViewBag.Payment');
+                $('#lblPrintDate').text('Print date: '+'@ViewBag.SaleDateTime');
 
                 $('#lblSubtotal').text(separatedComma('@ViewBag.Subtotal'));
                 $('#lblTaxValue').text(separatedComma('@ViewBag.TaxAmt'));
                 $('#lblChargesValue').text(separatedComma('@ViewBag.ChargesAmt'));
                 $('#lblTotal').text(separatedComma('@ViewBag.Total'));
                 $('#lblVoucherDiscountValue').text(separatedComma('@ViewBag.VoucherDiscount'));
+
+                $('#lblRemark').text('@ViewBag.Remark');
 
                 let vouDisPercent = '@ViewBag.VouDisPercent';
                 if (vouDisPercent != 0) $('#lblVoucherDiscount').text('Voucher Discount(' + vouDisPercent + '%):');

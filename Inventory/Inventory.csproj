@@ -216,6 +216,7 @@
     <Compile Include="Controllers\SaleController.cs" />
     <Compile Include="Controllers\SaleOrderController.cs" />
     <Compile Include="Controllers\SaleReturnController.cs" />
+    <Compile Include="Controllers\SaleVoucherDesignController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
     <Compile Include="Controllers\StockStatusController.cs" />
     <Compile Include="Controllers\SubMenuController.cs" />
@@ -541,6 +542,8 @@
     <Content Include="assets\img\photo.png" />
     <Content Include="assets\img\placeholder-thumb.jpg" />
     <Content Include="assets\img\placeholder.jpg" />
+    <Content Include="assets\img\SaleVoucherDesign1.png" />
+    <Content Include="assets\img\SaleVoucherDesign2.png" />
     <Content Include="assets\img\sent.png" />
     <Content Include="assets\img\user.jpg" />
     <Content Include="assets\js\app.js" />
@@ -769,6 +772,8 @@
     <Content Include="Views\RpStockStatusByModule\StockStatusByModuleReport.cshtml" />
     <Content Include="Views\Shared\_LogFilter.cshtml" />
     <Content Include="Views\Sale\SaleVoucherDesign1.cshtml" />
+    <Content Include="Views\Sale\SaleVoucherDesign2.cshtml" />
+    <Content Include="Views\SaleVoucherDesign\SaleVoucherDesign.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

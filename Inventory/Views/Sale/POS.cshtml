@@ -860,8 +860,14 @@
                     if (!response.ResultDefaultData.IsRequestSuccess)
                         responseUnSuccessful(response);
                     else {
-                        @*window.location.href = '@Url.Action("SaleVoucher", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;*@
-                        window.location.href = '@Url.Action("SaleVoucherDesign1", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
+                        let saleVoucherDesignType = localStorage.getItem("SaleVoucherDesignType");
+                        if (saleVoucherDesignType == 1) {
+                            window.location.href = '@Url.Action("SaleVoucherDesign1", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
+                        } else if (saleVoucherDesignType == 2) {
+                            window.location.href = '@Url.Action("SaleVoucherDesign2", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
+                        } else {
+                            window.location.href = '@Url.Action("SaleVoucher", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
+                        }
                     }
                 },
                 failure: function (response) {
