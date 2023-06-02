@@ -69,9 +69,9 @@ namespace Inventory.Controllers
             return View(saleReturnViewModel);
         }
 
-        public ActionResult ListSaleReturn(int userId)
+        public ActionResult ListSaleReturn()
         {
-            List<MasterSaleReturnViewModel> tempList = selectMasterSaleReturn(userId, false);
+            List<MasterSaleReturnViewModel> tempList = selectMasterSaleReturn(false);
             PagingViewModel pagingViewModel = calcMasterSaleReturnPaging(tempList);
             List<MasterSaleReturnViewModel> lstMasterSaleReturn = getMasterSaleReturnByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             ViewData["LstMasterSaleReturn"] = lstMasterSaleReturn;
@@ -612,7 +612,7 @@ namespace Inventory.Controllers
 
         public JsonResult SearchAction(int userId, bool isSearch, DateTime fromDate, DateTime toDate, string userVoucherNo)
         {
-            List<MasterSaleReturnViewModel> tempList = selectMasterSaleReturn(userId, isSearch, fromDate, toDate, userVoucherNo);
+            List<MasterSaleReturnViewModel> tempList = selectMasterSaleReturn(isSearch, fromDate, toDate, userVoucherNo);
             PagingViewModel pagingViewModel = calcMasterSaleReturnPaging(tempList);
             List<MasterSaleReturnViewModel> lstMasterSaleReturn = getMasterSaleReturnByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -626,7 +626,7 @@ namespace Inventory.Controllers
 
         public JsonResult RefreshAction(int userId, bool isSearch)
         {
-            List<MasterSaleReturnViewModel> tempList = selectMasterSaleReturn(userId, isSearch);
+            List<MasterSaleReturnViewModel> tempList = selectMasterSaleReturn(isSearch);
             PagingViewModel pagingViewModel = calcMasterSaleReturnPaging(tempList);
             List<MasterSaleReturnViewModel> lstMasterSaleOrder = getMasterSaleReturnByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -1040,13 +1040,12 @@ namespace Inventory.Controllers
             return list;
         }
 
-        private List<MasterSaleReturnViewModel> selectMasterSaleReturn(int userId, bool isSearch, [Optional]DateTime fromDate,[Optional]DateTime toDate,[Optional]string userVoucherNo)
+        private List<MasterSaleReturnViewModel> selectMasterSaleReturn(bool isSearch, [Optional]DateTime fromDate,[Optional]DateTime toDate,[Optional]string userVoucherNo)
         {
             List<MasterSaleReturnViewModel> list = new List<MasterSaleReturnViewModel>();
             MasterSaleReturnViewModel data = new MasterSaleReturnViewModel();
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterSaleReturnList, (SqlConnection) getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@UserID", userId);
             cmd.Parameters.AddWithValue("@IsSearch", isSearch);
             if (!isSearch)
             {

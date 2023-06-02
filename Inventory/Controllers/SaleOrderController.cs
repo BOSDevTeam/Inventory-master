@@ -68,10 +68,10 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult ListSaleOrder(int userId)
+        public ActionResult ListSaleOrder()
         {
             getCustomer(true);
-            List<SaleOrderViewModel.MasterSaleOrderViewModel> tempList = selectMasterSaleOrder(userId, false);
+            List<SaleOrderViewModel.MasterSaleOrderViewModel> tempList = selectMasterSaleOrder(false);
             PagingViewModel pagingViewModel = calcMasterSaleOrderPaging(tempList);
             List<SaleOrderViewModel.MasterSaleOrderViewModel> lstMasterSaleOrder = getMasterSaleOrderByPaging(tempList, pagingViewModel.StartItemIndex,pagingViewModel.EndItemIndex);
             ViewData["LstMasterSaleOrder"] = lstMasterSaleOrder;
@@ -221,7 +221,7 @@ namespace Inventory.Controllers
 
         public JsonResult SearchAction(int userId, DateTime fromDate, DateTime toDate, string userVoucherNo, int customerId)
         {
-            List<SaleOrderViewModel.MasterSaleOrderViewModel> tempList = selectMasterSaleOrder(userId, true, fromDate, toDate, userVoucherNo, customerId);
+            List<SaleOrderViewModel.MasterSaleOrderViewModel> tempList = selectMasterSaleOrder(true, fromDate, toDate, userVoucherNo, customerId);
             PagingViewModel pagingViewModel = calcMasterSaleOrderPaging(tempList);
             List<SaleOrderViewModel.MasterSaleOrderViewModel> lstMasterSaleOrder = getMasterSaleOrderByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -267,7 +267,7 @@ namespace Inventory.Controllers
 
         public JsonResult RefreshAction(int userId)
         {
-            List<SaleOrderViewModel.MasterSaleOrderViewModel> tempList = selectMasterSaleOrder(userId, false);
+            List<SaleOrderViewModel.MasterSaleOrderViewModel> tempList = selectMasterSaleOrder(false);
             PagingViewModel pagingViewModel = calcMasterSaleOrderPaging(tempList);
             List<SaleOrderViewModel.MasterSaleOrderViewModel> lstMasterSaleOrder = getMasterSaleOrderByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -614,13 +614,12 @@ namespace Inventory.Controllers
             return list;
         }
 
-        private List<SaleOrderViewModel.MasterSaleOrderViewModel> selectMasterSaleOrder(int userId, bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo, [Optional]int customerId)
+        private List<SaleOrderViewModel.MasterSaleOrderViewModel> selectMasterSaleOrder(bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo, [Optional]int customerId)
         {
             List<SaleOrderViewModel.MasterSaleOrderViewModel> tempList = new List<SaleOrderViewModel.MasterSaleOrderViewModel>();
             SaleOrderViewModel.MasterSaleOrderViewModel item = new SaleOrderViewModel.MasterSaleOrderViewModel();
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterSaleOrderList, (SqlConnection) getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@UserID", userId);
             cmd.Parameters.AddWithValue("@IsSearch", isSearch);
             if (!isSearch)
             {

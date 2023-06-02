@@ -34,7 +34,9 @@ namespace Inventory.ViewModels
             public string SaleDateTime { get; set; }
             public int Grandtotal { get; set; }
             public string CustomerName { get; set; }
-            public string PaymentKeyword { get; set; }         
+            public string PaymentKeyword { get; set; }
+            public string SystemVoucherNo { get; set; }
+            public int LocationID { get; set; }
         }
 
         public class MasterOpenBillViewModel

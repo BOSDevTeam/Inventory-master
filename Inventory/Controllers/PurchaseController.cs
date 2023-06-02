@@ -71,12 +71,12 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult ListPurchase(int userId)
+        public ActionResult ListPurchase()
         {
             if(checkConnection())
             {
                 getSupplier(true);
-                List<PurchaseViewModel.MasterPurchaseViewModel> tempList = selectMasterPurchase(userId, false);
+                List<PurchaseViewModel.MasterPurchaseViewModel> tempList = selectMasterPurchase(false);
                 PagingViewModel pagingViewModel = calcMasterPurchasePaging(tempList);
                 List<PurchaseViewModel.MasterPurchaseViewModel> lstMasterPurchase = getMasterPurchaseByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
                 ViewData["LstMasterPurchase"] = lstMasterPurchase;
@@ -671,7 +671,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult SearchAction(int userId, DateTime fromDate, DateTime toDate, string userVoucherNo, int supplierId)
         {
-            List<PurchaseViewModel.MasterPurchaseViewModel> tempList = selectMasterPurchase(userId, true, fromDate, toDate, userVoucherNo, supplierId);
+            List<PurchaseViewModel.MasterPurchaseViewModel> tempList = selectMasterPurchase(true, fromDate, toDate, userVoucherNo, supplierId);
             PagingViewModel pagingViewModel = calcMasterPurchasePaging(tempList);
             List<PurchaseViewModel.MasterPurchaseViewModel> lstMasterPurchase = getMasterPurchaseByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -686,7 +686,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult RefreshAction(int userId)
         {
-            List<PurchaseViewModel.MasterPurchaseViewModel> tempList = selectMasterPurchase(userId, false);
+            List<PurchaseViewModel.MasterPurchaseViewModel> tempList = selectMasterPurchase(false);
             PagingViewModel pagingViewModel = calcMasterPurchasePaging(tempList);
             List<PurchaseViewModel.MasterPurchaseViewModel> lstMasterPurchase = getMasterPurchaseByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -903,14 +903,13 @@ namespace Inventory.Controllers
             Session["TranPurchaseData"] = null;
         }
 
-        private List<PurchaseViewModel.MasterPurchaseViewModel> selectMasterPurchase(int userId, bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo, [Optional]int supplierId)
+        private List<PurchaseViewModel.MasterPurchaseViewModel> selectMasterPurchase(bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo, [Optional]int supplierId)
         {
             List<PurchaseViewModel.MasterPurchaseViewModel> tempList = new List<PurchaseViewModel.MasterPurchaseViewModel>();
             PurchaseViewModel.MasterPurchaseViewModel item = new PurchaseViewModel.MasterPurchaseViewModel();
 
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterPurchaseList, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@UserID", userId);
             cmd.Parameters.AddWithValue("@IsSearch", isSearch);
             if (!isSearch)
             {

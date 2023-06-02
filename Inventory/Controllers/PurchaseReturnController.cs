@@ -87,11 +87,11 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult ListPurchaseReturn(int userId)
+        public ActionResult ListPurchaseReturn()
         {
             if (checkConnection())
             {               
-                List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel> tempList = selectMasterPurchaseReturn(userId, false);
+                List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel> tempList = selectMasterPurchaseReturn(false);
                 PagingViewModel pagingViewModel = calcMasterPurchaseReturnPaging(tempList);
                 List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel> lstMasterPurchaseReturn = getMasterPurchaseReturnByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
                 ViewData["LstMasterPurchaseReturn"] = lstMasterPurchaseReturn;
@@ -510,7 +510,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult SearchAction(int userId, DateTime fromDate, DateTime toDate, string userVoucherNo)
         {
-            List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel> tempList = selectMasterPurchaseReturn(userId, true, fromDate, toDate, userVoucherNo);
+            List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel> tempList = selectMasterPurchaseReturn(true, fromDate, toDate, userVoucherNo);
             PagingViewModel pagingViewModel = calcMasterPurchaseReturnPaging(tempList);
             List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel> lstMasterPurchaseReturn = getMasterPurchaseReturnByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -524,7 +524,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult RefreshAction(int userId)
         {
-            List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel> tempList = selectMasterPurchaseReturn(userId, false);
+            List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel> tempList = selectMasterPurchaseReturn(false);
             PagingViewModel pagingViewModel = calcMasterPurchaseReturnPaging(tempList);
             List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel> lstMasterPurchaseReturn = getMasterPurchaseReturnByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -1018,14 +1018,13 @@ namespace Inventory.Controllers
             return list.OrderBy(m=>m.ID).ToList();
         }
 
-        private List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel> selectMasterPurchaseReturn(int userId, bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo)
+        private List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel> selectMasterPurchaseReturn(bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo)
         {
             List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel> tempList = new List<PurchaseReturnViewModel.MasterPurchaseReturnViewModel>();
             PurchaseReturnViewModel.MasterPurchaseReturnViewModel item = new PurchaseReturnViewModel.MasterPurchaseReturnViewModel();
 
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterPurchaseReturnList, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@UserID", userId);
             cmd.Parameters.AddWithValue("@IsSearch", isSearch);
             if (!isSearch)
             {

@@ -67,6 +67,7 @@ namespace Inventory.Controllers
                 item.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);
                 item.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
                 item.VoucherFOC = Convert.ToInt32(reader["VoucherFOC"]);
+                item.CurrencyKeyword = Convert.ToString(reader["CurrencyKeyword"]);
                 lstMasterSale.Add(item);
             }
             reader.Close();

@@ -27,12 +27,13 @@
 <div>
 
     <div class="row table-header" style="padding:10px 15px;">
-        <div class="col-md-2 col-lg-2">@Resource.Date</div>
+        <div class="col-md-1 col-lg-1">@Resource.Date</div>
         <div class="col-md-1 col-lg-1">@Resource.SlipID</div>
         <div class="col-md-1 col-lg-1">@Resource.User</div>
         <div class="col-md-1 col-lg-1">@Resource.Client</div>
         <div class="col-md-2 col-lg-2">@Resource.Customer</div>
         <div class="col-md-1 col-lg-1">@Resource.Location</div>
+        <div class="col-md-1 col-lg-1">@Resource.Currency</div>
         <div class="col-md-1 col-lg-1">@Resource.PayType</div>
         <div class="col-md-1 col-lg-1">@Resource.PayMethod</div>
         <div class="col-md-1 col-lg-1">@Resource.BankPay</div>
@@ -40,14 +41,14 @@
     </div>
 
     <div class="row table-header" style="padding:10px 15px;color:#666;">
-        <div class="col-md-4 col-lg-4"></div>
+        <div class="col-md-3 col-lg-3"></div>
         <div class="col-md-1 col-lg-1">@Resource.Code</div>
         <div class="col-md-2 col-lg-2">@Resource.Product</div>
         <div class="col-md-1 col-lg-1">@Resource.Qty</div>
         <div class="col-md-1 col-lg-1">@Resource.Price</div>
         <div class="col-md-1 col-lg-1"></div>
         <div class="col-md-1 col-lg-1">@Resource.Dis</div>
-        <div class="col-md-1 col-lg-1 aligh-right">@Resource.Amount</div>
+        <div class="col-md-2 col-lg-2 aligh-right">@Resource.Amount</div>
     </div>
 
         @foreach (var master in Model.lstMasterSale as List<RpSaleAuditViewModel.MasterSaleView>)
@@ -56,12 +57,13 @@
                 <div>
 
                     <div class="row rpt-main-group">
-                        <div class="col-md-2 col-lg-2">@master.SaleDateTime</div>
+                        <div class="col-md-1 col-lg-1">@master.SaleDateTime</div>
                         <div class="col-md-1 col-lg-1">@master.SlipID</div>
                         <div class="col-md-1 col-lg-1">@master.User</div>
                         <div class="col-md-1 col-lg-1">@master.Client</div>
                         <div class="col-md-2 col-lg-2">@master.CustomerName</div>
                         <div class="col-md-1 col-lg-1">@master.Location</div>
+                        <div class="col-md-1 col-lg-1">@master.CurrencyKeyword</div>
                         <div class="col-md-1 col-lg-1">@master.PaymentKeyword</div>
                         <div class="col-md-1 col-lg-1">@master.PayMethodName</div>
                         <div class="col-md-1 col-lg-1">@master.BankPayment</div>
@@ -71,7 +73,7 @@
                     @foreach (var item in Model.lstTranSale.Where(x => x.SaleID == master.SaleID).ToList() as List<RpSaleAuditViewModel.TranSaleView>)
                 {
                         <div class="row rpt-item">
-                            <div class="col-md-4 col-lg-4"></div>
+                            <div class="col-md-3 col-lg-3"></div>
                             <div class="col-md-1 col-lg-1">@item.Code</div>
                             <div class="col-md-2 col-lg-2">
                                 @if (item.IsFOC == true)
@@ -94,7 +96,7 @@
                                 <div class="col-md-1 col-lg-1">
                                     <script>separatedComma(@item.Discount);</script>
                                 </div>
-                                <div class="col-md-1 col-lg-1 aligh-right">
+                                <div class="col-md-2 col-lg-2 aligh-right">
                                     <script>separatedComma(@item.Amount);</script>
                                 </div>
                             </div>

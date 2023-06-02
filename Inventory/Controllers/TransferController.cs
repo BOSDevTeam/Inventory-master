@@ -65,9 +65,9 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult ListTransfer(int userId)
+        public ActionResult ListTransfer()
         {
-            List<TransferViewModel.MasterTransferModels> templist = selectMasterTransfer(userId,false);
+            List<TransferViewModel.MasterTransferModels> templist = selectMasterTransfer(false);
             PagingViewModel pagingViewModel = calcMasterTransferPaging(templist);
             List<TransferViewModel.MasterTransferModels> lstMaterTransfer = getMasterTransferByPaging(templist, paging.startItemIndex, paging.endItemIndex );
             ViewBag.TotalPage = pagingViewModel.TotalPageNum;
@@ -82,7 +82,7 @@ namespace Inventory.Controllers
 
         public JsonResult SearchAction(int userId,DateTime fromDate, DateTime toDate, string userVoucherNo)
         {
-            List<TransferViewModel.MasterTransferModels> templist = selectMasterTransfer(userId, true, fromDate, toDate, userVoucherNo);
+            List<TransferViewModel.MasterTransferModels> templist = selectMasterTransfer(true, fromDate, toDate, userVoucherNo);
             PagingViewModel pagingViewModel = calcMasterTransferPaging(templist);
             List<TransferViewModel.MasterTransferModels> lstMaterTransfer = getMasterTransferByPaging(templist, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             
@@ -97,7 +97,7 @@ namespace Inventory.Controllers
 
         public JsonResult RefreshAction(int userId)
         {
-            List<TransferViewModel.MasterTransferModels> templist = selectMasterTransfer(userId, false);
+            List<TransferViewModel.MasterTransferModels> templist = selectMasterTransfer(false);
             PagingViewModel pagingViewModel = calcMasterTransferPaging(templist);
             List<TransferViewModel.MasterTransferModels> lstMaterTransfer = getMasterTransferByPaging(templist, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -652,13 +652,12 @@ namespace Inventory.Controllers
 
         }
 
-        private List<TransferViewModel.MasterTransferModels> selectMasterTransfer(int userId, bool isSearch, [Optional]DateTime fromDate, [Optional] DateTime toDate, [Optional] string userVoucherNo)
+        private List<TransferViewModel.MasterTransferModels> selectMasterTransfer(bool isSearch, [Optional]DateTime fromDate, [Optional] DateTime toDate, [Optional] string userVoucherNo)
         {
             List<TransferViewModel.MasterTransferModels> tempList = new List<TransferViewModel.MasterTransferModels>();
             TransferViewModel.MasterTransferModels item = new TransferViewModel.MasterTransferModels();
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterTransferList, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@UserID", userId);
             cmd.Parameters.AddWithValue("@IsSearch", isSearch);
             if (!isSearch)
             {

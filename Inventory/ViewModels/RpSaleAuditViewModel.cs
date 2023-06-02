@@ -45,6 +45,7 @@ namespace Inventory.ViewModels
             public int Grandtotal { get; set; }
             public bool IsVouFOC { get; set; }
             public int VoucherFOC { get; set; }
+            public string CurrencyKeyword { get; set; }
         }
 
         public class TranSaleView

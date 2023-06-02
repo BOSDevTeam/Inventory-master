@@ -774,6 +774,7 @@
     <Content Include="Views\Sale\SaleVoucherDesign1.cshtml" />
     <Content Include="Views\Sale\SaleVoucherDesign2.cshtml" />
     <Content Include="Views\SaleVoucherDesign\SaleVoucherDesign.cshtml" />
+    <Content Include="Views\Sale\SaleVoucherDesign3.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

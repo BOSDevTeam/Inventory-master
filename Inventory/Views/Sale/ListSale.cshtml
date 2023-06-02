@@ -135,9 +135,44 @@
                         clearTableAction();
                         $('#modalConfirm').modal('show');
                         $("#btnDelOk").val(saleId);
+                    } else if (listActionValue == 4) {  // print
+                        clearTableAction();
+                        print(saleId);
                     }
                 });
             });
+
+            function print(saleId) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("PrintAction", "Sale")',
+                    data: { "saleId": saleId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        let saleVoucherDesignType = localStorage.getItem("SaleVoucherDesignType");
+                        if (saleVoucherDesignType == 1) {
+                            window.location.href = '@Url.Action("SaleVoucherDesign1", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
+                        } else if (saleVoucherDesignType == 2) {
+                            window.location.href = '@Url.Action("SaleVoucherDesign2", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
+                        } else if (saleVoucherDesignType == 3) {
+                            window.location.href = '@Url.Action("SaleVoucherDesign3", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
+                        } else {
+                            window.location.href = '@Url.Action("SaleVoucher", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
 
             function checkLedgerForSaleEditAction(saleId) {
                 showLoadingIcon();
@@ -197,15 +232,16 @@
                 if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterSale"]))');
                 $.each(response, function (index, item) {
                     var row = '<tr class="row table-item" onclick="findRowIndex(this)">'
-                            +'<td class="col-md-2 col-lg-2 text-overflow">' + item.SaleDateTime + '</td>'
+                            + '<td class="col-md-1 col-lg-1 text-overflow">' + item.SaleDateTime + '</td>'
                             + '<td class="col-md-3 col-lg-3">' + item.UserVoucherNo + '</td>'
                             + '<td class="col-md-3 col-lg-3 text-overflow">' + item.CustomerName + '</td>'
                             + '<td class="col-md-1 col-lg-1">' + item.PaymentKeyword + '</td>'
                             + '<td class="col-md-2 col-lg-2 value-right">' + separatedComma(item.Grandtotal) + '</td>'
-                            + '<td class="col-md-1 col-lg-1 btn-group">'
+                            + '<td class="col-md-2 col-lg-2 btn-group">'
                                 + '<button title="View" class="btn btn-sm btn-dark" onclick="listTableAction(1)"><i class="fa fa-list"></i></button>'
                                 + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
                                 + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
+                                + '<button title="Print" class="btn btn-sm btn-first" onclick="listTableAction(4)"><i class="fa fa-print"></i></button>'
                             +'</td>'
                             + '<td style="display:none">' + item.SaleID + '</td>'
                         +'</tr>'
@@ -298,12 +334,12 @@
             <table id="tblSaleList" class="col-md-12 col-lg-12" role="grid">
                 <thead>
                     <tr class="row table-header">
-                        <th class="col-md-2 col-lg-2">Date</th>
+                        <th class="col-md-1 col-lg-1">Date</th>
                         <th class="col-md-3 col-lg-3">Voucher No.</th>
                         <th class="col-md-3 col-lg-3">Customer</th>
                         <th class="col-md-1 col-lg-1">Pay Type</th>
                         <th class="col-md-2 col-lg-2 aligh-right">Grand Total</th>
-                        <th class="col-md-1 col-lg-1">Action</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
                     </tr>
                 </thead>
                 <tbody></tbody>

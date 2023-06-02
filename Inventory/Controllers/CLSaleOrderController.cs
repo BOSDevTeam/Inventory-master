@@ -343,6 +343,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult DeleteActionCont(int saleOrderID, int transaleId)
         {
+            string orderNumber = "", token = "";
             if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
             SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateCLMasterSaleOrder, (SqlConnection)Session["SQLConnection"]);
             cmd.Parameters.AddWithValue("@ID", transaleId);
@@ -351,9 +352,18 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@TaxAmt", Convert.ToInt32(Session["DeleteTaxAmt"]));
             cmd.Parameters.AddWithValue("@ChargesAmt", Convert.ToInt32(Session["DeleteChargeAmt"]));
             cmd.Parameters.AddWithValue("@Total", Convert.ToInt32(Session["DeleteTotal"]));
+            cmd.Parameters.AddWithValue("@CurrentDateTime", appSetting.getLocalDateTime());
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.ExecuteNonQuery();
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                orderNumber = Convert.ToString(reader["OrderNumber"]);
+                token = Convert.ToString(reader["Token"]);
+            }
+            reader.Close();
             dataConnectorSQL.Close();
+
+            appSetting.sendPushNotification(token, AppConstants.UpdateOrderTitle, AppConstants.UpdateOrderBody + orderNumber, null);
 
             List<CLMasterSaleOrderModels> List = Session["LstMSale"] as List<CLMasterSaleOrderModels>;
 

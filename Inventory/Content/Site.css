@@ -144,14 +144,39 @@ table tr td.value-right{text-align:right;padding-right:15px;}
 .total-amount-label{color:#299697;font-size:16px;font-family: 'Rubik',sans-serif;}
 .total-amount-value{font-size:16px;color:#299697;font-family: 'Rubik',sans-serif;}
 .voucher-header-name{font-size:20px;color:#000;font-family:'Rubik',sans-serif;font-weight:bold;}
+.voucher-header-desp{font-size:18px;color:#000;font-family:'Rubik',sans-serif;}
 .voucher-header{font-size:15px;color:#000;font-family:'Rubik',sans-serif;}
 .voucher-sub-header{font-size:13px;color:#000;font-family:'Rubik',sans-serif;}
 .voucher-sub-footer{font-size:13px;color:#000;font-family:'Rubik',sans-serif;}
 .voucher-table-header{color:#fff;padding:5px;font-size:13px;font-family:'Rubik',sans-serif;background-color:#666;}
 .voucher-table-item{color:#000;padding:5px;font-size:13px;font-family:'Rubik',sans-serif;}
+.voucher-table-item-sm{color:#333;font-size:10px;font-family:'Rubik',sans-serif;}
 .voucher-divider{border-top:1px solid #F3F3F3;}
-.voucher-table-border{border:1px solid #999;}
+.voucher-table-border{border:1px solid #000;}
+.voucher-total-border{border:1px solid #333;}
+.sale-voucher-design3{width:80mm;}
 /** end amount and voucher */
+
+
+
+@media print {
+    .voucher-header-name{font-size:33pt;color:#000;font-family:'Rubik',sans-serif;font-weight:bold;}
+    .voucher-header-desp{font-size:25pt;color:#000;font-family:'Rubik',sans-serif;}
+    .voucher-header{font-size:20pt;color:#000;font-family:'Rubik',sans-serif;}
+    .voucher-sub-header{font-size:18pt;color:#000;font-family:'Rubik',sans-serif;}
+    .voucher-sub-footer{font-size:18pt;color:#000;font-family:'Rubik',sans-serif;}
+    .voucher-table-header{color:#fff;padding:5px;font-size:19pt;font-family:'Rubik',sans-serif;background-color:#666;}
+    .voucher-table-item{color:#000;padding:5px;font-size:19pt;font-family:'Rubik',sans-serif;}
+    .voucher-table-item-sm{color:#333;font-size:15pt;font-family:'Rubik',sans-serif;}
+   
+    .hidden-print,
+    .hidden-print * {
+        display: none !important;
+    }
+
+    .sale-voucher-design3{width:110mm;}
+
+}
 
 
 

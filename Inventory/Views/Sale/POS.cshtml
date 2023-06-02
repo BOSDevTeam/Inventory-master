@@ -865,6 +865,8 @@
                             window.location.href = '@Url.Action("SaleVoucherDesign1", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
                         } else if (saleVoucherDesignType == 2) {
                             window.location.href = '@Url.Action("SaleVoucherDesign2", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
+                        } else if (saleVoucherDesignType == 3) {
+                            window.location.href = '@Url.Action("SaleVoucherDesign3", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
                         } else {
                             window.location.href = '@Url.Action("SaleVoucher", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
                         }

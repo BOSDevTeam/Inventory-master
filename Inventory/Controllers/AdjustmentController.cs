@@ -59,11 +59,11 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult ListAdjustment(int userId)
+        public ActionResult ListAdjustment()
         {
             if(checkConnection())
             {
-                List<AdjustmentViewModel.MasterAdjustmentViewModel> tempList = selectMasterAdjustment(userId, false);
+                List<AdjustmentViewModel.MasterAdjustmentViewModel> tempList = selectMasterAdjustment(false);
                 PagingViewModel pagingViewModel = calcMasterAdjustmentPaging(tempList);
                 List<AdjustmentViewModel.MasterAdjustmentViewModel> lstMasterAdjustment = getMasterAdjustmentByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
                 ViewData["LstMasterAdjustment"] = lstMasterAdjustment;
@@ -437,7 +437,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult SearchAction(int userId, DateTime fromDate, DateTime toDate, string userVoucherNo)
         {
-            List<AdjustmentViewModel.MasterAdjustmentViewModel> tempList = selectMasterAdjustment(userId, true, fromDate, toDate, userVoucherNo);
+            List<AdjustmentViewModel.MasterAdjustmentViewModel> tempList = selectMasterAdjustment(true, fromDate, toDate, userVoucherNo);
             PagingViewModel pagingViewModel = calcMasterAdjustmentPaging(tempList);
             List<AdjustmentViewModel.MasterAdjustmentViewModel> lstMasterAdjustment = getMasterAdjustmentByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -451,7 +451,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult RefreshAction(int userId)
         {
-            List<AdjustmentViewModel.MasterAdjustmentViewModel> tempList = selectMasterAdjustment(userId, false);
+            List<AdjustmentViewModel.MasterAdjustmentViewModel> tempList = selectMasterAdjustment(false);
             PagingViewModel pagingViewModel = calcMasterAdjustmentPaging(tempList);
             List<AdjustmentViewModel.MasterAdjustmentViewModel> lstMasterAdjustment = getMasterAdjustmentByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -604,14 +604,13 @@ namespace Inventory.Controllers
         {
             Session["TranAdjustmentData"] = null;
         }
-        private List<AdjustmentViewModel.MasterAdjustmentViewModel> selectMasterAdjustment(int userId, bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo)
+        private List<AdjustmentViewModel.MasterAdjustmentViewModel> selectMasterAdjustment(bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo)
         {
             List<AdjustmentViewModel.MasterAdjustmentViewModel> tempList = new List<AdjustmentViewModel.MasterAdjustmentViewModel>();
             AdjustmentViewModel.MasterAdjustmentViewModel item = new AdjustmentViewModel.MasterAdjustmentViewModel();
 
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterAdjustmentList, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@UserID", userId);
             cmd.Parameters.AddWithValue("@IsSearch", isSearch);
             if (!isSearch)
             {

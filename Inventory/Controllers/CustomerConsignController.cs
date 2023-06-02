@@ -67,12 +67,12 @@ namespace Inventory.Controllers
             return RedirectToAction("Login", "User");
         }
         [SessionTimeoutAttribute]
-        public ActionResult ListCustomerConsign(int userId)
+        public ActionResult ListCustomerConsign()
         {
             if (checkConnection())
             {
                 getCustomer(true);
-                List<CustomerConsignViewModel.MasterCustomerConsignViewModel> tempList = selectMasterCustomerConsign(userId, false);
+                List<CustomerConsignViewModel.MasterCustomerConsignViewModel> tempList = selectMasterCustomerConsign(false);
                 PagingViewModel pagingViewModel = calcMasterCustomerConsignPaging(tempList);
                 List<CustomerConsignViewModel.MasterCustomerConsignViewModel> lstMasterCustomerConsign = getMasterCustomerConsignByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
                 ViewData["LstMasterCustomerConsign"] = lstMasterCustomerConsign;
@@ -332,7 +332,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult SearchAction(int userId, DateTime fromDate, DateTime toDate, string userVoucherNo,int customerId)
         {
-            List<CustomerConsignViewModel.MasterCustomerConsignViewModel> tempList = selectMasterCustomerConsign(userId, true, fromDate, toDate, userVoucherNo,customerId);
+            List<CustomerConsignViewModel.MasterCustomerConsignViewModel> tempList = selectMasterCustomerConsign(true, fromDate, toDate, userVoucherNo,customerId);
             PagingViewModel pagingViewModel = calcMasterCustomerConsignPaging(tempList);
             List<CustomerConsignViewModel.MasterCustomerConsignViewModel> lstMasterCustomerConsign = getMasterCustomerConsignByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -347,7 +347,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public JsonResult RefreshAction(int userId)
         {
-            List<CustomerConsignViewModel.MasterCustomerConsignViewModel> tempList = selectMasterCustomerConsign(userId, false);
+            List<CustomerConsignViewModel.MasterCustomerConsignViewModel> tempList = selectMasterCustomerConsign(false);
             PagingViewModel pagingViewModel = calcMasterCustomerConsignPaging(tempList);
             List<CustomerConsignViewModel.MasterCustomerConsignViewModel> lstMasterCustomerConsign = getMasterCustomerConsignByPaging(tempList, pagingViewModel.StartItemIndex, pagingViewModel.EndItemIndex);
             var jsonResult = new
@@ -628,14 +628,13 @@ namespace Inventory.Controllers
             customerConsignViewModel.ProductMenus.Products = appData.selectProduct(getConnection(), subMenuId);
             Session["ProductData"] = customerConsignViewModel.ProductMenus.Products;
         }
-        private List<CustomerConsignViewModel.MasterCustomerConsignViewModel> selectMasterCustomerConsign(int userId, bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo,[Optional]int customerId)
+        private List<CustomerConsignViewModel.MasterCustomerConsignViewModel> selectMasterCustomerConsign(bool isSearch, [Optional]DateTime fromDate, [Optional]DateTime toDate, [Optional]string userVoucherNo,[Optional]int customerId)
         {
             List<CustomerConsignViewModel.MasterCustomerConsignViewModel> tempList = new List<CustomerConsignViewModel.MasterCustomerConsignViewModel>();
             CustomerConsignViewModel.MasterCustomerConsignViewModel item = new CustomerConsignViewModel.MasterCustomerConsignViewModel();
 
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetMasterCustomerConsignList, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@UserID", userId);
             cmd.Parameters.AddWithValue("@IsSearch", isSearch);
             if (!isSearch)
             {

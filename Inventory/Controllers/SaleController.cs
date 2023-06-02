@@ -189,6 +189,19 @@ namespace Inventory.Controllers
             return View(saleViewModel);
         }
 
+        [SessionTimeoutAttribute]
+        public ActionResult SaleVoucherDesign3(string systemVoucherNo, int locationId)
+        {
+            VoucherSettingModels voucherSettingModel = appData.selectVoucherSettingByLocation(getConnection(), locationId);
+            saleViewModel.VoucherSettings = voucherSettingModel;
+            ViewBag.Base64Photo = voucherSettingModel.Base64Photo;
+            MasterSaleVoucherViewModel masterSaleVoucherViewModel = selectMasterSale(systemVoucherNo);
+            setMasterSaleDataToViewBag(masterSaleVoucherViewModel);
+            List<TranSaleModels> lstTranSale = selectTranSaleBySaleID(masterSaleVoucherViewModel.MasterSaleModel.SaleID);
+            ViewData["LstTranSale"] = lstTranSale;
+            return View(saleViewModel);
+        }
+
         #endregion
 
         #region SaleAction     
@@ -1031,6 +1044,42 @@ namespace Inventory.Controllers
             return Json(price, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public JsonResult PrintAction(int saleId)
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            List<SaleViewModel.MasterSaleViewModel> lstMasterSale = new List<SaleViewModel.MasterSaleViewModel>();
+            string systemVoucherNo = "";
+            int locationId = 0;
+
+            if (Session["MasterSaleData"] != null)
+            {
+                try
+                {
+                    List<SaleViewModel.MasterSaleViewModel> tempList = Session["MasterSaleData"] as List<SaleViewModel.MasterSaleViewModel>;
+                    SaleViewModel.MasterSaleViewModel model = tempList.Where(x => x.SaleID == saleId).SingleOrDefault();
+                    systemVoucherNo = model.SystemVoucherNo;
+                    locationId = model.LocationID;
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+            }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
+
+            var jsonResult = new
+            {
+                SystemVoucherNo = systemVoucherNo,
+                LocationID = locationId,
+                ResultDefaultData = resultDefaultData
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
 
         #region OpenBillAction
@@ -1173,6 +1222,7 @@ namespace Inventory.Controllers
                 item.MasterSaleModel.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
                 item.MasterSaleModel.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
                 item.MasterSaleModel.UserVoucherNo = Convert.ToString(reader["UserVoucherNo"]);
+                item.MasterSaleModel.VoucherID = Convert.ToString(reader["VoucherID"]);
                 item.Payment = Convert.ToString(reader["Payment"]);
                 item.Remark = Convert.ToString(reader["Remark"]);
             }
@@ -1257,6 +1307,8 @@ namespace Inventory.Controllers
                 item.CustomerName = Convert.ToString(reader["CustomerName"]);
                 item.PaymentKeyword = Convert.ToString(reader["PaymentKeyword"]);
                 item.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);
+                item.SystemVoucherNo= Convert.ToString(reader["SystemVoucherNo"]);
+                item.LocationID = Convert.ToInt32(reader["LocationID"]);
                 tempList.Add(item);
             }
             reader.Close();
@@ -1339,6 +1391,7 @@ namespace Inventory.Controllers
                 ViewBag.GrandTotalNotPayPercent = item.MasterSaleModel.Total - (item.MasterSaleModel.VoucherDiscount + item.MasterSaleModel.AdvancedPay);
             ViewBag.IsVouFOC = item.MasterSaleModel.IsVouFOC;
             ViewBag.UserVoucherNo = item.MasterSaleModel.UserVoucherNo;
+            ViewBag.VoucherID = item.MasterSaleModel.VoucherID;
             ViewBag.Payment = item.Payment;
             ViewBag.Remark = item.Remark;
         }
