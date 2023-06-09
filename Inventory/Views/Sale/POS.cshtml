@@ -610,7 +610,7 @@
                     hideLoadingIcon();
                     if (!response.ResultDefaultData.IsRequestSuccess)
                         responseUnSuccessful(response);
-                    else window.location.href = '@Url.Action("ListSale", "Sale")?userId=' + userId;
+                    else window.location.href = '@Url.Action("ListSale", "Sale")';
                 },
                 failure: function (response) {
                     hideLoadingIcon();
