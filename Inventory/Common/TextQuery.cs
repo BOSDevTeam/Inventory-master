@@ -177,5 +177,11 @@ namespace Inventory.Common
         {
             return "Update SCompanySetting Set SaleVoucherDesignType=" + saleVoucherDesignType;
         }
+
+        public string getSalePaymentQuery(int saleId)
+        {
+            return "Select PaymentID,PayMethodID,BankPaymentID,LimitedDayID,Remark,VouDisPercent,VouDisAmount,AdvancedPay,PaymentPercent,isnull(IsVouFOC,0) AS IsVouFOC"
+            + " From TMasterSale Where SaleID=" + saleId;
+        }
     }
 }

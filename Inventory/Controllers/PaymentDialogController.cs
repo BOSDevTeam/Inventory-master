@@ -6,12 +6,16 @@ using System.Web.Mvc;
 using Inventory.ViewModels;
 using Inventory.Common;
 using Inventory.Models;
+using System.Data.SqlClient;
+using System.Data;
 
 namespace Inventory.Controllers
 {
     public class PaymentDialogController : MyController
     {
         AppData appData = new AppData();
+        TextQuery textQuery = new TextQuery();
+        AppSetting setting = new AppSetting();
         DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
 
         #region events
@@ -50,6 +54,46 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
+        public JsonResult PaymentEditAction(bool isBankPayment, int moduleCode, int saleId)
+        {
+            List<PaymentModels> lstPayment = new List<PaymentModels>();
+            List<PayMethodModels> lstPayMethod = new List<PayMethodModels>();
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            MasterSaleModels masterSaleModel = new MasterSaleModels();
+            List<LimitedDayModels> lstLimitedDay = new List<LimitedDayModels>();
+            List<BankPaymentModels> lstBankPayment = new List<BankPaymentModels>();
+
+            if ((moduleCode == AppConstants.SaleModule && Session["TranSaleData"] != null) || (moduleCode == AppConstants.PurchaseModule && Session["TranPurchaseData"] != null))
+            {
+                try
+                {
+                    lstPayment = getPayment();
+                    if (isBankPayment) lstPayMethod = getPayMethod();
+
+                    if (moduleCode == AppConstants.SaleModule) masterSaleModel = getSalePayment(saleId);
+                    
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+            }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
+
+            var jsonResult = new
+            {
+                LstPayment = lstPayment,
+                LstPayMethod = lstPayMethod,
+                MasterSaleModel = masterSaleModel,
+                ResultDefaultData = resultDefaultData
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
         public JsonResult GetLimitedDayAction()
         {
             List<LimitedDayModels> lstLimitedDay = new List<LimitedDayModels>();
@@ -68,6 +112,33 @@ namespace Inventory.Controllers
         #endregion
 
         #region methods
+
+        public MasterSaleModels getSalePayment(int saleId)
+        {
+            MasterSaleModels model = new MasterSaleModels();
+
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(textQuery.getSalePaymentQuery(saleId), setting.conn);
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                model.PaymentID = Convert.ToInt32(reader["PaymentID"]);
+                model.PayMethodID = Convert.ToInt32(reader["PayMethodID"]);
+                model.BankPaymentID = Convert.ToInt32(reader["BankPaymentID"]);
+                model.LimitedDayID = Convert.ToInt32(reader["LimitedDayID"]);
+                model.Remark = Convert.ToString(reader["Remark"]);
+                model.VouDisPercent = Convert.ToInt32(reader["VouDisPercent"]);
+                model.VouDisAmount = Convert.ToInt32(reader["VouDisAmount"]);
+                model.AdvancedPay = Convert.ToInt32(reader["AdvancedPay"]);
+                model.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
+                model.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
+            }
+            reader.Close();
+            setting.conn.Close();
+            return model;
+        }
 
         private List<PaymentModels> getPayment()
         {

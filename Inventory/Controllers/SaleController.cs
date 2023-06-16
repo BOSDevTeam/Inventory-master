@@ -555,10 +555,13 @@ namespace Inventory.Controllers
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
-        }
+        }        
 
-        [HttpGet]
-        public JsonResult PaymentEditAction(int saleId, string date, string voucherId, int customerId, int locationId, int taxAmt, int chargesAmt, int subtotal, int total, int currencyId, int userId)
+        [HttpPost]
+        public JsonResult SaleEditAction(int saleId, string date, string voucherId, int customerId, int locationId,
+                int paymentId, int? payMethodId, int? limitedDayId, int? bankPaymentId, string remark, int? advancedPay,
+                int? payPercent, int? payPercentAmt, int? vouDisPercent, int? vouDisAmount, int? voucherDiscount,
+                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId, bool isVoucherFOC, int currencyId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
 
@@ -598,26 +601,37 @@ namespace Inventory.Controllers
                         dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
                         if (list[i].IsNewTran)
                         {
-                            dtLog.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC, AppConstants.NewActionCode, AppConstants.NewActionName,0);
+                            dtLog.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].SalePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC, AppConstants.NewActionCode, AppConstants.NewActionName, 0);
                         }
                     }
 
                     if (Session["Log"] != null)
                     {
-                        List<TranSaleLogModels> lstTranSaleLog = Session["Log"] as List<TranSaleLogModels>;                        
-                        
+                        List<TranSaleLogModels> lstTranSaleLog = Session["Log"] as List<TranSaleLogModels>;
+
                         for (int i = 0; i < lstTranSaleLog.Count; i++)
                         {
-                            if(lstTranSaleLog[i].ActionCode != null) {
-                                string actionName = "";                               
+                            if (lstTranSaleLog[i].ActionCode != null)
+                            {
+                                string actionName = "";
                                 if (lstTranSaleLog[i].ActionCode == AppConstants.EditActionCode) actionName = AppConstants.EditActionName;
                                 else if (lstTranSaleLog[i].ActionCode == AppConstants.DeleteActionCode) actionName = AppConstants.DeleteActionName;
                                 dtLog.Rows.Add(lstTranSaleLog[i].ProductID, lstTranSaleLog[i].Quantity, lstTranSaleLog[i].UnitID, lstTranSaleLog[i].SalePrice, lstTranSaleLog[i].CurrencyID, lstTranSaleLog[i].DiscountPercent, lstTranSaleLog[i].Discount, lstTranSaleLog[i].Amount, lstTranSaleLog[i].IsFOC, lstTranSaleLog[i].ActionCode, actionName, lstTranSaleLog[i].OrginalQuantity);
-                            }                            
+                            }
                         }
                     }
 
                     DateTime saleDateTime = DateTime.Parse(date);
+                    if (payMethodId == null) payMethodId = 0;
+                    if (limitedDayId == null) limitedDayId = 0;
+                    if (bankPaymentId == null) bankPaymentId = 0;
+                    if (advancedPay == null) advancedPay = 0;
+                    if (payPercent == null) payPercent = 0;
+                    if (payPercentAmt == null) payPercentAmt = 0;
+                    if (vouDisPercent == null) vouDisPercent = 0;
+                    if (vouDisAmount == null) vouDisAmount = 0;
+                    if (voucherDiscount == null) voucherDiscount = 0;
+
                     SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateSale, dataConnectorSQL.Connect());
                     cmd.Parameters.AddWithValue("@SaleID", saleId);
                     cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
@@ -636,11 +650,26 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@UpdatedDateTime", setting.getLocalDateTime());
                     cmd.Parameters.AddWithValue("@ActionCode", AppConstants.EditActionCode);
                     cmd.Parameters.AddWithValue("@ActionName", AppConstants.EditActionName);
+                    cmd.Parameters.AddWithValue("@Tax", tax);
+                    cmd.Parameters.AddWithValue("@Charges", charges);
+                    cmd.Parameters.AddWithValue("@PaymentID", paymentId);
+                    cmd.Parameters.AddWithValue("@PayMethodID", payMethodId);
+                    cmd.Parameters.AddWithValue("@BankPaymentID", bankPaymentId);
+                    cmd.Parameters.AddWithValue("@LimitedDayID", limitedDayId);
+                    cmd.Parameters.AddWithValue("@AdvancedPay", advancedPay);
+                    cmd.Parameters.AddWithValue("@VouDisPercent", vouDisPercent);
+                    cmd.Parameters.AddWithValue("@VouDisAmount", vouDisAmount);
+                    cmd.Parameters.AddWithValue("@VoucherDiscount", voucherDiscount);
+                    cmd.Parameters.AddWithValue("@PaymentPercent", payPercent);
+                    cmd.Parameters.AddWithValue("@PayPercentAmt", payPercentAmt);
+                    cmd.Parameters.AddWithValue("@Remark", remark);
+                    cmd.Parameters.AddWithValue("@Grandtotal", grandtotal);
+                    cmd.Parameters.AddWithValue("@IsVoucherFOC", isVoucherFOC);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                     dataConnectorSQL.Close();
                     clearTranSale();
-                    resultDefaultData.IsRequestSuccess = true;                    
+                    resultDefaultData.IsRequestSuccess = true;
                 }
                 catch (Exception ex)
                 {

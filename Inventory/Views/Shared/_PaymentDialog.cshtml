@@ -117,6 +117,7 @@
             <div class="modal-footer">
                 <button id="btnClose" class="btn btn-white-outline-third">@Resource.Close</button>
                 <button id="btnSubmit" class="btn btn-first" data-dismiss="modal" aria-label="Close">@Resource.Submit</button>
+                <button id="btnEditSubmit" class="btn btn-second" data-dismiss="modal" aria-label="Close">@Resource.Submit</button>
             </div>
         </div>
     </div>
@@ -124,14 +125,58 @@
 
 <script type="text/javascript">
 
-    var isDisplayLimitedDay;
+    var isDisplayLimitedDay, isSaleEdit = false, limitedDayId, bankPaymentId;
 
     function initializePaymentControl(isDisplayLimitedDay) {
-        this.isDisplayLimitedDay = isDisplayLimitedDay;
+        this.isDisplayLimitedDay = isDisplayLimitedDay; // for sale module
+        $('#btnEditSubmit').css("display", "none");
         showHideByPayment(1);
         showHideByPayMethod(1);
         $("#inputHdnVouDisType").val('');
         changeDiscountType(1);
+        calcAmount();
+        clearPaidChange();
+    }
+
+    function fillSalePaymentData(isDisplayLimitedDay, masterSaleModel,saleId) {
+        isSaleEdit = true;
+        this.isDisplayLimitedDay = isDisplayLimitedDay;
+        $('#btnSubmit').css("display", "none");
+        $('#btnEditSubmit').val(saleId);
+        $('#ddlPayment').val(masterSaleModel.PaymentID);
+        if (masterSaleModel.PaymentID == 2) $('#ddlPayment').prop("disabled", true);
+        $('#ddlPayMethod').val(masterSaleModel.PayMethodID);
+
+        showHideByPayment(masterSaleModel.PaymentID);
+        showHideByPayMethod(masterSaleModel.PayMethodID);
+
+        if (masterSaleModel.IsVouFOC == true) $("#chkVoucherFOC").prop("checked", true);
+        else $("#chkVoucherFOC").prop("checked", false);
+
+        limitedDayId = masterSaleModel.LimitedDayID;
+
+        $("#inputAdvancedPay").val(masterSaleModel.AdvancedPay);
+        $("#lblAdvancedPay").text(separatedComma(parseInt(masterSaleModel.AdvancedPay)));
+        $("#inputHdnAdvancedPay").val(masterSaleModel.AdvancedPay);
+
+        bankPaymentId = masterSaleModel.BankPaymentID;
+
+        $("#inputPercent").val(masterSaleModel.PaymentPercent);
+
+        $("#inputHdnVouDisType").val('');
+        if (masterSaleModel.VouDisAmount == 0) changeDiscountType(1);
+        else changeDiscountType(2);
+        if (masterSaleModel.VouDisAmount != 0) {
+            $("#inputVouDisAmount").val(masterSaleModel.VouDisAmount);
+            calcVouDisAmount();
+        }
+        else if (masterSaleModel.VouDisPercent != 0) {
+            $("#inputVouDisPercent").val(masterSaleModel.VouDisPercent);
+            calcVouDisPercent();
+        }
+
+        calcAmount();
+        $('#txtRemark').val(masterSaleModel.Remark);
         clearPaidChange();
     }
 
@@ -142,7 +187,7 @@
         if (value == 1) {  //cash
             $("#trLimitedDay").css('display', 'none');
             $(".trAdvancedPay").css('display', 'none');
-        } else if (value == 2) {  //credit  
+        } else if (value == 2) {  //credit
             $(".trAdvancedPay").show();
             if (isDisplayLimitedDay == true) {
                 showLoadingIcon();
@@ -156,6 +201,7 @@
                         hideLoadingIcon();
                         createLimitedDayData(response);
                         $("#trLimitedDay").show();
+                        if (isSaleEdit && limitedDayId != 0) $('#ddlLimitedDay').val(limitedDayId);
                     },
                     failure: function (response) {
                         hideLoadingIcon();
@@ -192,9 +238,7 @@
                     $("#trBankPayment").show();
                     $(".trPercent").show();
                     $("#trPcntGrandtotal").show();
-                    let grandtotal = $("#inputHdnPayGrandtotal").val();
-                    $("#lblPcntGrandtotal").text(separatedComma(parseInt(grandtotal)));
-                    $("#inputHdnPcntGrandtotal").val(grandtotal);
+                    if (isSaleEdit && bankPaymentId != 0) $('#ddlBankPayment').val(bankPaymentId);
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -251,8 +295,8 @@
             let totalPay = $("#inputHdnPayTotal").val();
             let advancedPay = $("#inputAdvancedPay").val();
             if (advancedPay.length == 0 || advancedPay == 0) return;
-            if (parseInt(advancedPay) > parseInt(totalPay)) {               
-                showAlertInDialog(0,"Advanced Pay is greater than Total Pay!");                
+            if (parseInt(advancedPay) > parseInt(totalPay)) {
+                showAlertInDialog(0,"Advanced Pay is greater than Total Pay!");
                 return;
             }
             $("#lblAdvancedPay").text(separatedComma(parseInt(advancedPay)));
@@ -262,7 +306,7 @@
     });
 
     $('#inputPercent').keydown(function (event) {
-        if (event.which === 13) {            
+        if (event.which === 13) {
             calcAmount();
         }
     });
@@ -312,16 +356,18 @@
             bankPayment += '<option value="' + response[i].BankPaymentID + '">' + response[i].Name + '</option>';
         }
         $("#ddlBankPayment").append(bankPayment);
-    }    
+    }
 
     $("#btnDiscountPercent").click(function (e) {
         let value = $(this).val();
         changeDiscountType(value);
+        calcAmount();
     });
 
     $("#btnDiscountAmount").click(function (e) {
         let value = $(this).val();
         changeDiscountType(value);
+        calcAmount();
     });
 
     function changeDiscountType(value) {
@@ -347,37 +393,44 @@
             $("#inputVouDisAmount").show();
             $("#inputVouDisPercent").css('display', 'none');
         }
-        calcAmount();
     }
 
     $('#inputVouDisAmount').keydown(function (event) {
         if (event.which === 13) {
-            let disAmount, percent;
-            if ($("#inputVouDisAmount").val() == null || $("#inputVouDisAmount").val().length == 0) return;
-            let totalPay = $("#inputHdnPayTotal").val();
-            disAmount = $("#inputVouDisAmount").val();                       
-            if (parseInt(disAmount) > parseInt(totalPay)) {
-                showAlertInDialog(0, "Voucher Discount is greater than Total Pay!");
-                return;
-            }
-            $("#lblVoucherDiscount").text(separatedComma(parseInt(disAmount)));
-            $("#inputHdnVoucherDiscount").val(disAmount);
+            calcVouDisAmount();
             calcAmount();
         }
     });
 
+    function calcVouDisAmount() {
+        let disAmount, percent;
+        if ($("#inputVouDisAmount").val() == null || $("#inputVouDisAmount").val().length == 0) return;
+        let totalPay = $("#inputHdnPayTotal").val();
+        disAmount = $("#inputVouDisAmount").val();
+        if (parseInt(disAmount) > parseInt(totalPay)) {
+            showAlertInDialog(0, "Voucher Discount is greater than Total Pay!");
+            return;
+        }
+        $("#lblVoucherDiscount").text(separatedComma(parseInt(disAmount)));
+        $("#inputHdnVoucherDiscount").val(disAmount);
+    }
+
     $('#inputVouDisPercent').keydown(function (event) {
         if (event.which === 13) {
-            let disAmount, percent;
-            if ($("#inputVouDisPercent").val() == null || $("#inputVouDisPercent").val().length == 0) return;
-            percent = $("#inputVouDisPercent").val();
-            let totalPay = $("#inputHdnPayTotal").val();
-            disAmount = (parseInt(totalPay) * parseInt(percent)) / 100;
-            $("#lblVoucherDiscount").text(separatedComma(parseInt(disAmount)));
-            $("#inputHdnVoucherDiscount").val(parseInt(disAmount));
+            calcVouDisPercent();
             calcAmount();
         }
     });
+
+    function calcVouDisPercent() {
+        let disAmount, percent;
+        if ($("#inputVouDisPercent").val() == null || $("#inputVouDisPercent").val().length == 0) return;
+        percent = $("#inputVouDisPercent").val();
+        let totalPay = $("#inputHdnPayTotal").val();
+        disAmount = (parseInt(totalPay) * parseInt(percent)) / 100;
+        $("#lblVoucherDiscount").text(separatedComma(parseInt(disAmount)));
+        $("#inputHdnVoucherDiscount").val(parseInt(disAmount));
+    }
 
     $('#inputPaid').keydown(function (event) {
         if (event.which === 13) {

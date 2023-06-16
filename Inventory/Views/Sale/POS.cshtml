@@ -133,7 +133,7 @@
                         <input type="hidden" id="inputOpenBillID" />
                         <input type="hidden" id="inputCLSaleOrderID" />
                         <button id="btnPayment" class="btn btn-first plr-30">@Resource.Payment</button>
-                        <button id="btnEditPayment" class="btn btn-first plr-30 m-t-0">@Resource.Edit</button>
+                        <button id="btnEditPayment" class="btn btn-second plr-30 m-t-0">@Resource.Payment</button>
                     </div>
                 </div>
             </div>
@@ -587,23 +587,86 @@
             let row = $("#tblTranSale tbody tr").length;
             if (row < 1) return;
             let saleId = $(this).val();
+            let totalItem = $("#lblTotalItem").text();
+            let total = $("#lblTotal").text();
+            let hdnTotal = $("#inputHdnTotal").val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("PaymentEditAction", "PaymentDialog")',
+                data: { "isBankPayment": isBankPayment, "moduleCode": SaleModule, "saleId": saleId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else {
+                        createPaymentData(response);
+                        showHidePayMethod();
+                        createPayMethodData(response);
+                        $("#lblPayTotalItem").text(totalItem);
+                        $("#lblPayTotal").text(total);
+                        $("#inputHdnPayTotal").val(hdnTotal);
+                        $("#lblPayGrandtotal").text(0);
+                        $("#inputHdnPayGrandtotal").val(0);
+                        $('#modalPayment').modal('show');
+                        fillSalePaymentData(true, response.MasterSaleModel,saleId);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnEditSubmit").click(function (e) {
+            let saleId = $(this).val();
             let date = $('#inputDate').val();
             let voucherId = $('#inputVoucherID').val();
             let customerId = $('#ddlCustomer option:selected').val();
             let locationId = $('#ddlLocation option:selected').val();
             let currencyId = $('#ddlMCurrency option:selected').val();
+            let paymentId = $('#ddlPayment option:selected').val();
+            let payMethodId = $('#ddlPayMethod option:selected').val();
+            let limitedDayId = $('#ddlLimitedDay option:selected').val();
+            let bankPaymentId = $('#ddlBankPayment option:selected').val();
+            let advancedPay = $('#inputHdnAdvancedPay').val();
+            let payPercentAmt = $('#inputHdnPercent').val();
+            let payPercent = $('#inputPercent').val();
+            let voucherDiscount = $('#inputHdnVoucherDiscount').val();
+            let vouDisPercent = $('#inputVouDisPercent').val();
+            let vouDisAmount = $('#inputVouDisAmount').val();
+            let remark = $('#txtRemark').val();
+            let tax = localStorage.getItem("Tax");
+            let charges = localStorage.getItem("Charges");
             let subtotal = $("#inputHdnSubtotal").val();
             let taxAmt = $("#inputHdnTax").val();
             let chargesAmt = $("#inputHdnCharges").val();
-            let total = $("#inputHdnTotal").val();
+            let total = $("#inputHdnPayTotal").val();
+            let grandtotal;
+            if (isBankPayment == "True" && payMethodId == 2)
+                grandtotal = $("#inputHdnPcntGrandtotal").val();
+            else grandtotal = $("#inputHdnPayGrandtotal").val();
+            let userId = localStorage.getItem("UserID");
+            let isVoucherFOC = false;
+            if ($('#chkVoucherFOC').is(":checked")) isVoucherFOC = true;
             showLoadingIcon();
             $.ajax({
-                type: "GET",
-                url: '@Url.Action("PaymentEditAction", "Sale")',
-                data: {
+                type: "POST",
+                url: '@Url.Action("SaleEditAction", "Sale")',
+                data: JSON.stringify({
                     "saleId": saleId, "date": date, "voucherId": voucherId, "customerId": customerId, "locationId": locationId,
-                    "taxAmt": taxAmt, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total, "currencyId": currencyId, "userId": userId
-                },
+                    "paymentId": paymentId, "payMethodId": payMethodId, "limitedDayId": limitedDayId, "bankPaymentId": bankPaymentId, "remark": remark, "advancedPay": advancedPay,
+                    "payPercent": payPercent, "payPercentAmt": payPercentAmt, "vouDisPercent": vouDisPercent, "vouDisAmount": vouDisAmount, "voucherDiscount": voucherDiscount,
+                    "tax": tax, "taxAmt": taxAmt, "charges": charges, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total, "grandtotal": grandtotal, "userId": userId,
+                    "isVoucherFOC": isVoucherFOC, "currencyId": currencyId
+                }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
@@ -621,7 +684,7 @@
                     alert(response.responseText);
                 }
             });
-        });
+        });        
 
         $("#tblTranSale").on("click", "tbody tr", function (event) {
             $('#tblTranSale tr').removeClass("selected");
