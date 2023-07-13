@@ -47,6 +47,7 @@ namespace Inventory
         public virtual DbSet<SysModule> SysModules { get; set; }
         public virtual DbSet<TCLMasterSaleOrder> TCLMasterSaleOrders { get; set; }
         public virtual DbSet<TCLTranSaleOrder> TCLTranSaleOrders { get; set; }
+        public virtual DbSet<SStaff> SStaffs { get; set; }
     
         public virtual int PrcDeleteBank(Nullable<int> bankID)
         {
@@ -885,7 +886,7 @@ namespace Inventory
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<PrcGetLocation_Result>("PrcGetLocation");
         }
     
-        public virtual int PrcUpdateCLMasterSaleOrder(Nullable<int> saleOrderID, Nullable<int> iD, Nullable<int> subtotal, Nullable<int> taxAmt, Nullable<int> chargesAmt, Nullable<int> total)
+        public virtual int PrcUpdateCLMasterSaleOrder(Nullable<int> saleOrderID, Nullable<int> iD, Nullable<int> subtotal, Nullable<int> taxAmt, Nullable<int> chargesAmt, Nullable<int> total, Nullable<System.DateTime> currentDateTime)
         {
             var saleOrderIDParameter = saleOrderID.HasValue ?
                 new ObjectParameter("SaleOrderID", saleOrderID) :
@@ -911,7 +912,11 @@ namespace Inventory
                 new ObjectParameter("Total", total) :
                 new ObjectParameter("Total", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcUpdateCLMasterSaleOrder", saleOrderIDParameter, iDParameter, subtotalParameter, taxAmtParameter, chargesAmtParameter, totalParameter);
+            var currentDateTimeParameter = currentDateTime.HasValue ?
+                new ObjectParameter("CurrentDateTime", currentDateTime) :
+                new ObjectParameter("CurrentDateTime", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("PrcUpdateCLMasterSaleOrder", saleOrderIDParameter, iDParameter, subtotalParameter, taxAmtParameter, chargesAmtParameter, totalParameter, currentDateTimeParameter);
         }
     
         public virtual int PrcUpdateCLTranSaleOrder(Nullable<int> saleOrderID, Nullable<int> subtotal, Nullable<int> taxAmt, Nullable<int> chargesAmt, Nullable<int> total, Nullable<System.DateTime> currentDateTime)

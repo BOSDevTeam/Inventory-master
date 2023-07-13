@@ -67,6 +67,7 @@
           <Property Name="IsClientPhoneVerify" Type="bit" />
           <Property Name="IsLimitUser" Type="bit" />
           <Property Name="LimitedUserCount" Type="smallint" />
+          <Property Name="SaleVoucherDesignType" Type="smallint" />
         </EntityType>
         <EntityType Name="SCustomer">
           <Key>
@@ -134,6 +135,18 @@
           <Property Name="AlertQty" Type="int" />
           <Property Name="DisPercent" Type="smallint" />
           <Property Name="PhotoUrl" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="SStaff">
+          <Key>
+            <PropertyRef Name="StaffID" />
+          </Key>
+          <Property Name="StaffID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="StaffName" Type="nvarchar" MaxLength="200" />
+          <Property Name="Phone" Type="varchar" MaxLength="50" />
+          <Property Name="TownshipID" Type="int" />
+          <Property Name="DivisionID" Type="int" />
+          <Property Name="Address" Type="nvarchar" MaxLength="1000" />
         </EntityType>
         <EntityType Name="SSubMenu">
           <Key>
@@ -441,6 +454,7 @@
           <Parameter Name="TaxAmt" Type="int" Mode="In" />
           <Parameter Name="ChargesAmt" Type="int" Mode="In" />
           <Parameter Name="Total" Type="int" Mode="In" />
+          <Parameter Name="CurrentDateTime" Type="datetime" Mode="In" />
         </Function>
         <Function Name="PrcUpdateCLTranSaleOrder" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="SaleOrderID" Type="int" Mode="In" />
@@ -567,6 +581,7 @@
           <EntitySet Name="SLocation" EntityType="Self.SLocation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SMainMenu" EntityType="Self.SMainMenu" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SProduct" EntityType="Self.SProduct" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SStaff" EntityType="Self.SStaff" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SSubMenu" EntityType="Self.SSubMenu" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SSupplier" EntityType="Self.SSupplier" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="STownship" EntityType="Self.STownship" Schema="dbo" store:Type="Tables" />
@@ -829,6 +844,7 @@
             <Parameter Name="TaxAmt" Mode="In" Type="Int32" />
             <Parameter Name="ChargesAmt" Mode="In" Type="Int32" />
             <Parameter Name="Total" Mode="In" Type="Int32" />
+            <Parameter Name="CurrentDateTime" Mode="In" Type="DateTime" />
           </FunctionImport>
           <FunctionImport Name="PrcUpdateCLTranSaleOrder">
             <Parameter Name="SaleOrderID" Mode="In" Type="Int32" />
@@ -906,6 +922,7 @@
           <EntitySet Name="TCLMasterSaleOrders" EntityType="InventoryDBModel.TCLMasterSaleOrder" />
           <EntitySet Name="TCLTranSaleOrders" EntityType="InventoryDBModel.TCLTranSaleOrder" />
           <FunctionImport Name="PrcGetVoucherSetting" ReturnType="Collection(InventoryDBModel.PrcGetVoucherSetting_Result)" />
+          <EntitySet Name="SStaffs" EntityType="InventoryDBModel.SStaff" />
         </EntityContainer>
         <ComplexType Name="PrcGetCompanySetting_Result">
           <Property Type="Boolean" Name="IsMultiCurrency" Nullable="false" />
@@ -1312,6 +1329,7 @@
           <Property Name="IsClientPhoneVerify" Type="Boolean" />
           <Property Name="IsLimitUser" Type="Boolean" />
           <Property Name="LimitedUserCount" Type="Int16" />
+          <Property Name="SaleVoucherDesignType" Type="Int16" />
         </EntityType>
         <EntityType Name="SCustomer">
           <Key>
@@ -1524,6 +1542,18 @@
           <Property Type="String" Name="HeaderName2" Nullable="true" MaxLength="200" />
           <Property Type="String" Name="HeaderDesp2" Nullable="true" MaxLength="200" />
         </ComplexType>
+        <EntityType Name="SStaff">
+          <Key>
+            <PropertyRef Name="StaffID" />
+          </Key>
+          <Property Name="StaffID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="StaffName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TownshipID" Type="Int32" />
+          <Property Name="DivisionID" Type="Int32" />
+          <Property Name="Address" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2044,6 +2074,7 @@
           <EntitySetMapping Name="SCompanySettings">
             <EntityTypeMapping TypeName="InventoryDBModel.SCompanySetting">
               <MappingFragment StoreEntitySet="SCompanySetting">
+                <ScalarProperty Name="SaleVoucherDesignType" ColumnName="SaleVoucherDesignType" />
                 <ScalarProperty Name="LimitedUserCount" ColumnName="LimitedUserCount" />
                 <ScalarProperty Name="IsLimitUser" ColumnName="IsLimitUser" />
                 <ScalarProperty Name="IsClientPhoneVerify" ColumnName="IsClientPhoneVerify" />
@@ -2294,6 +2325,19 @@
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="SStaffs">
+            <EntityTypeMapping TypeName="InventoryDBModel.SStaff">
+              <MappingFragment StoreEntitySet="SStaff">
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="DivisionID" ColumnName="DivisionID" />
+                <ScalarProperty Name="TownshipID" ColumnName="TownshipID" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="StaffName" ColumnName="StaffName" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="StaffID" ColumnName="StaffID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

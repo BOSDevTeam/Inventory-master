@@ -31,5 +31,6 @@ namespace Inventory
         public Nullable<bool> IsClientPhoneVerify { get; set; }
         public Nullable<bool> IsLimitUser { get; set; }
         public Nullable<short> LimitedUserCount { get; set; }
+        public Nullable<short> SaleVoucherDesignType { get; set; }
     }
 }

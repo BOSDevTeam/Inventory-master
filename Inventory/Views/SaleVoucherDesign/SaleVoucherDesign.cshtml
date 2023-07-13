@@ -34,8 +34,14 @@
         <div id="divSaleVoucherDesign1" class="divImg col-md-6 col-lg-6">
             <img src="~/assets/img/SaleVoucherDesign1.png"/>
         </div>
-        <div id="divSaleVoucherDesign2" class="divImg col-md-6 col-lg-6">
+        <div id="divSaleVoucherDesign2" class="divImg col-md-6 col-lg-6" style="display:none;">
             <img src="~/assets/img/SaleVoucherDesign2.png"/>
+        </div>
+        <div id="divSaleVoucherDesign3" class="divImg col-md-3 col-lg-3" style="display:none;">
+            <img src="~/assets/img/SaleVoucherDesign3.png" />
+        </div>
+        <div id="divSaleVoucherDesign4" class="divImg col-md-3 col-lg-3">
+            <img src="~/assets/img/SaleVoucherDesign4.png" />
         </div>
     </div>
 </div>
@@ -50,14 +56,24 @@
             $('.divImg').css('background-color', 'transparent');
             $('#divSaleVoucherDesign1').css('background-color', '#299697');
             saveSaleVoucherDesign(1);
-
         });
 
         $('#divSaleVoucherDesign2').click(function () {
             $('.divImg').css('background-color', 'transparent');
             $('#divSaleVoucherDesign2').css('background-color', '#299697');
             saveSaleVoucherDesign(2);
+        });
 
+        $('#divSaleVoucherDesign3').click(function () {
+            $('.divImg').css('background-color', 'transparent');
+            $('#divSaleVoucherDesign3').css('background-color', '#299697');
+            saveSaleVoucherDesign(3);
+        });
+
+        $('#divSaleVoucherDesign4').click(function () {
+            $('.divImg').css('background-color', 'transparent');
+            $('#divSaleVoucherDesign4').css('background-color', '#299697');
+            saveSaleVoucherDesign(4);
         });
 
         function initializeControl() {
@@ -66,6 +82,10 @@
                 $('#divSaleVoucherDesign1').css('background-color', '#299697');
             } else if (saleVoucherDesignType == 2) {
                 $('#divSaleVoucherDesign2').css('background-color', '#299697');
+            } else if (saleVoucherDesignType == 3) {
+                $('#divSaleVoucherDesign3').css('background-color', '#299697');
+            } else if (saleVoucherDesignType == 4) {
+                $('#divSaleVoucherDesign4').css('background-color', '#299697');
             }
         }
 

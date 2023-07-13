@@ -601,7 +601,7 @@
     <value>Purchase Audit Report</value>
   </data>
   <data name="PurchaseItemBySupplierReport" xml:space="preserve">
-    <value>Purchase Item By Supplier Report</value>
+    <value>Purchase Item by Supplier Report</value>
   </data>
   <data name="PurchaseItemSimpleReport" xml:space="preserve">
     <value>Purchase Item Simple Report</value>
@@ -622,7 +622,7 @@
     <value>View Detail</value>
   </data>
   <data name="PurchaseAmountBySupplierReport" xml:space="preserve">
-    <value>Purchase Amount By Supplier Report</value>
+    <value>Purchase Amount by Supplier Report</value>
   </data>
   <data name="PurchaseAmountOnlyReport" xml:space="preserve">
     <value>Purchase Amount Only Report</value>
@@ -673,7 +673,7 @@
     <value>All User</value>
   </data>
   <data name="SaleAmountBySalePersonReport" xml:space="preserve">
-    <value>Sale Amount By SalePerson Report</value>
+    <value>Sale Amount by SalePerson Report</value>
   </data>
   <data name="UserClientSalePersonFilter" xml:space="preserve">
     <value>User or Client SalePerson Filter</value>
@@ -899,5 +899,29 @@
   </data>
   <data name="SaleVoucherDesign" xml:space="preserve">
     <value>Sale Voucher Design</value>
+  </data>
+  <data name="Staff" xml:space="preserve">
+    <value>Staff</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="CALL" xml:space="preserve">
+    <value>ALL</value>
+  </data>
+  <data name="CreateStaff" xml:space="preserve">
+    <value>Create Staff</value>
+  </data>
+  <data name="FillStaffDetail" xml:space="preserve">
+    <value>Fill Staff Detail</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="SaleItemByStaffReport" xml:space="preserve">
+    <value>Sale Item by Staff Report</value>
   </data>
 </root>

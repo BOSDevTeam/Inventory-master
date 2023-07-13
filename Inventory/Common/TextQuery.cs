@@ -18,7 +18,8 @@ namespace Inventory.Common
         public const string limitedDayQuery = "Select LimitedDayID,LimitedDayName From SysLimitedDay";
         public const string bankPaymentQuery = "Select BankPaymentID,BankPaymentName From SBankPayment";
         public const string adjustTypeQuery = "Select AdjustTypeID,ShortName From SAdjustType";
-        public const string divisionQuery = "Select DivisionID,DivisionName From SDivision";
+        public const string divisionQuery = "Select DivisionID,DivisionName From SDivision Order By Code";
+        public const string townshipQuery = "Select TownshipID,TownshipName From STownship Order By Code";
         public const string clientSalePersonQuery = "Select ClientID,ClientName From SClient Where IsSalePerson=1";
         public const string clientTokenQuery = "Select Token From SClient";     
         public const string allUserQuery = "Select UserID,UserName,isnull(IsTechnician,0) AS IsTechnician From SUser Order by IsTechnician";
@@ -26,6 +27,7 @@ namespace Inventory.Common
         public const string setupModuleQuery = "Select SetupModuleID,SetupModuleName From SysSetupModule";
         public const string entryModuleQuery = "Select EntryModuleID,EntryModuleName From SysEntryModule";
         public const string reportModuleQuery = "Select ReportModuleID,ReportModuleName From SysReportModule Order by ReportModuleGroupCode";
+        public const string staffQuery = "Select StaffID,StaffName From SStaff";
 
         public string getSubMenuQuery(int mainMenuId)
         {
@@ -70,7 +72,7 @@ namespace Inventory.Common
 
         public string getMasterOpenBillQuery(int openBillId)
         {
-            return "Select UserVoucherNo,VoucherID,Subtotal,TaxAmt,ChargesAmt,Total,LocationID,CustomerID,CurrencyID"
+            return "Select UserVoucherNo,VoucherID,Subtotal,TaxAmt,ChargesAmt,Total,LocationID,CustomerID,CurrencyID,isnull(StaffID,0) AS StaffID"
             + " From TMasterOpenBill Where OpenBillID=" + openBillId;
         }
 
@@ -182,6 +184,12 @@ namespace Inventory.Common
         {
             return "Select PaymentID,PayMethodID,BankPaymentID,LimitedDayID,Remark,VouDisPercent,VouDisAmount,AdvancedPay,PaymentPercent,isnull(IsVouFOC,0) AS IsVouFOC"
             + " From TMasterSale Where SaleID=" + saleId;
+        }
+
+        public string getTownshipQuery(int divisionId)
+        {
+            return "Select TownshipID,TownshipName"
+            + " From STownship Where DivisionID=" + divisionId + " Order By Code";
         }
     }
 }

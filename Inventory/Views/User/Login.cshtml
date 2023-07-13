@@ -99,8 +99,11 @@
                             localStorage.setItem("UserName", response.UserName);
                             localStorage.setItem("IsTechnician", response.IsTechnician);
                             if (response.isMultiCurrency == true) localStorage.setItem("IsMultiCurrency", "True");
+                            else localStorage.setItem("IsMultiCurrency", "False");
                             if (response.isMultiUnit == true) localStorage.setItem("IsMultiUnit", "True");
+                            else localStorage.setItem("IsMultiUnit", "False");
                             if (response.isBankPayment == true) localStorage.setItem("IsBankPayment", "True");
+                            else localStorage.setItem("IsBankPayment", "False");
                             localStorage.setItem("Tax", response.Tax);
                             localStorage.setItem("Charges", response.ServiceCharges);
                             localStorage.setItem("SaleVoucherDesignType", response.SaleVoucherDesignType);

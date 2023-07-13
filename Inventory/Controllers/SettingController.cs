@@ -51,6 +51,9 @@ namespace Inventory.Controllers
                     case "Supplier":
                         ViewBag.IsAllowSupplierModule = Convert.ToBoolean(reader["IsAllow"]);
                         break;
+                    case "Staff":
+                        ViewBag.IsAllowStaffModule = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
                     case "Main Menu":
                         ViewBag.IsAllowMainMenuModule = Convert.ToBoolean(reader["IsAllow"]);
                         break;

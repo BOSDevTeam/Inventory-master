@@ -1,0 +1,282 @@
+﻿@using Inventory.Models
+@model StaffModels
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuStaff').className = 'active';
+    </script>
+</head>
+
+<div>
+
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">@Resource.Staff</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAdd" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("StaffEntry","Staff")'">@Resource.Add</button>
+        </div>
+    </div>
+
+    <div class="row setup-title-layout search-div">
+        <div class="col-md-12 col-lg-12">
+            <div class="btn-group" style="float:right">
+                <input id="tvSearch" type="text" placeholder="Name" class="width-200 custom-textbox mr-10" />
+                @Html.DropDownListFor(m => m.DivisionID, Model.Divisions, new { @class = "form-control control-input" })
+                @Html.DropDownListFor(m => m.TownshipID, Model.Townships, new { @class = "form-control control-input width-200 ml-10" })
+                <button id="btnSearch" class="btn btn-first setup-btn-search" style="margin-left:10px" title="Search"><i class="fa fa-search"></i></button>
+                <button id="btnRefresh" class="btn btn-light" title="Refresh" style="margin-left:10px"><i class="fa fa-refresh refresh-icon"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row padding-10">
+        <div class="col-md-12 col-lg-12">
+            <table id="tblStaff" class="col-md-12 col-lg-12" role="grid">
+                <thead>
+                    <tr class="row table-header">
+                        <th class="col-md-4 col-lg-4">Name</th>
+                        <th class="col-md-2 col-lg-2">Code</th>
+                        <th class="col-md-2 col-lg-2">Division</th>
+                        <th class="col-md-2 col-lg-2">Township</th>
+                        <th class="col-md-2 col-lg-2">Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+    <div>
+        @{
+            Html.RenderPartial("_ConfirmDialog");
+        }
+    </div>
+
+</div>
+
+<div class="modal fade" id="modalView" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">Staff Name:</label> 
+                            <label id="lblStaffName" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Code:</label>
+                            <label id="lblCode" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Phone:</label>
+                            <label id="lblPhone" class="control-input"></label>
+                        </div>                       
+                    </div>
+                    <div class="col-md-6 col-sm-6">
+                        <div class="form-group">
+                            <label class="control-label">Division:</label>
+                            <label id="lblDivision" class="control-input"></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Township:</label>
+                            <label id="lblTownship" class="control-input"></label>
+                        </div>   
+                        <div class="form-group">
+                            <label class="control-label">Address:</label>
+                            <label id="lblAddress" class="control-input"></label>
+                        </div>                                          
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    let actionValue, staffId;
+
+    $(function () {
+
+        createStaffData('', false);
+
+        $('#DivisionID').change(function () {
+            let val = $('#DivisionID option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetTownshipByDivision", "Staff")',
+                data: { "divisionId": val },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess) responseUnSuccessful(response);
+                    else {
+                        let town;
+                        $('#TownshipID').html("");
+                        for (var i = 0 ; i < response.LstTownship.length; i++) {
+                            town += '<option value= "' + response.LstTownship[i].TownshipID + '">' + response.LstTownship[i].TownshipName + '</option>';
+                        }
+                        $('#TownshipID').append(town);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#tblStaff").on("click", "tbody tr", function (event) {            
+            $(this).find("td:last").each(function () {
+                staffId = $(this).text();
+                if (actionValue == 1) {   // view
+                    showLoadingIcon();
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("ViewAction", "Staff")',
+                        data: { "staffId": staffId },
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            hideLoadingIcon();
+                            if (!response.ResultDefaultData.IsRequestSuccess) responseUnSuccessful(response);
+                            else {
+                                $('#lblStaffName').text(response.StaffModel.StaffName);
+                                $('#lblCode').text(response.StaffModel.Code);
+                                $('#lblDivision').text(response.StaffModel.DivisionName);
+                                $('#lblTownship').text(response.StaffModel.TownshipName);
+                                if (response.StaffModel.Phone.length == 0) $('#lblPhone').text('---');
+                                else $('#lblPhone').text(response.StaffModel.Phone);
+                                if (response.StaffModel.Address.length == 0) $('#lblAddress').text('---');
+                                else $('#lblAddress').text(response.StaffModel.Address);
+                                $('#modalView').modal('show');
+                            }                          
+                        },
+                        failure: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            hideLoadingIcon();
+                            alert(response.responseText);
+                        }
+                    });
+                }
+                else if (actionValue == 2) {  // edit
+                    window.location.href = '@Url.Action("StaffEntry", "Staff")?staffId=' + staffId;
+                } else if (actionValue == 3) {  // delete
+                    $('#modalConfirm').modal('show');
+                }
+            });
+        });
+
+        $("#btnSearch").click(function(){
+            let keyword = $('#tvSearch').val();
+            let divisionId = $('#DivisionID').val();
+            let townshipId = $('#TownshipID').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url:'@Url.Action("SearchAction", "Staff")',
+                data: { "keyword": keyword, "divisionId": divisionId, "townshipId": townshipId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess) responseUnSuccessful(response);
+                    else createStaffData(response.LstStaff, true);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        function createStaffData(response, isFromJson) {
+            $("#tblStaff").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["StaffList"]))');
+            $.each(response, function (index, item) {
+                let rows = "<tr class='row table-item'>"
+                        + "<td class='col-md-4 col-lg-4'>" + item.StaffName + "</td>"
+                        + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
+                        + "<td class='col-md-2 col-lg-2'>" + item.DivisionName + "</td>"
+                        + "<td class='col-md-2 col-lg-2'>" + item.TownshipName + "</td>"
+                        + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:3px' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
+                        + "<td style='display:none'>" + item.StaffID + "</td>"
+                        + "</tr>";
+                $('#tblStaff tbody').append(rows);
+            });
+        }
+
+        $("#btnDelOk").click(function () {
+            showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("DeleteAction", "Staff")',
+                    data: { "staffId": staffId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess) responseUnSuccessful(response);
+                        else {
+                            showToast(1, response.ResultDefaultData.Message);
+                            location.reload();
+                        }                    
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+    });
+
+    function action(val) {
+        actionValue = val;
+    }
+
+</script>
+
+
+
+

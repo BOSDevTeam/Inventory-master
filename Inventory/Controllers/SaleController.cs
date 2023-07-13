@@ -33,6 +33,7 @@ namespace Inventory.Controllers
                 getCustomer(false);
                 getLocation();
                 getMCurrency();
+                if (Session[AppConstants.ShopTypeCode] != null && Session[AppConstants.ShopTypeCode].ToString().Equals(AppConstants.ShopType.BeautyAndHairStyleShop)) getStaff();
                 getMainMenu();
                 getSubMenu(getFirstMainMenuID());
                 getProduct(getFirstSubMenuID());
@@ -65,6 +66,7 @@ namespace Inventory.Controllers
                     ViewBag.Total = data.MasterSaleModel.Total;
                     ViewBag.TotalQuantity = totalQuantity;
                     ViewBag.SaleID = saleId;
+                    ViewBag.StaffID = data.MasterSaleModel.StaffID;
                 }
                 else if (openBillId != null)  // add sale from open bill
                 {
@@ -88,6 +90,7 @@ namespace Inventory.Controllers
                     ViewBag.Total = data.Total;
                     ViewBag.TotalQuantity = totalQuantity;
                     ViewBag.OpenBillID = openBillId;
+                    ViewBag.StaffID = data.StaffID;
                 }
                 else if (clSaleOrderId != null)  // add sale from client sale order
                 {
@@ -176,21 +179,34 @@ namespace Inventory.Controllers
             return View(saleViewModel);
         }
 
-        [SessionTimeoutAttribute]
-        public ActionResult SaleVoucherDesign2(string systemVoucherNo, int locationId)
-        {
-            VoucherSettingModels voucherSettingModel = appData.selectVoucherSettingByLocation(getConnection(), locationId);
-            saleViewModel.VoucherSettings = voucherSettingModel;
-            ViewBag.Base64Photo = voucherSettingModel.Base64Photo;
-            MasterSaleVoucherViewModel masterSaleVoucherViewModel = selectMasterSale(systemVoucherNo);
-            setMasterSaleDataToViewBag(masterSaleVoucherViewModel);
-            List<TranSaleModels> lstTranSale = selectTranSaleBySaleID(masterSaleVoucherViewModel.MasterSaleModel.SaleID);
-            ViewData["LstTranSale"] = lstTranSale;
-            return View(saleViewModel);
-        }
+        //[SessionTimeoutAttribute]
+        //public ActionResult SaleVoucherDesign2(string systemVoucherNo, int locationId)
+        //{
+        //    VoucherSettingModels voucherSettingModel = appData.selectVoucherSettingByLocation(getConnection(), locationId);
+        //    saleViewModel.VoucherSettings = voucherSettingModel;
+        //    ViewBag.Base64Photo = voucherSettingModel.Base64Photo;
+        //    MasterSaleVoucherViewModel masterSaleVoucherViewModel = selectMasterSale(systemVoucherNo);
+        //    setMasterSaleDataToViewBag(masterSaleVoucherViewModel);
+        //    List<TranSaleModels> lstTranSale = selectTranSaleBySaleID(masterSaleVoucherViewModel.MasterSaleModel.SaleID);
+        //    ViewData["LstTranSale"] = lstTranSale;
+        //    return View(saleViewModel);
+        //}
+
+        //[SessionTimeoutAttribute]
+        //public ActionResult SaleVoucherDesign3(string systemVoucherNo, int locationId)
+        //{
+        //    VoucherSettingModels voucherSettingModel = appData.selectVoucherSettingByLocation(getConnection(), locationId);
+        //    saleViewModel.VoucherSettings = voucherSettingModel;
+        //    ViewBag.Base64Photo = voucherSettingModel.Base64Photo;
+        //    MasterSaleVoucherViewModel masterSaleVoucherViewModel = selectMasterSale(systemVoucherNo);
+        //    setMasterSaleDataToViewBag(masterSaleVoucherViewModel);
+        //    List<TranSaleModels> lstTranSale = selectTranSaleBySaleID(masterSaleVoucherViewModel.MasterSaleModel.SaleID);
+        //    ViewData["LstTranSale"] = lstTranSale;
+        //    return View(saleViewModel);
+        //}
 
         [SessionTimeoutAttribute]
-        public ActionResult SaleVoucherDesign3(string systemVoucherNo, int locationId)
+        public ActionResult SaleVoucherDesign4(string systemVoucherNo, int locationId)
         {
             VoucherSettingModels voucherSettingModel = appData.selectVoucherSettingByLocation(getConnection(), locationId);
             saleViewModel.VoucherSettings = voucherSettingModel;
@@ -561,7 +577,7 @@ namespace Inventory.Controllers
         public JsonResult SaleEditAction(int saleId, string date, string voucherId, int customerId, int locationId,
                 int paymentId, int? payMethodId, int? limitedDayId, int? bankPaymentId, string remark, int? advancedPay,
                 int? payPercent, int? payPercentAmt, int? vouDisPercent, int? vouDisAmount, int? voucherDiscount,
-                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId, bool isVoucherFOC, int currencyId)
+                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId, bool isVoucherFOC, int currencyId, int? staffId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
 
@@ -631,6 +647,7 @@ namespace Inventory.Controllers
                     if (vouDisPercent == null) vouDisPercent = 0;
                     if (vouDisAmount == null) vouDisAmount = 0;
                     if (voucherDiscount == null) voucherDiscount = 0;
+                    if (staffId == null) staffId = 0;
 
                     SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateSale, dataConnectorSQL.Connect());
                     cmd.Parameters.AddWithValue("@SaleID", saleId);
@@ -665,6 +682,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@Remark", remark);
                     cmd.Parameters.AddWithValue("@Grandtotal", grandtotal);
                     cmd.Parameters.AddWithValue("@IsVoucherFOC", isVoucherFOC);
+                    cmd.Parameters.AddWithValue("@StaffID", staffId);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                     dataConnectorSQL.Close();
@@ -690,7 +708,7 @@ namespace Inventory.Controllers
         public JsonResult PaymentSubmitAction(string userVoucherNo, string date, string voucherId, int customerId, int locationId,
                 int paymentId, int? payMethodId, int? limitedDayId, int? bankPaymentId, string remark, int? advancedPay,
                 int? payPercent, int? payPercentAmt, int? vouDisPercent, int? vouDisAmount, int? voucherDiscount,
-                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId, int? openBillId, int? clSaleOrderId, bool isVoucherFOC, int currencyId)
+                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId, int? openBillId, int? clSaleOrderId, bool isVoucherFOC, int currencyId, int? staffId)
         {
             string systemVoucherNo = "";
             ResultDefaultData resultDefaultData = new ResultDefaultData();
@@ -727,6 +745,7 @@ namespace Inventory.Controllers
                     if (voucherDiscount == null) voucherDiscount = 0;
                     if (openBillId == null) openBillId = 0;
                     if (clSaleOrderId == null) clSaleOrderId = 0;
+                    if (staffId == null) staffId = 0;
 
                     SqlCommand cmd = new SqlCommand(Procedure.PrcInsertSale, dataConnectorSQL.Connect());
                     cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
@@ -761,6 +780,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@CLSaleOrderID", clSaleOrderId);
                     cmd.Parameters.AddWithValue("@IsVoucherFOC", isVoucherFOC);
                     cmd.Parameters.AddWithValue("@AccountCode", AppConstants.SaleAccountCode);
+                    cmd.Parameters.AddWithValue("@StaffID", staffId);
                     cmd.CommandType = CommandType.StoredProcedure;
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read()) systemVoucherNo = Convert.ToString(reader[0]);
@@ -854,7 +874,8 @@ namespace Inventory.Controllers
                 VouDisPercent = item.MasterSaleModel.VouDisPercent,
                 PaymentPercent = item.MasterSaleModel.PaymentPercent,
                 GrandTotalNotPayPercent = grandTotalNotPayPercent,
-                IsVouFOC = item.MasterSaleModel.IsVouFOC
+                IsVouFOC = item.MasterSaleModel.IsVouFOC,
+                StaffName = item.StaffName
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
@@ -964,7 +985,7 @@ namespace Inventory.Controllers
 
         [HttpPost]
         public JsonResult HoldAction(string userVoucherNo, string date, string voucherId, int customerId, int locationId,
-                string remark, int taxAmt, int chargesAmt, int subtotal, int total, int userId, int currencyId)
+                string remark, int taxAmt, int chargesAmt, int subtotal, int total, int userId, int currencyId, int? staffId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
 
@@ -995,6 +1016,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@CustomerID", customerId);
                     cmd.Parameters.AddWithValue("@LocationID", locationId);
                     cmd.Parameters.AddWithValue("@CurrencyID", currencyId);
+                    cmd.Parameters.AddWithValue("@StaffID", staffId);
                     cmd.Parameters.AddWithValue("@TaxAmt", taxAmt);
                     cmd.Parameters.AddWithValue("@ChargesAmt", chargesAmt);
                     cmd.Parameters.AddWithValue("@Subtotal", subtotal);
@@ -1282,6 +1304,7 @@ namespace Inventory.Controllers
                 item.MasterSaleModel.SaleDateTime = Convert.ToString(reader["Date"]);
                 item.UserName = Convert.ToString(reader["UserName"]);
                 item.CustomerName = Convert.ToString(reader["CustomerName"]);
+                item.StaffName = Convert.ToString(reader["StaffName"]);
                 item.MasterSaleModel.SlipID = Convert.ToInt32(reader["SlipID"]);
                 item.MasterSaleModel.Subtotal = Convert.ToInt32(reader["Subtotal"]);
                 item.MasterSaleModel.TaxAmt = Convert.ToInt32(reader["TaxAmt"]);
@@ -1296,6 +1319,7 @@ namespace Inventory.Controllers
                 item.MasterSaleModel.LocationID = Convert.ToInt32(reader["LocationID"]);
                 item.MasterSaleModel.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
                 item.MasterSaleModel.CustomerID = Convert.ToInt32(reader["CustomerID"]);
+                item.MasterSaleModel.StaffID = Convert.ToInt32(reader["StaffID"]);
                 item.MasterSaleModel.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
             }
             reader.Close();
@@ -1493,7 +1517,8 @@ namespace Inventory.Controllers
                 item.Subtotal = Convert.ToInt32(reader["Subtotal"]);
                 item.TaxAmt = Convert.ToInt32(reader["TaxAmt"]);
                 item.ChargesAmt = Convert.ToInt32(reader["ChargesAmt"]);
-                item.Total = Convert.ToInt32(reader["Total"]);            
+                item.Total = Convert.ToInt32(reader["Total"]);
+                item.StaffID = Convert.ToInt32(reader["StaffID"]);
             }
             reader.Close();
 
@@ -1730,6 +1755,16 @@ namespace Inventory.Controllers
             for (int i = 0; i < list.Count; i++)
             {
                 saleViewModel.Locations.Add(new SelectListItem { Text = list[i].ShortName, Value = Convert.ToString(list[i].LocationID) });
+            }
+        }
+
+        private void getStaff()
+        {
+            saleViewModel.Staffs.Add(new SelectListItem { Text = Resource.Staff, Value = "0" });
+            List<StaffModels> list = appData.selectStaff();
+            for (int i = 0; i < list.Count; i++)
+            {
+                saleViewModel.Staffs.Add(new SelectListItem { Text = list[i].StaffName, Value = Convert.ToString(list[i].StaffID) });
             }
         }
 

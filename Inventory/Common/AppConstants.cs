@@ -41,6 +41,13 @@ namespace Inventory.Common
         public const string EditActionName = "Edit";
         public const string DeleteActionName = "Delete";
 
+        //ShopType Codes
+        public class ShopType
+        {
+            public const string GeneralShop = "ST001";
+            public const string BeautyAndHairStyleShop = "ST002";
+        }
+        
         //Firebase Notification
         public const string CloudMessagingServerKey = "AAAAm-35J2M:APA91bG7cMqe-P2pkXZsNPn81sz9e0vwEWNKmiPPtblzfGhQYvqE8_JOBCm76cCI9lFyI0Gcglr104CfxkvKqdxs0vITi2sn759ytppjtNQOF3Kyy-A6RATXwmdgLvVEQIj3GSWWQ7PS";  
         public static Uri FirebasePushNotificationsURL = new Uri("https://fcm.googleapis.com/fcm/send");
@@ -51,6 +58,7 @@ namespace Inventory.Common
 
         //Session Values
         public const string SQLConnection = "SQLConnection";
+        public const string ShopTypeCode = "ShopTypeCode";
 
         //Drop Down Default Values
         public const string AllCustomer = "All Customer";
@@ -69,6 +77,7 @@ namespace Inventory.Common
             public const string SaveSuccessOpenBill = "Saved Successfully to Opened Bills!";
             public const string DeleteSuccess = "Deleted Successfully!";
             public const string SaveSuccess = "Saved Successfully!";
+            public const string EditSuccess = "Edited Successfully!";
             public const string NoProductByCode = "Not found product with this code!";
             public const string NoProduct = "Not found product!";
             public const string NoTransferSameLocation = "Not allow to transfer by same location!";
@@ -89,6 +98,9 @@ namespace Inventory.Common
             public const string AlreadyAddSupplier = "Already added supplier!";
             public const string UserLimitOver = "Cannot add more that user limit full!";
             public const string NoDelete = "Not Allow to Delete! It is using in others!";
+            public const string CodeDuplicate = "Code Duplicate!";
+            public const string NotFoundData = "Not found data!";
+            public const string SomethingWentWrong = "Something Went Wrong!";
         }
     }
 }

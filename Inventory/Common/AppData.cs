@@ -619,5 +619,73 @@ namespace Inventory.Common
             setting.conn.Close();
             return list;
         }
+
+        public List<DivisionModels> selectDivision()
+        {
+            List<DivisionModels> list = new List<DivisionModels>();
+            DivisionModels item;
+
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(TextQuery.divisionQuery, setting.conn);
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new DivisionModels();
+                item.DivisionID = Convert.ToInt32(reader["DivisionID"]);
+                item.DivisionName = Convert.ToString(reader["DivisionName"]);
+                list.Add(item);
+            }
+            reader.Close();
+            setting.conn.Close();
+            return list;
+        }
+
+        public List<TownshipModels.TownshipModel> selectTownship(int? divisionId)
+        {
+            List<TownshipModels.TownshipModel> list = new List<TownshipModels.TownshipModel>();
+            TownshipModels.TownshipModel item;
+
+            setting.conn.Open();
+            SqlCommand cmd;
+            if (divisionId != null) cmd = new SqlCommand(textQuery.getTownshipQuery(Convert.ToInt32(divisionId)), setting.conn);
+            else cmd = new SqlCommand(TextQuery.townshipQuery, setting.conn);
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new TownshipModels.TownshipModel();
+                item.TownshipID = Convert.ToInt32(reader["TownshipID"]);
+                item.TownshipName = Convert.ToString(reader["TownshipName"]);
+                list.Add(item);
+            }
+            reader.Close();
+            setting.conn.Close();
+            return list;
+        }
+
+        public List<StaffModels> selectStaff()
+        {
+            List<StaffModels> list = new List<StaffModels>();
+            StaffModels item;
+
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(TextQuery.staffQuery, setting.conn);
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new StaffModels();
+                item.StaffID = Convert.ToInt32(reader["StaffID"]);
+                item.StaffName = Convert.ToString(reader["StaffName"]);
+                list.Add(item);
+            }
+            reader.Close();
+            setting.conn.Close();
+            return list;
+        }
     }
 }

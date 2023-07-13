@@ -10,31 +10,70 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <link rel="shortcut icon" type="image/x-icon" href="~/assets/img/favicon.ico">
-    <title>QuickInventory - POS & Inventory Management</title>
-    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/select2.min.css">
+    <title>QuickInventory - POS & Inventory Management</title>  
     <link href="~/Content/Site.css" rel="stylesheet" />    
+    <style type="text/css" media="all">
+        body {
+            color: #000;
+        }
+
+        #wrapper {
+            max-width: 520px;
+            margin: 0 auto;
+            padding-top: 20px;
+        }       
+
+        table td{
+            padding:0;            
+        }
+
+        .table-cell{
+            border:1px solid #000;
+            height:20px;
+        }
+
+        button{padding:10px 15px;border:none;}
+
+        @@media print {
+            .no-print {
+                display: none;
+            }
+
+            #wrapper {
+                max-width: 480px;
+                width: 100%;
+                min-width: 250px;
+                margin: 0 auto;
+            }
+
+            .d3-voucher-header{font-size:10pt;color:#000;font-family:'Rubik',sans-serif;}
+            .d3-voucher-sub-header{font-size:8pt;color:#000;font-family:'Rubik',sans-serif;}
+            .d3-voucher-sub-footer{font-size:8pt;color:#000;font-family:'Rubik',sans-serif;}
+            .d3-voucher-table-header{color:#fff;padding:5px;font-size:8pt;font-family:'Rubik',sans-serif;background-color:#666;}
+            .d3-voucher-table-item{color:#000;padding:5px;font-size:8pt;font-family:'Rubik',sans-serif;}
+            .d3-voucher-table-item-sm{color:#333;font-size:5pt;font-family:'Rubik',sans-serif;}
+        }
+    </style>
 </head>
 <body>
-    <div style="display:flex;justify-content:center;">
-        <div class="m-t-10" style="background-color:#DEE2E6;">
+    <div id="wrapper">
+        <div id="receiptData" style="width: auto; max-width: 580px; min-width: 250px; margin: 0 auto; background-color:#DEE2E6;">
   
             <div class="padding-10 hidden-print" style="text-align:center;">                
                 <button id="btnPrint" class="btn btn-first">@Resource.Print</button>
                 <button id="btnBack" class="btn btn-second ml-10">@Resource.BackToPOS</button>
             </div>
 
-            <div id="divVoucher" class="sale-voucher-design3 padding-10" style="background-color:#fff;">
+            <div id="divVoucher" style="background-color:#fff;">
            
                 <div class="width-100-percent" style="overflow:auto;display:flex;align-items:center;">
                     <div style="width:30%;float:left;text-align:center;">
                         <img id="imgLogo" src="~/assets/img/logo.png" width="50" />
                     </div>
                     <div style="width:70%;float:left;text-align:center;">
+                        <div><label class="d3-voucher-header" style="visibility:hidden;">@Model.VoucherSettings.OtherHeader1</label></div>
                         <div>
-                            <label class="d3-voucher-header m-t-10">@Model.VoucherSettings.HeaderAddress</label>
+                            <label class="d3-voucher-header">@Model.VoucherSettings.HeaderAddress</label>
                         </div>
                         <div>
                             <label class="d3-voucher-header">@Model.VoucherSettings.OtherHeader1</label>
@@ -74,19 +113,19 @@
 
                 <table id="tblTranSale" class="width-100-percent m-t-10">
                     <thead>
-                        <tr class="d3-voucher-table-header" style="width:100%;background-color:#333;">
-                            <td class="voucher-table-border" style="width:5%;float:left;">@Resource.No</td>
-                            <td class="voucher-table-border" style="width:45%;float:left;">@Resource.Description</td>
-                            <td style="width:10%;float:left;" class="align-justify-center voucher-table-border">@Resource.Qty</td>
-                            <td style="width:20%;float:left;" class="aligh-right voucher-table-border">@Resource.Price</td>
+                        <tr class="d3-voucher-table-header" style="width:100%;background-color:#333;height:15px;display:flex;align-items:center;">
+                            <td style="width:5%;float:left;">#</td>
+                            <td style="width:45%;float:left;">@Resource.Description</td>
+                            <td style="width:10%;float:left;" class="align-justify-center">@Resource.Qty</td>
+                            <td style="width:20%;float:left;" class="aligh-right">@Resource.Price</td>
                             @*<td style="width:15%;float:left;" class="aligh-right voucher-table-border">@Resource.Discount</td>*@
-                            <td style="width:20%;float:left;" class="aligh-right voucher-table-border">@Resource.Amount</td>
+                            <td style="width:20%;float:left;" class="aligh-right">@Resource.Amount</td>
                         </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
 
-                <div class="width-100-percent">
+                <div class="width-100-percent" style="overflow:auto;">
 
                     <div style="width:50%;float:left">
 
@@ -94,7 +133,7 @@
                             <thead>
                                 <tr class="width-100-percent">
                                     <td style="width:50%;float:left;"><label class="d3-voucher-sub-footer mb-0">Bank Name</label></td>
-                                    <td style="width:50%;float:left;"><label class="d3-voucher-sub-footer mb-0">:&nbsp;&nbsp;&nbsp;Cash Down</label></td>
+                                    <td style="width:50%;float:left;"><label class="d3-voucher-sub-footer mb-0">:&nbsp;&nbsp;&nbsp;CashDown</label></td>
                                 </tr>
                                 <tr class="width-100-percent">
                                     <td style="width:50%;float:left;"><label class="d3-voucher-sub-footer mb-0">Bank No</label></td>
@@ -113,49 +152,49 @@
 
                         <table class="width-100-percent">
                             <thead>
-                                <tr class="width-100-percent aligh-right">
-                                    <td style="width:60%;float:left;" class="voucher-table-border aligh-right"><label class="d3-voucher-sub-footer mb-0">@Resource.Subtotal@Resource.ColonSign</label></td>
-                                    <td style="width:40%;float:left;" class="aligh-right voucher-table-border"><label id="lblSubtotal" class="d3-voucher-sub-footer mb-0"></label></td>
+                                <tr class="width-100-percent aligh-right" style="height:20px;display:flex;align-items:center;">
+                                    <td style="width:60%;float:left;" class="aligh-right"><label class="d3-voucher-sub-footer mb-0">@Resource.Subtotal@Resource.ColonSign</label></td>
+                                    <td style="width:40%;float:left;" class="aligh-right"><label id="lblSubtotal" class="d3-voucher-sub-footer mb-0"></label></td>
                                 </tr>
-                                <tr class="width-100-percent aligh-right">
-                                    <td style="width:60%;float:left;" class="voucher-table-border aligh-right"><label class="d3-voucher-sub-footer mb-0">@Resource.Tax@Resource.ColonSign</label></td>
-                                    <td style="width:40%;float:left;" class="aligh-right voucher-table-border"><label id="lblTaxValue" class="d3-voucher-sub-footer mb-0"></label></td>
+                                <tr class="width-100-percent aligh-right" style="height:20px;display:flex;align-items:center;">
+                                    <td style="width:60%;float:left;" class="aligh-right"><label class="d3-voucher-sub-footer mb-0">@Resource.Tax@Resource.ColonSign</label></td>
+                                    <td style="width:40%;float:left;" class="aligh-right"><label id="lblTaxValue" class="d3-voucher-sub-footer mb-0"></label></td>
                                 </tr>
-                                <tr class="width-100-percent aligh-right">
-                                    <td style="width:60%;float:left;" class="voucher-table-border aligh-right"><label class="d3-voucher-sub-footer mb-0">@Resource.Charges@Resource.ColonSign</label></td>
-                                    <td style="width:40%;float:left;" class="aligh-right voucher-table-border"><label id="lblChargesValue" class="d3-voucher-sub-footer mb-0"></label></td>
+                                <tr class="width-100-percent aligh-right" style="height:20px;display:flex;align-items:center;">
+                                    <td style="width:60%;float:left;" class="aligh-right"><label class="d3-voucher-sub-footer mb-0">@Resource.Charges@Resource.ColonSign</label></td>
+                                    <td style="width:40%;float:left;" class="aligh-right"><label id="lblChargesValue" class="d3-voucher-sub-footer mb-0"></label></td>
                                 </tr>
-                                <tr class="width-100-percent aligh-right">
-                                    <td style="width:60%;float:left;" class="voucher-table-border aligh-right"><label class="d3-voucher-sub-footer mb-0">@Resource.Total@Resource.ColonSign</label></td>
-                                    <td style="width:40%;float:left;" class="aligh-right voucher-table-border"><label id="lblTotal" class="d3-voucher-sub-footer mb-0"></label></td>
+                                <tr class="width-100-percent aligh-right" style="height:20px;display:flex;align-items:center;">
+                                    <td style="width:60%;float:left;" class="aligh-right"><label class="d3-voucher-sub-footer mb-0">@Resource.Total@Resource.ColonSign</label></td>
+                                    <td style="width:40%;float:left;" class="aligh-right"><label id="lblTotal" class="d3-voucher-sub-footer mb-0"></label></td>
                                 </tr>
-                                <tr class="width-100-percent aligh-right">
-                                    <td style="width:60%;float:left;" class="voucher-table-border aligh-right"><label id="lblVoucherDiscount" class="d3-voucher-sub-footer mb-0">Vou Discount:</label></td>
-                                    <td style="width:40%;float:left;" class="aligh-right voucher-table-border"><label id="lblVoucherDiscountValue" class="d3-voucher-sub-footer mb-0"></label></td>
+                                <tr class="width-100-percent aligh-right" style="height:20px;display:flex;align-items:center;">
+                                    <td style="width:60%;float:left;" class="aligh-right"><label id="lblVoucherDiscount" class="d3-voucher-sub-footer mb-0">Vou Discount:</label></td>
+                                    <td style="width:40%;float:left;" class="aligh-right"><label id="lblVoucherDiscountValue" class="d3-voucher-sub-footer mb-0"></label></td>
                                 </tr>
-                                <tr id="trAdvancedPay" class="width-100-percent aligh-right">
-                                    <td style="width:60%;float:left;" class="voucher-table-border aligh-right"><label class="d3-voucher-sub-footer mb-0">@Resource.AdvancedPay@Resource.ColonSign</label></td>
-                                    <td style="width:40%;float:left;" class="aligh-right voucher-table-border"><label id="lblAdvancedPay" class="d3-voucher-sub-footer mb-0"></label></td>
+                                <tr id="trAdvancedPay" class="width-100-percent aligh-right" style="height:20px;display:flex;align-items:center;">
+                                    <td style="width:60%;float:left;" class="aligh-right"><label class="d3-voucher-sub-footer mb-0">@Resource.AdvancedPay@Resource.ColonSign</label></td>
+                                    <td style="width:40%;float:left;" class="aligh-right"><label id="lblAdvancedPay" class="d3-voucher-sub-footer mb-0"></label></td>
                                 </tr>
-                                <tr class="width-100-percent aligh-right">
-                                    <td style="width:60%;float:left;" class="voucher-table-border aligh-right"><label class="d3-voucher-sub-footer mb-0" style="font-weight:bold;">@Resource.Grandtotal@Resource.ColonSign</label></td>
-                                    <td style="width:40%;float:left;" class="aligh-right voucher-table-border"><label id="lblGrandtotal" class="d3-voucher-sub-footer mb-0" style="font-weight:bold;"></label></td>
+                                <tr class="width-100-percent aligh-right" style="height:20px;display:flex;align-items:center;">
+                                    <td style="width:60%;float:left;" class="aligh-right"><label class="d3-voucher-sub-footer mb-0" style="font-weight:bold;">@Resource.Grandtotal@Resource.ColonSign</label></td>
+                                    <td style="width:40%;float:left;" class="aligh-right"><label id="lblGrandtotal" class="d3-voucher-sub-footer mb-0" style="font-weight:bold;"></label></td>
                                 </tr>
-                                <tr id="trPercent" class="width-100-percent aligh-right">
-                                    <td style="width:60%;float:left;" class="voucher-table-border aligh-right"><label id="lblPercent" class="d3-voucher-sub-footer mb-0">@Resource.Percent@Resource.ColonSign</label></td>
-                                    <td style="width:40%;float:left;" class="aligh-right voucher-table-border"><label id="lblPercentValue" class="d3-voucher-sub-footer mb-0"></label></td>
+                                <tr id="trPercent" class="width-100-percent aligh-right" style="height:20px;display:flex;align-items:center;">
+                                    <td style="width:60%;float:left;" class="aligh-right"><label id="lblPercent" class="d3-voucher-sub-footer mb-0">@Resource.Percent@Resource.ColonSign</label></td>
+                                    <td style="width:40%;float:left;" class="aligh-right"><label id="lblPercentValue" class="d3-voucher-sub-footer mb-0"></label></td>
                                 </tr>
-                                <tr id="trPcntGrandtotal" class="width-100-percent aligh-right">
-                                    <td style="width:60%;float:left;" class="voucher-table-border aligh-right"><label class="d3-voucher-sub-footer mb-0" style="color:transparent;">-</label></td>
-                                    <td style="width:40%;float:left;" class="aligh-right voucher-table-border"><label id="lblPcntGrandtotal" class="d3-voucher-sub-footer mb-0" style="font-weight:bold;"></label></td>
+                                <tr id="trPcntGrandtotal" class="width-100-percent aligh-right" style="height:20px;display:flex;align-items:center;">
+                                    <td style="width:60%;float:left;" class="aligh-right"><label class="d3-voucher-sub-footer mb-0" style="color:transparent;">-</label></td>
+                                    <td style="width:40%;float:left;" class="aligh-right"><label id="lblPcntGrandtotal" class="d3-voucher-sub-footer mb-0" style="font-weight:bold;"></label></td>
                                 </tr>
-                                <tr id="trVoucherFOC" class="width-100-percent aligh-right">
-                                    <td style="width:60%;float:left;" class="voucher-table-border aligh-right"><label class="d3-voucher-sub-footer mb-0">@Resource.VoucherFOC@Resource.ColonSign</label></td>
-                                    <td style="width:40%;float:left;" class="aligh-right voucher-table-border"><label id="lblVoucherFOC" class="d3-voucher-sub-footer mb-0"></label></td>
+                                <tr id="trVoucherFOC" class="width-100-percent aligh-right" style="height:20px;display:flex;align-items:center;">
+                                    <td style="width:60%;float:left;" class="aligh-right"><label class="d3-voucher-sub-footer mb-0">@Resource.VoucherFOC@Resource.ColonSign</label></td>
+                                    <td style="width:40%;float:left;" class="aligh-right"><label id="lblVoucherFOC" class="d3-voucher-sub-footer mb-0"></label></td>
                                 </tr>
-                                <tr id="trVFOCGrandtotal" class="width-100-percent aligh-right">
-                                    <td style="width:60%;float:left;" class="voucher-table-border aligh-right"><label class="d3-voucher-sub-footer mb-0" style="color:transparent;">-</label></td>
-                                    <td style="width:40%;float:left;" class="aligh-right voucher-table-border"><label id="lblVFOCGrandtotal" class="d3-voucher-sub-footer mb-0" style="font-weight:bold;"></label></td>
+                                <tr id="trVFOCGrandtotal" class="width-100-percent aligh-right" style="height:20px;display:flex;align-items:center;">
+                                    <td style="width:60%;float:left;" class="aligh-right"><label class="d3-voucher-sub-footer mb-0" style="color:transparent;">-</label></td>
+                                    <td style="width:40%;float:left;" class="aligh-right"><label id="lblVFOCGrandtotal" class="d3-voucher-sub-footer mb-0" style="font-weight:bold;"></label></td>
                                 </tr>
                             </thead>
                         </table>
@@ -164,7 +203,7 @@
 
                 </div>
 
-                <div class="width-100-percent">
+                <div class="width-100-percent" style="overflow:auto;">
 
                     <div class="width-100-percent">
                         <label class="d3-voucher-sub-footer">မှတ်ချက်။&nbsp;&nbsp;&nbsp;။</label>
@@ -208,10 +247,10 @@
     <script src="~/Scripts/printThis.js"></script>
     <script type="text/javascript">
 
-        //const $btnPrint = document.querySelector("#btnPrint");
-        //$btnPrint.addEventListener("click", () => {
-        //    window.print();
-        //});
+        const $btnPrint = document.querySelector("#btnPrint");
+        $btnPrint.addEventListener("click", () => {
+            window.print();
+        });
 
         $(document).ready(function () {
 
@@ -223,22 +262,22 @@
                 window.location.href = '@Url.Action("POS", "Sale")?userId=' + userId;
             });
 
-            $("#btnPrint").click(function () {               
-                $("#divVoucher").printThis();              
-            });
+            //$("#btnPrint").click(function () {               
+            //    $("#divVoucher").printThis();              
+            //});
 
             function createTranSaleData() {
                 $("#tblTranSale").find("tbody").empty();
                 let tranSaleList = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstTranSale"]))');
                 $.each(tranSaleList, function (index, item) {
-                    let row = '<tr class="d3-voucher-table-item" style="width:100%">'
-                    row += '<td class="voucher-table-border" style="width:5%;float:left;">' + item.Number + '</td>'
-                    if (item.IsFOC == true) row += '<td class="text-overflow voucher-table-border" style="width:35%;float:left;">' + item.ProductName + '(FOC)' + '</td>'
-                    else row += '<td class="text-overflow voucher-table-border" style="width:45%;float:left;">' + item.ProductName + '</td>'
-                    row += '<td style="width:10%;float:left;" class="align-justify-center voucher-table-border">' + item.Quantity + '<span class="d3-voucher-table-item-sm">' + item.UnitKeyword + '</span></td>'
-                      + '<td style="width:20%;float:left;" class="aligh-right align-center voucher-table-border">' + separatedComma(item.SalePrice) + '<span class="d3-voucher-table-item-sm">' + item.CurrencyKeyword + '</span></td>'
+                    let row = '<tr class="d3-voucher-table-item" style="width:100%;min-height:15px;display:flex;align-items:center;">'
+                    row += '<td style="width:5%;float:left;">' + item.Number + '</td>'
+                    if (item.IsFOC == true) row += '<td class="" style="width:35%;float:left;">' + item.ProductName + '(FOC)' + '</td>'
+                    else row += '<td class="" style="width:45%;float:left;">' + item.ProductName + '</td>'
+                    row += '<td style="width:10%;float:left;" class="align-justify-center">' + item.Quantity + '<span class="d3-voucher-table-item-sm">' + item.UnitKeyword + '</span></td>'
+                      + '<td style="width:20%;float:left;" class="aligh-right align-center">' + separatedComma(item.SalePrice) + '<span class="d3-voucher-table-item-sm">' + item.CurrencyKeyword + '</span></td>'
                       //+ '<td style="width:15%;float:left;" class="aligh-right voucher-table-border">' + separatedComma(item.Discount) + '</td>'
-                      + '<td style="width:20%;float:left;" class="aligh-right voucher-table-border">' + separatedComma(item.Amount) + '</td>'
+                      + '<td style="width:20%;float:left;" class="aligh-right">' + separatedComma(item.Amount) + '</td>'
                       + "</tr>";
                     $('#tblTranSale tbody').append(row);
                 });

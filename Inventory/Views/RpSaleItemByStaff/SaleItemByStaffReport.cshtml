@@ -1,0 +1,122 @@
+﻿@using Inventory.ViewModels;
+@model RpSaleItemByStaffViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutReportDetail.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+        if ('@ViewBag.ErrorMessage'.length != 0) {
+            showToast(0, '@ViewBag.ErrorMessage');
+        }
+        setReportTitle('@Resource.SaleItemByStaffReport');
+        setDefaultFilter('@Model.FromDate.ToShortDateString()', '@Model.ToDate.ToShortDateString()', '');
+        $("#divFilter").visible = false;
+    });
+
+    function separatedComma(value) {
+        let iVal = parseInt(value);
+        let result = iVal.toLocaleString('en-US');
+        document.write(result);
+    }
+    </script>
+</head>
+<div>
+    <div class="row table-header font-weight-500">
+        <div class="col-md-2 col-lg-2">
+            <span class="ml-10">@Resource.Code</span>
+        </div>
+        <div class="col-md-2 col-lg-2">
+            <span>@Resource.Product</span>
+        </div>
+        <div class="col-md-2 col-lg-2 aligh-right">
+            <span>@Resource.Qty</span>
+        </div>
+        <div class="col-md-2 col-lg-2 aligh-right">
+            <span>@Resource.SalePrice</span>
+        </div>
+        <div class="col-md-2 col-lg-2 aligh-right">
+            <span>@Resource.Dis</span>
+        </div>
+        <div class="col-md-2 col-lg-2 aligh-right plr-30">
+            <span class="mr-10">@Resource.Amount</span>
+        </div>
+    </div>
+</div>
+<div>
+    @foreach (var staff in Model.lstRptSaleItemByStaff as List<RpSaleItemByStaffViewModel.StaffViewModel>)
+    {
+        <div class="row rpt-main-group" style="background-color:#ffffec;">
+            <div class="col-md-12 col-lg-12">
+                <span class="ml-10">@staff.StaffName</span>
+            </div>
+        </div>
+        foreach (var item in staff.lstSaleItem.OrderBy(m => m.Code).ThenBy(m => m.ProductName).ThenBy(m => m.UnitID).ToList() as List<RpSaleItemByStaffViewModel.SaleItemViewModel>)
+        {
+            <div class="row rpt-item">
+                <div class="col-md-2 col-lg-2"><span class="ml-10">@item.Code</span></div>
+                <div class="col-md-2 col-lg-2">
+                    @item.ProductName @if (item.UnitID != 0)
+                    {<span>( @item.UnitKeyword )</span>}
+                </div>
+                <div class="col-md-2 col-lg-2 aligh-right"><span>@item.Quantity</span></div>
+                <div class="col-md-2 col-lg-2 aligh-right">
+                    <span>
+                        <script>separatedComma(@item.SalePrice)</script>
+                    </span>
+                </div>
+                <div class="col-md-2 col-lg-2 aligh-right">
+                    <span>
+                        <script>separatedComma(@item.Discount)</script>
+                    </span>
+                </div>
+                <div class="col-md-2 col-lg-2 aligh-right plr-30"><span class="mr-10">
+                <script>separatedComma(@item.Amount)</script></span></div>
+            </div>
+        }
+        <div class="row rpt-sub-total">
+            <div class="col-md-2 col-lg-2"></div>
+            <div class="col-md-3 col-lg-3">@Resource.Total</div>
+            <div class="col-md-1 col-lg-1 aligh-right"><span>@staff.lstSaleItem.Sum(m => m.Quantity)</span></div>
+            <div class="col-md-4 col-lg-4 aligh-right">
+                <span>
+                    <script>separatedComma(@staff.lstSaleItem.Sum(m=>m.Discount))</script>
+                </span>
+            </div>
+            <div class="col-md-2 col-lg-2 aligh-right plr-30"><span class="mr-10">
+            <script>separatedComma(@staff.lstSaleItem.Sum(m => m.Amount))</script></span></div>
+        </div>
+    }
+    <div class="row rpt-total">
+        <div class="col-md-2 col-lg-2"></div>
+        <div class="col-md-3 col-lg-3">@Resource.Total</div>
+        <div class="col-md-1 col-lg-1 aligh-right">
+            <span>
+                <script>separatedComma(@Model.TotalQuantity)</script>
+            </span>
+        </div>
+        <div class="col-md-4 col-lg-4 aligh-right">
+            <span>
+                <script>separatedComma(@Model.TotalDis)</script>
+            </span>
+        </div>
+        <div class="col-md-2 col-lg-2 aligh-right plr-30">
+            <span class="mr-10">
+                <script>separatedComma(@Model.TotalAmount)</script>
+            </span>
+        </div>
+    </div>
+    <div class="row padding-10" style="font-weight:bold;">
+        <div class="col-md-5 col-lg-5"></div>
+        <div class="col-md-1 col-lg-1 aligh-right"><span>@Resource.Qty</span></div>
+        <div class="col-md-4 col-lg-4 aligh-right"><span>@Resource.Dis</span></div>
+        <div class="col-md-2 col-lg-2 aligh-right plr-30"><span class="mr-10">@Resource.Amount</span></div>
+    </div>
+</div>
+
+

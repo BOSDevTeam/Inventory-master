@@ -39,5 +39,6 @@ namespace Inventory.Models
         public string Remark { get; set; }
         public int SlipID { get; set; }
         public bool IsVouFOC { get; set; }
+        public int StaffID { get; set; }
     }
 }

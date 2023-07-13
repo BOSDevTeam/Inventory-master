@@ -92,6 +92,9 @@
                         <li id="menuSupplier">
                             <a href="~/Supplier/SupplierList?p=1"><i class="fa fa-user"></i> <span>@Resource.Supplier</span></a>
                         </li> 
+                        <li id="menuStaff">
+                            <a href="~/Staff/StaffList"><i class="fa fa-user"></i> <span>@Resource.Staff</span></a>
+                        </li> 
                         <li id="menuMainMenu">
                             <a href="~/MainMenu/MainMenuList?p=1"><i class="fa fa-file-text-o"></i> <span>@Resource.MainMenu</span></a>
                         </li>  
@@ -179,6 +182,24 @@
             $('#lblToastMessage').text(message);
         }
 
+        $(document).on('keypress', '.numberonly', function (e) {
+            var txt = String.fromCharCode(e.which);
+            if (!txt.match(/^[0-9]*$/)) {
+                return false;
+            }
+        });
+
+        function responseUnSuccessful(response) {
+            if (response.ResultDefaultData.UnSuccessfulReason == '@Inventory.Common.AppConstants.RequestUnSuccessful.SessionExpired') {
+                alert('@Resource.SessionExpired');
+                redirectToLogin();
+            } else if (response.ResultDefaultData.UnSuccessfulReason == '@Inventory.Common.AppConstants.RequestUnSuccessful.InCompletedData') {
+                showToast(0, response.ResultDefaultData.Message);
+            } else if (response.ResultDefaultData.UnSuccessfulReason == '@Inventory.Common.AppConstants.RequestUnSuccessful.UnExpectedError') {
+                showToast(0, response.ResultDefaultData.Message);
+            }
+        }
+
         function hideModule() {  
             let isShowUserModule = localStorage.getItem("UserModule");
             let isShowUserRightModule = localStorage.getItem("UserRightModule");
@@ -186,6 +207,7 @@
             let isShowTownshipModule = localStorage.getItem("TownshipModule");
             let isShowCustomerModule = localStorage.getItem("CustomerModule");
             let isShowSupplierModule = localStorage.getItem("SupplierModule");
+            let isShowStaffModule = localStorage.getItem("StaffModule");
             let isShowMainMenuModule = localStorage.getItem("MainMenuModule");
             let isShowSubMenuModule = localStorage.getItem("SubMenuModule");
             let isShowProductModule = localStorage.getItem("ProductModule");
@@ -200,6 +222,7 @@
             if (isShowTownshipModule != 'True') $("#menuTownship").css('display', 'none');
             if (isShowCustomerModule != 'True') $("#menuCustomer").css('display', 'none');
             if (isShowSupplierModule != 'True') $("#menuSupplier").css('display', 'none');
+            if (isShowStaffModule != 'True') $("#menuStaff").css('display', 'none');
             if (isShowMainMenuModule != 'True') $("#menuMainMenu").css('display', 'none');
             if (isShowSubMenuModule != 'True') $("#menuSubMenu").css('display', 'none');
             if (isShowProductModule != 'True') $("#menuProduct").css('display', 'none');

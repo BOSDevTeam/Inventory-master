@@ -25,6 +25,7 @@
         <EntityTypeShape EntityType="InventoryDBModel.SysModule" Width="1.5" PointX="9.375" PointY="11.75" />
         <EntityTypeShape EntityType="InventoryDBModel.TCLMasterSaleOrder" Width="1.5" PointX="11.75" PointY="11.75" />
         <EntityTypeShape EntityType="InventoryDBModel.TCLTranSaleOrder" Width="1.5" PointX="0.75" PointY="12.75" />
+        <EntityTypeShape EntityType="InventoryDBModel.SStaff" Width="1.5" PointX="3.375" PointY="12.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

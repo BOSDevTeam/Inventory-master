@@ -1,0 +1,250 @@
+﻿@using Inventory.Models
+@model StaffModels
+@{
+    Layout = "~/Views/Shared/_LayoutSetting.cshtml";
+}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        document.getElementById('menuStaff').className = 'active';
+    </script>
+</head>
+
+<div>
+    <div class="row setup-title-layout">
+        <div class="col-md-6 col-lg-6">
+            <label class="page-title">@Resource.CreateStaff</label>
+        </div>
+        <div class="col-md-6 col-lg-6">
+            <button id="btnAll" class="btn btn-primary" style="float:right" onclick="location.href='@Url.Action("StaffList", "Staff")'">@Resource.CALL</button>
+        </div>
+    </div>
+    <div class="row margin-20">
+        <div class="col-md-12 col-lg-12">
+            <div class="row setup-entry-header">
+                <div class="col-md-11 col-lg-11">
+                    <label class="setup-entry-header-title">@Resource.FillStaffDetail</label>
+                </div>
+                <div class="col-md-1 col-lg-1" style="display:flex;align-items:center;justify-content:center">
+                    <button id="btnRefresh" class="btn btn-light" title="Refresh"><i class="fa fa-refresh refresh-icon"></i></button>
+                </div>
+            </div>
+            <div class="row setup-entry-border padding-20">
+                <div class="col-md-6 col-md-6">
+                    <div class="form-group">
+                        <label class="control-label">@Resource.Name</label>
+                        @Html.TextBoxFor(m => m.StaffName, null, new { @class = "form-control control-input" })
+                        <label id="vldName" class="text-danger" style="display:none">Name Require!</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">@Resource.Code</label>
+                        @Html.TextBoxFor(m => m.Code, null, new { @class = "form-control control-input" })
+                        <label id="vldCode" class="text-danger" style="display:none">Code Require!</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">@Resource.Phone</label>
+                        <input type='text' id="Phone" class="form-control control-input numberonly" />
+                    </div>
+                </div>  
+                <div class="col-md-6 col-md-6">
+                    <div class="form-group">
+                        <label class="control-label">@Resource.Division</label>
+                        @Html.DropDownListFor(m => m.DivisionID, Model.Divisions, new { @class = "form-control control-input" })
+                        <label id="vldDivision" class="text-danger" style="display:none">Division Require!</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">@Resource.Township</label>
+                        @Html.DropDownListFor(m => m.TownshipID, Model.Townships, new { @class = "form-control control-input" })
+                        <label id="vldTownship" class="text-danger" style="display:none">Township Require!</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">@Resource.Address</label>
+                        @Html.TextArea("Address", null, new { @class = "form-control control-input" })
+                    </div>
+                    <div class="form-group">
+                        <button id="btnSave" class="btn btn-first setup-btn-save-edit">Save</button>
+                        <button id="btnEdit" class="btn btn-first setup-btn-save-edit" style="display:none;">Edit</button>
+                    </div>
+                </div>
+            </div>          
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    let staffName, code, phone, address, townshipId, divisionId, editStaffId;
+
+    $(function () {
+
+        let isEdit = '@ViewBag.IsEdit';
+        if (isEdit) fillEditData();
+
+        $('#DivisionID').change(function () {
+            let val = $('#DivisionID option:selected').val();
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetTownshipByDivision", "Staff")',
+                data: { "divisionId": val },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess) responseUnSuccessful(response);
+                    else {
+                        let town;
+                        $('#TownshipID').html("");
+                        for (var i = 0 ; i < response.LstTownship.length; i++) {
+                            town += '<option value= "' + response.LstTownship[i].TownshipID + '">' + response.LstTownship[i].TownshipName + '</option>';
+                        }
+                        $('#TownshipID').append(town);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        function validateControl() {
+            if (staffName.length == 0) {
+                $("#vldName").show();
+                return false;
+            } else if (code.length == 0) {
+                $("#vldCode").show();
+                return false;
+            } else if (divisionId == null || divisionId.length == 0) {
+                $('#vldDivision').show();
+                return false;
+            }
+            else if (townshipId == null || townshipId.length == 0) {
+                $('#vldTownship').show();
+                return false;
+            }
+            return true;
+        }
+
+        function clearControl() {
+            $('#StaffName').val("");
+            $('#Code').val("");
+            $('#Phone').val("");
+            $('#Address').val("");
+        }
+
+        $('#btnSave').click(function () {
+            staffName = $('#StaffName').val();
+            code = $('#Code').val();
+            phone = $('#Phone').val();
+            address = $('#Address').val();
+            townshipId = $('#TownshipID option:selected').val();
+            divisionId = $('#DivisionID option:selected').val();
+
+            if (validateControl()) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SaveAction", "Staff")',
+                    data: JSON.stringify({ "staffName": staffName, "code": code, "phone": phone, "address": address, "townshipId": townshipId, "divisionId": divisionId }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess) responseUnSuccessful(response);
+                        else {
+                            showToast(1, response.ResultDefaultData.Message);
+                            clearControl();
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $("#StaffName").keypress(function () {
+            $("#vldName").hide();
+        });
+
+        $("#Code").keypress(function () {
+            $("#vldCode").hide();
+        });
+
+        $('#DivisionID').change(function () {
+            $('#vldTownship').hide();
+        });
+
+        $('#btnEdit').click(function () {
+            staffName = $('#StaffName').val();
+            code = $('#Code').val();
+            phone = $('#Phone').val();
+            address = $('#Address').val();
+            townshipId = $('#TownshipID option:selected').val();
+            divisionId = $('#DivisionID option:selected').val();
+
+            if (validateControl()) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("EditAction", "Staff")',
+                    data: JSON.stringify({ "staffName": staffName, "code": code, "phone": phone, "address": address, "townshipId": townshipId, "divisionId": divisionId, "editStaffId": editStaffId }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess) responseUnSuccessful(response);
+                        else {
+                            showToast(1, response.ResultDefaultData.Message);
+                            window.location.href = '@Url.Action("StaffList", "Staff")';
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+
+        $('#btnRefresh').click(function () {
+            window.location.reload();
+        });
+
+        function fillEditData() {
+            editStaffId = '@ViewBag.StaffID';
+            $('#StaffName').val('@ViewBag.StaffName');
+            $('#Code').val('@ViewBag.Code');
+            $('#Phone').val('@ViewBag.Phone');
+            $('#Address').val('@ViewBag.Address');
+            $('#TownshipID').val('@ViewBag.TownshipID');
+            $('#DivisionID').val('@ViewBag.DivisionID');
+            $('#btnSave').css('display', 'none');
+            $('#btnEdit').show();
+        }
+
+    });
+
+</script>
+
+
+
+
+

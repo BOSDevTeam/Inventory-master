@@ -68,7 +68,8 @@ namespace Inventory.Controllers
                                 isBankPayment = Convert.ToBoolean(reader["IsBankPayment"]);
                                 tax = Convert.ToInt32(reader["Tax"]);
                                 serviceCharges = Convert.ToInt32(reader["ServiceCharges"]);
-                                saleVoucherDesignType = Convert.ToInt16(reader["SaleVoucherDesignType"]);
+                                saleVoucherDesignType = Convert.ToInt16(reader["SaleVoucherDesignType"]);                                
+                                Session[AppConstants.ShopTypeCode] = reader["ShopTypeCode"];
                                 resultDefaultData.IsRequestSuccess = true;
                                 break;
                             case 0:

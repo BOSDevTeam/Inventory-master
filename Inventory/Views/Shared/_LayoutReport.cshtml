@@ -86,6 +86,7 @@
                                 <li id="subMenuSaleAmountByCustomerRp"><a href="#">@Resource.SaleAmountByCustomerReport</a></li>
                                 <li id="subMenuSaleAmountBySalePersonRp"><a href="#">@Resource.SaleAmountBySalePersonReport</a></li>
                                 <li id="subMenuSaleItemByCustomerRp"><a href="#">@Resource.SaleItemByCustomerReport</a></li>
+                                <li id="subMenuSaleItemByStaffRp"><a href="#">@Resource.SaleItemByStaffReport</a></li>
                                 <li id="subMenuTopSaleItemRp"><a href="#">@Resource.TopSaleItemReport</a></li>
                                 <li id="subMenuBottomSaleItemRp"><a href="#">@Resource.BottomSaleItemReport</a></li>
                                 <li id="subMenuSaleItemProfitRp"><a href="#">@Resource.SaleItemProfitReport</a></li>
@@ -184,6 +185,9 @@
             $('#subMenuSaleItemByCustomerRp').click(function () {
                 window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.SaleItemByCustomerReport})';
             });
+            $('#subMenuSaleItemByStaffRp').click(function () {
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.SaleItemByStaffReport})';
+            });
             $('#subMenuTopSaleItemRp').click(function () {
                 window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.TopSaleItemReport})';
             });
@@ -275,6 +279,7 @@
             let isShowSaleAmountByCustomer = localStorage.getItem("SaleAmountByCustomer");
             let isShowSaleAmountBySalePerson = localStorage.getItem("SaleAmountBySalePerson");
             let isShowSaleItemByCustomer = localStorage.getItem("SaleItemByCustomer");
+            let isShowSaleItemByStaff = localStorage.getItem("SaleItemByStaff");
             let isShowTopSaleItem = localStorage.getItem("TopSaleItem");
             let isShowBottomSaleItem = localStorage.getItem("BottomSaleItem");
             let isShowSaleItemProfit = localStorage.getItem("SaleItemProfit");
@@ -299,6 +304,7 @@
             if (isShowSaleAmountByCustomer != 'True') $("#subMenuSaleAmountByCustomerRp").css('display', 'none');
             if (isShowSaleAmountBySalePerson != 'True') $("#subMenuSaleAmountBySalePersonRp").css('display', 'none');
             if (isShowSaleItemByCustomer != 'True') $("#subMenuSaleItemByCustomerRp").css('display', 'none');
+            if (isShowSaleItemByStaff != 'True') $("#subMenuSaleItemByStaffRp").css('display', 'none');
             if (isShowTopSaleItem != 'True') $("#subMenuTopSaleItemRp").css('display', 'none');
             if (isShowBottomSaleItem != 'True') $("#subMenuBottomSaleItemRp").css('display', 'none');
             if (isShowSaleItemProfit != 'True') $("#subMenuSaleItemProfitRp").css('display', 'none');
@@ -321,7 +327,7 @@
             // show hide group menu
             if (isShowSaleAmountOnly == 'False' && isShowSaleAmountSummary == 'False' && isShowSaleItemSimple == 'False' && isShowSaleItem == 'False' && 
                 isShowSaleAudit == 'False' && isShowSaleAmountByCustomer == 'False' && isShowSaleAmountBySalePerson == 'False' && isShowSaleItemByCustomer == 'False' &&
-                isShowTopSaleItem == 'False' && isShowBottomSaleItem == 'False' && isShowSaleItemProfit == 'False' && isShowSaleLog == 'False') {
+                isShowTopSaleItem == 'False' && isShowBottomSaleItem == 'False' && isShowSaleItemProfit == 'False' && isShowSaleLog == 'False' && isShowSaleItemByStaff == 'False') {
                 $("#menuSale").css('display', 'none');
             }
             if (isShowPurchaseAmountOnly == 'False' && isShowPurchaseItemSimple == 'False' && isShowPurchaseAudit == 'False' && isShowPurchaseAmountBySupplier == 'False' &&

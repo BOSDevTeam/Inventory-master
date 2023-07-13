@@ -15,6 +15,7 @@ namespace Inventory.ViewModels
             this.Locations = new List<SelectListItem>();
             this.Units = new List<SelectListItem>();
             this.Currencies = new List<SelectListItem>();
+            this.Staffs = new List<SelectListItem>();
             this.ProductMenus = new ProductMenuViewModel();
             this.Payments = new PaymentViewModel();
             this.VoucherSettings = new VoucherSettingModels();
@@ -23,6 +24,7 @@ namespace Inventory.ViewModels
         public List<SelectListItem> Locations { get; set; }
         public List<SelectListItem> Units { get; set; }
         public List<SelectListItem> Currencies { get; set; }
+        public List<SelectListItem> Staffs { get; set; }
         public ProductMenuViewModel ProductMenus { get; set; }
         public PaymentViewModel Payments { get; set; }
         public VoucherSettingModels VoucherSettings { get; set; }  
@@ -54,6 +56,7 @@ namespace Inventory.ViewModels
             public int Subtotal { get; set; }
             public int TaxAmt { get; set; }
             public int ChargesAmt { get; set; }
+            public int StaffID { get; set; }
         }
 
         public class CLMasterSaleOrderViewModel

@@ -206,6 +206,13 @@ namespace Inventory.Controllers
                 reportViewModel.HtmlGroupElementID = "subMenuStockStatusRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuStockStatusDetailRp";
             }
+            else if (reportName.Equals(Resource.SaleItemByStaffReport))
+            {
+                reportViewModel.ControllerName = "RpSaleItemByStaff";
+                reportViewModel.ActionName = "SaleItemByStaffReport";
+                reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
+                reportViewModel.HtmlActiveElementID = "subMenuSaleItemByStaffRp";
+            }
             return View(reportViewModel);
         }
 
@@ -309,6 +316,9 @@ namespace Inventory.Controllers
                     case "Sale Item by Customer Report":
                         ViewBag.IsAllowSaleItemByCustomer = Convert.ToBoolean(reader["IsAllow"]);
                         break;
+                    case "Sale Item by Staff Report":
+                        ViewBag.IsAllowSaleItemByStaff = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
                     case "Top Sale Item Report":
                         ViewBag.IsAllowTopSaleItem = Convert.ToBoolean(reader["IsAllow"]);
                         break;
@@ -333,7 +343,7 @@ namespace Inventory.Controllers
                     case "Purchase Amount by Supplier Report":
                         ViewBag.IsAllowPurchaseAmountBySupplier = Convert.ToBoolean(reader["IsAllow"]);
                         break;
-                    case "Purchase Item By Supplier Report":
+                    case "Purchase Item by Supplier Report":
                         ViewBag.IsAllowPurchaseItemBySupplier = Convert.ToBoolean(reader["IsAllow"]);
                         break;
                     case "Purchase Log Report":

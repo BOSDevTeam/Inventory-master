@@ -155,6 +155,12 @@ table tr td.value-right{text-align:right;padding-right:15px;}
 .voucher-table-border{border:1px solid #000;}
 .voucher-total-border{border:1px solid #333;}
 .sale-voucher-design3{width:80mm;}
+.d3-voucher-header{font-size:12px;color:#000;font-family:'Rubik',sans-serif;}
+.d3-voucher-sub-header{font-size:10px;color:#000;font-family:'Rubik',sans-serif;}
+.d3-voucher-sub-footer{font-size:10px;color:#000;font-family:'Rubik',sans-serif;}
+.d3-voucher-table-header{color:#fff;padding:5px;font-size:10px;font-family:'Rubik',sans-serif;background-color:#666;}
+.d3-voucher-table-item{color:#000;padding:5px;font-size:10px;font-family:'Rubik',sans-serif;}
+.d3-voucher-table-item-sm{color:#333;font-size:7px;font-family:'Rubik',sans-serif;}
 /** end amount and voucher */
 
 
@@ -175,7 +181,12 @@ table tr td.value-right{text-align:right;padding-right:15px;}
     }
 
     .sale-voucher-design3{width:110mm;}
-
+    .d3-voucher-header{font-size:15pt;color:#000;font-family:'Rubik',sans-serif;}
+    .d3-voucher-sub-header{font-size:13pt;color:#000;font-family:'Rubik',sans-serif;}
+    .d3-voucher-sub-footer{font-size:13pt;color:#000;font-family:'Rubik',sans-serif;}
+    .d3-voucher-table-header{color:#fff;padding:5px;font-size:14pt;font-family:'Rubik',sans-serif;background-color:#666;}
+    .d3-voucher-table-item{color:#000;padding:5px;font-size:14pt;font-family:'Rubik',sans-serif;}
+    .d3-voucher-table-item-sm{color:#333;font-size:10pt;font-family:'Rubik',sans-serif;}
 }
 
 
