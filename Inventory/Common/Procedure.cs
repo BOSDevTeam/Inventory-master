@@ -179,5 +179,6 @@ namespace Inventory.Common
         public const string PrcGetStaff = "PrcGetStaff";
         public const string PrcDeleteStaff = "PrcDeleteStaff";
         public const string PrcGetRptSaleItemByStaff = "PrcGetRptSaleItemByStaff";
+        public const string PrcGetMultiPayBySaleID = "PrcGetMultiPayBySaleID";
     }
 }

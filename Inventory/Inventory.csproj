@@ -261,6 +261,7 @@
     <Compile Include="Models\CLTranSaleOrderModels.cs" />
     <Compile Include="Models\CompanySettingModels.cs" />
     <Compile Include="Models\CurrencyModels.cs" />
+    <Compile Include="Models\MultiPayMethodSaleModels.cs" />
     <Compile Include="Models\StaffModels.cs" />
     <Compile Include="Models\CustomerModels.cs" />
     <Compile Include="Models\DivisionModels.cs" />

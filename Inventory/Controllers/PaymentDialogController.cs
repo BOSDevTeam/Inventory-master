@@ -43,6 +43,8 @@ namespace Inventory.Controllers
             }
             else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
+            Session["MultiPayMethodData"] = null;
+
             var jsonResult = new
             {
                 LstPayment = lstPayment,
@@ -69,8 +71,11 @@ namespace Inventory.Controllers
                 {
                     lstPayment = getPayment();
                     if (isBankPayment) lstPayMethod = getPayMethod();
-
-                    if (moduleCode == AppConstants.SaleModule) masterSaleModel = getSalePayment(saleId);
+                    
+                    if (moduleCode == AppConstants.SaleModule)
+                    {
+                        masterSaleModel = getSalePayment(saleId);
+                    }
                     
                     resultDefaultData.IsRequestSuccess = true;
                 }
@@ -107,7 +112,7 @@ namespace Inventory.Controllers
             List<BankPaymentModels> lstBankPayment = new List<BankPaymentModels>();
             lstBankPayment = getBankPayment();
             return Json(lstBankPayment, JsonRequestBehavior.AllowGet);
-        }
+        }       
 
         #endregion
 
@@ -136,9 +141,47 @@ namespace Inventory.Controllers
                 model.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
             }
             reader.Close();
+
+            if(model.PayMethodID == 3)
+            {
+                model.IsMultiPay = true;
+                cmd = new SqlCommand(textQuery.getMultiPayCashInHand(saleId), setting.conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = setting.conn;
+                reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    model.CashInHand = Convert.ToInt32(reader["Amount"]);
+                }
+                reader.Close();
+            }
             setting.conn.Close();
             return model;
         }
+
+        //private void getMultiBankPay(int saleId)
+        //{
+        //    List<MultiPayMethodSaleModels> lstMultiBankPay = new List<MultiPayMethodSaleModels>();
+        //    MultiPayMethodSaleModels multiBankPay;
+
+        //    setting.conn.Open();
+        //    SqlCommand cmd = new SqlCommand(textQuery.getMultiPayBanking(saleId), setting.conn);
+        //    cmd.CommandType = CommandType.Text;
+        //    cmd.Connection = setting.conn;
+        //    SqlDataReader reader = cmd.ExecuteReader();
+        //    while (reader.Read())
+        //    {
+        //        multiBankPay = new MultiPayMethodSaleModels();
+        //        multiBankPay.BankPaymentID = Convert.ToInt32(reader["BankPaymentID"]);
+        //        multiBankPay.BankPaymentName = Convert.ToString(reader["BankPaymentName"]);
+        //        multiBankPay.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
+        //        multiBankPay.Amount = Convert.ToInt32(reader["Amount"]);
+        //        //model.BankingTotal += multiBankPay.Amount;
+        //        lstMultiBankPay.Add(multiBankPay);
+        //    }
+        //    reader.Close();
+        //    Session["MultiPayMethodData"] = lstMultiBankPay;
+        //}
 
         private List<PaymentModels> getPayment()
         {

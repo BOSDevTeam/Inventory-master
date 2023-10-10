@@ -39,6 +39,10 @@
                     Html.RenderPartial("_SaleVoucherChild");
                 }
 
+                <table id="tblMultiPay" class="width-100-percent soft-gray-background" style="border-radius:5px;">
+                    <tbody></tbody>
+                </table>
+
                 <div id="divRemark" class="light-background padding-5" style="text-align:center;">
                     <label id="lblRemark" class="control-label mb-0"></label>
                 </div>
@@ -49,6 +53,19 @@
 </div>
 
 <script type="text/javascript">
+
+    function createMultiPayDetail(response) {
+        $("#tblMultiPay").find("tbody").empty();
+        $.each(response.LstMultiPay, function (index, item) {
+            let row = '<tr class="row voucher-table-item" style="width:100%">'
+            if (item.PayMethodID == 1) row += '<td class="col-md-6 col-lg-6">' + item.PayMethodName + '</td>'
+            else if (item.PayMethodID == 2 && item.PaymentPercent != 0) row += '<td class="col-md-6 col-lg-6">' + item.BankPaymentName + '(' + item.PaymentPercent + '%)' + '</td>'
+            else if (item.PayMethodID == 2 && item.PaymentPercent == 0) row += '<td class="col-md-6 col-lg-6">' + item.BankPaymentName + '</td>'
+            row += '<td class="col-md-6 col-lg-6 value-right">' + separatedComma(item.Amount) + '</td>'
+               + "</tr>";
+            $('#tblMultiPay tbody').append(row);
+        });
+    }
 
     function createTranSaleDetail(response) {
         $("#tblTranSale").find("tbody").empty();

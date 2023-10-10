@@ -28,21 +28,77 @@
                             <tr class="trAdvancedPay soft-gray-background">
                                 <td class="padding-10"><label class="control-label mb-0">@Resource.AdvancedPay</label></td>
                                 <td class="padding-10"><input id="inputAdvancedPay" type="text" class="form-control control-input numberonly" /></td>
-                            </tr>                                                 
-                            <tr id="trPayMethod">
-                                <td><label class="control-label mb-0">@Resource.PayMethod</label></td>
-                                <td>@Html.DropDownList("PayMethod", Model.PayMethods, new { @id = "ddlPayMethod", @class = "form-control control-input" })</td>
-                            </tr>                                                                      
-                            <tr id="trBankPayment" class="soft-gray-background">
-                                <td class="padding-10"><label class="control-label mb-0">@Resource.BankPay</label></td>
-                                <td class="padding-10">@Html.DropDownList("BankPayment", Model.BankPayments, new { @id = "ddlBankPayment", @class = "form-control control-input" })</td>
-                            </tr>
-                            <tr class="trPercent soft-gray-background">
-                                <td class="padding-10"><label class="control-label mb-0">@Resource.Percent</label></td>
-                                <td class="padding-10"><input id="inputPercent" type="text" class="form-control control-input numberonly" maxlength="2" /></td>
-                            </tr>                                      
-                        </table>  
-                        <div class="row">
+                            </tr>                                                                                                                                                                                 
+                        </table> 
+
+                        <div style="background-color:#f8f9fa;padding:10px">
+                            <div id="divUseMultiPayMethod" style="text-align:right;color:#299697">
+                                <input id="chkUseMultiPayMethod" type="checkbox" /><span>&nbsp;&nbsp;@Resource.UseMultiPayMethod</span>
+                            </div>
+
+                            <div id="divPayMethod" class="m-t-10">
+                                <div id="trPayMethod" class="row">
+                                    <div class="col-md-4 col-lg-4 align-center">
+                                        <label class="control-label mb-0">@Resource.PayMethod</label>
+                                    </div>
+                                    <div class="col-md-8 col-lg-8">
+                                        @Html.DropDownList("PayMethod", Model.PayMethods, new { @id = "ddlPayMethod", @class = "form-control control-input" })
+                                    </div>
+                                </div>
+                                <div class="soft-gray-background m-t-10">
+                                    <div id="trBankPayment" class="row padding-10">
+                                        <div class="col-md-4 col-lg-4 align-center">
+                                            <label class="control-label mb-0">@Resource.BankPay</label>
+                                        </div>
+                                        <div class="col-md-8 col-lg-8">
+                                            @Html.DropDownList("BankPayment", Model.BankPayments, new { @id = "ddlBankPayment", @class = "form-control control-input" })
+                                        </div>
+                                    </div>
+                                    <div class="row trPercent padding-10">
+                                        <div class="col-md-4 col-lg-4 align-center">
+                                            <label class="control-label mb-0">@Resource.Percent</label>
+                                        </div>
+                                        <div class="col-md-8 col-lg-8">
+                                            <input id="inputPercent" type="text" class="form-control control-input numberonly" maxlength="2" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="divMultiPayMethod" class="padding-10 soft-gray-background m-t-10">
+                                <label class="control-label mb-0">@Resource.MultiPayMethod</label>
+                                <div class="row m-t-10">
+                                    <div class="col-md-4 col-lg-4 align-center">
+                                        <label class="control-label mb-0" style="color:#299697;">@Resource.CashInHand</label>
+                                    </div>
+                                    <div class="col-md-8 col-lg-8">
+                                        <input id="inputCashInHand" type="text" class="form-control control-input numberonly" />
+                                    </div>
+                                </div>
+                                <label class="control-label mb-0 m-t-10" style="color:#299697;">@Resource.Banking</label>
+                                <div class="row">
+                                    <div class="col-md-4 col-lg-4 align-center">
+                                        <label class="control-label mb-0">@Resource.BankPay</label>
+                                    </div>
+                                    <div class="col-md-8 col-lg-8">
+                                        @Html.DropDownList("BankPaymentMulti", Model.BankPayments, new { @id = "ddlBankPaymentMulti", @class = "form-control control-input" })
+                                    </div>
+                                </div>
+                                <div class="row m-t-10">
+                                    <div class="col-md-4 col-lg-4 align-center">
+                                        <input id="inputBankPaymentPercent" type="text" class="form-control control-input numberonly" maxlength="2" placeholder="%" />
+                                    </div>
+                                    <div class="col-md-8 col-lg-8">
+                                        <input id="inputBankPaymentAmount" type="text" class="form-control control-input numberonly" placeholder="Amount" />
+                                    </div>
+                                </div>
+                                <table id="tblBankPayment" class="width-100-percent m-t-10">
+                                    <tbody></tbody>
+                                </table>
+                            </div> 
+                        </div>
+
+                        <div class="row m-t-10">
                             <div class="col-md-8 col-lg-8">
                                 <div class="form-group">
                                     <label class="control-label mb-0">@Resource.VoucherDiscount</label>
@@ -102,6 +158,14 @@
                                 <td></td>
                                 <td class="value-right"><div class="note"><input id="inputHdnPcntGrandtotal" type="hidden" /><label id="lblPcntGrandtotal" class="total-amount-value mb-0">0</label></div></td>
                             </tr>
+                            <tr id="trCashInHand">
+                                <td><label class="control-label mb-0">@Resource.CashInHand@Resource.ColonSign</label></td>
+                                <td class="value-right"><div class="note"><input id="inputHdnCashInHand" type="hidden" /><label id="lblCashInHand" class="control-input mb-0">0</label></div></td>
+                            </tr>
+                            <tr id="trBankingTotal">
+                                <td><label class="control-label mb-0">@Resource.BankingTotal@Resource.ColonSign</label></td>
+                                <td class="value-right"><div class="note"><input id="inputHdnBankingTotal" type="hidden" /><label id="lblBankingTotal" class="control-input mb-0">0</label></div></td>
+                            </tr>
                             <tr id="trPaid">
                                 <td><label class="control-label mb-0">@Resource.Paid@Resource.ColonSign</label></td>
                                 <td class="value-right"><input id="inputPaid" type="text" class="form-control control-input numberonly" style="text-align:right;"/></td>
@@ -126,29 +190,20 @@
 <script type="text/javascript">
 
     var isDisplayLimitedDay, isSaleEdit = false, limitedDayId, bankPaymentId;
+    let bankPayMethodListAction;
 
-    function initializePaymentControl(isDisplayLimitedDay) {
-        this.isDisplayLimitedDay = isDisplayLimitedDay; // for sale module
-        $('#btnEditSubmit').css("display", "none");
-        showHideByPayment(1);
-        showHideByPayMethod(1);
-        $("#inputHdnVouDisType").val('');
-        changeDiscountType(1);
-        calcAmount();
-        clearPaidChange();
-    }
-
-    function fillSalePaymentData(isDisplayLimitedDay, masterSaleModel,saleId) {
+    function fillSalePaymentData(isDisplayLimitedDay, masterSaleModel, saleId) {
+        hideAllControl();
         isSaleEdit = true;
         this.isDisplayLimitedDay = isDisplayLimitedDay;
-        $('#btnSubmit').css("display", "none");
+        //$('#btnSubmit').css("display", "none");
+        $('#btnEditSubmit').show();
         $('#btnEditSubmit').val(saleId);
         $('#ddlPayment').val(masterSaleModel.PaymentID);
         if (masterSaleModel.PaymentID == 2) $('#ddlPayment').prop("disabled", true);
-        $('#ddlPayMethod').val(masterSaleModel.PayMethodID);
 
-        showHideByPayment(masterSaleModel.PaymentID);
-        showHideByPayMethod(masterSaleModel.PayMethodID);
+        showByPayment(masterSaleModel.PaymentID);
+        showByPayMethod(masterSaleModel.PayMethodID);
 
         if (masterSaleModel.IsVouFOC == true) $("#chkVoucherFOC").prop("checked", true);
         else $("#chkVoucherFOC").prop("checked", false);
@@ -178,16 +233,124 @@
         calcAmount();
         $('#txtRemark').val(masterSaleModel.Remark);
         clearPaidChange();
+
+        if (masterSaleModel.IsMultiPay == true) {
+            $("#chkUseMultiPayMethod").prop("checked", true);
+            $("#inputCashInHand").val(masterSaleModel.CashInHand);
+            $("#lblCashInHand").text(separatedComma(parseInt(masterSaleModel.CashInHand)));
+            $("#inputHdnCashInHand").val(masterSaleModel.CashInHand);
+            @*let bankPayList = JSON.parse('@Html.Raw(Json.Encode(Session["MultiPayMethodData"]))');
+            createBankPayMethodData(bankPayList);
+            $("#lblBankingTotal").text(separatedComma(parseInt(masterSaleModel.BankingTotal)));
+            $("#inputHdnBankingTotal").val(masterSaleModel.BankingTotal);*@
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetMultiBankPayAction", "Sale")',
+                data: {"saleId":saleId},
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    createBankPayMethodData(response.LstMultiBankPay);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        } else {
+            $('#ddlPayMethod').val(masterSaleModel.PayMethodID);
+        }
     }
 
-    function showHideByPayment(value) {
+    function hideAllControl() {
+        $("#trLimitedDay").css('display', 'none');
+        $(".trAdvancedPay").css('display', 'none');
+        $('#divPayMethod').css("display", "none");
+        $('#divMultiPayMethod').css("display", "none");
+        $("#trBankPayment").css('display', 'none');
+        $(".trPercent").css('display', 'none');
+        $("#trPcntGrandtotal").css('display', 'none');
+        $("#trCashInHand").css('display', 'none');
+        $("#trBankingTotal").css('display', 'none');
+        $('#btnSubmit').css("display", "none");
+        $('#btnEditSubmit').css("display", "none");
+    }
+
+    function hideByPayment() {
+        $("#trLimitedDay").css('display', 'none');
+        $(".trAdvancedPay").css('display', 'none');
+    }
+
+    function hideByPayMethod() {
+        $('#divPayMethod').css("display", "none");
+        $('#divMultiPayMethod').css("display", "none");
+        $("#trBankPayment").css('display', 'none');
+        $(".trPercent").css('display', 'none');
+        $("#trPcntGrandtotal").css('display', 'none');
+        $("#trCashInHand").css('display', 'none');
+        $("#trBankingTotal").css('display', 'none');
+    }
+
+    function initializePaymentControl(isDisplayLimitedDay) {
+        hideAllControl();
+        this.isDisplayLimitedDay = isDisplayLimitedDay; // for sale module
+        //$('#btnEditSubmit').css("display", "none");
+        $('#btnSubmit').show();
+        showByPayment(1);
+        showByPayMethod(1);
+        $("#inputHdnVouDisType").val('');
+        changeDiscountType(1);
+        calcAmount();
+        clearPaidChange();
+        $("#chkUseMultiPayMethod").prop("checked", false);
+        //$("#chkUseMultiPayMethod").prop("checked", false);
+        //$('#divPayMethod').show();
+        //$('#divMultiPayMethod').css("display", "none");
+        //$("#trCashInHand").css('display', 'none');
+        //$("#trBankingTotal").css('display', 'none');
+        //showMultiPay();
+    }
+
+    function showMultiPay() {
+        $('#divMultiPayMethod').show();
+        $("#trCashInHand").show();
+        $("#trBankingTotal").show();
+        //if (isShow == true) {
+        //    $("#chkUseMultiPayMethod").prop("checked", true);
+        //    $('#divMultiPayMethod').show();
+        //    $("#trCashInHand").show();
+        //    $("#trBankingTotal").show();
+
+        //    $('#divPayMethod').css("display", "none");
+        //    $(".trPercent").css('display', 'none');
+        //    $("#trPcntGrandtotal").css('display', 'none');
+
+        //    getBankPayment();
+        //} else {
+        //    $("#chkUseMultiPayMethod").prop("checked", false);
+        //    $('#divMultiPayMethod').css("display", "none");
+        //    $("#trCashInHand").css('display', 'none');
+        //    $("#trBankingTotal").css('display', 'none');
+
+        //    $('#divPayMethod').show();
+        //}
+    }
+
+    function showByPayment(value) {
         clearByPayment();
         let payMethodVal = $('#ddlPayMethod option:selected').val();
         showHideVoucherFOC(value, payMethodVal);
-        if (value == 1) {  //cash
-            $("#trLimitedDay").css('display', 'none');
-            $(".trAdvancedPay").css('display', 'none');
-        } else if (value == 2) {  //credit
+        //if (value == 1) {  //cash
+        //    $("#trLimitedDay").css('display', 'none');
+        //    $(".trAdvancedPay").css('display', 'none');
+        //} else
+            if (value == 2) {  //credit
             $(".trAdvancedPay").show();
             if (isDisplayLimitedDay == true) {
                 showLoadingIcon();
@@ -216,16 +379,19 @@
         }
     }
 
-    function showHideByPayMethod(value) {
+    function showByPayMethod(value) {
         clearByPayMethod();
+        clearMultiPay();
         let paymentVal = $('#ddlPayment option:selected').val();
         showHideVoucherFOC(paymentVal, value);
         if (value == 1) {  //cash in hand
-            $("#trBankPayment").css('display', 'none');
-            $(".trPercent").css('display', 'none');
-            $("#trPcntGrandtotal").css('display', 'none');
+            //$("#trBankPayment").css('display', 'none');
+            //$(".trPercent").css('display', 'none');
+            //$("#trPcntGrandtotal").css('display', 'none');
+            $('#divPayMethod').show();
+            $('#ddlPayMethod').val(1);
             bankPaymentId = 0;
-        } else if (value == 2) {  //banking
+        } else if (value == 2 || value == 3) {  //banking or multi pay
             showLoadingIcon();
             $.ajax({
                 type: "GET",
@@ -235,11 +401,17 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    createBankPaymentData(response);
-                    $("#trBankPayment").show();
-                    $(".trPercent").show();
-                    $("#trPcntGrandtotal").show();
-                    if (isSaleEdit && bankPaymentId != 0) $('#ddlBankPayment').val(bankPaymentId);
+                    if (value == 2) {  //banking
+                        createBankPaymentData(response);
+                        $('#divPayMethod').show();
+                        $("#trBankPayment").show();
+                        $(".trPercent").show();
+                        $("#trPcntGrandtotal").show();
+                        if (isSaleEdit && bankPaymentId != 0) $('#ddlBankPayment').val(bankPaymentId);
+                    } else if (value == 3) {  //multi pay
+                        showMultiPay();
+                        createBankPaymentMultiData(response);
+                    }
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -281,13 +453,17 @@
 
     $('#ddlPayment').change(function () {
         let val = $('#ddlPayment option:selected').val();
-        showHideByPayment(val);
+        hideByPayment();
+        showByPayment(val);
         calcAmount();
+        //$("#chkUseMultiPayMethod").prop("checked", false);   // to edit
+        //hideMultiPayMethod();
     });
 
     $('#ddlPayMethod').change(function () {
         let val = $('#ddlPayMethod option:selected').val();
-        showHideByPayMethod(val);
+        hideByPayMethod();
+        showByPayMethod(val);
         calcAmount();
     });
 
@@ -357,6 +533,15 @@
             bankPayment += '<option value="' + response[i].BankPaymentID + '">' + response[i].Name + '</option>';
         }
         $("#ddlBankPayment").append(bankPayment);
+    }
+
+    function createBankPaymentMultiData(response) {
+        let bankPayment;
+        $("#ddlBankPaymentMulti").html("");
+        for (var i = 0; i < response.length; i++) {
+            bankPayment += '<option value="' + response[i].BankPaymentID + '">' + response[i].Name + '</option>';
+        }
+        $("#ddlBankPaymentMulti").append(bankPayment);
     }
 
     $("#btnDiscountPercent").click(function (e) {
@@ -464,5 +649,291 @@
         $("#inputPaid").val('');
         $("#lblReturnChange").text('');
     }
+
+    $("#chkUseMultiPayMethod").change(function (e) {
+        var checkbox = e.target;
+        hideByPayMethod();
+
+        //clearMultiBankPay();
+        if (checkbox.checked) {
+
+            showByPayMethod(3);
+            //clearMultiPayMethod();
+            //showMultiPayMethod();
+            //getBankPayment();
+        } else {
+            showByPayMethod(1);
+        }
+    });
+
+    //function showMultiPayMethod() {
+    //    $('#divMultiPayMethod').show();
+    //    $("#divPayMethod").css('display', 'none');
+    //    if ($('.trPercent').css('display') != 'none') {
+    //        $(".trPercent").css('display', 'none');
+    //    }
+    //    if ($('#trPcntGrandtotal').css('display') != 'none') {
+    //        $("#trPcntGrandtotal").css('display', 'none');
+    //    }
+    //    $("#trCashInHand").show();
+    //    $("#trBankingTotal").show();
+    //}
+
+    //function hideMultiPayMethod() {
+    //    $('#divMultiPayMethod').css('display', 'none');
+    //    $("#divPayMethod").show();
+    //    if ($('#trBankPayment').css('display') != 'none') {
+    //        $(".trPercent").show();
+    //        $("#trPcntGrandtotal").show();
+    //    }
+    //    $("#trCashInHand").css('display', 'none');
+    //    $("#trBankingTotal").css('display', 'none');
+    //}
+
+    @*function getBankPayment() {
+        showLoadingIcon();
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetBankPaymentAction", "PaymentDialog")',
+            data: {},
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                hideLoadingIcon();
+                createBankPaymentMultiData(response);
+            },
+            failure: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            }
+        });
+    }*@
+
+            $('#inputCashInHand').keydown(function (event) {
+                if (event.which === 13) {
+                    validateMultiPayMethod();
+                }
+            });
+
+            function validateMultiPayMethod() {
+                let grandTotal = 0, advancedPay = 0;
+
+                let cashInHand;
+                if ($("#inputCashInHand").val() == null || $("#inputCashInHand").val().length == 0) cashInHand = 0;
+                else cashInHand = $("#inputCashInHand").val();
+
+                let paymentVal = $('#ddlPayment option:selected').val();
+                if (paymentVal == 1) {
+                    if ($("#inputHdnPayGrandtotal").val() == null || $("#inputHdnPayGrandtotal").val().length == 0) grandTotal = 0;
+                    else grandTotal = $("#inputHdnPayGrandtotal").val();
+                } else if (paymentVal == 2) {
+                    if ($("#inputHdnAdvancedPay").val() == null || $("#inputHdnAdvancedPay").val().length == 0) advancedPay = 0;
+                    else advancedPay = $("#inputHdnAdvancedPay").val();
+                }
+
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("ValidateMultiPayMethodAction", "Sale")',
+                    data: { "cashInHand": cashInHand, "grandTotal": grandTotal, "advancedPay": advancedPay, "payType": paymentVal },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess) {
+                            showAlertInDialog(0, response.ResultDefaultData.Message);
+                            $("#inputCashInHand").val('');
+                        } else {
+                            $("#inputHdnCashInHand").val(cashInHand);
+                            $("#lblCashInHand").text(separatedComma(parseInt(cashInHand)));
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+
+            $('#inputBankPaymentAmount').keydown(function (event) {
+                if (event.which === 13) {
+                    addBankPayMethodAmount();
+                }
+            });
+
+            function addBankPayMethodAmount() {
+                let grandTotal = 0, advancedPay = 0;
+
+                let bankPaymentId = $('#ddlBankPaymentMulti option:selected').val();
+                let bankPaymentName = $('#ddlBankPaymentMulti option:selected').text();
+
+                let paymentPercent;
+                if ($("#inputBankPaymentPercent").val() == null || $("#inputBankPaymentPercent").val().length == 0) paymentPercent = 0;
+                else paymentPercent = $("#inputBankPaymentPercent").val();
+
+                if ($("#inputBankPaymentAmount").val() == null || $("#inputBankPaymentAmount").val().length == 0) return;
+                let amount = $("#inputBankPaymentAmount").val();
+
+                let cashInHand;
+                if ($("#inputHdnCashInHand").val() == null || $("#inputHdnCashInHand").val().length == 0) cashInHand = 0;
+                else cashInHand = $("#inputHdnCashInHand").val();
+
+                let paymentVal = $('#ddlPayment option:selected').val();
+                if (paymentVal == 1) {
+                    if ($("#inputHdnPayGrandtotal").val() == null || $("#inputHdnPayGrandtotal").val().length == 0) grandTotal = 0;
+                    else grandTotal = $("#inputHdnPayGrandtotal").val();
+                } else if (paymentVal == 2) {
+                    if ($("#inputHdnAdvancedPay").val() == null || $("#inputHdnAdvancedPay").val().length == 0) advancedPay = 0;
+                    else advancedPay = $("#inputHdnAdvancedPay").val();
+                }
+
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("BankPayMethodAddAction", "Sale")',
+                    data: { "bankPaymentId": bankPaymentId, "bankPaymentName": bankPaymentName, "paymentPercent": paymentPercent, "amount": amount, "cashInHand": cashInHand, "grandTotal": grandTotal, "advancedPay": advancedPay, "payType": paymentVal },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            showAlertInDialog(0, response.ResultDefaultData.Message);
+                        else {
+                            createBankPayMethodData(response.LstMultiPayMethod);
+                            $("#inputBankPaymentPercent").val('');
+                            $("#inputBankPaymentAmount").val('');
+                            $("#inputHdnBankingTotal").val(response.BankingTotal);
+                            $("#lblBankingTotal").text(separatedComma(parseInt(response.BankingTotal)));
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+
+            function createBankPayMethodData(lstMultiPayMethod) {
+                alert(lstMultiPayMethod);
+                $("#tblBankPayment").find("tbody").empty();
+                $.each(lstMultiPayMethod, function (i, item) {
+                    let row = '<tr class="row tran-table-item-row">'
+                           + '<td style="display:none;">' + item.BankPaymentID + '</td>'
+                           + '<td class="col-md-4 col-lg-4"><label class="control-label mb-0">' + item.BankPaymentName + '</label></td>'
+                           + '<td class="col-md-3 col-lg-3 value-right"><label class="control-label mb-0">' + item.PaymentPercent + '<span class="control-span-sm">&nbsp;%</span></label></td>'
+                           + '<td class="col-md-4 col-lg-4 value-right"><label class="control-label mb-0">' + separatedComma(item.Amount) + '</label></td>'
+                           + '<td class="col-md-1 col-lg-1 value-right"><button class="btn-icon gray" title="Delete" onclick="bankPayMethodDeleteAction(3)"><i class="fa fa-remove"></i></button></td>'
+                           + '</tr>';
+                    $('#tblBankPayment tbody').append(row);
+                })
+            }
+
+            function bankPayMethodDeleteAction(value) {
+                bankPayMethodListAction = value;
+            }
+
+            $("#tblBankPayment").on("click", "tbody tr", function (event) {
+                $(this).find("td:first").each(function () {
+                    let bankPaymentId = $(this).text();
+                    if (bankPayMethodListAction == 3) {
+                        bankPayMethodListAction = 0;
+                        deleteBankPayMethod(bankPaymentId);
+                    }
+                })
+            });
+
+            function deleteBankPayMethod(bankPaymentId) {
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("BankPayMethodDeleteAction", "Sale")',
+                    data: { "bankPaymentId": bankPaymentId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            showAlertInDialog(0, response.ResultDefaultData.Message);
+                        else {
+                            createBankPayMethodData(response.LstMultiPayMethod);
+                            $("#inputHdnBankingTotal").val(response.BankingTotal);
+                            $("#lblBankingTotal").text(separatedComma(parseInt(response.BankingTotal)));
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
+
+            function clearMultiPay() {
+                $("#inputCashInHand").val('');
+                $("#inputHdnCashInHand").val('');
+                $("#lblCashInHand").text("0");
+                $("#inputHdnBankingTotal").val('');
+                $("#lblBankingTotal").text("0");
+                $("#inputBankPaymentPercent").val('');
+                $("#inputBankPaymentAmount").val('');
+
+                @*showLoadingIcon();
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("BankPayMethodClearAction", "Sale")',
+            data: {},
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                hideLoadingIcon();
+            },
+            failure: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            }
+        });*@
+            }
+
+            function clearMultiBankPay() {
+                $("#tblBankPayment").find("tbody").empty();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("BankPayMethodClearAction", "Sale")',
+                    data: {},
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            }
 
 </script>

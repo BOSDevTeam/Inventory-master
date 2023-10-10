@@ -708,15 +708,25 @@ namespace Inventory.Controllers
         public JsonResult PaymentSubmitAction(string userVoucherNo, string date, string voucherId, int customerId, int locationId,
                 int paymentId, int? payMethodId, int? limitedDayId, int? bankPaymentId, string remark, int? advancedPay,
                 int? payPercent, int? payPercentAmt, int? vouDisPercent, int? vouDisAmount, int? voucherDiscount,
-                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId, int? openBillId, int? clSaleOrderId, bool isVoucherFOC, int currencyId, int? staffId)
+                int tax, int taxAmt, int charges, int chargesAmt, int subtotal, int total, int grandtotal, int userId, int? openBillId, int? clSaleOrderId, bool isVoucherFOC, int currencyId, int? staffId,
+                bool isUseMultiPayMethod,int cashInHand)
         {
             string systemVoucherNo = "";
             ResultDefaultData resultDefaultData = new ResultDefaultData();
+
+          
 
             if (Session["TranSaleData"] != null)
             {
                 try
                 {
+                    DataTable dtMultiPayMethodSale = new DataTable();
+                    dtMultiPayMethodSale.Columns.Add(new DataColumn("PayMethodID", typeof(int)));
+                    dtMultiPayMethodSale.Columns.Add(new DataColumn("BankPaymentID", typeof(int)));
+                    dtMultiPayMethodSale.Columns.Add(new DataColumn("PaymentPercent", typeof(int)));
+                    dtMultiPayMethodSale.Columns.Add(new DataColumn("PayPercentAmt", typeof(int)));
+                    dtMultiPayMethodSale.Columns.Add(new DataColumn("Amount", typeof(int)));
+
                     List<TranSaleModels> list = Session["TranSaleData"] as List<TranSaleModels>;
                     DataTable dt = new DataTable();
                     dt.Columns.Add(new DataColumn("ProductID", typeof(int)));
@@ -747,6 +757,31 @@ namespace Inventory.Controllers
                     if (clSaleOrderId == null) clSaleOrderId = 0;
                     if (staffId == null) staffId = 0;
 
+                    if (isUseMultiPayMethod)
+                    {
+                        if (cashInHand != 0) dtMultiPayMethodSale.Rows.Add(1, 0, 0, 0, cashInHand);
+
+                        payMethodId = 3;
+                        bankPaymentId = 0;
+
+                        if (Session["MultiPayMethodData"] != null)
+                        {
+                            List<MultiPayMethodSaleModels> lstMultiPayMethodSale = Session["MultiPayMethodData"] as List<MultiPayMethodSaleModels>;
+
+                            for (int i = 0; i < lstMultiPayMethodSale.Count; i++)
+                            {
+                                int paymentPercent = lstMultiPayMethodSale[i].PaymentPercent;
+                                int amount = lstMultiPayMethodSale[i].Amount;
+                                int percentAmount = 0;
+                                if (paymentPercent != 0)
+                                {
+                                    percentAmount = (amount * paymentPercent) / 100;
+                                }
+                                dtMultiPayMethodSale.Rows.Add(2, lstMultiPayMethodSale[i].BankPaymentID, paymentPercent, percentAmount, amount);
+                            }                           
+                        }                       
+                    }
+                  
                     SqlCommand cmd = new SqlCommand(Procedure.PrcInsertSale, dataConnectorSQL.Connect());
                     cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
                     cmd.Parameters.AddWithValue("@CustomerID", customerId);
@@ -781,6 +816,7 @@ namespace Inventory.Controllers
                     cmd.Parameters.AddWithValue("@IsVoucherFOC", isVoucherFOC);
                     cmd.Parameters.AddWithValue("@AccountCode", AppConstants.SaleAccountCode);
                     cmd.Parameters.AddWithValue("@StaffID", staffId);
+                    cmd.Parameters.AddWithValue("@tempMultiPayMethodSale", dtMultiPayMethodSale);
                     cmd.CommandType = CommandType.StoredProcedure;
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read()) systemVoucherNo = Convert.ToString(reader[0]);
@@ -842,6 +878,7 @@ namespace Inventory.Controllers
         {
             MasterSaleVoucherViewModel item = selectMasterSale(saleId);
             List<TranSaleModels> lstTranSale = selectTranSaleBySaleID(saleId);
+            List<MultiPayMethodSaleModels> lstMultiPay = selectMultiPayBySaleID(saleId);
             int grandTotalNotPayPercent = 0;
                    
             if (item.MasterSaleModel.PayPercentAmt != 0)
@@ -875,7 +912,8 @@ namespace Inventory.Controllers
                 PaymentPercent = item.MasterSaleModel.PaymentPercent,
                 GrandTotalNotPayPercent = grandTotalNotPayPercent,
                 IsVouFOC = item.MasterSaleModel.IsVouFOC,
-                StaffName = item.StaffName
+                StaffName = item.StaffName,
+                LstMultiPay = lstMultiPay
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
@@ -1131,6 +1169,206 @@ namespace Inventory.Controllers
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpGet]
+        public JsonResult BankPayMethodAddAction(int bankPaymentId, string bankPaymentName, int paymentPercent, int amount,int cashInHand,int grandTotal, int advancedPay, int payType)
+        {
+            List<MultiPayMethodSaleModels> list = new List<MultiPayMethodSaleModels>();
+            MultiPayMethodSaleModels data = new MultiPayMethodSaleModels();
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+
+            data.BankPaymentID = bankPaymentId;
+            data.BankPaymentName = bankPaymentName;
+            data.PaymentPercent = paymentPercent;
+            data.Amount = amount;
+
+            if (Session["MultiPayMethodData"] != null)
+            {
+                list = Session["MultiPayMethodData"] as List<MultiPayMethodSaleModels>;
+                MultiPayMethodSaleModels existData = list.Where(x => x.BankPaymentID == bankPaymentId).SingleOrDefault();
+                if (existData == null)
+                {
+                    if(validateMultiPayMethod(cashInHand, amount, grandTotal,advancedPay,payType))
+                    {
+                        list.Add(data);
+                        resultDefaultData.IsRequestSuccess = true;
+                    }else
+                    {
+                        if (payType == 1) resultDefaultData.Message = AppConstants.Message.InvalidMultiPayByGrandTotal;
+                        else if (payType == 2) resultDefaultData.Message = AppConstants.Message.InvalidMultiPayByAdvancedPay;
+                    }               
+                }
+                else
+                {
+                    resultDefaultData.Message = AppConstants.Message.PayHasAlreadyAdd;
+                }
+            }
+            else
+            {
+                if (validateMultiPayMethod(cashInHand, amount, grandTotal, advancedPay, payType))
+                {
+                    list.Add(data);
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                else
+                {
+                    if (payType == 1) resultDefaultData.Message = AppConstants.Message.InvalidMultiPayByGrandTotal;
+                    else if (payType == 2) resultDefaultData.Message = AppConstants.Message.InvalidMultiPayByAdvancedPay;
+                }
+            }
+
+            Session["MultiPayMethodData"] = list;
+
+            var jsonResult = new
+            {
+                LstMultiPayMethod = list,
+                BankingTotal = getBankingTotal(),
+                ResultDefaultData = resultDefaultData
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult ValidateMultiPayMethodAction(int cashInHand, int grandTotal, int advancedPay, int payType)
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+
+            if (validateMultiPayMethod(cashInHand, 0, grandTotal, advancedPay, payType))
+            {
+                resultDefaultData.IsRequestSuccess = true;
+            }
+            else
+            {
+                if (payType == 1) resultDefaultData.Message = AppConstants.Message.InvalidMultiPayByGrandTotal;
+                else if (payType == 2) resultDefaultData.Message = AppConstants.Message.InvalidMultiPayByAdvancedPay;
+            }
+
+            var jsonResult = new
+            {
+                ResultDefaultData = resultDefaultData
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        private bool validateMultiPayMethod(int cashInHand,int bankPayAmt, int grandTotal,int advancedPay,int payType)
+        {
+            List<MultiPayMethodSaleModels> list = new List<MultiPayMethodSaleModels>();
+            int existingBankPayAmt = 0;
+
+            if (Session["MultiPayMethodData"] != null)
+            {
+                list = Session["MultiPayMethodData"] as List<MultiPayMethodSaleModels>;
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    existingBankPayAmt += list[i].Amount;
+                }
+            }
+
+            int totalMultiPayAmt = cashInHand + bankPayAmt + existingBankPayAmt;
+            if(payType == 1)
+            {
+                if (totalMultiPayAmt > grandTotal)
+                {
+                    return false;
+                }
+            }else if(payType == 2)
+            {
+                if (totalMultiPayAmt > advancedPay)
+                {
+                    return false;
+                }
+            }
+           
+            return true;
+        }
+
+        private int getBankingTotal()
+        {
+            List<MultiPayMethodSaleModels> list = new List<MultiPayMethodSaleModels>();
+            int bankingTotal = 0;
+
+            if (Session["MultiPayMethodData"] != null)
+            {
+                list = Session["MultiPayMethodData"] as List<MultiPayMethodSaleModels>;
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    bankingTotal += list[i].Amount;
+                }
+            }
+            return bankingTotal;
+        }
+
+        [HttpGet]
+        public JsonResult BankPayMethodDeleteAction(int bankPaymentId)
+        {
+            List<MultiPayMethodSaleModels> list = new List<MultiPayMethodSaleModels>();
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+
+            if (Session["MultiPayMethodData"] != null)
+            {
+                list = Session["MultiPayMethodData"] as List<MultiPayMethodSaleModels>;
+                for (int i = 0; i < list.Count(); i++)
+                {
+                    if (bankPaymentId == list[i].BankPaymentID)
+                    {
+                        list.RemoveAt(i);
+                        resultDefaultData.IsRequestSuccess = true;
+                    }
+                }
+            }
+            else resultDefaultData.Message = Resource.SessionExpired;
+
+            Session["MultiPayMethodData"] = list;
+
+            var jsonResult = new
+            {
+                LstMultiPayMethod = list,
+                BankingTotal = getBankingTotal(),
+                ResultDefaultData = resultDefaultData
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult BankPayMethodClearAction()
+        {
+            Session["MultiPayMethodData"] = null;
+            return Json("", JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetMultiBankPayAction(int saleId)
+        {
+            List<MultiPayMethodSaleModels> lstMultiBankPay = new List<MultiPayMethodSaleModels>();
+            MultiPayMethodSaleModels multiBankPay;
+
+            setting.conn.Open();
+            SqlCommand cmd = new SqlCommand(textQuery.getMultiPayBanking(saleId), setting.conn);
+            cmd.CommandType = CommandType.Text;
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                multiBankPay = new MultiPayMethodSaleModels();
+                multiBankPay.BankPaymentID = Convert.ToInt32(reader["BankPaymentID"]);
+                multiBankPay.BankPaymentName = Convert.ToString(reader["BankPaymentName"]);
+                multiBankPay.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
+                multiBankPay.Amount = Convert.ToInt32(reader["Amount"]);
+                //model.BankingTotal += multiBankPay.Amount;
+                lstMultiBankPay.Add(multiBankPay);
+            }
+            reader.Close();
+            Session["MultiPayMethodData"] = lstMultiBankPay;
+
+            var jsonResult = new
+            {
+                LstMultiBankPay = lstMultiBankPay
+            };
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
 
         #region OpenBillAction
@@ -1321,6 +1559,9 @@ namespace Inventory.Controllers
                 item.MasterSaleModel.CustomerID = Convert.ToInt32(reader["CustomerID"]);
                 item.MasterSaleModel.StaffID = Convert.ToInt32(reader["StaffID"]);
                 item.MasterSaleModel.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
+                if(Convert.ToInt32(reader["PayMethodID"]) == 3){
+                    item.PayMethod = AppConstants.Message.MultiPay;
+                }
             }
             reader.Close();
 
@@ -1498,7 +1739,32 @@ namespace Inventory.Controllers
             reader.Close();
 
             return list;
-        }       
+        }
+
+        private List<MultiPayMethodSaleModels> selectMultiPayBySaleID(int saleId)
+        {
+            List<MultiPayMethodSaleModels> list = new List<MultiPayMethodSaleModels>();
+            MultiPayMethodSaleModels item = new MultiPayMethodSaleModels();
+
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetMultiPayBySaleID, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@SaleID", saleId);
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new MultiPayMethodSaleModels();
+             
+                item.PayMethodID = Convert.ToInt32(reader["PayMethodID"]);
+                item.PayMethodName = Convert.ToString(reader["PayMethodName"]);
+                item.BankPaymentName = Convert.ToString(reader["BankPaymentName"]);
+                item.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
+                item.Amount = Convert.ToInt32(reader["Amount"]);
+                list.Add(item);
+            }
+            reader.Close();
+
+            return list;
+        }
 
         private SaleViewModel.MasterOpenBillViewModel selectMasterOpenBill(int openBillId)
         {        

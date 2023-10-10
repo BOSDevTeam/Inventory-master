@@ -216,6 +216,7 @@
                         hideLoadingIcon();
                         createMasterSaleDetail(response);
                         createTranSaleDetail(response);
+                        createMultiPayDetail(response);
                         $('#modalSaleDetail').modal('show');
                     },
                     failure: function (response) {

@@ -40,5 +40,8 @@ namespace Inventory.Models
         public int SlipID { get; set; }
         public bool IsVouFOC { get; set; }
         public int StaffID { get; set; }
+        public bool IsMultiPay { get; set; }
+        public int CashInHand { get; set; }
+        public int BankingTotal { get; set; }
     }
 }

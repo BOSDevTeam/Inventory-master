@@ -191,5 +191,17 @@ namespace Inventory.Common
             return "Select TownshipID,TownshipName"
             + " From STownship Where DivisionID=" + divisionId + " Order By Code";
         }
+
+        public string getMultiPayCashInHand(int saleId)
+        {
+            return "Select Amount"
+            + " From TMultiPayMethodSale Where PayMethodID=1 And SaleID=" + saleId;
+        }
+
+        public string getMultiPayBanking(int saleId)
+        {
+            return "Select ms.BankPaymentID,PaymentPercent,Amount,BankPaymentName"
+            + " From TMultiPayMethodSale ms Inner Join SBankPayment bp On ms.BankPaymentID=bp.BankPaymentID Where PayMethodID=2 And SaleID=" + saleId;
+        }
     }
 }

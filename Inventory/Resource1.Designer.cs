@@ -412,6 +412,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Banking Total.
+        /// </summary>
+        public static string BankingTotal {
+            get {
+                return ResourceManager.GetString("BankingTotal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bank/Pay.
         /// </summary>
         public static string BankPay {
@@ -1182,6 +1191,15 @@ namespace Inventory {
         public static string ModuleAccess {
             get {
                 return ResourceManager.GetString("ModuleAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multi Pay Method.
+        /// </summary>
+        public static string MultiPayMethod {
+            get {
+                return ResourceManager.GetString("MultiPayMethod", resourceCulture);
             }
         }
         
@@ -2352,6 +2370,15 @@ namespace Inventory {
         public static string UpdatedUser {
             get {
                 return ResourceManager.GetString("UpdatedUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use Multi Pay Method.
+        /// </summary>
+        public static string UseMultiPayMethod {
+            get {
+                return ResourceManager.GetString("UseMultiPayMethod", resourceCulture);
             }
         }
         

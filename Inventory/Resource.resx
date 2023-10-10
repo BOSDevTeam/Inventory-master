@@ -924,4 +924,13 @@
   <data name="SaleItemByStaffReport" xml:space="preserve">
     <value>Sale Item by Staff Report</value>
   </data>
+  <data name="MultiPayMethod" xml:space="preserve">
+    <value>Multi Pay Method</value>
+  </data>
+  <data name="UseMultiPayMethod" xml:space="preserve">
+    <value>Use Multi Pay Method</value>
+  </data>
+  <data name="BankingTotal" xml:space="preserve">
+    <value>Banking Total</value>
+  </data>
 </root>

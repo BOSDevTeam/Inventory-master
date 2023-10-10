@@ -101,6 +101,10 @@ namespace Inventory.Common
             public const string CodeDuplicate = "Code Duplicate!";
             public const string NotFoundData = "Not found data!";
             public const string SomethingWentWrong = "Something Went Wrong!";
+            public const string PayHasAlreadyAdd = "This pay has been already added!";
+            public const string InvalidMultiPayByGrandTotal = "Total Pay Amount is greater than grand total!";
+            public const string InvalidMultiPayByAdvancedPay = "Total Pay Amount is greater than advanced pay!";
+            public const string MultiPay = "Multi Pay";
         }
     }
 }
