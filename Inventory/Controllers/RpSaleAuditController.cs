@@ -24,6 +24,7 @@ namespace Inventory.Controllers
         {
             saleAuditViewModel.lstMasterSale = selectMasterSale(fromDate, toDate);
             saleAuditViewModel.lstTranSale = selectTranSale(fromDate, toDate);
+            saleAuditViewModel.lstMultiPay = selectMultiPaySale(fromDate, toDate);
             saleAuditViewModel.FromDate = fromDate;
             saleAuditViewModel.ToDate = toDate;
             return View(saleAuditViewModel);
@@ -68,6 +69,10 @@ namespace Inventory.Controllers
                 item.IsVouFOC = Convert.ToBoolean(reader["IsVouFOC"]);
                 item.VoucherFOC = Convert.ToInt32(reader["VoucherFOC"]);
                 item.CurrencyKeyword = Convert.ToString(reader["CurrencyKeyword"]);
+                if (Convert.ToInt32(reader["PayMethodID"]) == 3)
+                {
+                    item.PayMethodName = AppConstants.Message.MultiPay;
+                }
                 lstMasterSale.Add(item);
             }
             reader.Close();
@@ -103,6 +108,32 @@ namespace Inventory.Controllers
             }
             reader.Close();
             return lstTranSale;
+        }
+
+        private List<RpSaleAuditViewModel.MultiPayView> selectMultiPaySale(DateTime fromDate, DateTime toDate)
+        {
+            List<RpSaleAuditViewModel.MultiPayView> lstMultiPay = new List<RpSaleAuditViewModel.MultiPayView>();
+            RpSaleAuditViewModel.MultiPayView item = new RpSaleAuditViewModel.MultiPayView();
+
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptMultiPaySaleList, (SqlConnection)getConnection());
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@FromDate", fromDate);
+            cmd.Parameters.AddWithValue("@ToDate", toDate);
+
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new RpSaleAuditViewModel.MultiPayView();
+                item.SaleID = Convert.ToInt32(reader["SaleID"]);
+                item.PayMethodID = Convert.ToInt32(reader["PayMethodID"]);
+                item.PayMethodName = Convert.ToString(reader["PayMethodName"]);
+                item.BankPaymentName = Convert.ToString(reader["BankPaymentName"]);
+                item.PaymentPercent = Convert.ToInt32(reader["PaymentPercent"]);
+                item.Amount = Convert.ToInt32(reader["Amount"]);
+                lstMultiPay.Add(item);
+            }
+            reader.Close();
+            return lstMultiPay;
         }
 
         private object getConnection()

@@ -11,6 +11,7 @@ namespace Inventory.ViewModels
         {
             this.lstMasterSale = new List<MasterSaleView>();
             this.lstTranSale = new List<TranSaleView>();
+            this.lstMultiPay = new List<MultiPayView>();
             this.FromDate = new DateTime();
             this.ToDate = new DateTime();
         }
@@ -18,6 +19,17 @@ namespace Inventory.ViewModels
         public DateTime ToDate { get; set; }
         public List<MasterSaleView> lstMasterSale { get; set; }
         public List<TranSaleView> lstTranSale { get; set; }
+        public List<MultiPayView> lstMultiPay { get; set; }
+
+        public class MultiPayView
+        {          
+            public int SaleID { get; set; }
+            public int PayMethodID { get; set; }
+            public string PayMethodName { get; set; }          
+            public string BankPaymentName { get; set; }
+            public int PaymentPercent { get; set; }           
+            public int Amount { get; set; }
+        }
 
         public class MasterSaleView
         {

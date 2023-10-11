@@ -64,8 +64,15 @@ namespace Inventory.Controllers
                     saleModel.TaxAmount = Convert.ToInt32(reader["TaxAmt"]);
                     saleModel.ChargesAmount = Convert.ToInt32(reader["ChargesAmt"]);
                     saleModel.VouDiscount = Convert.ToInt32(reader["VoucherDiscount"]);
-                    saleModel.AdvancedPay = Convert.ToInt32(reader["AdvancedPay"]);
-                    saleModel.PayPercentAmount = Convert.ToInt32(reader["PayPercentAmt"]);
+                    saleModel.AdvancedPay = Convert.ToInt32(reader["AdvancedPay"]);                   
+                    if (Convert.ToInt32(reader["PayMethodID"]) == 3)
+                    {
+                        saleModel.PayPercentAmount = Convert.ToInt32(reader["MultiPayPercentAmt"]);
+                    }
+                    else
+                    {
+                        saleModel.PayPercentAmount = Convert.ToInt32(reader["PayPercentAmt"]);
+                    }
                     saleModel.VouFOC = Convert.ToInt32(reader["VoucherFOC"]);
                     if (saleModel.VouFOC > 0) saleModel.GrandTotal = 0;
                     else saleModel.GrandTotal = Convert.ToInt32(reader["Grandtotal"]);
@@ -88,7 +95,14 @@ namespace Inventory.Controllers
                     saleModel.ChargesAmount = Convert.ToInt32(reader["ChargesAmt"]);
                     saleModel.VouDiscount = Convert.ToInt32(reader["VoucherDiscount"]);
                     saleModel.AdvancedPay = Convert.ToInt32(reader["AdvancedPay"]);
-                    saleModel.PayPercentAmount = Convert.ToInt32(reader["PayPercentAmt"]);
+                    if (Convert.ToInt32(reader["PayMethodID"]) == 3)
+                    {
+                        saleModel.PayPercentAmount = Convert.ToInt32(reader["MultiPayPercentAmt"]);
+                    }
+                    else
+                    {
+                        saleModel.PayPercentAmount = Convert.ToInt32(reader["PayPercentAmt"]);
+                    }
                     saleModel.VouFOC = Convert.ToInt32(reader["VoucherFOC"]);
                     if (saleModel.VouFOC > 0) saleModel.GrandTotal = 0;
                     else saleModel.GrandTotal = Convert.ToInt32(reader["Grandtotal"]);

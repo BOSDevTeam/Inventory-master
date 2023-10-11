@@ -135,42 +135,71 @@
                                     @if (master.VouDisPercent != 0)
                                     {
                                         @Resource.VoucherDiscount@Resource.OpenParenthesis@master.VouDisPercent@Resource.PercentSign@Resource.CloseParenthesis@Resource.ColonSign
+
                                     }
                                     else
                                     {
                                         @Resource.VoucherDiscount@Resource.ColonSign
+
                                     }
-                                </div>
-                                <div class="col-md-6 col-lg-6 aligh-right">
-                                    <script>separatedComma(@master.VoucherDiscount);</script>
-                                </div>
-                            </div>
-                            @if (master.AdvancedPay != 0)
-                            {
-                                <div class="row">
-                                    <div class="col-md-6 col-lg-6">
-                                        @Resource.AdvancedPay@Resource.ColonSign
+                                        
                                     </div>
                                     <div class="col-md-6 col-lg-6 aligh-right">
-                                        <script>separatedComma(@master.AdvancedPay);</script>
+                                        <script>separatedComma(@master.VoucherDiscount);</script>
                                     </div>
                                 </div>
-                            }
-                            <div class="row rpt-divider">
-                                <div class="col-md-6 col-lg-6">
-                                    @Resource.Grandtotal@Resource.ColonSign
+                                @if (master.AdvancedPay != 0)
+                                {
+                                    <div class="row">
+                                        <div class="col-md-6 col-lg-6">
+                                            @Resource.AdvancedPay@Resource.ColonSign
+                                        </div>
+                                        <div class="col-md-6 col-lg-6 aligh-right">
+                                            <script>separatedComma(@master.AdvancedPay);</script>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="row rpt-divider">
+                                    <div class="col-md-6 col-lg-6">
+                                        @Resource.Grandtotal@Resource.ColonSign
+                                    </div>
+                                    <div class="col-md-6 col-lg-6 aligh-right">
+                                        @if (master.PaymentPercent != 0)
+                                        {
+                                            <script>separatedComma(@master.Grandtotal - @master.PayPercentAmt);</script>
+                                        }
+                                        else
+                                        {
+                                            <script>separatedComma(@master.Grandtotal);</script>
+                                        }
+                                    </div>
                                 </div>
-                                <div class="col-md-6 col-lg-6 aligh-right">
-                                    @if (master.PaymentPercent != 0)
-                                    {
-                                        <script>separatedComma(@master.Grandtotal - @master.PayPercentAmt);</script>
+
+                               
+                                    @foreach (var item in Model.lstMultiPay.Where(x => x.SaleID == master.SaleID).ToList() as List<RpSaleAuditViewModel.MultiPayView>)
+                                    {                                       
+                                        <div class="row" style="background-color:#eaeaea;">
+                                            <div class="col-md-6 col-lg-6">
+                                                @if (item.PayMethodID == 1)
+                                                {
+                                                    @item.PayMethodName
+                                                }
+                                                else if (item.PayMethodID == 2 && item.PaymentPercent != 0)
+                                                {
+                                                    @item.BankPaymentName@Resource.OpenParenthesis@item.PaymentPercent@Resource.PercentSign@Resource.CloseParenthesis
+                                                }
+                                                else if (item.PayMethodID == 2 && item.PaymentPercent == 0)
+                                                {
+                                                    @item.BankPaymentName
+                                                }
+                                            </div>
+                                            <div class="col-md-6 col-lg-6 aligh-right">
+                                                <script>separatedComma(@item.Amount);</script>
+                                            </div>
+                                        </div>
                                     }
-                                    else
-                                    {
-                                        <script>separatedComma(@master.Grandtotal);</script>
-                                    }
-                                </div>
-                            </div>
+                          
+
                             @if (master.PaymentPercent != 0)
                             {
                                 <div class="row">
@@ -205,11 +234,9 @@
                             }
                         </div>
                     </div>
-
                 </div>
             </div>
         }
- 
 </div>
 
 

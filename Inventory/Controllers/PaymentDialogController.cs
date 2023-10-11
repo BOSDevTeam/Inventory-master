@@ -43,8 +43,6 @@ namespace Inventory.Controllers
             }
             else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
 
-            Session["MultiPayMethodData"] = null;
-
             var jsonResult = new
             {
                 LstPayment = lstPayment,

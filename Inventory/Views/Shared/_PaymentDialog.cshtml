@@ -253,6 +253,8 @@
                 success: function (response) {
                     hideLoadingIcon();
                     createBankPayMethodData(response.LstMultiBankPay);
+                    $("#lblBankingTotal").text(separatedComma(parseInt(response.BankingTotal)));
+                    $("#inputHdnBankingTotal").val(response.BankingTotal);
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -409,6 +411,7 @@
                         $("#trPcntGrandtotal").show();
                         if (isSaleEdit && bankPaymentId != 0) $('#ddlBankPayment').val(bankPaymentId);
                     } else if (value == 3) {  //multi pay
+                        $('#ddlPayMethod').val(1);
                         showMultiPay();
                         createBankPaymentMultiData(response);
                     }
@@ -713,186 +716,185 @@
         });
     }*@
 
-            $('#inputCashInHand').keydown(function (event) {
-                if (event.which === 13) {
-                    validateMultiPayMethod();
+    $('#inputCashInHand').keydown(function (event) {
+        if (event.which === 13) {
+            validateMultiPayMethod();
+        }
+    });
+
+    function validateMultiPayMethod() {
+        let grandTotal = 0, advancedPay = 0;
+
+        let cashInHand;
+        if ($("#inputCashInHand").val() == null || $("#inputCashInHand").val().length == 0) cashInHand = 0;
+        else cashInHand = $("#inputCashInHand").val();
+
+        let paymentVal = $('#ddlPayment option:selected').val();
+        if (paymentVal == 1) {
+            if ($("#inputHdnPayGrandtotal").val() == null || $("#inputHdnPayGrandtotal").val().length == 0) grandTotal = 0;
+            else grandTotal = $("#inputHdnPayGrandtotal").val();
+        } else if (paymentVal == 2) {
+            if ($("#inputHdnAdvancedPay").val() == null || $("#inputHdnAdvancedPay").val().length == 0) advancedPay = 0;
+            else advancedPay = $("#inputHdnAdvancedPay").val();
+        }
+
+        showLoadingIcon();
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("ValidateMultiPayMethodAction", "Sale")',
+            data: { "cashInHand": cashInHand, "grandTotal": grandTotal, "advancedPay": advancedPay, "payType": paymentVal },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                hideLoadingIcon();
+                if (!response.ResultDefaultData.IsRequestSuccess) {
+                    showAlertInDialog(0, response.ResultDefaultData.Message);
+                    $("#inputCashInHand").val('');
+                } else {
+                    $("#inputHdnCashInHand").val(cashInHand);
+                    $("#lblCashInHand").text(separatedComma(parseInt(cashInHand)));
                 }
-            });
+            },
+            failure: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            }
+        });
+    }
 
-            function validateMultiPayMethod() {
-                let grandTotal = 0, advancedPay = 0;
+    $('#inputBankPaymentAmount').keydown(function (event) {
+        if (event.which === 13) {
+            addBankPayMethodAmount();
+        }
+    });
 
-                let cashInHand;
-                if ($("#inputCashInHand").val() == null || $("#inputCashInHand").val().length == 0) cashInHand = 0;
-                else cashInHand = $("#inputCashInHand").val();
+    function addBankPayMethodAmount() {
+        let grandTotal = 0, advancedPay = 0;
 
-                let paymentVal = $('#ddlPayment option:selected').val();
-                if (paymentVal == 1) {
-                    if ($("#inputHdnPayGrandtotal").val() == null || $("#inputHdnPayGrandtotal").val().length == 0) grandTotal = 0;
-                    else grandTotal = $("#inputHdnPayGrandtotal").val();
-                } else if (paymentVal == 2) {
-                    if ($("#inputHdnAdvancedPay").val() == null || $("#inputHdnAdvancedPay").val().length == 0) advancedPay = 0;
-                    else advancedPay = $("#inputHdnAdvancedPay").val();
+        let bankPaymentId = $('#ddlBankPaymentMulti option:selected').val();
+        let bankPaymentName = $('#ddlBankPaymentMulti option:selected').text();
+
+        let paymentPercent;
+        if ($("#inputBankPaymentPercent").val() == null || $("#inputBankPaymentPercent").val().length == 0) paymentPercent = 0;
+        else paymentPercent = $("#inputBankPaymentPercent").val();
+
+        if ($("#inputBankPaymentAmount").val() == null || $("#inputBankPaymentAmount").val().length == 0) return;
+        let amount = $("#inputBankPaymentAmount").val();
+
+        let cashInHand;
+        if ($("#inputHdnCashInHand").val() == null || $("#inputHdnCashInHand").val().length == 0) cashInHand = 0;
+        else cashInHand = $("#inputHdnCashInHand").val();
+
+        let paymentVal = $('#ddlPayment option:selected').val();
+        if (paymentVal == 1) {
+            if ($("#inputHdnPayGrandtotal").val() == null || $("#inputHdnPayGrandtotal").val().length == 0) grandTotal = 0;
+            else grandTotal = $("#inputHdnPayGrandtotal").val();
+        } else if (paymentVal == 2) {
+            if ($("#inputHdnAdvancedPay").val() == null || $("#inputHdnAdvancedPay").val().length == 0) advancedPay = 0;
+            else advancedPay = $("#inputHdnAdvancedPay").val();
+        }
+
+        showLoadingIcon();
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("BankPayMethodAddAction", "Sale")',
+            data: { "bankPaymentId": bankPaymentId, "bankPaymentName": bankPaymentName, "paymentPercent": paymentPercent, "amount": amount, "cashInHand": cashInHand, "grandTotal": grandTotal, "advancedPay": advancedPay, "payType": paymentVal },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                hideLoadingIcon();
+                if (!response.ResultDefaultData.IsRequestSuccess)
+                    showAlertInDialog(0, response.ResultDefaultData.Message);
+                else {
+                    createBankPayMethodData(response.LstMultiPayMethod);
+                    $("#inputBankPaymentPercent").val('');
+                    $("#inputBankPaymentAmount").val('');
+                    $("#inputHdnBankingTotal").val(response.BankingTotal);
+                    $("#lblBankingTotal").text(separatedComma(parseInt(response.BankingTotal)));
                 }
-
-                showLoadingIcon();
-                $.ajax({
-                    type: "GET",
-                    url: '@Url.Action("ValidateMultiPayMethodAction", "Sale")',
-                    data: { "cashInHand": cashInHand, "grandTotal": grandTotal, "advancedPay": advancedPay, "payType": paymentVal },
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        hideLoadingIcon();
-                        if (!response.ResultDefaultData.IsRequestSuccess) {
-                            showAlertInDialog(0, response.ResultDefaultData.Message);
-                            $("#inputCashInHand").val('');
-                        } else {
-                            $("#inputHdnCashInHand").val(cashInHand);
-                            $("#lblCashInHand").text(separatedComma(parseInt(cashInHand)));
-                        }
-                    },
-                    failure: function (response) {
-                        hideLoadingIcon();
-                        alert(response.responseText);
-                    },
-                    error: function (response) {
-                        hideLoadingIcon();
-                        alert(response.responseText);
-                    }
-                });
+            },
+            failure: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
             }
+        });
+    }
 
-            $('#inputBankPaymentAmount').keydown(function (event) {
-                if (event.which === 13) {
-                    addBankPayMethodAmount();
+    function createBankPayMethodData(lstMultiPayMethod) {
+        $("#tblBankPayment").find("tbody").empty();
+        $.each(lstMultiPayMethod, function (i, item) {
+            let row = '<tr class="row tran-table-item-row">'
+                    + '<td style="display:none;">' + item.BankPaymentID + '</td>'
+                    + '<td class="col-md-4 col-lg-4"><label class="control-label mb-0">' + item.BankPaymentName + '</label></td>'
+                    + '<td class="col-md-3 col-lg-3 value-right"><label class="control-label mb-0">' + item.PaymentPercent + '<span class="control-span-sm">&nbsp;%</span></label></td>'
+                    + '<td class="col-md-4 col-lg-4 value-right"><label class="control-label mb-0">' + separatedComma(item.Amount) + '</label></td>'
+                    + '<td class="col-md-1 col-lg-1 value-right"><button class="btn-icon gray" title="Delete" onclick="bankPayMethodDeleteAction(3)"><i class="fa fa-remove"></i></button></td>'
+                    + '</tr>';
+            $('#tblBankPayment tbody').append(row);
+        })
+    }
+
+    function bankPayMethodDeleteAction(value) {
+        bankPayMethodListAction = value;
+    }
+
+    $("#tblBankPayment").on("click", "tbody tr", function (event) {
+        $(this).find("td:first").each(function () {
+            let bankPaymentId = $(this).text();
+            if (bankPayMethodListAction == 3) {
+                bankPayMethodListAction = 0;
+                deleteBankPayMethod(bankPaymentId);
+            }
+        })
+    });
+
+    function deleteBankPayMethod(bankPaymentId) {
+        showLoadingIcon();
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("BankPayMethodDeleteAction", "Sale")',
+            data: { "bankPaymentId": bankPaymentId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                hideLoadingIcon();
+                if (!response.ResultDefaultData.IsRequestSuccess)
+                    showAlertInDialog(0, response.ResultDefaultData.Message);
+                else {
+                    createBankPayMethodData(response.LstMultiPayMethod);
+                    $("#inputHdnBankingTotal").val(response.BankingTotal);
+                    $("#lblBankingTotal").text(separatedComma(parseInt(response.BankingTotal)));
                 }
-            });
-
-            function addBankPayMethodAmount() {
-                let grandTotal = 0, advancedPay = 0;
-
-                let bankPaymentId = $('#ddlBankPaymentMulti option:selected').val();
-                let bankPaymentName = $('#ddlBankPaymentMulti option:selected').text();
-
-                let paymentPercent;
-                if ($("#inputBankPaymentPercent").val() == null || $("#inputBankPaymentPercent").val().length == 0) paymentPercent = 0;
-                else paymentPercent = $("#inputBankPaymentPercent").val();
-
-                if ($("#inputBankPaymentAmount").val() == null || $("#inputBankPaymentAmount").val().length == 0) return;
-                let amount = $("#inputBankPaymentAmount").val();
-
-                let cashInHand;
-                if ($("#inputHdnCashInHand").val() == null || $("#inputHdnCashInHand").val().length == 0) cashInHand = 0;
-                else cashInHand = $("#inputHdnCashInHand").val();
-
-                let paymentVal = $('#ddlPayment option:selected').val();
-                if (paymentVal == 1) {
-                    if ($("#inputHdnPayGrandtotal").val() == null || $("#inputHdnPayGrandtotal").val().length == 0) grandTotal = 0;
-                    else grandTotal = $("#inputHdnPayGrandtotal").val();
-                } else if (paymentVal == 2) {
-                    if ($("#inputHdnAdvancedPay").val() == null || $("#inputHdnAdvancedPay").val().length == 0) advancedPay = 0;
-                    else advancedPay = $("#inputHdnAdvancedPay").val();
-                }
-
-                showLoadingIcon();
-                $.ajax({
-                    type: "GET",
-                    url: '@Url.Action("BankPayMethodAddAction", "Sale")',
-                    data: { "bankPaymentId": bankPaymentId, "bankPaymentName": bankPaymentName, "paymentPercent": paymentPercent, "amount": amount, "cashInHand": cashInHand, "grandTotal": grandTotal, "advancedPay": advancedPay, "payType": paymentVal },
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        hideLoadingIcon();
-                        if (!response.ResultDefaultData.IsRequestSuccess)
-                            showAlertInDialog(0, response.ResultDefaultData.Message);
-                        else {
-                            createBankPayMethodData(response.LstMultiPayMethod);
-                            $("#inputBankPaymentPercent").val('');
-                            $("#inputBankPaymentAmount").val('');
-                            $("#inputHdnBankingTotal").val(response.BankingTotal);
-                            $("#lblBankingTotal").text(separatedComma(parseInt(response.BankingTotal)));
-                        }
-                    },
-                    failure: function (response) {
-                        hideLoadingIcon();
-                        alert(response.responseText);
-                    },
-                    error: function (response) {
-                        hideLoadingIcon();
-                        alert(response.responseText);
-                    }
-                });
+            },
+            failure: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
+            },
+            error: function (response) {
+                hideLoadingIcon();
+                alert(response.responseText);
             }
+        });
+    }
 
-            function createBankPayMethodData(lstMultiPayMethod) {
-                alert(lstMultiPayMethod);
-                $("#tblBankPayment").find("tbody").empty();
-                $.each(lstMultiPayMethod, function (i, item) {
-                    let row = '<tr class="row tran-table-item-row">'
-                           + '<td style="display:none;">' + item.BankPaymentID + '</td>'
-                           + '<td class="col-md-4 col-lg-4"><label class="control-label mb-0">' + item.BankPaymentName + '</label></td>'
-                           + '<td class="col-md-3 col-lg-3 value-right"><label class="control-label mb-0">' + item.PaymentPercent + '<span class="control-span-sm">&nbsp;%</span></label></td>'
-                           + '<td class="col-md-4 col-lg-4 value-right"><label class="control-label mb-0">' + separatedComma(item.Amount) + '</label></td>'
-                           + '<td class="col-md-1 col-lg-1 value-right"><button class="btn-icon gray" title="Delete" onclick="bankPayMethodDeleteAction(3)"><i class="fa fa-remove"></i></button></td>'
-                           + '</tr>';
-                    $('#tblBankPayment tbody').append(row);
-                })
-            }
-
-            function bankPayMethodDeleteAction(value) {
-                bankPayMethodListAction = value;
-            }
-
-            $("#tblBankPayment").on("click", "tbody tr", function (event) {
-                $(this).find("td:first").each(function () {
-                    let bankPaymentId = $(this).text();
-                    if (bankPayMethodListAction == 3) {
-                        bankPayMethodListAction = 0;
-                        deleteBankPayMethod(bankPaymentId);
-                    }
-                })
-            });
-
-            function deleteBankPayMethod(bankPaymentId) {
-                showLoadingIcon();
-                $.ajax({
-                    type: "GET",
-                    url: '@Url.Action("BankPayMethodDeleteAction", "Sale")',
-                    data: { "bankPaymentId": bankPaymentId },
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        hideLoadingIcon();
-                        if (!response.ResultDefaultData.IsRequestSuccess)
-                            showAlertInDialog(0, response.ResultDefaultData.Message);
-                        else {
-                            createBankPayMethodData(response.LstMultiPayMethod);
-                            $("#inputHdnBankingTotal").val(response.BankingTotal);
-                            $("#lblBankingTotal").text(separatedComma(parseInt(response.BankingTotal)));
-                        }
-                    },
-                    failure: function (response) {
-                        hideLoadingIcon();
-                        alert(response.responseText);
-                    },
-                    error: function (response) {
-                        hideLoadingIcon();
-                        alert(response.responseText);
-                    }
-                });
-            }
-
-            function clearMultiPay() {
-                $("#inputCashInHand").val('');
-                $("#inputHdnCashInHand").val('');
-                $("#lblCashInHand").text("0");
-                $("#inputHdnBankingTotal").val('');
-                $("#lblBankingTotal").text("0");
-                $("#inputBankPaymentPercent").val('');
-                $("#inputBankPaymentAmount").val('');
-
-                @*showLoadingIcon();
+    function clearMultiPay() {
+        $("#inputCashInHand").val('');
+        $("#inputHdnCashInHand").val('');
+        $("#lblCashInHand").text("0");
+        $("#inputHdnBankingTotal").val('');
+        $("#lblBankingTotal").text("0");
+        $("#inputBankPaymentPercent").val('');
+        $("#inputBankPaymentAmount").val('');
+        $("#tblBankPayment").find("tbody").empty();
+        showLoadingIcon();
         $.ajax({
             type: "GET",
             url: '@Url.Action("BankPayMethodClearAction", "Sale")',
@@ -910,30 +912,7 @@
                 hideLoadingIcon();
                 alert(response.responseText);
             }
-        });*@
-            }
-
-            function clearMultiBankPay() {
-                $("#tblBankPayment").find("tbody").empty();
-                showLoadingIcon();
-                $.ajax({
-                    type: "GET",
-                    url: '@Url.Action("BankPayMethodClearAction", "Sale")',
-                    data: {},
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        hideLoadingIcon();
-                    },
-                    failure: function (response) {
-                        hideLoadingIcon();
-                        alert(response.responseText);
-                    },
-                    error: function (response) {
-                        hideLoadingIcon();
-                        alert(response.responseText);
-                    }
-                });
-            }
+        });
+    }
 
 </script>

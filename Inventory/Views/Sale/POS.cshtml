@@ -669,12 +669,21 @@
             let total = $("#inputHdnPayTotal").val();
             let grandtotal;
             if (isBankPayment == "True" && payMethodId == 2)
-                grandtotal = $("#inputHdnPcntGrandtotal").val();
+                grandtotal = $("#inputHdnPcntGrandtotal").val();                                        
             else grandtotal = $("#inputHdnPayGrandtotal").val();
             let userId = localStorage.getItem("UserID");
             let isVoucherFOC = false;
             if ($('#chkVoucherFOC').is(":checked")) isVoucherFOC = true;
             let staffId = $('#ddlStaff option:selected').val();
+            let chkUseMultiPayMethod = document.getElementById("chkUseMultiPayMethod");
+            let isUseMultiPayMethod = false;
+            let cashInHand = 0;
+            if (chkUseMultiPayMethod.checked == true) {
+                isUseMultiPayMethod = true;
+                if ($("#inputHdnCashInHand").val().length != 0) {
+                    cashInHand = $("#inputHdnCashInHand").val();
+                }
+            }
             showLoadingIcon();
             $.ajax({
                 type: "POST",
@@ -684,7 +693,7 @@
                     "paymentId": paymentId, "payMethodId": payMethodId, "limitedDayId": limitedDayId, "bankPaymentId": bankPaymentId, "remark": remark, "advancedPay": advancedPay,
                     "payPercent": payPercent, "payPercentAmt": payPercentAmt, "vouDisPercent": vouDisPercent, "vouDisAmount": vouDisAmount, "voucherDiscount": voucherDiscount,
                     "tax": tax, "taxAmt": taxAmt, "charges": charges, "chargesAmt": chargesAmt, "subtotal": subtotal, "total": total, "grandtotal": grandtotal, "userId": userId,
-                    "isVoucherFOC": isVoucherFOC, "currencyId": currencyId, "staffId": staffId
+                    "isVoucherFOC": isVoucherFOC, "currencyId": currencyId, "staffId": staffId, "isUseMultiPayMethod": isUseMultiPayMethod, "cashInHand": cashInHand
                 }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -918,7 +927,7 @@
             let total = $("#inputHdnPayTotal").val();
             let grandtotal;
             if (isBankPayment == "True" && payMethodId == 2)
-                grandtotal = $("#inputHdnPcntGrandtotal").val();
+                grandtotal = $("#inputHdnPcntGrandtotal").val();                                         
             else grandtotal = $("#inputHdnPayGrandtotal").val();
             let userId = localStorage.getItem("UserID");
             let openBillId = $('#inputOpenBillID').val();
