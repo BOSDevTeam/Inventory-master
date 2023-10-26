@@ -34,7 +34,7 @@ namespace Inventory.Controllers
         {
             List<RpBottomSaleItemViewModel.TranSaleModels> list = new List<RpBottomSaleItemViewModel.TranSaleModels>();
             RpBottomSaleItemViewModel.TranSaleModels item = new RpBottomSaleItemViewModel.TranSaleModels();
-            SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptBottomSale, (SqlConnection) getConnection());
+            SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptBottomSaleItem, (SqlConnection) getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@fromDate", fromDate);
             cmd.Parameters.AddWithValue("@toDate", toDate);

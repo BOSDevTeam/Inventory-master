@@ -218,6 +218,21 @@ namespace Inventory.Controllers
             return View(saleViewModel);
         }
 
+        [SessionTimeoutAttribute]
+        public ActionResult SaleVoucherDesign5(string systemVoucherNo, int locationId)
+        {
+            VoucherSettingModels voucherSettingModel = appData.selectVoucherSettingByLocation(getConnection(), locationId);
+            saleViewModel.VoucherSettings = voucherSettingModel;          
+            MasterSaleVoucherViewModel masterSaleVoucherViewModel = selectMasterSale(systemVoucherNo);
+            setMasterSaleDataToViewBag(masterSaleVoucherViewModel);
+            ViewBag.Time = setting.getLocalTime();
+            List<TranSaleModels> lstTranSale = selectTranSaleBySaleID(masterSaleVoucherViewModel.MasterSaleModel.SaleID);
+            List<MultiPayMethodSaleModels> lstMultiPay = selectMultiPayBySaleID(masterSaleVoucherViewModel.MasterSaleModel.SaleID);
+            ViewData["LstTranSale"] = lstTranSale;
+            ViewData["LstMultiPay"] = lstMultiPay;
+            return View(saleViewModel);
+        }
+
         #endregion
 
         #region SaleAction     
@@ -682,6 +697,9 @@ namespace Inventory.Controllers
                         }
                     }
 
+                    // Remove all newlines from the 'remark' string variable
+                    remark = remark.Replace("\n", "").Replace("\r", "");
+
                     SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateSale, dataConnectorSQL.Connect());
                     cmd.Parameters.AddWithValue("@SaleID", saleId);
                     cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
@@ -813,7 +831,10 @@ namespace Inventory.Controllers
                             }                           
                         }                       
                     }
-                  
+
+                    // Remove all newlines from the 'remark' string variable
+                    remark = remark.Replace("\n", "").Replace("\r", "");
+
                     SqlCommand cmd = new SqlCommand(Procedure.PrcInsertSale, dataConnectorSQL.Connect());
                     cmd.Parameters.AddWithValue("@SaleDateTime", saleDateTime);
                     cmd.Parameters.AddWithValue("@CustomerID", customerId);
@@ -1393,6 +1414,7 @@ namespace Inventory.Controllers
                 lstMultiBankPay.Add(multiBankPay);
             }
             reader.Close();
+            setting.conn.Close();
             Session["MultiPayMethodData"] = lstMultiBankPay;
 
             var jsonResult = new
@@ -1548,6 +1570,7 @@ namespace Inventory.Controllers
                 item.MasterSaleModel.VoucherID = Convert.ToString(reader["VoucherID"]);
                 item.Payment = Convert.ToString(reader["Payment"]);
                 item.Remark = Convert.ToString(reader["Remark"]);
+                item.StaffName = Convert.ToString(reader["StaffName"]);
             }
             reader.Close();         
 
@@ -1722,6 +1745,7 @@ namespace Inventory.Controllers
             ViewBag.VoucherID = item.MasterSaleModel.VoucherID;
             ViewBag.Payment = item.Payment;
             ViewBag.Remark = item.Remark;
+            ViewBag.StaffName = item.StaffName;
         }
 
         private List<TranSaleModels> selectTranSaleBySaleID(int saleId)

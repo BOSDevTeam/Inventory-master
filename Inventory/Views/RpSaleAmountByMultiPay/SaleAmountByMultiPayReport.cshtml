@@ -1,0 +1,124 @@
+﻿@using Inventory.ViewModels;
+@model RpSaleAmountByMultiPayViewModel
+@{
+    Layout = "~/Views/Shared/_LayoutReportDetail.cshtml";
+}
+<head>
+    <link rel="stylesheet" type="text/css" href="~/assets/css/style.css">
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="~/assets/js/jquery-3.2.1.min.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            setReportTitle('@Resource.SaleAmountByMultiPayReport');
+            setDefaultFilter('@Model.FromDate.ToShortDateString()', '@Model.ToDate.ToShortDateString()', '');
+        });
+
+        function separatedComma(value) {
+            let iVal = parseInt(value);
+            let result = iVal.toLocaleString('en-US');
+            document.write(result);
+        }
+
+    </script>
+</head>
+
+<div>
+    <div class="row table-header">
+        <div class="col-md-4 col-lg-4">@Resource.VoucherNo</div>
+        <div class="col-md-4 col-lg-4">@Resource.SlipID</div>
+        <div class="col-md-4 col-lg-4 aligh-right">@Resource.Grandtotal</div>
+    </div>
+
+    @{
+        var list = Model.lstMultiPayAmount.Where(x => x.PayMethodID == 1 || x.MultiPayMethodID == 1).ToList() as List<RpSaleAmountByMultiPayViewModel.MultiPayAmountView>;
+        if (list.Count() != 0)
+        {
+            <div class="rpt-main-group">
+                <label class="mb-0">@Resource.CashInHand</label>
+            </div>
+        }
+        foreach (var data in list)
+        {
+            <div class="row table-item">
+                <div class="col-md-4 col-lg-4">@data.UserVoucherNo</div>
+                <div class="col-md-4 col-lg-4">@data.SlipID</div>
+                <div class="col-md-4 col-lg-4 aligh-right">
+                    @if (data.PayMethodID == 3)
+                    {
+                        <script>separatedComma(@data.MultiGrandtotal)</script>
+                    }
+                    else
+                    {
+                        <script>separatedComma(@data.Grandtotal)</script>
+                    }
+                </div>
+            </div>
+        }
+        if (list.Count() != 0)
+        {
+            <div class="row rpt-sub-total">             
+                <div class="col-md-12 col-lg-12 aligh-right">
+                    @{
+                        int grandTotal = list.Where(x => x.PayMethodID == 1).Sum(x => x.Grandtotal);
+                        int multiGrandTotal = list.Where(x => x.MultiPayMethodID == 1).Sum(x => x.MultiGrandtotal);
+                        <script>separatedComma(@grandTotal+@multiGrandTotal)</script>
+                    }                    
+                </div>
+            </div>
+        }
+    }
+
+    @foreach (var bankPayment in Model.lstBankPayment)
+    {
+        var bankPayList = Model.lstMultiPayAmount.Where(x => x.BankPaymentID == bankPayment.BankPaymentID || x.MultiBankPaymentID == bankPayment.BankPaymentID).ToList() as List<RpSaleAmountByMultiPayViewModel.MultiPayAmountView>;
+        if (bankPayList.Count() != 0)
+        {
+            <div class="rpt-main-group">
+                <label class="mb-0">@bankPayment.Name</label>
+            </div>
+        }
+        foreach (var data in bankPayList)
+        {
+            <div class="row table-item">
+                <div class="col-md-4 col-lg-4">@data.UserVoucherNo</div>
+                <div class="col-md-4 col-lg-4">@data.SlipID</div>
+                <div class="col-md-4 col-lg-4 aligh-right">
+                    @if (data.PayMethodID == 3)
+                    {
+                        <script>separatedComma(@data.MultiGrandtotal)</script>
+                    }
+                    else
+                    {
+                        <script>separatedComma(@data.Grandtotal)</script>
+                    }
+                </div>
+            </div>
+        }
+        if (bankPayList.Count() != 0)
+        {
+            <div class="row rpt-sub-total">
+                <div class="col-md-12 col-lg-12 aligh-right">
+                    @{
+                        int grandTotal = bankPayList.Where(x => x.BankPaymentID == bankPayment.BankPaymentID).Sum(x => x.Grandtotal);
+                        int multiGrandTotal = bankPayList.Where(x => x.MultiBankPaymentID == bankPayment.BankPaymentID).Sum(x => x.MultiGrandtotal);
+                        <script>separatedComma(@grandTotal+@multiGrandTotal)</script>
+                    }
+                </div>
+            </div>
+        }
+    }
+
+    <div class="row rpt-total">
+        <div class="col-md-12 col-lg-12 aligh-right">
+            @{
+                int allGrandTotal = Model.lstMultiPayAmount.Where(x => x.PayMethodID != 3).Sum(x => x.Grandtotal);
+                int allMultiGrandTotal = Model.lstMultiPayAmount.Where(x => x.PayMethodID == 3).Sum(x => x.MultiGrandtotal);
+                <script>separatedComma(@allGrandTotal+@allMultiGrandTotal)</script>
+            }
+        </div>
+    </div>
+
+</div>
+

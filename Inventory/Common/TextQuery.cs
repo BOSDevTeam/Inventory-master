@@ -27,6 +27,7 @@ namespace Inventory.Common
         public const string setupModuleQuery = "Select SetupModuleID,SetupModuleName From SysSetupModule";
         public const string entryModuleQuery = "Select EntryModuleID,EntryModuleName From SysEntryModule";
         public const string reportModuleQuery = "Select ReportModuleID,ReportModuleName From SysReportModule Order by ReportModuleGroupCode";
+        public const string permissionQuery = "Select PermissionID,PermissionName From SysPermission";
         public const string staffQuery = "Select StaffID,StaffName From SStaff";
 
         public string getSubMenuQuery(int mainMenuId)
@@ -173,6 +174,18 @@ namespace Inventory.Common
         {
             return "Select rm.ReportModuleID,ReportModuleName"
             + " From SysReportModule rm Inner Join SReportUserRight ur On rm.ReportModuleID=ur.ReportModuleID Where UserID=" + loginUserId + " And IsAllow=1 Order by ReportModuleGroupCode";
+        }
+
+        public string getPermissionAccessQuery(int userId)
+        {
+            return "Select ur.PermissionID,PermissionName,IsAllow"
+            + " From SPermissionUserRight ur Inner Join SysPermission sm ON ur.PermissionID=sm.PermissionID Where UserID=" + userId;
+        }
+
+        public string getAllowPermissionQuery(int loginUserId)
+        {
+            return "Select rm.PermissionID,PermissionName"
+            + " From SysPermission rm Inner Join SPermissionUserRight ur On rm.PermissionID=ur.PermissionID Where UserID=" + loginUserId + " And IsAllow=1";
         }
 
         public string updateSaleVoucherDesignQuery(short saleVoucherDesignType)

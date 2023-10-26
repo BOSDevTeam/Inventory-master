@@ -43,6 +43,13 @@ namespace Inventory.Controllers
                 reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuSaleAmountSummaryRp";
             }
+            else if (reportName.Equals(Resource.SaleAmountByMultiPayReport))
+            {
+                reportViewModel.ControllerName = "RpSaleAmountByMultiPay";
+                reportViewModel.ActionName = "SaleAmountByMultiPayReport";
+                reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
+                reportViewModel.HtmlActiveElementID = "subMenuSaleAmountByMultiPayRp";
+            }
             else if (reportName.Equals(Resource.SaleItemSimpleReport))
             {
                 reportViewModel.ControllerName = "RpSaleItemSimple";
@@ -297,6 +304,9 @@ namespace Inventory.Controllers
                         break;
                     case "Sale Amount Summary Report":
                         ViewBag.IsAllowSaleAmountSummary = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Sale Amount by MultiPay Report":
+                        ViewBag.IsAllowSaleAmountByMultiPay = Convert.ToBoolean(reader["IsAllow"]);
                         break;
                     case "Sale Item Simple Report":
                         ViewBag.IsAllowSaleItemSimple = Convert.ToBoolean(reader["IsAllow"]);

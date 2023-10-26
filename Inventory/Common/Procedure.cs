@@ -109,8 +109,7 @@ namespace Inventory.Common
         public const string PrcGetRptTranSaleList = "PrcGetRptTranSaleList";
         public const string PrcGetMenuData = "PrcGetMenuData";
         public const string PrcGetRptSaleItemSimple = "PrcGetRptSaleItemSample";
-        public const string PrcGetRptSaleAmountOnly = "PrcGetRptSaleAmountOnly";
-        public const string PrcGetRptSaleAmountSummary = "PrcGetRptSaleAmountSummary";
+        public const string PrcGetRptSaleAmountOnlyAndSummary = "PrcGetRptSaleAmountOnlyAndSummary";
         public const string PrcInsertCustomerOpening = "PrcInsertCustomerOpening";
         public const string PrcGetMasterCustomerOpeningList = "PrcGetMasterCustomerOpeningList";
         public const string PrcGetMasterCustomerOpeningByID = "PrcGetMasterCustomerOpeningByID";
@@ -122,7 +121,7 @@ namespace Inventory.Common
         public const string PrcGetRptSaleAmountByCustomer = "PrcGetRptSaleAmountByCustomer";
         public const string PrcGetRptBankPayment = "PrcGetRptBankPayment";
         public const string PrcGetRptTopSaleItem = "PrcGetRptTopSaleItem";
-        public const string PrcGetRptBottomSale = "PrcGetRptBottomSale";
+        public const string PrcGetRptBottomSaleItem = "PrcGetRptBottomSaleItem";
         public const string PrcInsertCustomerOutstandingPayment = "PrcInsertCustomerOutstandingPayment";
         public const string PrcUpdateCustomerOutstandingPayment = "PrcUpdateCustomerOutstandingPayment";
         public const string PrcGetCustomerOutstandingHistory = "PrcGetCustomerOutstandingHistory";
@@ -181,5 +180,8 @@ namespace Inventory.Common
         public const string PrcGetRptSaleItemByStaff = "PrcGetRptSaleItemByStaff";
         public const string PrcGetMultiPayBySaleID = "PrcGetMultiPayBySaleID";
         public const string PrcGetRptMultiPaySaleList = "PrcGetRptMultiPaySaleList";
+        public const string PrcGetRptSaleAmountByMultiPay = "PrcGetRptSaleAmountByMultiPay";
+        public const string PrcGetAccessAllowedPermission = "PrcGetAccessAllowedPermission";
+        public const string PrcUpdatePermissionUserRight = "PrcUpdatePermissionUserRight";
     }
 }

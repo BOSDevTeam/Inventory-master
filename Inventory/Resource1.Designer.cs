@@ -331,6 +331,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow this user to:.
+        /// </summary>
+        public static string AllowThisUserTo {
+            get {
+                return ResourceManager.GetString("AllowThisUserTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All Supplier.
         /// </summary>
         public static string AllSupplier {
@@ -997,6 +1006,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Item.
+        /// </summary>
+        public static string Item {
+            get {
+                return ResourceManager.GetString("Item", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Limited Day.
         /// </summary>
         public static string LimitedDay {
@@ -1447,6 +1465,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Permission Access.
+        /// </summary>
+        public static string PermissionAccess {
+            get {
+                return ResourceManager.GetString("PermissionAccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Phone.
         /// </summary>
         public static string Phone {
@@ -1645,6 +1672,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rate.
+        /// </summary>
+        public static string Rate {
+            get {
+                return ResourceManager.GetString("Rate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remark.
         /// </summary>
         public static string Remark {
@@ -1740,6 +1776,15 @@ namespace Inventory {
         public static string SaleAmountByCustomerReport {
             get {
                 return ResourceManager.GetString("SaleAmountByCustomerReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sale Amount By MultiPay Report.
+        /// </summary>
+        public static string SaleAmountByMultiPayReport {
+            get {
+                return ResourceManager.GetString("SaleAmountByMultiPayReport", resourceCulture);
             }
         }
         
@@ -2145,6 +2190,15 @@ namespace Inventory {
         public static string TechnicianSettings {
             get {
                 return ResourceManager.GetString("TechnicianSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Time.
+        /// </summary>
+        public static string Time {
+            get {
+                return ResourceManager.GetString("Time", resourceCulture);
             }
         }
         

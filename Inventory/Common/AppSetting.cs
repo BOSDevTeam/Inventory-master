@@ -49,6 +49,12 @@ namespace Inventory.Common
             return MyanmarStd;
         }
 
+        public string getLocalTime()
+        {
+            DateTime MyanmarStd = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Myanmar Standard Time");
+            return MyanmarStd.ToString("hh:mm tt");
+        }
+
         public int getCurrentMonth()
         {
             DateTime MyanmarStd = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Myanmar Standard Time");

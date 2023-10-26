@@ -971,7 +971,10 @@
                             window.location.href = '@Url.Action("SaleVoucherDesign3", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
                         } else if (saleVoucherDesignType == 4) {
                             window.location.href = '@Url.Action("SaleVoucherDesign4", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
-                        } else {
+                        } else if (saleVoucherDesignType == 5) {
+                            window.location.href = '@Url.Action("SaleVoucherDesign5", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
+                        }
+                        else {
                             window.location.href = '@Url.Action("SaleVoucher", "Sale")?systemVoucherNo=' + response.SystemVoucherNo + '&locationId=' + response.LocationID;
                         }
                     }

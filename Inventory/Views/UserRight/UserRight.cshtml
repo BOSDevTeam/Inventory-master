@@ -42,6 +42,7 @@
                 <button id="defaultOpen" class="tablinks" onclick="openModuleGroup(event, 'SetupGroup')">@Resource.SetupModuleAccess</button>
                 <button class="tablinks" onclick="openModuleGroup(event, 'EntryGroup')">@Resource.EntryModuleAccess</button>
                 <button class="tablinks" onclick="openModuleGroup(event, 'ReportGroup')">@Resource.ReportModuleAccess</button>
+                <button class="tablinks" onclick="openModuleGroup(event, 'PermissionGroup')">@Resource.PermissionAccess</button>
             </div>
          
             <div id="SetupGroup" class="tabcontent" style="border:1px solid #f3f3f3;background-color:#fff;padding:10px;margin-bottom:25px;">
@@ -63,6 +64,18 @@
                     <label class="control-label mb-0">@Resource.AccessAll &nbsp;</label><input id="chkReportAccessAll" type="checkbox" />
                 </div>
                 <div id="divReportGroup"></div>
+            </div>
+
+            <div id="PermissionGroup" class="tabcontent" style="border:1px solid #f3f3f3;background-color:#fff;padding:10px;margin-bottom:25px;">
+                <div class="row m-b-10" style="padding-right:5px;">
+                    <div class="col-md-6 col-lg-6">
+                        <label class="control-label mb-0" style="font-weight:bold;">@Resource.AllowThisUserTo</label>
+                    </div>
+                    <div class="col-md-6 col-lg-6 aligh-right">
+                        <label class="control-label mb-0">@Resource.AccessAll &nbsp;</label><input id="chkPermissionAccessAll" type="checkbox" />
+                    </div>
+                </div>               
+                <div id="divPermissionGroup"></div>
             </div>
 
             <div class="row soft-gray-background pt-1" style="bottom:0px;position:absolute;width:100%;">
@@ -90,6 +103,7 @@
         createSetupModuleAccess('', false);
         createEntryModuleAccess('', false);
         createReportModuleAccess('', false);
+        createPermissionAccess('', false);
 
         $('#btnSave').click(function () {
             if (!validateUser()) {
@@ -165,9 +179,11 @@
                         createSetupModuleAccess(response.LstSetupModuleAccess, true);
                         createEntryModuleAccess(response.LstEntryModuleAccess, true);
                         createReportModuleAccess(response.LstReportModuleAccess, true);
+                        createPermissionAccess(response.LstPermissionAccess, true);
                         $("#chkSetupAccessAll").prop('checked', false);
                         $("#chkEntryAccessAll").prop('checked', false);
                         $("#chkReportAccessAll").prop('checked', false);
+                        $("#chkPermissionAccessAll").prop('checked', false);
                     }
                 },
                 failure: function (response) {
@@ -196,6 +212,13 @@
         });
 
         $(document).on('change', '#chkReportAccessAll', function (e) {
+            let isChecked = false;
+            if (this.checked) isChecked = true;
+            else isChecked = false;
+            accessAllModuleByGroup(isChecked);
+        });
+
+        $(document).on('change', '#chkPermissionAccessAll', function (e) {
             let isChecked = false;
             if (this.checked) isChecked = true;
             else isChecked = false;
@@ -304,6 +327,40 @@
             });
         });
 
+        $(document).on('change', '.chkPermission', function (e) {
+            if (!validateUser()) {
+                showToast(0, '@Resource.SelectUser');
+                $(".chkPermission").prop('checked', false);
+                return;
+            }
+            let permissionId = $(this).val();
+            let isChecked = false;
+            if (this.checked) isChecked = true;
+            else isChecked = false;
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("AccessPermissionAction", "UserRight")',
+                data: { "userId": selectedUserId, "isChecked": isChecked, "permissionId": permissionId },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else createPermissionAccess(response.LstPermissionAccess, true);
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
     })
 
     function accessAllModuleByGroup(isChecked) {
@@ -312,6 +369,7 @@
             if (moduleType == 1) $("#chkSetupAccessAll").prop('checked', false);
             else if (moduleType == 2) $("#chkEntryAccessAll").prop('checked', false);
             else if (moduleType == 3) $("#chkReportAccessAll").prop('checked', false);
+            else if (moduleType == 4) $("#chkPermissionAccessAll").prop('checked', false);
             return;
         }
         showLoadingIcon();
@@ -329,6 +387,7 @@
                     if (moduleType == 1) createSetupModuleAccess(response.LstSetupModuleAccess, true);
                     else if (moduleType == 2) createEntryModuleAccess(response.LstEntryModuleAccess, true);
                     else if (moduleType == 3) createReportModuleAccess(response.LstReportModuleAccess, true);
+                    else if (moduleType == 4) createPermissionAccess(response.LstPermissionAccess, true);
                 }
             },
             failure: function (response) {
@@ -399,6 +458,25 @@
         });
     }
 
+    function createPermissionAccess(response, isFromJson) {
+        $('#divPermissionGroup').empty();
+        if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["PermissionAccess"]))');
+        $.each(response, function (index, item) {
+            let html = '<div id="divPermissionAccess" class="row border-bottom-white m-t-5">'
+                    + '<div id="divPermissionName" class="col-md-6 col-lg-6">'
+                    + '<label>' + item.PermissionName + '</label>'
+                    + '</div>'
+                    + '<div id="divPermissionCheck" class="col-md-6 col-lg-6 aligh-right">'
+            if (item.IsAllow) {
+                html += '<input class="chkPermission" type="checkbox" value="' + item.PermissionID + '" checked />'
+            } else {
+                html += '<input class="chkPermission" type="checkbox" value="' + item.PermissionID + '" />'
+            }
+            html += '</div></div>'
+            $('#divPermissionGroup').append(html);
+        });
+    }
+
     function validateUser() {
         if (selectedUserId == 0) return false;
         return true;
@@ -414,9 +492,11 @@
         $("#chkSetupAccessAll").prop('checked', false);
         $("#chkEntryAccessAll").prop('checked', false);
         $("#chkReportAccessAll").prop('checked', false);
+        $("#chkPermissionAccessAll").prop('checked', false);
         $(".chkSetupModule").prop('checked', false);
         $(".chkEntryModule").prop('checked', false);
         $(".chkReportModule").prop('checked', false);
+        $(".chkPermission").prop('checked', false);
     }
 
     function openModuleGroup(evt, moduleGroup) {
@@ -440,6 +520,8 @@
             moduleType = 2;
         } else if (moduleGroup == "ReportGroup") {
             moduleType = 3;
+        } else if (moduleGroup == "PermissionGroup") {
+            moduleType = 4;
         }
     }
 

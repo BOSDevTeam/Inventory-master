@@ -101,9 +101,11 @@ namespace Inventory.Controllers
                         item.ChargesAmt = Convert.ToInt32(reader["ChargesAmt"]);
                         item.VouDiscount = Convert.ToInt32(reader["VoucherDiscount"]);
                         item.AdvancedPay = Convert.ToInt32(reader["AdvancedPay"]);
-                        item.PayPercentAmt = Convert.ToInt32(reader["PayPercentAmt"]);
+                        if (Convert.ToInt32(reader["PayMethodID"]) == 3) item.PayPercentAmt = Convert.ToInt32(reader["MultiPayPercentAmt"]);
+                        else item.PayPercentAmt = Convert.ToInt32(reader["PayPercentAmt"]);
                         item.VouFOC = Convert.ToInt32(reader["VoucherFOC"]);
-                        item.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);
+                        if (item.VouFOC != 0) item.Grandtotal = 0;
+                        else item.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);                           
                         foreach (var person in lstSaleAmountBySalePerson.Where(m => m.SalePersonID == SalePerson.SalePersonID))
                         {
                             person.lstSaleItem.Add(item);
@@ -123,9 +125,11 @@ namespace Inventory.Controllers
                         item.ChargesAmt = Convert.ToInt32(reader["ChargesAmt"]);
                         item.VouDiscount = Convert.ToInt32(reader["VoucherDiscount"]);
                         item.AdvancedPay = Convert.ToInt32(reader["AdvancedPay"]);
-                        item.PayPercentAmt = Convert.ToInt32(reader["PayPercentAmt"]);
+                        if (Convert.ToInt32(reader["PayMethodID"]) == 3) item.PayPercentAmt = Convert.ToInt32(reader["MultiPayPercentAmt"]);
+                        else item.PayPercentAmt = Convert.ToInt32(reader["PayPercentAmt"]);
                         item.VouFOC = Convert.ToInt32(reader["VoucherFOC"]);
-                        item.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);
+                        if (item.VouFOC != 0) item.Grandtotal = 0;
+                        else item.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);                           
                         lst.Add(item);
                         SalePerson.lstSaleItem = lst;
                         lstSaleAmountBySalePerson.Add(SalePerson);
@@ -146,10 +150,12 @@ namespace Inventory.Controllers
                         item.ChargesAmt = Convert.ToInt32(reader["ChargesAmt"]);
                         item.VouDiscount = Convert.ToInt32(reader["VoucherDiscount"]);
                         item.AdvancedPay = Convert.ToInt32(reader["AdvancedPay"]);
-                        item.PayPercentAmt = Convert.ToInt32(reader["PayPercentAmt"]);
+                        if (Convert.ToInt32(reader["PayMethodID"]) == 3) item.PayPercentAmt = Convert.ToInt32(reader["MultiPayPercentAmt"]);
+                        else item.PayPercentAmt = Convert.ToInt32(reader["PayPercentAmt"]);
                         item.VouFOC = Convert.ToInt32(reader["VoucherFOC"]);
-                        item.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);
-                        foreach(var person in lstSaleAmountBySalePerson.Where(m => m.SalePersonID2 == SalePerson.SalePersonID2))
+                        if (item.VouFOC != 0) item.Grandtotal = 0;
+                        else item.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);                           
+                        foreach (var person in lstSaleAmountBySalePerson.Where(m => m.SalePersonID2 == SalePerson.SalePersonID2))
                         {
                             person.lstSaleItem.Add(item);
                         }
@@ -168,9 +174,11 @@ namespace Inventory.Controllers
                         item.ChargesAmt = Convert.ToInt32(reader["ChargesAmt"]);
                         item.VouDiscount = Convert.ToInt32(reader["VoucherDiscount"]);
                         item.AdvancedPay = Convert.ToInt32(reader["AdvancedPay"]);
-                        item.PayPercentAmt = Convert.ToInt32(reader["PayPercentAmt"]);
+                        if (Convert.ToInt32(reader["PayMethodID"]) == 3) item.PayPercentAmt = Convert.ToInt32(reader["MultiPayPercentAmt"]);
+                        else item.PayPercentAmt = Convert.ToInt32(reader["PayPercentAmt"]);
                         item.VouFOC = Convert.ToInt32(reader["VoucherFOC"]);
-                        item.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);
+                        if (item.VouFOC != 0) item.Grandtotal = 0;
+                        else item.Grandtotal = Convert.ToInt32(reader["Grandtotal"]);                            
                         lst.Add(item);
                         SalePerson.lstSaleItem = lst;
                         lstSaleAmountBySalePerson.Add(SalePerson);

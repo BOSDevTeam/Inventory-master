@@ -200,6 +200,7 @@
     <Compile Include="Controllers\RpPurchaseItemSimpleController.cs" />
     <Compile Include="Controllers\RpPurchaseLogController.cs" />
     <Compile Include="Controllers\RpSaleAmountByCustomerController.cs" />
+    <Compile Include="Controllers\RpSaleAmountByMultiPayController.cs" />
     <Compile Include="Controllers\RpSaleAmountBySalePersonController.cs" />
     <Compile Include="Controllers\RpSaleAmountOnlyController.cs" />
     <Compile Include="Controllers\RpSaleAmountSummaryController.cs" />
@@ -262,6 +263,7 @@
     <Compile Include="Models\CompanySettingModels.cs" />
     <Compile Include="Models\CurrencyModels.cs" />
     <Compile Include="Models\MultiPayMethodSaleModels.cs" />
+    <Compile Include="Models\PermissionModels.cs" />
     <Compile Include="Models\StaffModels.cs" />
     <Compile Include="Models\CustomerModels.cs" />
     <Compile Include="Models\DivisionModels.cs" />
@@ -509,9 +511,9 @@
     <Compile Include="ViewModels\RpPurchaseItemSimpleViewModel.cs" />
     <Compile Include="ViewModels\RpPurchaseLogViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAmountByCustomerViewModel.cs" />
+    <Compile Include="ViewModels\RpSaleAmountByMultiPayViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAmountBySalePersonViewModel.cs" />
-    <Compile Include="ViewModels\RpSaleAmountOnlyViewModel.cs" />
-    <Compile Include="ViewModels\RpSaleAmountSummaryViewModel.cs" />
+    <Compile Include="ViewModels\RpSaleAmountViewModel.cs" />
     <Compile Include="ViewModels\RpSaleAuditViewModel.cs" />
     <Compile Include="ViewModels\RpSaleItemByStaffViewModel.cs" />
     <Compile Include="ViewModels\RpSaleItemByCustomerViewModel.cs" />
@@ -554,6 +556,7 @@
     <Content Include="assets\img\SaleVoucherDesign2.png" />
     <Content Include="assets\img\SaleVoucherDesign3.png" />
     <Content Include="assets\img\SaleVoucherDesign4.png" />
+    <Content Include="assets\img\SaleVoucherDesign5.png" />
     <Content Include="assets\img\sent.png" />
     <Content Include="assets\img\user.jpg" />
     <Content Include="assets\js\app.js" />
@@ -789,6 +792,8 @@
     <Content Include="Views\Staff\StaffEntry.cshtml" />
     <Content Include="Views\Staff\StaffList.cshtml" />
     <Content Include="Views\RpSaleItemByStaff\SaleItemByStaffReport.cshtml" />
+    <Content Include="Views\Sale\SaleVoucherDesign5.cshtml" />
+    <Content Include="Views\RpSaleAmountByMultiPay\SaleAmountByMultiPayReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

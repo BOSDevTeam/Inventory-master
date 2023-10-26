@@ -43,6 +43,9 @@
         <div id="divSaleVoucherDesign4" class="divImg col-md-3 col-lg-3">
             <img src="~/assets/img/SaleVoucherDesign4.png" />
         </div>
+        <div id="divSaleVoucherDesign5" class="divImg col-md-3 col-lg-3">
+            <img src="~/assets/img/SaleVoucherDesign5.png" />
+        </div>
     </div>
 </div>
 
@@ -76,6 +79,12 @@
             saveSaleVoucherDesign(4);
         });
 
+        $('#divSaleVoucherDesign5').click(function () {
+            $('.divImg').css('background-color', 'transparent');
+            $('#divSaleVoucherDesign5').css('background-color', '#299697');
+            saveSaleVoucherDesign(5);
+        });
+
         function initializeControl() {
             let saleVoucherDesignType = localStorage.getItem("SaleVoucherDesignType");
             if (saleVoucherDesignType == 1) {
@@ -86,6 +95,8 @@
                 $('#divSaleVoucherDesign3').css('background-color', '#299697');
             } else if (saleVoucherDesignType == 4) {
                 $('#divSaleVoucherDesign4').css('background-color', '#299697');
+            } else if (saleVoucherDesignType == 5) {
+                $('#divSaleVoucherDesign5').css('background-color', '#299697');
             }
         }
 

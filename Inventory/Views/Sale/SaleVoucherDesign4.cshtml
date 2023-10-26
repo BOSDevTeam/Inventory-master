@@ -272,7 +272,7 @@
                 $.each(tranSaleList, function (index, item) {
                     let row = '<tr class="d3-voucher-table-item" style="width:100%;min-height:15px;display:flex;align-items:center;">'
                     row += '<td style="width:5%;float:left;">' + item.Number + '</td>'
-                    if (item.IsFOC == true) row += '<td class="" style="width:35%;float:left;">' + item.ProductName + '(FOC)' + '</td>'
+                    if (item.IsFOC == true) row += '<td class="" style="width:45%;float:left;">' + item.ProductName + '(FOC)' + '</td>'
                     else row += '<td class="" style="width:45%;float:left;">' + item.ProductName + '</td>'
                     row += '<td style="width:10%;float:left;" class="align-justify-center">' + item.Quantity + '<span class="d3-voucher-table-item-sm">' + item.UnitKeyword + '</span></td>'
                       + '<td style="width:20%;float:left;" class="aligh-right align-center">' + separatedComma(item.SalePrice) + '<span class="d3-voucher-table-item-sm">' + item.CurrencyKeyword + '</span></td>'

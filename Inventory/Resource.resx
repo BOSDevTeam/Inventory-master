@@ -933,4 +933,22 @@
   <data name="BankingTotal" xml:space="preserve">
     <value>Banking Total</value>
   </data>
+  <data name="Item" xml:space="preserve">
+    <value>Item</value>
+  </data>
+  <data name="Rate" xml:space="preserve">
+    <value>Rate</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="SaleAmountByMultiPayReport" xml:space="preserve">
+    <value>Sale Amount By MultiPay Report</value>
+  </data>
+  <data name="PermissionAccess" xml:space="preserve">
+    <value>Permission Access</value>
+  </data>
+  <data name="AllowThisUserTo" xml:space="preserve">
+    <value>Allow this user to:</value>
+  </data>
 </root>

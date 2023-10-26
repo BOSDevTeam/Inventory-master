@@ -23,6 +23,7 @@ namespace Inventory.Controllers
             ViewData["SetupModuleAccess"] = getSetupModule(0, isTechnician, userId);
             ViewData["EntryModuleAccess"] = getEntryModule(0, isTechnician, userId);
             ViewData["ReportModuleAccess"] = getReportModule(0,isTechnician,userId);
+            ViewData["PermissionAccess"] = getPermission(0, isTechnician, userId);
             if (isTechnician == 1)
             {
                 model.IsTechnician = 1;
@@ -62,6 +63,15 @@ namespace Inventory.Controllers
                 }
                 Session["LstReportModuleAccess"] = lstReportModuleAccess;
             }
+            if (Session["LstPermissionAccess"] != null)
+            {
+                List<PermissionModels> lstPermissionAccess = Session["LstPermissionAccess"] as List<PermissionModels>;
+                for (int i = 0; i < lstPermissionAccess.Count(); i++)
+                {
+                    lstPermissionAccess[i].IsAllow = false;
+                }
+                Session["LstPermissionAccess"] = lstPermissionAccess;
+            }
 
             return Json("", JsonRequestBehavior.AllowGet);
         }
@@ -73,15 +83,18 @@ namespace Inventory.Controllers
             List<SetupModuleModels> lstSetupModuleAccess = new List<SetupModuleModels>();
             List<EntryModuleModels> lstEntryModuleAccess = new List<EntryModuleModels>();
             List<ReportModuleModels> lstReportModuleAccess = new List<ReportModuleModels>();
+            List<PermissionModels> lstPermissionAccess = new List<PermissionModels>();
 
             try
             {
                 lstSetupModuleAccess = getSetupModule(userId, isTechnician, loginUserId);
                 lstEntryModuleAccess = getEntryModule(userId, isTechnician, loginUserId);
                 lstReportModuleAccess = getReportModule(userId,isTechnician,loginUserId);
+                lstPermissionAccess = getPermission(userId, isTechnician, loginUserId);
                 Session["LstSetupModuleAccess"] = lstSetupModuleAccess;
                 Session["LstEntryModuleAccess"] = lstEntryModuleAccess;
                 Session["LstReportModuleAccess"] = lstReportModuleAccess;
+                Session["LstPermissionAccess"] = lstPermissionAccess;
                 resultDefaultData.IsRequestSuccess = true;
             }
             catch(Exception ex)
@@ -95,7 +108,8 @@ namespace Inventory.Controllers
                 ResultDefaultData = resultDefaultData,
                 LstSetupModuleAccess = lstSetupModuleAccess,
                 LstEntryModuleAccess = lstEntryModuleAccess,
-                LstReportModuleAccess = lstReportModuleAccess
+                LstReportModuleAccess = lstReportModuleAccess,
+                LstPermissionAccess = lstPermissionAccess
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -108,6 +122,7 @@ namespace Inventory.Controllers
             List<SetupModuleModels> lstSetupModuleAccess = new List<SetupModuleModels>();
             List<EntryModuleModels> lstEntryModuleAccess = new List<EntryModuleModels>();
             List<ReportModuleModels> lstReportModuleAccess = new List<ReportModuleModels>();
+            List<PermissionModels> lstPermissionAccess = new List<PermissionModels>();
 
             if (moduleType == 1)
             {
@@ -150,13 +165,28 @@ namespace Inventory.Controllers
                 }
                 else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
             }
+            else if (moduleType == 4)
+            {
+                if (Session["LstPermissionAccess"] != null)
+                {
+                    lstPermissionAccess = Session["LstPermissionAccess"] as List<PermissionModels>;
+                    for (int i = 0; i < lstPermissionAccess.Count(); i++)
+                    {
+                        lstPermissionAccess[i].IsAllow = isChecked;
+                    }
+                    Session["LstPermissionAccess"] = lstPermissionAccess;
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
+            }
 
             var jsonResult = new
             {
                 ResultDefaultData = resultDefaultData,
                 LstSetupModuleAccess = lstSetupModuleAccess,
                 LstEntryModuleAccess = lstEntryModuleAccess,
-                LstReportModuleAccess = lstReportModuleAccess
+                LstReportModuleAccess = lstReportModuleAccess,
+                LstPermissionAccess = lstPermissionAccess
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
@@ -247,6 +277,34 @@ namespace Inventory.Controllers
         }
 
         [HttpGet]
+        public JsonResult AccessPermissionAction(int userId, bool isChecked, int permissionId)
+        {
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            List<PermissionModels> lstPermissionAccess = new List<PermissionModels>();
+
+            if (Session["LstPermissionAccess"] != null)
+            {
+                lstPermissionAccess = Session["LstPermissionAccess"] as List<PermissionModels>;
+                PermissionModels permissionModel = lstPermissionAccess.Where(x => x.PermissionID == permissionId).SingleOrDefault();
+                permissionModel.IsAllow = isChecked;
+                int index = lstPermissionAccess.FindIndex(x => x.PermissionID == permissionId);
+                lstPermissionAccess[index] = permissionModel;
+
+                Session["LstPermissionAccess"] = lstPermissionAccess;
+                resultDefaultData.IsRequestSuccess = true;
+            }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
+
+            var jsonResult = new
+            {
+                ResultDefaultData = resultDefaultData,
+                LstPermissionAccess = lstPermissionAccess
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
         public JsonResult SaveAction(int userId, short moduleType)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
@@ -324,6 +382,34 @@ namespace Inventory.Controllers
 
                     setting.conn.Open();
                     SqlCommand cmd = new SqlCommand(Procedure.PrcUpdateReportModuleUserRight, setting.conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@temptbl", dt);
+                    cmd.Connection = setting.conn;
+                    cmd.ExecuteNonQuery();
+                    setting.conn.Close();
+
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
+            }
+            else if (moduleType == 4)
+            {
+                if (Session["LstPermissionAccess"] != null)
+                {
+                    List<PermissionModels> lstPermissionAccess = Session["LstPermissionAccess"] as List<PermissionModels>;
+
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add(new DataColumn("ModuleID", typeof(int)));
+                    dt.Columns.Add(new DataColumn("IsAllow", typeof(bool)));
+
+                    for (int i = 0; i < lstPermissionAccess.Count; i++)
+                    {
+                        dt.Rows.Add(lstPermissionAccess[i].PermissionID, lstPermissionAccess[i].IsAllow);
+                    }
+
+                    setting.conn.Open();
+                    SqlCommand cmd = new SqlCommand(Procedure.PrcUpdatePermissionUserRight, setting.conn);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@UserID", userId);
                     cmd.Parameters.AddWithValue("@temptbl", dt);
@@ -485,6 +571,56 @@ namespace Inventory.Controllers
                 item = new ReportModuleModels();
                 item.ReportModuleID = Convert.ToInt32(reader["ReportModuleID"]);
                 item.ReportModuleName = Convert.ToString(reader["ReportModuleName"]);
+                if (selectedUserId != 0) item.IsAllow = Convert.ToBoolean(reader["IsAllow"]);
+                list.Add(item);
+            }
+            reader.Close();
+            setting.conn.Close();
+            return list;
+        }
+
+        private List<PermissionModels> getPermission(int selectedUserId, short isTechnician, int loginUserId)
+        {
+            List<PermissionModels> list = new List<PermissionModels>();
+            PermissionModels item;
+
+            setting.conn.Open();
+            SqlCommand cmd;
+            if (isTechnician == 1)
+            {
+                if (selectedUserId == 0)
+                {
+                    cmd = new SqlCommand(TextQuery.permissionQuery, setting.conn);
+                    cmd.CommandType = CommandType.Text;
+                }
+                else
+                {
+                    cmd = new SqlCommand(textQuery.getPermissionAccessQuery(selectedUserId), setting.conn);
+                    cmd.CommandType = CommandType.Text;
+                }
+            }
+            else
+            {
+                if (selectedUserId == 0)
+                {
+                    cmd = new SqlCommand(textQuery.getAllowPermissionQuery(loginUserId), setting.conn);
+                    cmd.CommandType = CommandType.Text;
+                }
+                else
+                {
+                    cmd = new SqlCommand(Procedure.PrcGetAccessAllowedPermission, setting.conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@LoginUserID", loginUserId);
+                    cmd.Parameters.AddWithValue("@SelectedUserID", selectedUserId);
+                }
+            }
+            cmd.Connection = setting.conn;
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                item = new PermissionModels();
+                item.PermissionID = Convert.ToInt32(reader["PermissionID"]);
+                item.PermissionName = Convert.ToString(reader["PermissionName"]);
                 if (selectedUserId != 0) item.IsAllow = Convert.ToBoolean(reader["IsAllow"]);
                 list.Add(item);
             }
