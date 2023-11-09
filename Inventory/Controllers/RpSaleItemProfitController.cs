@@ -18,13 +18,13 @@ namespace Inventory.Controllers
         {
             return View();
         }
-        public ActionResult SaleItemProfitReport(DateTime fromDate,DateTime toDate)
+        public ActionResult SaleItemProfitReport(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
             try
             {
                 SaleItemProfit.FromDate = fromDate;
                 SaleItemProfit.ToDate = fromDate;
-                SaleItemProfit.lstSaleItemProfit = GetSaleItemProfitReport(fromDate, toDate);
+                SaleItemProfit.lstSaleItemProfit = GetSaleItemProfitReport(fromDate, toDate,selectedLocationId);
             }
             catch(Exception ex)
             {
@@ -32,7 +32,7 @@ namespace Inventory.Controllers
             }
             return View(SaleItemProfit);
         }
-        private List<RpSaleItemProfitViewModel> GetSaleItemProfitReport(DateTime fromDate,DateTime toDate)
+        private List<RpSaleItemProfitViewModel> GetSaleItemProfitReport(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
             List<RpSaleItemProfitViewModel> lstSaleItemProfit = new List<RpSaleItemProfitViewModel>();
             RpSaleItemProfitViewModel item = new RpSaleItemProfitViewModel();
@@ -42,6 +42,7 @@ namespace Inventory.Controllers
             cmd.Connection = setting.conn;
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {

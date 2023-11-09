@@ -24,11 +24,11 @@ namespace Inventory.Controllers
             return View();
         }
         [SessionTimeoutAttribute]
-        public ActionResult SaleItemReport(DateTime fromDate, DateTime toDate, int paymentType)
+        public ActionResult SaleItemReport(DateTime fromDate, DateTime toDate, int paymentType, int? selectedLocationId)
         {
             try
             {
-                List<RpSaleItemViewModel.MasterSaleViewModel> lstSaleItemRpt = GetSaleItemReport(fromDate, toDate, paymentType);
+                List<RpSaleItemViewModel.MasterSaleViewModel> lstSaleItemRpt = GetSaleItemReport(fromDate, toDate, paymentType, selectedLocationId);
                 saleItemViewModel.lstMasterSaleRpt = lstSaleItemRpt;
                 saleItemViewModel.FromDate = fromDate;
                 saleItemViewModel.ToDate = toDate;
@@ -60,7 +60,7 @@ namespace Inventory.Controllers
         //    }                   
         //    return View(saleItemViewModel);
         //}
-        public List<RpSaleItemViewModel.MasterSaleViewModel>GetSaleItemReport(DateTime fromDate,DateTime toDate,int paymentType)
+        public List<RpSaleItemViewModel.MasterSaleViewModel> GetSaleItemReport(DateTime fromDate,DateTime toDate,int paymentType, int? selectedLocationId)
         {
             string code = "", productName = "", unitKeyword = "";
             int unitID = 0;
@@ -72,7 +72,8 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@fromDate", fromDate);
             cmd.Parameters.AddWithValue("@toDate", toDate);
-            cmd.Parameters.AddWithValue("@paymentType", paymentType);           
+            cmd.Parameters.AddWithValue("@paymentType", paymentType);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

@@ -62,12 +62,20 @@
             }
         </div>
     }
+    @if (Model.IsShowLocationFilter)
+    {
+        <div>
+            @{
+                Html.RenderPartial("_LocationFilter");
+            }
+        </div>
+    }
 
 </div>
 
 <script type="text/javascript">
-    let paymentType = 1,logType=1;
-    var isShowPayment = false, isShowMenu = false,isShowUserClient=false,isShowLog=false;
+    let paymentType = 1, logType = 1, selectedLocationId;
+    var isShowPayment = false, isShowMenu = false, isShowUserClient = false, isShowLog = false, isShowLocation = false;
     var subMenuIDArray = [];
     var lstUserID = [], lstClientID = [];
     $(function () {
@@ -75,24 +83,27 @@
         $('#btnViewReport').click(function () {
             let fromDate = $('#inputFromDate').val();
             let toDate = $('#inputToDate').val();
+            let link;
             if (isShowPayment==true)
             {
-                window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate +'&paymentType=' + paymentType;
+                link = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate + '&paymentType=' + paymentType;
             }
-            else if (isShowMenu == true) {               
-                window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate + '&SubMenuID=' + JSON.stringify(subMenuIDArray);               
+            else if (isShowMenu == true) {
+                link = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate + '&SubMenuID=' + JSON.stringify(subMenuIDArray);
             }
             else if (isShowUserClient == true) {
-                window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate + '&lstUserID=' + JSON.stringify(lstUserID) + '&lstClientID=' + JSON.stringify(lstClientID);
+                link = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate + '&lstUserID=' + JSON.stringify(lstUserID) + '&lstClientID=' + JSON.stringify(lstClientID);
             }
             else if (isShowLog == true) {
-                window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate + '&logType=' + logType;
+                link = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate + '&logType=' + logType;
             }
             else
             {
-                window.location.href = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate;
+                link = '@Url.Action(Model.ActionName, Model.ControllerName)?fromDate=' + fromDate + '&toDate=' + toDate;
             }
 
+            if (selectedLocationId != null) window.location.href = link + '&selectedLocationId=' + selectedLocationId;
+            else window.location.href = link;
         })
 
         $(document).ready(function () {
@@ -102,8 +113,9 @@
                 $('#inputFromDate').val(getTodayDate());
                 $('#inputToDate').val(getTodayDate());
                 isShowPayment = '@ViewBag.isShowPayment';
-                isShowMenu = '@ViewBag.isShowMenu';   
+                isShowMenu = '@ViewBag.isShowMenu';
                 isShowLog = '@ViewBag.isShowLog';
+                isShowLocation = '@ViewBag.isShowLocation';
                 if (isShowMenu == true) {
                     let menuList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.MenuData))');
                     createMenuFilter(menuList);
@@ -113,6 +125,10 @@
                     let userList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.UserData))');
                     let clientList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.ClientData))');
                     createSalePersonFilter(userList, clientList);
+                }
+                if (isShowLocation == true) {
+                    let locationList = JSON.parse('@Html.Raw(Json.Encode(ViewBag.LocationData))');
+                    createLocationFilter(locationList);
                 }
             }
 

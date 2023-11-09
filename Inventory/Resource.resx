@@ -951,4 +951,7 @@
   <data name="AllowThisUserTo" xml:space="preserve">
     <value>Allow this user to:</value>
   </data>
+  <data name="LocationFilter" xml:space="preserve">
+    <value>Location Filter</value>
+  </data>
 </root>

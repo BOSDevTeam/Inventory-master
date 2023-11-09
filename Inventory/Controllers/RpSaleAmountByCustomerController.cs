@@ -23,11 +23,11 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult SaleAmountByCustomerReport(DateTime FromDate,DateTime ToDate)
+        public ActionResult SaleAmountByCustomerReport(DateTime FromDate,DateTime ToDate, int? selectedLocationId)
         {
             try
             {
-                saleAmountByCustomerViewModel.lstRptSaleAmountByCustomer = GetSaleAmountByCustomerReport(FromDate, ToDate);
+                saleAmountByCustomerViewModel.lstRptSaleAmountByCustomer = GetSaleAmountByCustomerReport(FromDate, ToDate,selectedLocationId);
                 saleAmountByCustomerViewModel.FromDate = FromDate;
                 saleAmountByCustomerViewModel.ToDate = ToDate;
             }
@@ -37,7 +37,7 @@ namespace Inventory.Controllers
             }           
             return View(saleAmountByCustomerViewModel);
         }
-        public List<RpSaleAmountByCustomerViewModel.CustomerViewModel> GetSaleAmountByCustomerReport(DateTime fromDate,DateTime toDate)
+        public List<RpSaleAmountByCustomerViewModel.CustomerViewModel> GetSaleAmountByCustomerReport(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
             List<RpSaleAmountByCustomerViewModel.CustomerViewModel> lstSaleAmountByCustomer = new List<RpSaleAmountByCustomerViewModel.CustomerViewModel>();
             RpSaleAmountByCustomerViewModel.CustomerViewModel customerModel = new RpSaleAmountByCustomerViewModel.CustomerViewModel();
@@ -47,6 +47,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

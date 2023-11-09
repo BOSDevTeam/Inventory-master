@@ -114,14 +114,23 @@
                         + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Total) + '</td>'
                         + '<td class="col-md-1 col-lg-1 btn-group">'
                             + '<button title="View" class="btn btn-sm btn-dark" onclick="listTableAction(1)"><i class="fa fa-list"></i></button>'
-                            + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
-                            + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
-                        + '</td>'
+                if (isEditEntryModule == 'True') {
+                    row += '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
+                } else {
+                    row += '<button title="Edit" class="btn btn-sm" disabled><i class="fa fa-edit"></i></button>'
+                }
+                if (isDeleteEntryModule == 'True') {
+                    row += '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
+                } else {
+                    row += '<button title="Delete" class="btn btn-sm" disabled><i class="fa fa-remove"></i></button>'
+                }
+                row += '</td>'
                         + '<td style="display:none">' + item.PurchaseReturnID + '</td>'
                     + '</tr>'
                 $('#tblPurchaseReturnList tbody').append(row);
             });
         }
+
         $("#btnSearch").click(function (e) {
             let fromDate = $('#inputFromDate').val();
             let toDate = $('#inputToDate').val();

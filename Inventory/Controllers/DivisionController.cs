@@ -135,7 +135,7 @@ namespace Inventory.Controllers
         [HttpGet]
         public ActionResult DivisionList()
         {
-            List<DivisionModels> DivList = new List<DivisionModels>();
+            List<DivisionModels> lstDivision = new List<DivisionModels>();
             DivisionModels divisionModel = new DivisionModels();
             if (Session["SQLConnection"] != null) Session["SQLConnection"] = dataConnectorSQL.Connect();
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetDivision, (SqlConnection)Session["SQLConnection"]);
@@ -146,14 +146,16 @@ namespace Inventory.Controllers
                 divisionModel = new DivisionModels();
                 divisionModel.DivisionID = Convert.ToInt32(rd["DivisionID"]);
                 divisionModel.Code = Convert.ToString(rd["Code"]);
-                divisionModel.DivisionName = Convert.ToString(rd["DivisionName"]);
-                model.LstDivision.Add(divisionModel);
-                Session["LstDivision"] = model.LstDivision;
+                divisionModel.DivisionName = Convert.ToString(rd["DivisionName"]);              
+                lstDivision.Add(divisionModel);
+                Session["LstDivision"] = lstDivision;
             }
             rd.Close();
             dataConnectorSQL.Close();
 
-            return View(model);
+            ViewData["LstDivision"] = lstDivision;
+
+            return View();
         }
 
         [HttpGet]

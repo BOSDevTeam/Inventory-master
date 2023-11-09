@@ -85,31 +85,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for (int i = 0; i < Model.LstClient.Count(); i++)
-                    {
-                        <tr class="row table-item">
-                            <td class="col-md-3 col-lg-3">@Model.LstClient[i].ClientName</td>
-                            @*<td class="col-md-2 col-lg-2">@Model.LstClient[i].ShopName</td>*@
-                            <td class="col-md-3 col-lg-3"><divC>@Model.LstClient[i].Phone</divC></td>
-                            <td class="col-md-2 col-lg-2">@Model.LstClient[i].DivisionName</td>
-                            <td class="col-md-2 col-lg-2">@Model.LstClient[i].TownshipName</td>
-                            <td class="col-md-2 col-lg-2">
-                                <button id="btnView" class="btn btn-sm btn-dark btn-list-action" onclick="action('1')">View</button>
-                                <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('2')">Delete</button>
-                            </td>
-                            @*<td class="col-md-1 col-lg-1"><divC>@Model.LstClient[i].Address</divC></td>*@
-                           @*@if (Model.LstClient[i].IsSalePerson != true)
-                           {
-                            <td class="col-md-1 col-lg-1"></td>
-                           }
-                           else
-                           {
-                            <td class="col-md-1 col-lg-1"><divC>Sale Person</divC></td>
-                           }*@
-
-                            <td style="display:none">@Model.LstClient[i].ClientID</td>
-                        </tr>
-                    }
                 </tbody>
             </table>
         </div>
@@ -197,6 +172,8 @@
     var actionValue, clientId, vldOk;
     $(function () {
 
+        createClient('', false);
+
         $('#DivisionID').change(function () {
             var val = $('#DivisionID option:selected').val();
             showLoadingIcon();
@@ -242,7 +219,7 @@
                 success: function (response) {
                     hideLoadingIcon();
                     $("#tblClient").find("tbody").empty();
-                    createClient(response);
+                    createClient(response,true);
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -334,7 +311,7 @@
 
                     $('#modalView').modal('show');
                 }
-                else if (actionValue == 2) {
+                else if (actionValue == 3) {
                     $('#btnDelOk').val(clientId);
                     $('#modalConfirm').modal('show');    
                 }
@@ -433,7 +410,7 @@
                         addDisable();
                         showAlertInDialog(1, "Edit successfully!");
                         $("#tblClient").find("tbody").empty();
-                        createClient(response);
+                        createClient(response,true);
                         $('#modalView').modal('show');
                     },
                     failure: function (response) {
@@ -456,7 +433,9 @@
             $("#spnAlertMessage").text(message);
         }
 
-        function createClient(response) {
+        function createClient(response, isFromJson) {
+            $("#tblClient").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstClient"]))');
             $.each(response, function (i, item) {
                 var rows = "<tr class='row table-item'>"
            + "<td class='col-md-3 col-lg-3'>" + item.ClientName + "</td>"
@@ -464,8 +443,13 @@
            + "<td class='col-md-2 col-lg-2'>" + item.DivisionName + "</td>"
            + "<td class='col-md-2 col-lg-2'>" + item.TownshipName + "</td>"
            + "<td class='col-md-2 col-lg-2'>"
-           + "<button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button> <button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' onclick='action(2)'>Delete</button>"
-           + "</td>"
+           + "<button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button>" 
+                if (isDeleteSetupModule == 'True') {
+                    rows += "<button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button>"
+                } else {
+                    rows += "<button id='btnDelete' class='btn btn-sm btn-list-action disabled' style='margin-left:3px'>Delete</button>"
+                }
+                rows += "</td>"
            + "<td style='display:none'>" + item.ClientID + "</td>"
            + "</tr>";
                 $('#tblClient tbody').append(rows);

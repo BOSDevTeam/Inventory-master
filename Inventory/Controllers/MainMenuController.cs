@@ -52,7 +52,6 @@ namespace Inventory.Controllers
         public ActionResult MainMenuList()
         {                   
             MainMenuModels.MainMenuModel mainMenuModel = new MainMenuModels.MainMenuModel();
-            model.LstMainMenu = new List<MainMenuModels.MainMenuModel>();
             lstMainMenuList = new List<MainMenuModels.MainMenuModel>();
 
             foreach (var main in Entities.SMainMenus.OrderBy(m => m.SortCode))
@@ -67,10 +66,9 @@ namespace Inventory.Controllers
                     mainMenuModel.Photo = main.Photo;
                     mainMenuModel.Base64Photo = Convert.ToBase64String(main.Photo);
                 }           
-
-                model.LstMainMenu.Add(mainMenuModel);
                 lstMainMenuList.Add(mainMenuModel);
             }
+            ViewData["LstMainMenu"] = lstMainMenuList;
 
             return View(model);
         }

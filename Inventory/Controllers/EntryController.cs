@@ -17,7 +17,7 @@ namespace Inventory.Controllers
         public ActionResult Index(int userId, short isTechnician)
         {
             ViewBag.IsTechnician = isTechnician;
-            if (isTechnician == 0) selectEntryModule(userId);
+            if (isTechnician == 0) selectEntryModule(userId);         
             return View();
         }
 

@@ -45,31 +45,7 @@
                     </tr>
                 </thead>
 
-                <tbody>
-
-                    @for (int i = 0; i < Model.LstMainMenu.Count(); i++)
-                    {
-                        <tr class="row table-item">                          
-                            @if (Model.LstMainMenu[i].Base64Photo != null)
-                            {
-                                <td class="col-md-2 col-lg-2"><img src="@Url.Content("data:image/png;base64," + Model.LstMainMenu[i].Base64Photo)" id="imgPreview" style="height:20px;height:20px;" /></td>
-                            }
-                            else
-                            {
-                                <td class="col-md-2 col-lg-2"></td>
-                            }                                                   
-                            <td class="col-md-3 col-lg-3">@Model.LstMainMenu[i].MainMenuName</td>
-                            <td class="col-md-3 col-lg-3">@Model.LstMainMenu[i].Code</td>
-                            <td class="col-md-2 col-lg-2">@Model.LstMainMenu[i].SortCode</td>
-                            <td class="col-md-2 col-lg-2">
-                                <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
-                                <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
-                            </td>
-                            <td style="display:none">@Model.LstMainMenu[i].MainMenuID</td>
-                        </tr>
-                    }
-
-                </tbody>
+                <tbody></tbody>
 
             </table>
         </div>
@@ -107,6 +83,8 @@
 
     $(function () {
 
+        createMainMenuData('', false);
+
         $("#tblMainMenu").on("click", "tbody tr", function (event) {
             selectedRow = $(this).parent('tr');
             $(this).find("td:last").each(function () {
@@ -130,30 +108,7 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    $("#tblMainMenu").find("tbody").empty();
-                    $.each(response, function (i, item) {
-                        if (item.Base64Photo != null) {
-                            var rows = "<tr class='row table-item'>"
-                            + "<td class='col-md-2 col-lg-2'> " + '<img width="20px" height="20px" src="data:image/png;base64,' + item.Base64Photo + '" />' + "</td>"
-                            + "<td class='col-md-3 col-lg-3'>" + item.MainMenuName + "</td>"
-                            + "<td class='col-md-3 col-lg-3'>" + item.Code + "</td>"
-                            + "<td class='col-md-2 col-lg-2'>" + item.SortCode + "</td>"
-                            + "<td class='col-md-2 col-lg-2'><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
-                            + "<td style='display:none'>" + item.MainMenuID + "</td>"
-                            + "</tr>";
-                            $('#tblMainMenu tbody').append(rows);
-                        } else {
-                            var rows = "<tr class='row table-item'>"
-                            + "<td class='col-md-2 col-lg-2'></td>"
-                            + "<td class='col-md-3 col-lg-3'>" + item.MainMenuName + "</td>"
-                            + "<td class='col-md-3 col-lg-3'>" + item.Code + "</td>"
-                            + "<td class='col-md-2 col-lg-2'>" + item.SortCode + "</td>"
-                            + "<td class='col-md-2 col-lg-2'><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
-                            + "<td style='display:none'>" + item.MainMenuID + "</td>"
-                            + "</tr>";
-                            $('#tblMainMenu tbody').append(rows);
-                        }
-                     });
+                    createMainMenuData(response, true);                
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -165,6 +120,56 @@
                 }
             });
         });
+
+        function createMainMenuData(response, isFromJson) {
+            $("#tblMainMenu").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMainMenu"]))');
+            $.each(response, function (i, item) {
+                if (item.Base64Photo != null) {
+                    var rows = "<tr class='row table-item'>"
+                    + "<td class='col-md-2 col-lg-2'> " + '<img width="20px" height="20px" src="data:image/png;base64,' + item.Base64Photo + '" />' + "</td>"
+                    + "<td class='col-md-3 col-lg-3'>" + item.MainMenuName + "</td>"
+                    + "<td class='col-md-3 col-lg-3'>" + item.Code + "</td>"
+                    + "<td class='col-md-2 col-lg-2'>" + item.SortCode + "</td>"
+                    + "<td class='col-md-2 col-lg-2'>"
+                    if (isEditSetupModule == 'True') {
+                        rows += "<button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button>"
+                    } else {
+                        rows += "<button id='btnEdit' class='btn btn-sm btn-list-action disabled'>Edit</button>"
+                    }
+                    if (isDeleteSetupModule == 'True') {
+                        rows += "<button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button>"
+                    } else {
+                        rows += "<button id='btnDelete' class='btn btn-sm btn-list-action disabled' style='margin-left:3px'>Delete</button>"
+                    }
+                    rows += "</td>"
+                    + "<td style='display:none'>" + item.MainMenuID + "</td>"
+                    + "</tr>";
+                    $('#tblMainMenu tbody').append(rows);
+                } else {
+                    var rows = "<tr class='row table-item'>"
+                    + "<td class='col-md-2 col-lg-2'></td>"
+                    + "<td class='col-md-3 col-lg-3'>" + item.MainMenuName + "</td>"
+                    + "<td class='col-md-3 col-lg-3'>" + item.Code + "</td>"
+                    + "<td class='col-md-2 col-lg-2'>" + item.SortCode + "</td>"
+                    + "<td class='col-md-2 col-lg-2'>"
+                    if (isEditSetupModule == 'True') {
+                        rows += "<button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button>"
+                    } else {
+                        rows += "<button id='btnEdit' class='btn btn-sm btn-list-action disabled'>Edit</button>"
+                    }
+                    if (isDeleteSetupModule == 'True') {
+                        rows += "<button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button>"
+                    } else {
+                        rows += "<button id='btnDelete' class='btn btn-sm btn-list-action disabled' style='margin-left:3px'>Delete</button>"
+                    }
+                    rows += "</td>"
+                    + "<td style='display:none'>" + item.MainMenuID + "</td>"
+                    + "</tr>";
+                    $('#tblMainMenu tbody').append(rows);
+                }
+            });
+        }
 
         $("#btnDelOk").click(function () {
             showLoadingIcon();
@@ -180,10 +185,10 @@
                         if (selectedRow != null) {
                             selectedRow.remove();
                             location.reload();
-                            showToast(1, "Deleted Successfully!");                         
+                            showToast(1, "Deleted Successfully!");
                         }
                     } else if (response.DELOK == 0) {
-                        showToast(0, "This Main Menu is using! Cannot Delete!");                     
+                        showToast(0, "This Main Menu is using! Cannot Delete!");
                     }
                 },
                 failure: function (response) {

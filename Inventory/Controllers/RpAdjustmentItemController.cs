@@ -21,13 +21,13 @@ namespace Inventory.Controllers
             return View();
         }
         [SessionTimeoutAttribute]
-        public ActionResult AdjustmentItemReport(DateTime fromDate,DateTime toDate)
+        public ActionResult AdjustmentItemReport(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
             try
             {
                 adjustmentItemViewModel.FromDate = fromDate;
                 adjustmentItemViewModel.ToDate = toDate;
-                adjustmentItemViewModel.lstAdjustment = GetAdjustmentItemReport(fromDate,toDate);
+                adjustmentItemViewModel.lstAdjustment = GetAdjustmentItemReport(fromDate,toDate, selectedLocationId);
             }
             catch(Exception ex)
             {
@@ -35,7 +35,7 @@ namespace Inventory.Controllers
             }
             return View(adjustmentItemViewModel);
         }
-        public List<RpAdjustmentItemViewModel.AdjustmentTypeViewModel>GetAdjustmentItemReport(DateTime fromDate,DateTime toDate)
+        public List<RpAdjustmentItemViewModel.AdjustmentTypeViewModel> GetAdjustmentItemReport(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
             List<RpAdjustmentItemViewModel.AdjustmentTypeViewModel> lstAdjustmentType = new List<RpAdjustmentItemViewModel.AdjustmentTypeViewModel>();
             RpAdjustmentItemViewModel.AdjustmentTypeViewModel adjustType = new RpAdjustmentItemViewModel.AdjustmentTypeViewModel();
@@ -46,6 +46,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

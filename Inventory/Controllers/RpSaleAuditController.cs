@@ -20,17 +20,17 @@ namespace Inventory.Controllers
             return View();
         }
 
-        public ActionResult SaleAuditReport(DateTime fromDate, DateTime toDate)
+        public ActionResult SaleAuditReport(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
-            saleAuditViewModel.lstMasterSale = selectMasterSale(fromDate, toDate);
-            saleAuditViewModel.lstTranSale = selectTranSale(fromDate, toDate);
-            saleAuditViewModel.lstMultiPay = selectMultiPaySale(fromDate, toDate);
+            saleAuditViewModel.lstMasterSale = selectMasterSale(fromDate, toDate,selectedLocationId);
+            saleAuditViewModel.lstTranSale = selectTranSale(fromDate, toDate, selectedLocationId);
+            saleAuditViewModel.lstMultiPay = selectMultiPaySale(fromDate, toDate, selectedLocationId);
             saleAuditViewModel.FromDate = fromDate;
             saleAuditViewModel.ToDate = toDate;
             return View(saleAuditViewModel);
         }
 
-        private List<RpSaleAuditViewModel.MasterSaleView> selectMasterSale(DateTime fromDate, DateTime toDate)
+        private List<RpSaleAuditViewModel.MasterSaleView> selectMasterSale(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
             List<RpSaleAuditViewModel.MasterSaleView> lstMasterSale = new List<RpSaleAuditViewModel.MasterSaleView>();
             RpSaleAuditViewModel.MasterSaleView item = new RpSaleAuditViewModel.MasterSaleView();
@@ -39,7 +39,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;                     
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
-                        
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -79,7 +79,7 @@ namespace Inventory.Controllers
             return lstMasterSale;
         }
 
-        private List<RpSaleAuditViewModel.TranSaleView> selectTranSale(DateTime fromDate, DateTime toDate)
+        private List<RpSaleAuditViewModel.TranSaleView> selectTranSale(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
             List<RpSaleAuditViewModel.TranSaleView> lstTranSale = new List<RpSaleAuditViewModel.TranSaleView>();
             RpSaleAuditViewModel.TranSaleView item = new RpSaleAuditViewModel.TranSaleView();
@@ -88,7 +88,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
-
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
@@ -110,7 +110,7 @@ namespace Inventory.Controllers
             return lstTranSale;
         }
 
-        private List<RpSaleAuditViewModel.MultiPayView> selectMultiPaySale(DateTime fromDate, DateTime toDate)
+        private List<RpSaleAuditViewModel.MultiPayView> selectMultiPaySale(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
             List<RpSaleAuditViewModel.MultiPayView> lstMultiPay = new List<RpSaleAuditViewModel.MultiPayView>();
             RpSaleAuditViewModel.MultiPayView item = new RpSaleAuditViewModel.MultiPayView();
@@ -119,7 +119,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
-
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {

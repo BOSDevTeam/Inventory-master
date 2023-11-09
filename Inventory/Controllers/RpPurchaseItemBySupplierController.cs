@@ -27,11 +27,11 @@ namespace Inventory.Controllers
             return View();
         }
 
-        public ActionResult PurchaseItemBySupplierReport(DateTime fromDate, DateTime toDate)
+        public ActionResult PurchaseItemBySupplierReport(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
             purchaseViewModel.FromDate = fromDate;
             purchaseViewModel.ToDate = toDate;
-            List<RpPurchaseItemBySupplierViewModel.TranPurchaseModels> lstTranPurchase = GetPurchaseItemBySupplier(fromDate, toDate);
+            List<RpPurchaseItemBySupplierViewModel.TranPurchaseModels> lstTranPurchase = GetPurchaseItemBySupplier(fromDate, toDate, selectedLocationId);
             List<RpPurchaseItemBySupplierViewModel.SupplierModels> lstSupplier = GetSupplier(fromDate, toDate);
             purchaseViewModel.lstTranPurchase = lstTranPurchase;
             purchaseViewModel.lstSupplier = lstSupplier;
@@ -59,7 +59,7 @@ namespace Inventory.Controllers
             return list;
         }
 
-        private List<RpPurchaseItemBySupplierViewModel.TranPurchaseModels> GetPurchaseItemBySupplier(DateTime fromDate, DateTime toDate)
+        private List<RpPurchaseItemBySupplierViewModel.TranPurchaseModels> GetPurchaseItemBySupplier(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
             List<RpPurchaseItemBySupplierViewModel.TranPurchaseModels> list = new List<RpPurchaseItemBySupplierViewModel.TranPurchaseModels>();
             RpPurchaseItemBySupplierViewModel.TranPurchaseModels item = new RpPurchaseItemBySupplierViewModel.TranPurchaseModels();
@@ -68,6 +68,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@fromDate", fromDate);
             cmd.Parameters.AddWithValue("@toDate", toDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {

@@ -49,28 +49,7 @@
                     </tr>
                 </thead>
 
-                <tbody>
-
-                    @for (int i = 0; i < Model.LstCustomer.Count(); i++)
-                    {
-                        <tr class="row table-item">
-                            <td class="col-md-4 col-lg-4">@Model.LstCustomer[i].CustomerName</td>
-                            <td class="col-md-2 col-lg-2">@Model.LstCustomer[i].Code</td>
-                            <td class="col-md-2 col-lg-2">@Model.LstCustomer[i].DivisionName</td>
-                            <td class="col-md-2 col-lg-2">@Model.LstCustomer[i].TownshipName</td>                            
-                            @if (Model.LstCustomer[i].IsDefault != true)
-                            {
-                                <td class="col-md-2 col-lg-2">
-                                    <button id="btnView" class="btn btn-sm btn-dark btn-list-action" onclick="action('1')">View</button>
-                                    <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
-                                    <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
-                                </td>
-                            }
-                            <td style="display:none">@Model.LstCustomer[i].CustomerID</td>
-                        </tr>
-                    }
-
-                </tbody>
+                <tbody></tbody>
 
             </table>
         </div>
@@ -166,6 +145,8 @@
 
     $(function () {
 
+        createCustomerData('', false);
+
         $('#DivisionID').change(function () {
             var val = $('#DivisionID option:selected').val();
             showLoadingIcon();
@@ -220,7 +201,7 @@
                                 $('#cusname').show();
                                 $('#lblCustomerName').text(response.CustomerName).hide();
                             }
-                            if (response.Code != null) {                           
+                            if (response.Code != null) {
                                 $('#code').hide();
                                 $('#lblCode').text(response.Code).show();
                             }
@@ -267,7 +248,7 @@
                             else {
                                 $('#township').show();
                                 $('#lblTownship').text(response.TownshipName).hide();
-                            }                  
+                            }
                             if (response.DivisionName != null) {
                                 $('#division').hide();
                                 $('#lblDivision').text(response.DivisionName).show();
@@ -284,7 +265,7 @@
                                 $('#credit').show();
                                 $('#lblCredit').text(response.Credit).hide();
                             }
-                            
+
                             $('#modalView').modal('show');
                         },
                         failure: function (response) {
@@ -318,29 +299,7 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    $("#tblCustomer").find("tbody").empty();
-                    $.each(response, function (i, item) {
-                            if (item.IsDefault != true) {
-                                var rows = "<tr class='row table-item'>"
-                                + "<td class='col-md-4 col-lg-4'>" + item.CustomerName + "</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
-                                +"<td class='col-md-2 col-lg-2'>"+ item.DivisionName +"</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.TownshipName + "</td>"
-                                + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:3px' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
-                                + "<td style='display:none'>" + item.CustomerID + "</td>"
-                                + "</tr>";
-                                $('#tblCustomer tbody').append(rows);
-                            } else {
-                                var rows = "<tr class='row table-item'>"
-                                + "<td class='col-md-4 col-lg-4'>" + item.CustomerName + "</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
-                                +"<td class='col-md-2 col-lg-2'>"+ item.DivisionName+"</td>"
-                                + "<td class='col-md-2 col-lg-2'>" + item.TownshipName + "</td>"
-                                + "<td style='display:none'>" + item.CustomerID + "</td>"
-                                + "</tr>";
-                                $('#tblCustomer tbody').append(rows);
-                            }
-                    });
+                    createCustomerData(response, true);                    
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -352,6 +311,44 @@
                 }
             });
         });
+
+        function createCustomerData(response, isFromJson) {
+            $("#tblCustomer").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstCustomer"]))');
+            $.each(response, function (i, item) {
+                if (item.IsDefault != true) {
+                    var rows = "<tr class='row table-item'>"
+                    + "<td class='col-md-4 col-lg-4'>" + item.CustomerName + "</td>"
+                    + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
+                    + "<td class='col-md-2 col-lg-2'>" + item.DivisionName + "</td>"
+                    + "<td class='col-md-2 col-lg-2'>" + item.TownshipName + "</td>"
+                    + "<td class='col-md-2 col-lg-2'><button id='btnView' class='btn btn-sm btn-dark btn-list-action' onclick='action(1)'>View</button>"
+                    if (isEditSetupModule == 'True') {
+                        rows += "<button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' style='margin-left:3px' onclick='action(2)'>Edit</button>"
+                    } else {
+                        rows += "<button id='btnEdit' class='btn btn-sm btn-list-action disabled' style='margin-left:3px'>Edit</button>"
+                    }
+                    if (isDeleteSetupModule == 'True') {
+                        rows += "<button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button>"
+                    } else {
+                        rows += "<button id='btnDelete' class='btn btn-sm btn-list-action disabled' style='margin-left:3px'>Delete</button>"
+                    }
+                    rows += "</td>"
+                    + "<td style='display:none'>" + item.CustomerID + "</td>"
+                    + "</tr>";
+                    $('#tblCustomer tbody').append(rows);
+                } else {
+                    var rows = "<tr class='row table-item'>"
+                    + "<td class='col-md-4 col-lg-4'>" + item.CustomerName + "</td>"
+                    + "<td class='col-md-2 col-lg-2'>" + item.Code + "</td>"
+                    + "<td class='col-md-2 col-lg-2'>" + item.DivisionName + "</td>"
+                    + "<td class='col-md-2 col-lg-2'>" + item.TownshipName + "</td>"
+                    + "<td style='display:none'>" + item.CustomerID + "</td>"
+                    + "</tr>";
+                    $('#tblCustomer tbody').append(rows);
+                }
+            });
+        }
 
         $("#btnDelOk").click(function () {
             showLoadingIcon();

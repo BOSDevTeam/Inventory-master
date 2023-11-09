@@ -44,22 +44,7 @@
                     </tr>
                 </thead>
 
-                <tbody>
-
-                    @for (int i = 0; i < Model.LstBankPayment.Count(); i++)
-                    {
-                        <tr class="row table-item">
-                            <td class="col-md-5 col-lg-5">@Model.LstBankPayment[i].Name</td>
-                            <td class="col-md-5 col-lg-5">@Model.LstBankPayment[i].BankName</td>
-                            <td class="col-md-2 col-lg-2">
-                                <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
-                                <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
-                            </td>
-                            <td style="display:none">@Model.LstBankPayment[i].BankPaymentID</td>
-                        </tr>
-                    }
-
-                </tbody>
+                <tbody></tbody>
 
             </table>
         </div>
@@ -97,6 +82,8 @@
 
     $(function () {
 
+        createBankPaymentData('', false);
+
         $("#tblBankPayment").on("click", "tbody tr", function (event) {
             selectedRow = $(this).parent('tr');
             $(this).find("td:last").each(function () {
@@ -121,16 +108,7 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    $("#tblBankPayment").find("tbody").empty();
-                    $.each(response.LstBankPayment, function (i, item) {
-                        var rows = "<tr class='row table-item'>"
-                        + "<td class='col-md-5 col-lg-5'>" + item.Name + "</td>"
-                        + "<td class='col-md-5 col-lg-5'>" + item.BankName + "</td>"
-                        + "<td class='col-md-2 col-lg-2'><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
-                        + "<td style='display:none'>" + item.BankID + "</td>"
-                        + "</tr>";
-                        $('#tblBankPayment tbody').append(rows);
-                     });
+                    createBankPaymentData(response.LstBankPayment, true);                   
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -142,6 +120,31 @@
                 }
             });
         });
+
+        function createBankPaymentData(response, isFromJson) {
+            $("#tblBankPayment").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstBankPayment"]))');
+            $.each(response, function (i, item) {
+                var rows = "<tr class='row table-item'>"
+                + "<td class='col-md-5 col-lg-5'>" + item.Name + "</td>"
+                + "<td class='col-md-5 col-lg-5'>" + item.BankName + "</td>"
+                + "<td class='col-md-2 col-lg-2'>"
+                if (isEditSetupModule == 'True') {
+                    rows += "<button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button>"
+                } else {
+                    rows += "<button id='btnEdit' class='btn btn-sm btn-list-action disabled'>Edit</button>"
+                }
+                if (isDeleteSetupModule == 'True') {
+                    rows += "<button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button>"
+                } else {
+                    rows += "<button id='btnDelete' class='btn btn-sm btn-list-action disabled' style='margin-left:3px'>Delete</button>"
+                }
+                rows += "</td>"
+                + "<td style='display:none'>" + item.BankID + "</td>"
+                + "</tr>";
+                $('#tblBankPayment tbody').append(rows);
+            });
+        }
 
         $("#btnDelOk").click(function () {
             showLoadingIcon();

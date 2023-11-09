@@ -385,7 +385,7 @@ namespace Inventory.Controllers
                         dataLog.UnitID = data.UnitID;
                         dataLog.CurrencyID = data.CurrencyID;
                         dataLog.DiscountPercent = data.DiscountPercent;
-                        dataLog.IsFOC = data.IsFOC;                       
+                        dataLog.IsFOC = data.IsFOC;
                         if (!data.IsNewTran) setLog(AppConstants.DeleteActionCode, dataLog, data, number);
                     }
                     lstTranSale.RemoveAt(number - 1);

@@ -69,6 +69,7 @@ namespace Inventory.Controllers
             }
             reader.Close();
             dataConnectorSQL.Close();
+            ViewData["LstBank"] = model.LstBank;
 
             //if (tempList.Count > common.pageSize)
             //{

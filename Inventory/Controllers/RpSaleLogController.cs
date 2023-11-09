@@ -18,9 +18,9 @@ namespace Inventory.Controllers
         {
             return View();
         }
-        public ActionResult SaleLogReport(DateTime fromDate,DateTime toDate,int logType)
+        public ActionResult SaleLogReport(DateTime fromDate,DateTime toDate,int logType, int? selectedLocationId)
         {
-            SaleLog.lstMasterSaleLog = GetSaleLogData(fromDate, toDate, logType);
+            SaleLog.lstMasterSaleLog = GetSaleLogData(fromDate, toDate, logType,selectedLocationId);
             try
             {
                 SaleLog.FromDate = fromDate;
@@ -34,7 +34,7 @@ namespace Inventory.Controllers
             }
             return View(SaleLog);
         }
-        private List<RpSaleLogViewModel.MasterSaleLogViewModel>GetSaleLogData(DateTime fromDate,DateTime toDate,int logType)
+        private List<RpSaleLogViewModel.MasterSaleLogViewModel> GetSaleLogData(DateTime fromDate,DateTime toDate,int logType, int? selectedLocationId)
         {
             List<RpSaleLogViewModel.MasterSaleLogViewModel> lstMasterSaleLog = new List<RpSaleLogViewModel.MasterSaleLogViewModel>();
             List<RpSaleLogViewModel.SaleLogViewModel> lstSaleLog = new List<RpSaleLogViewModel.SaleLogViewModel>();
@@ -47,6 +47,7 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
             cmd.Parameters.AddWithValue("@LogType", logType);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {

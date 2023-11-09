@@ -32,5 +32,6 @@ namespace Inventory
         public Nullable<bool> IsLimitUser { get; set; }
         public Nullable<short> LimitedUserCount { get; set; }
         public Nullable<short> SaleVoucherDesignType { get; set; }
+        public string ShopTypeCode { get; set; }
     }
 }

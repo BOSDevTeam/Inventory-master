@@ -140,7 +140,7 @@
 
     <script>
         var isMultiCurrency = false, isMultiUnit = false, isBankPayment = false,
-            userId = 0, userName, isTechnician = 0;
+            userId = 0, userName, isTechnician = 0, isEditSetupModule = false, isDeleteSetupModule = false;
 
         isMultiCurrency = localStorage.getItem("IsMultiCurrency");
         isMultiUnit = localStorage.getItem("IsMultiUnit");
@@ -148,6 +148,8 @@
         userId = localStorage.getItem("UserID");
         userName = localStorage.getItem("UserName");
         isTechnician = localStorage.getItem("IsTechnician");
+        isEditSetupModule = localStorage.getItem("IsEditSetupModule");
+        isDeleteSetupModule = localStorage.getItem("IsDeleteSetupModule");
 
         $("#loginUser").text(userName);
 

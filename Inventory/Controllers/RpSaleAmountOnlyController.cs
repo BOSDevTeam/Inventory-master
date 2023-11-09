@@ -20,17 +20,17 @@ namespace Inventory.Controllers
             return View();
         }
 
-        public ActionResult SaleAmountOnlyReport(DateTime fromDate, DateTime toDate)
+        public ActionResult SaleAmountOnlyReport(DateTime fromDate, DateTime toDate,int? selectedLocationId)
         {
             saleAmountViewModel = new RpSaleAmountViewModel();
-            List<RpSaleAmountViewModel.MasterSaleView> lstSaleReport = GetSaleReport(fromDate, toDate);           
+            List<RpSaleAmountViewModel.MasterSaleView> lstSaleReport = GetSaleReport(fromDate, toDate,selectedLocationId);           
             saleAmountViewModel.FromDate = fromDate;
             saleAmountViewModel.ToDate = toDate;
             saleAmountViewModel.lstMasterSaleRpt = lstSaleReport;       
             return View(saleAmountViewModel);
         }     
 
-        private List<RpSaleAmountViewModel.MasterSaleView> GetSaleReport(DateTime fromDate, DateTime toDate)
+        private List<RpSaleAmountViewModel.MasterSaleView> GetSaleReport(DateTime fromDate, DateTime toDate,int? selectedLocationId)
         {
             List<RpSaleAmountViewModel.MasterSaleView> list = new List<RpSaleAmountViewModel.MasterSaleView>();
             RpSaleAmountViewModel.MasterSaleView item = new RpSaleAmountViewModel.MasterSaleView();
@@ -38,6 +38,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@fromDate", fromDate);
             cmd.Parameters.AddWithValue("@toDate", toDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {

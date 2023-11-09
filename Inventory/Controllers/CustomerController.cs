@@ -58,8 +58,7 @@ namespace Inventory.Controllers
             GetDivisionDefaultInclude();
             GetTownshipDefaultInclude();
 
-            CustomerModels.CustomerModel customerModel = new CustomerModels.CustomerModel();
-            model.LstCustomer = new List<CustomerModels.CustomerModel>();
+            CustomerModels.CustomerModel customerModel = new CustomerModels.CustomerModel();            
             lstCustomerList = new List<CustomerModels.CustomerModel>();
 
             foreach (var customer in Entities.PrcGetCustomer())
@@ -78,13 +77,11 @@ namespace Inventory.Controllers
                 customerModel.Email = customer.Email;
                 customerModel.TownshipID = customer.TownshipID;
                 customerModel.TownshipName = customer.TownshipName;
-                customerModel.DivisionID = Convert.ToInt32(customer.DivisionID);
-                //GetTownshipByDivision(customer.DivisionID);
-                customerModel.DivisionName = customer.DivisionName;
-
-                model.LstCustomer.Add(customerModel);
+                customerModel.DivisionID = Convert.ToInt32(customer.DivisionID);              
+                customerModel.DivisionName = customer.DivisionName;               
                 lstCustomerList.Add(customerModel);
             }
+            ViewData["LstCustomer"] = lstCustomerList;
 
             return View(model);
         }

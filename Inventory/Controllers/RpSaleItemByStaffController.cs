@@ -16,11 +16,11 @@ namespace Inventory.Controllers
         AppSetting setting = new AppSetting();
         RpSaleItemByStaffViewModel SaleItemByStaffViewModel = new RpSaleItemByStaffViewModel();
 
-        public ActionResult SaleItemByStaffReport(DateTime FromDate, DateTime ToDate)
+        public ActionResult SaleItemByStaffReport(DateTime FromDate, DateTime ToDate, int? selectedLocationId)
         {
             try
             {
-                SaleItemByStaffViewModel.lstRptSaleItemByStaff = GetSaleItemByStaffReport(FromDate, ToDate);
+                SaleItemByStaffViewModel.lstRptSaleItemByStaff = GetSaleItemByStaffReport(FromDate, ToDate,selectedLocationId);
                 SaleItemByStaffViewModel.FromDate = FromDate;
                 SaleItemByStaffViewModel.ToDate = ToDate;
             }
@@ -31,7 +31,7 @@ namespace Inventory.Controllers
             return View(SaleItemByStaffViewModel);
         }
 
-        public List<RpSaleItemByStaffViewModel.StaffViewModel> GetSaleItemByStaffReport(DateTime fromDate, DateTime toDate)
+        public List<RpSaleItemByStaffViewModel.StaffViewModel> GetSaleItemByStaffReport(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
             List<RpSaleItemByStaffViewModel.StaffViewModel> lstSaleItemByStaff = new List<RpSaleItemByStaffViewModel.StaffViewModel>();
             RpSaleItemByStaffViewModel.StaffViewModel staffModel = new RpSaleItemByStaffViewModel.StaffViewModel();
@@ -42,6 +42,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

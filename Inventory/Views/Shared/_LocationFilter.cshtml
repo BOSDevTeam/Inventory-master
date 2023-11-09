@@ -1,0 +1,31 @@
+﻿<div class="row padding-10">
+    <h4>@Resource.LocationFilter</h4>
+</div>
+<div class="setup-title-layout m-t-10">
+    <div id="divLocation">
+
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function createLocationFilter(locationList) {      
+       let location = '';
+       $.each(locationList, function (i, item) {
+           location += '<div class="row">'
+                    + '<div class="col-md-12 col-lg-12">'
+                    + '<input type="radio" id="rdo' + item.ShortName + '" value="' + item.LocationID + '" name="location" onchange="locationChange(this)"/>'
+                    + '<label for="rdo'+ item.ShortName +'" style="padding-left:10px;">' + item.ShortName + '</label>'
+                    + '</div>'                                    
+                    + '</div>'
+        })
+       $("#divLocation").append(location);      
+    }
+
+    function locationChange(location) {
+        selectedLocationId = location.value;   
+    }
+  
+</script>
+
+

@@ -35,6 +35,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "SaleAmountOnlyReport";
                 reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuSaleAmountOnlyRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.SaleAmountSummaryReport))
             {
@@ -42,6 +45,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "SaleAmountSummaryReport";
                 reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuSaleAmountSummaryRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.SaleAmountByMultiPayReport))
             {
@@ -49,6 +55,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "SaleAmountByMultiPayReport";
                 reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuSaleAmountByMultiPayRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.SaleItemSimpleReport))
             {
@@ -59,6 +68,9 @@ namespace Inventory.Controllers
                 reportViewModel.IsShowMenuFilter = true;
                 GetMenuData();
                 ViewBag.isShowMenu = 1;
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.SaleItemReport))
             {
@@ -68,6 +80,9 @@ namespace Inventory.Controllers
                 reportViewModel.HtmlActiveElementID = "subMenuSaleItemRp";
                 reportViewModel.IsShowPaymentFilter = true;
                 ViewBag.isShowPayment = 1;
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.PurchaseAmountOnlyReport))
             {
@@ -75,6 +90,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "PurchaseAmountOnlyReport";
                 reportViewModel.HtmlGroupElementID = "subMenuPurchaseRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuPurchaseAmountOnlyRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.SaleAuditReport))
             {
@@ -82,6 +100,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "SaleAuditReport";
                 reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuSaleAuditRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.SaleAmountByCustomerReport))
             {
@@ -89,6 +110,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "SaleAmountByCustomerReport";
                 reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuSaleAmountByCustomerRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.SaleAmountBySalePersonReport))
             {
@@ -100,6 +124,9 @@ namespace Inventory.Controllers
                 ViewBag.isShowUserClient = 1;
                 GetUserList();
                 GetClientList();
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.SaleItemByCustomerReport))
             {
@@ -107,6 +134,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "SaleItemByCustomerReport";
                 reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuSaleItemByCustomerRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.TopSaleItemReport))
             {
@@ -114,6 +144,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "TopSaleItemReport";
                 reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuTopSaleItemRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.BottomSaleItemReport))
             {
@@ -121,6 +154,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "BottomSaleItemReport";
                 reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuBottomSaleItemRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.PurchaseItemSimpleReport))
             {
@@ -131,6 +167,9 @@ namespace Inventory.Controllers
                 reportViewModel.IsShowMenuFilter = true;
                 ViewBag.isShowMenu = 1;
                 GetMenuData();
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.PurchaseAuditReport))
             {
@@ -138,6 +177,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "PurchaseAuditReport";
                 reportViewModel.HtmlGroupElementID = "subMenuPurchaseRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuPurchaseAuditRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.PurchaseAmountBySupplierReport))
             {
@@ -145,6 +187,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "PurchaseAmountBySupplierReport";
                 reportViewModel.HtmlGroupElementID = "subMenuPurchaseRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuPurchaseAmountBySupplierRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.PurchaseItemBySupplierReport))
             {
@@ -152,6 +197,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "PurchaseItemBySupplierReport";
                 reportViewModel.HtmlGroupElementID = "subMenuPurchaseRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuPurchaseItemBySupplierRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.AdjustmentVoucherReport))
             {
@@ -159,6 +207,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "AdjustmentVoucherReport";
                 reportViewModel.HtmlGroupElementID = "subMenuAdjustmentRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuAdjustmentVoucherRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.AdjustmentItemReport))
             {
@@ -166,6 +217,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "AdjustmentItemReport";
                 reportViewModel.HtmlGroupElementID = "subMenuAdjustmentRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuAdjustmentItemRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.TransferVoucherReport))
             {
@@ -187,6 +241,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "SaleItemProfitReport";
                 reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuSaleItemProfitRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.SaleLogReport))
             {
@@ -196,6 +253,9 @@ namespace Inventory.Controllers
                 reportViewModel.HtmlActiveElementID = "subMenuSaleLogRp";
                 reportViewModel.IsShowLogFilter = true;
                 ViewBag.isShowLog = 1;
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.PurchaseLogReport))
             {
@@ -205,6 +265,9 @@ namespace Inventory.Controllers
                 reportViewModel.HtmlActiveElementID = "subMenuPurchaseLogRp";
                 reportViewModel.IsShowLogFilter = true;
                 ViewBag.isShowLog = 1;
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.StockStatusDetailReport))
             {
@@ -212,6 +275,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "StockStatusByModuleReport";
                 reportViewModel.HtmlGroupElementID = "subMenuStockStatusRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuStockStatusDetailRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             else if (reportName.Equals(Resource.SaleItemByStaffReport))
             {
@@ -219,6 +285,9 @@ namespace Inventory.Controllers
                 reportViewModel.ActionName = "SaleItemByStaffReport";
                 reportViewModel.HtmlGroupElementID = "subMenuSaleRpGp";
                 reportViewModel.HtmlActiveElementID = "subMenuSaleItemByStaffRp";
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
             }
             return View(reportViewModel);
         }
@@ -286,6 +355,12 @@ namespace Inventory.Controllers
             reader.Close();
             setting.conn.Close();
             ViewBag.ClientData= lstClient;
+        }
+
+        private List<LocationModels.LocationModel> getLocation()
+        {
+            AppData appData = new AppData();
+            return appData.selectLocation();
         }
 
         public void selectReportModule(int userId)

@@ -15,15 +15,15 @@ namespace Inventory.Controllers
         RpStockStatusByModuleViewModel stockStatusByModuleViewModel = new RpStockStatusByModuleViewModel();
         AppSetting setting = new AppSetting();
 
-        public ActionResult StockStatusByModuleReport(DateTime fromDate, DateTime toDate)
+        public ActionResult StockStatusByModuleReport(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
-            stockStatusByModuleViewModel.lstDetail = selectStockStatusByModule(fromDate, toDate);
+            stockStatusByModuleViewModel.lstDetail = selectStockStatusByModule(fromDate, toDate, selectedLocationId);
             stockStatusByModuleViewModel.FromDate = fromDate;
             stockStatusByModuleViewModel.ToDate = toDate;
             return View(stockStatusByModuleViewModel);
         }
 
-        private List<RpStockStatusByModuleViewModel.DetailView> selectStockStatusByModule(DateTime fromDate, DateTime toDate)
+        private List<RpStockStatusByModuleViewModel.DetailView> selectStockStatusByModule(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
             List<RpStockStatusByModuleViewModel.DetailView> list = new List<RpStockStatusByModuleViewModel.DetailView>();
             RpStockStatusByModuleViewModel.DetailView item = new RpStockStatusByModuleViewModel.DetailView();
@@ -33,6 +33,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

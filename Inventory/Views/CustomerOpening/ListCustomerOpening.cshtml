@@ -87,9 +87,17 @@
                         + '<td class="col-md-3 col-lg-3">' + item.VoucherID + '</td>'
                         + '<td class="col-md-2 col-lg-2">' + item.UserName + '</td>'
                         + '<td class="col-md-1 col-lg-1 btn-group">'
-                            + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
-                            + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
-                        + '</td>'
+                if (isEditEntryModule == 'True') {
+                    row += '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
+                } else {
+                    row += '<button title="Edit" class="btn btn-sm" disabled><i class="fa fa-edit"></i></button>'
+                }
+                if (isDeleteEntryModule == 'True') {
+                    row += '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
+                } else {
+                    row += '<button title="Delete" class="btn btn-sm" disabled><i class="fa fa-remove"></i></button>'
+                }
+                row += '</td>'
                         + '<td style="display:none">' + item.CustomerOpeningID + '</td>'
                     + '</tr>'
                 $('#tblCustomerOpeningList tbody').append(row);

@@ -19,7 +19,7 @@ namespace Inventory.Controllers
         {
             return View();
         }
-        public ActionResult PurchaseAmountOnlyReport(DateTime fromDate, DateTime toDate)
+        public ActionResult PurchaseAmountOnlyReport(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
             purchaseAmountViewModel.FromDate = fromDate;
             purchaseAmountViewModel.ToDate = toDate;
@@ -27,7 +27,7 @@ namespace Inventory.Controllers
             purchaseAmountViewModel.lstPayMethod = lstPayMethod;
             List<RpPurchaseAmountOnlyViewModel.BankPayment> lstBankPayment = GetBankPayment();
             purchaseAmountViewModel.lstBankPayment = lstBankPayment;
-            List<RpPurchaseAmountOnlyViewModel.MasterPurchaseModels> lstMasterPurchase = GetPurchaseReport(fromDate, toDate);
+            List<RpPurchaseAmountOnlyViewModel.MasterPurchaseModels> lstMasterPurchase = GetPurchaseReport(fromDate, toDate, selectedLocationId);
             purchaseAmountViewModel.lstMasterPurchase = lstMasterPurchase;
             return View(purchaseAmountViewModel);
         }
@@ -72,7 +72,7 @@ namespace Inventory.Controllers
             return list;
         }
 
-        private List<RpPurchaseAmountOnlyViewModel.MasterPurchaseModels> GetPurchaseReport(DateTime fromDate, DateTime toDate)
+        private List<RpPurchaseAmountOnlyViewModel.MasterPurchaseModels> GetPurchaseReport(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
             List<RpPurchaseAmountOnlyViewModel.MasterPurchaseModels> list = new List<RpPurchaseAmountOnlyViewModel.MasterPurchaseModels>();
             RpPurchaseAmountOnlyViewModel.MasterPurchaseModels item = new RpPurchaseAmountOnlyViewModel.MasterPurchaseModels();
@@ -80,6 +80,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@fromDate", fromDate);
             cmd.Parameters.AddWithValue("@toDate", toDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {

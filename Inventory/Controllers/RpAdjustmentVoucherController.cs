@@ -22,14 +22,14 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult AdjustmentVoucherReport(DateTime fromDate,DateTime toDate)
+        public ActionResult AdjustmentVoucherReport(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
             try
             {
                 adjustmentVoucherViewModel.FromDate = fromDate;
                 adjustmentVoucherViewModel.ToDate = toDate;
-                adjustmentVoucherViewModel.lstMasterAdjustment = GetRptMasterAdjustment(fromDate, toDate);
-                adjustmentVoucherViewModel.lstTranAdjustment = GetRptTranAdjustment(fromDate, toDate);
+                adjustmentVoucherViewModel.lstMasterAdjustment = GetRptMasterAdjustment(fromDate, toDate, selectedLocationId);
+                adjustmentVoucherViewModel.lstTranAdjustment = GetRptTranAdjustment(fromDate, toDate, selectedLocationId);
             }
             catch(Exception ex)
             {
@@ -37,7 +37,7 @@ namespace Inventory.Controllers
             }           
             return View(adjustmentVoucherViewModel);
         }
-        public List<RpAdjustmentVoucherViewModel.MasterAdjustmentView>GetRptMasterAdjustment(DateTime fromDate,DateTime toDate)
+        public List<RpAdjustmentVoucherViewModel.MasterAdjustmentView> GetRptMasterAdjustment(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
             List<RpAdjustmentVoucherViewModel.MasterAdjustmentView> lstMasterAdjustment = new List<RpAdjustmentVoucherViewModel.MasterAdjustmentView>();
             RpAdjustmentVoucherViewModel.MasterAdjustmentView masterAdjustment = new RpAdjustmentVoucherViewModel.MasterAdjustmentView();
@@ -46,6 +46,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -63,7 +64,7 @@ namespace Inventory.Controllers
             setting.conn.Close();
             return lstMasterAdjustment;
         }
-        public List<RpAdjustmentVoucherViewModel.TranAdjustmentView>GetRptTranAdjustment(DateTime fromDate,DateTime toDate)
+        public List<RpAdjustmentVoucherViewModel.TranAdjustmentView>GetRptTranAdjustment(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
             List<RpAdjustmentVoucherViewModel.TranAdjustmentView> lstTranAdjustment = new List<RpAdjustmentVoucherViewModel.TranAdjustmentView>();
             RpAdjustmentVoucherViewModel.TranAdjustmentView tranAdjustment = new RpAdjustmentVoucherViewModel.TranAdjustmentView();
@@ -72,6 +73,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

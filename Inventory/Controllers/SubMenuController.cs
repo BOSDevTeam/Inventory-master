@@ -73,10 +73,9 @@ namespace Inventory.Controllers
                     subMenuModel.Photo = sub.Photo;
                     subMenuModel.Base64Photo = Convert.ToBase64String(sub.Photo);
                 }             
-
-                model.LstSubMenu.Add(subMenuModel);
                 lstSubMenuList.Add(subMenuModel);
             }
+            ViewData["LstSubMenu"] = lstSubMenuList;
 
             return View(model);
         }

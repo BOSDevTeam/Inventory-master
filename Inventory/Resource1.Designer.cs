@@ -1150,6 +1150,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Location Filter.
+        /// </summary>
+        public static string LocationFilter {
+            get {
+                return ResourceManager.GetString("LocationFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Log Filter.
         /// </summary>
         public static string LogFilter {

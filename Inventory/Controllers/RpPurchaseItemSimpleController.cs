@@ -31,7 +31,7 @@ namespace Inventory.Controllers
             return View();
         }
 
-        public ActionResult PurchaseItemSimpleReport(DateTime fromDate,DateTime toDate)
+        public ActionResult PurchaseItemSimpleReport(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
             try
             {
@@ -39,7 +39,7 @@ namespace Inventory.Controllers
                 string concat = @"{""data"":" + getVal + "}";
                 ValList vl = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);
                 ValList subMenu = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);
-                List<RpPurchaseItemSimpleViewModel.MainMenuViewModel> lstPurchaseItemSimpleRpt = GetPurchaseItemSimpleReport(fromDate, toDate, subMenu.data);
+                List<RpPurchaseItemSimpleViewModel.MainMenuViewModel> lstPurchaseItemSimpleRpt = GetPurchaseItemSimpleReport(fromDate, toDate, subMenu.data,selectedLocationId);
                 purchaseItemSimpleViewModel.lstPurchaseRpt = lstPurchaseItemSimpleRpt;
                 purchaseItemSimpleViewModel.FromDate = fromDate;
                 purchaseItemSimpleViewModel.ToDate = toDate;
@@ -51,7 +51,7 @@ namespace Inventory.Controllers
             return View(purchaseItemSimpleViewModel);
         }
 
-        public List<RpPurchaseItemSimpleViewModel.MainMenuViewModel> GetPurchaseItemSimpleReport(DateTime fromDate, DateTime toDate, List<int> lstSubMenuID)
+        public List<RpPurchaseItemSimpleViewModel.MainMenuViewModel> GetPurchaseItemSimpleReport(DateTime fromDate, DateTime toDate, List<int> lstSubMenuID, int? selectedLocationId)
         {
             List<RpPurchaseItemSimpleViewModel.MainMenuViewModel> lstPurchaseItemSimpleRpt = new List<RpPurchaseItemSimpleViewModel.MainMenuViewModel>();
             RpPurchaseItemSimpleViewModel.MainMenuViewModel MainMenuModel = new RpPurchaseItemSimpleViewModel.MainMenuViewModel();
@@ -69,6 +69,7 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
             cmd.Parameters.AddWithValue("@temptbl", dt);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

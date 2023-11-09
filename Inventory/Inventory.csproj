@@ -794,6 +794,7 @@
     <Content Include="Views\RpSaleItemByStaff\SaleItemByStaffReport.cshtml" />
     <Content Include="Views\Sale\SaleVoucherDesign5.cshtml" />
     <Content Include="Views\RpSaleAmountByMultiPay\SaleAmountByMultiPayReport.cshtml" />
+    <Content Include="Views\Shared\_LocationFilter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

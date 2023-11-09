@@ -18,6 +18,7 @@ namespace Inventory.Controllers
         DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
         Procedure procedure = new Procedure();
         AppSetting setting = new AppSetting();
+        TextQuery textQuery = new TextQuery();
 
         public ActionResult ChangeLanguage(string lang)
         {
@@ -36,7 +37,8 @@ namespace Inventory.Controllers
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
             short result = 0, isTechnician = 0, saleVoucherDesignType = 0;
-            bool isMultiCurrency = false, isMultiUnit = false, isBankPayment = false;
+            bool isMultiCurrency = false, isMultiUnit = false, isBankPayment = false, isEditSetupModule = true,
+                isDeleteSetupModule = true, isEditEntryModule = true, isDeleteEntryModule = true;
             int tax = 0, serviceCharges = 0;
 
             if (Session["LstUser"] != null)
@@ -70,6 +72,36 @@ namespace Inventory.Controllers
                                 serviceCharges = Convert.ToInt32(reader["ServiceCharges"]);
                                 saleVoucherDesignType = Convert.ToInt16(reader["SaleVoucherDesignType"]);                                
                                 Session[AppConstants.ShopTypeCode] = reader["ShopTypeCode"];
+
+                                reader.Close();
+
+                                if (isTechnician == 0)
+                                {
+                                    cmd = new SqlCommand(textQuery.getPermissionAccessQuery(userId), setting.conn);
+                                    cmd.CommandType = CommandType.Text;
+                                    cmd.Connection = setting.conn;
+                                    reader = cmd.ExecuteReader();
+                                    while (reader.Read())
+                                    {
+                                        switch (Convert.ToString(reader["PermissionName"]))
+                                        {
+                                            case "Edit Setup Modules":
+                                                isEditSetupModule = Convert.ToBoolean(reader["IsAllow"]);
+                                                break;
+                                            case "Delete Setup Modules":
+                                                isDeleteSetupModule = Convert.ToBoolean(reader["IsAllow"]);
+                                                break;
+                                            case "Edit Entry Modules":
+                                                isEditEntryModule = Convert.ToBoolean(reader["IsAllow"]);
+                                                break;
+                                            case "Delete Entry Modules":
+                                                isDeleteEntryModule = Convert.ToBoolean(reader["IsAllow"]);
+                                                break;
+                                        }
+                                    }
+                                    reader.Close();
+                                }
+
                                 resultDefaultData.IsRequestSuccess = true;
                                 break;
                             case 0:
@@ -77,10 +109,8 @@ namespace Inventory.Controllers
                                 break;
                             default: break;
                         }
-                    }
-                    reader.Close();
+                    }                   
                     setting.conn.Close();
-
                 }
                 catch (Exception ex)
                 {
@@ -101,11 +131,15 @@ namespace Inventory.Controllers
                 isBankPayment = isBankPayment,
                 Tax = tax,
                 ServiceCharges = serviceCharges,
-                SaleVoucherDesignType = saleVoucherDesignType
+                SaleVoucherDesignType = saleVoucherDesignType,
+                IsEditSetupModule = isEditSetupModule,
+                IsDeleteSetupModule = isDeleteSetupModule,
+                IsEditEntryModule = isEditEntryModule,
+                IsDeleteEntryModule = isDeleteEntryModule
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
-       
+
         public ActionResult UserEntry(int userId,short? isTechnician)
         {                  
             if (userId != 0)
@@ -142,8 +176,7 @@ namespace Inventory.Controllers
 
         public ActionResult UserList(short? isTechnician)
         {                    
-            UserModels.UserModel userModel = new UserModels.UserModel();
-            model.LstUser = new List<UserModels.UserModel>();
+            UserModels.UserModel userModel = new UserModels.UserModel();          
             lstUserList = new List<UserModels.UserModel>();
 
             if (Session["SQLConnection"] == null) Session["SQLConnection"] = dataConnectorSQL.Connect();
@@ -159,13 +192,14 @@ namespace Inventory.Controllers
                 userModel.UserPassword = Convert.ToString(reader["UserPassword"]);              
                 userModel.LocationID = Convert.ToInt32(reader["LocationID"]);
                 userModel.LocationName = Convert.ToString(reader["LocationName"]);
-                userModel.IsDefaultLocation = Convert.ToBoolean(reader["IsDefaultLocation"]);
-
-                model.LstUser.Add(userModel);
+                userModel.IsDefaultLocation = Convert.ToBoolean(reader["IsDefaultLocation"]);             
                 lstUserList.Add(userModel);
             }
             reader.Close();
             dataConnectorSQL.Close();
+
+            ViewData["LstUser"] = lstUserList;
+
             if (isTechnician == 1)
             {
                 model.IsTechnician = 1;

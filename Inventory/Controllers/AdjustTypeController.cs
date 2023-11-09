@@ -40,8 +40,7 @@ namespace Inventory.Controllers
 
         public ActionResult AdjustTypeList()
         {
-            AdjustTypeModels adjustTypeModel = new AdjustTypeModels();
-            model.LstAdjustType = new List<AdjustTypeModels>();
+            AdjustTypeModels adjustTypeModel = new AdjustTypeModels();           
             lstAdjustTypeList = new List<AdjustTypeModels>();
 
             foreach (var adjust in Entities.SAdjustTypes)
@@ -52,13 +51,12 @@ namespace Inventory.Controllers
                 adjustTypeModel.ShortName = adjust.ShortName;
                 adjustTypeModel.IsIncrease = adjust.IsIncrease;
                 if (adjust.IsIncrease) adjustTypeModel.IncreaseDecrease = "Increase";
-                else adjustTypeModel.IncreaseDecrease = "Decrease";
-
-                model.LstAdjustType.Add(adjustTypeModel);
+                else adjustTypeModel.IncreaseDecrease = "Decrease";              
                 lstAdjustTypeList.Add(adjustTypeModel);
             }
+            ViewData["LstAdjustType"] = lstAdjustTypeList;
 
-            return View(model);
+            return View();
         }
 
         [HttpGet]

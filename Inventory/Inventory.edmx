@@ -68,6 +68,7 @@
           <Property Name="IsLimitUser" Type="bit" />
           <Property Name="LimitedUserCount" Type="smallint" />
           <Property Name="SaleVoucherDesignType" Type="smallint" />
+          <Property Name="ShopTypeCode" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="SCustomer">
           <Key>
@@ -1330,6 +1331,7 @@
           <Property Name="IsLimitUser" Type="Boolean" />
           <Property Name="LimitedUserCount" Type="Int16" />
           <Property Name="SaleVoucherDesignType" Type="Int16" />
+          <Property Name="ShopTypeCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="SCustomer">
           <Key>
@@ -2074,6 +2076,7 @@
           <EntitySetMapping Name="SCompanySettings">
             <EntityTypeMapping TypeName="InventoryDBModel.SCompanySetting">
               <MappingFragment StoreEntitySet="SCompanySetting">
+                <ScalarProperty Name="ShopTypeCode" ColumnName="ShopTypeCode" />
                 <ScalarProperty Name="SaleVoucherDesignType" ColumnName="SaleVoucherDesignType" />
                 <ScalarProperty Name="LimitedUserCount" ColumnName="LimitedUserCount" />
                 <ScalarProperty Name="IsLimitUser" ColumnName="IsLimitUser" />

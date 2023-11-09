@@ -18,14 +18,14 @@ namespace Inventory.Controllers
         {
             return View();
         }
-        public ActionResult PurchaseLogReport(DateTime fromDate,DateTime toDate,int logType)
+        public ActionResult PurchaseLogReport(DateTime fromDate,DateTime toDate,int logType, int? selectedLocationId)
         {
             try
             {
                 purchaseLog.FromDate = fromDate;
                 purchaseLog.ToDate = toDate;
                 purchaseLog.LogType = logType;
-                purchaseLog.lstMasterPurchaseLog = GetRptPurchaseLog(fromDate, toDate, logType);
+                purchaseLog.lstMasterPurchaseLog = GetRptPurchaseLog(fromDate, toDate, logType,selectedLocationId);
             }
             catch(Exception ex)
             {
@@ -33,7 +33,7 @@ namespace Inventory.Controllers
             }
             return View(purchaseLog);
         }
-        private List<RpPurchaseLogViewModel.MasterPurchaseLogViewModel>GetRptPurchaseLog(DateTime fromDate,DateTime toDate,int logType)
+        private List<RpPurchaseLogViewModel.MasterPurchaseLogViewModel> GetRptPurchaseLog(DateTime fromDate,DateTime toDate,int logType, int? selectedLocationId)
         {
             List<RpPurchaseLogViewModel.MasterPurchaseLogViewModel> lstMasterPurchaseLog = new List<RpPurchaseLogViewModel.MasterPurchaseLogViewModel>();
             List<RpPurchaseLogViewModel.PurchaseLogViewModel> lstPurchaseLog = new List<RpPurchaseLogViewModel.PurchaseLogViewModel>();
@@ -46,6 +46,7 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
             cmd.Parameters.AddWithValue("@LogType", logType);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {

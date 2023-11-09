@@ -39,22 +39,7 @@
                         <th class="col-md-2 col-lg-2">Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @for (int i = 0; i < Model.LstDivision.Count(); i++)
-                    {
-                        <tr class="row table-item">
-                            <td class="col-md-5 col-lg-5">@Model.LstDivision[i].DivisionName</td>
-                            <td class="col-md-5 col-lg-5">@Model.LstDivision[i].Code</td>
-                           
-                                <td class="col-md-2 col-lg-2">
-                                    <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
-                                    <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
-                                </td>
-                           
-                            <td style="display:none">@Model.LstDivision[i].DivisionID</td>
-                        </tr>
-                    }
-                </tbody>
+                <tbody></tbody>
             </table>
         </div>
     </div>
@@ -91,6 +76,8 @@
 
     $(function () {
 
+        createDivisionData('', false);
+
         $("#tblDivision").on("click", "tbody tr", function (event) {
             selectedRow = $(this).parent('tr');
             $(this).find("td:last").each(function () {
@@ -114,17 +101,7 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    $("#tblDivision").find("tbody").empty();
-                    $.each(response, function (i, item) {
-                        var rows = "<tr class='row table-item'>"
-                        + "<td class='col-md-5 col-lg-5'>" + item.DivisionName + "</td>"
-                        + "<td class='col-md-5 col-lg-5'>" + item.Code + "</td>"
-                        + "<td class='col-md-2 col-lg-2'><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
-                        + "<td style='display:none'>" + item.DivisionID + "</td>"
-                        + "</tr>";
-                        $('#tblDivision tbody').append(rows);
-
-                    });
+                    createDivisionData(response, true);                   
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -136,6 +113,31 @@
                 }
             });
         });
+
+        function createDivisionData(response, isFromJson) {
+            $("#tblDivision").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstDivision"]))');
+            $.each(response, function (i, item) {
+                var rows = "<tr class='row table-item'>"
+                + "<td class='col-md-5 col-lg-5'>" + item.DivisionName + "</td>"
+                + "<td class='col-md-5 col-lg-5'>" + item.Code + "</td>"
+                + "<td class='col-md-2 col-lg-2'>"
+                if (isEditSetupModule == 'True') {
+                    rows += "<button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button>"
+                } else {
+                    rows += "<button id='btnEdit' class='btn btn-sm btn-list-action disabled'>Edit</button>"
+                }
+                if (isDeleteSetupModule == 'True') {
+                    rows += "<button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button>"
+                } else {
+                    rows += "<button id='btnDelete' class='btn btn-sm btn-list-action disabled' style='margin-left:3px'>Delete</button>"
+                }
+                rows += "</td>"
+                + "<td style='display:none'>" + item.DivisionID + "</td>"
+                + "</tr>";
+                $('#tblDivision tbody').append(rows);
+            });
+        }
 
         $("#btnDelOk").click(function () {
             showLoadingIcon();

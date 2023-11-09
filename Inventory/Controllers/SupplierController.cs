@@ -54,8 +54,7 @@ namespace Inventory.Controllers
         {
             GetDivisionDefaultInclude();
             GetTownshipDefaultInclude();
-            SupplierModels.SupplierModel supplierModel = new SupplierModels.SupplierModel();
-            model.LstSupplier = new List<SupplierModels.SupplierModel>();
+            SupplierModels.SupplierModel supplierModel = new SupplierModels.SupplierModel();           
             lstSupplierList = new List<SupplierModels.SupplierModel>();
 
             foreach (var supplier in Entities.PrcGetSupplier())
@@ -75,11 +74,10 @@ namespace Inventory.Controllers
                 supplierModel.TownshipID = supplier.TownshipID;
                 supplierModel.TownshipName = supplier.TownshipName;
                 supplierModel.DivisionID = supplier.DivisionID;
-                supplierModel.DivisionName = supplier.DivisionName;
-
-                model.LstSupplier.Add(supplierModel);
+                supplierModel.DivisionName = supplier.DivisionName;             
                 lstSupplierList.Add(supplierModel);
             }
+            ViewData["LstSupplier"] = lstSupplierList;
 
             return View(model);
         }

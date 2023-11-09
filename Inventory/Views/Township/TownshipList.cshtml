@@ -45,26 +45,7 @@
                     </tr>
                 </thead>
 
-                <tbody>
-
-                    @for (int i = 0; i < Model.LstTownship.Count(); i++)
-                    {
-                        <tr class="row table-item">
-                            <td class="col-md-3 col-lg-3">@Model.LstTownship[i].TownshipName</td>
-                            <td class="col-md-3 col-lg-3">@Model.LstTownship[i].Code</td>
-                            <td class="col-md-3 col-lg-3">@Model.LstTownship[i].DivisionName</td>
-                            @if (Model.LstTownship[i].IsDefault != true)
-                            {
-                                <td class="col-md-3 col-lg-3">
-                                    <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
-                                    <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
-                                </td>
-                            }
-                            <td style="display:none">@Model.LstTownship[i].TownshipID</td>
-                        </tr>
-                    }
-
-                </tbody>
+                <tbody></tbody>
 
             </table>
         </div>
@@ -102,6 +83,8 @@
 
     $(function () {
 
+        createTownshipData('', false);
+
         $("#tblTownship").on("click", "tbody tr", function (event) {
             selectedRow = $(this).parent('tr');
             $(this).find("td:last").each(function () {
@@ -126,28 +109,7 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    $("#tblTownship").find("tbody").empty();
-                    $.each(response, function (i, item) {
-                        if (item.IsDefault != true) {
-                            var rows = "<tr class='row table-item'>"
-                            + "<td class='col-md-3 col-lg-3'>" + item.TownshipName + "</td>"
-                            + "<td class='col-md-3 col-lg-3'>" + item.Code + "</td>"
-                            + "<td class='col-md-3 col-lg-3'>" + item.DivisionName + "</td>"
-                            + "<td class='col-md-3 col-lg-3'><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
-                            + "<td style='display:none'>" + item.TownshipID + "</td>"
-                            + "</tr>";
-                            $('#tblTownship tbody').append(rows);
-                        } else {
-                            var rows = "<tr class='row table-item'>"
-                           + "<td class='col-md-3 col-lg-3'>" + item.TownshipName + "</td>"
-                           + "<td class='col-md-3 col-lg-3'>" + item.Code + "</td>"
-                           + "<td class='col-md-3 col-lg-3'>" + item.DivisionName + "</td>"
-                           + "<td class='col-md-3 col-lg-3'></td>"
-                           + "<td style='display:none'>" + item.TownshipID + "</td>"
-                           + "</tr>";
-                            $('#tblTownship tbody').append(rows);
-                        }
-                     });
+                    createTownshipData(response, true);
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -159,6 +121,43 @@
                 }
             });
         });
+
+        function createTownshipData(response, isFromJson) {
+            $("#tblTownship").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstTownship"]))');
+            $.each(response, function (i, item) {
+                if (item.IsDefault != true) {
+                    var rows = "<tr class='row table-item'>"
+                    + "<td class='col-md-3 col-lg-3'>" + item.TownshipName + "</td>"
+                    + "<td class='col-md-3 col-lg-3'>" + item.Code + "</td>"
+                    + "<td class='col-md-3 col-lg-3'>" + item.DivisionName + "</td>"
+                    + "<td class='col-md-3 col-lg-3'>"
+                    if (isEditSetupModule == 'True') {
+                        rows += "<button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button>"
+                    } else {
+                        rows += "<button id='btnEdit' class='btn btn-sm btn-list-action disabled'>Edit</button>"
+                    }
+                    if (isDeleteSetupModule == 'True') {
+                        rows += "<button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button>"
+                    } else {
+                        rows += "<button id='btnDelete' class='btn btn-sm btn-list-action disabled' style='margin-left:3px'>Delete</button>"
+                    }
+                    rows += "</td>"
+                    + "<td style='display:none'>" + item.TownshipID + "</td>"
+                    + "</tr>";
+                    $('#tblTownship tbody').append(rows);
+                } else {
+                    var rows = "<tr class='row table-item'>"
+                   + "<td class='col-md-3 col-lg-3'>" + item.TownshipName + "</td>"
+                   + "<td class='col-md-3 col-lg-3'>" + item.Code + "</td>"
+                   + "<td class='col-md-3 col-lg-3'>" + item.DivisionName + "</td>"
+                   + "<td class='col-md-3 col-lg-3'></td>"
+                   + "<td style='display:none'>" + item.TownshipID + "</td>"
+                   + "</tr>";
+                    $('#tblTownship tbody').append(rows);
+                }
+            });
+        }
 
         $("#btnDelOk").click(function () {
             showLoadingIcon();
@@ -181,7 +180,7 @@
                     else {
                         showToast(0, response.Message);
                     }
-                   
+
                 },
                 failure: function (response) {
                     hideLoadingIcon();

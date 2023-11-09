@@ -491,6 +491,7 @@ namespace Inventory.Controllers
                 model.LstProduct.Add(productModel);
                 lstProductList.Add(productModel);
             }
+            ViewData["LstProduct"] = lstProductList;
         }
 
     }

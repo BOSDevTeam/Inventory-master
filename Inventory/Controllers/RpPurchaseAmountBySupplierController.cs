@@ -24,11 +24,11 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult PurchaseAmountBySupplierReport(DateTime fromDate,DateTime toDate)
+        public ActionResult PurchaseAmountBySupplierReport(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
             try
             {
-                purchaseAmountBySupplierViewModel.lstRptPurchaseAmountBySupplier = GetPurchaseAmountBySupplierReport(fromDate, toDate);
+                purchaseAmountBySupplierViewModel.lstRptPurchaseAmountBySupplier = GetPurchaseAmountBySupplierReport(fromDate, toDate,selectedLocationId);
                 purchaseAmountBySupplierViewModel.FromDate = fromDate;
                 purchaseAmountBySupplierViewModel.ToDate = toDate;
             }
@@ -39,7 +39,7 @@ namespace Inventory.Controllers
             return View(purchaseAmountBySupplierViewModel);
         }
 
-        public List<RpPurchaseAmountBySupplierViewModel.SupplierViewModel>GetPurchaseAmountBySupplierReport(DateTime fromDate,DateTime toDate)
+        public List<RpPurchaseAmountBySupplierViewModel.SupplierViewModel> GetPurchaseAmountBySupplierReport(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
             List<RpPurchaseAmountBySupplierViewModel.SupplierViewModel> lstPurchaseAmountBySupplier = new List<RpPurchaseAmountBySupplierViewModel.SupplierViewModel>();
             RpPurchaseAmountBySupplierViewModel.SupplierViewModel supplierModel = new RpPurchaseAmountBySupplierViewModel.SupplierViewModel();
@@ -49,6 +49,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

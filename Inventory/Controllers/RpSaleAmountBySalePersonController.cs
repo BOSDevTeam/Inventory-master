@@ -32,7 +32,7 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult SaleAmountBySalePersonReport(DateTime fromDate, DateTime toDate)
+        public ActionResult SaleAmountBySalePersonReport(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace Inventory.Controllers
                 string concatID = @"{""data"":" + getClientVal + "}";
                 ValList vlClient = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concatID);
                 ValList lstClient = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concatID);
-                saleAmountBySalePerson.lstSalePerson = GetSaleAmountBySalePersonReport(fromDate, toDate, lstUser.data, lstClient.data);
+                saleAmountBySalePerson.lstSalePerson = GetSaleAmountBySalePersonReport(fromDate, toDate, lstUser.data, lstClient.data,selectedLocationId);
                 saleAmountBySalePerson.FromDate = fromDate;
                 saleAmountBySalePerson.ToDate = toDate;
             }
@@ -56,7 +56,7 @@ namespace Inventory.Controllers
             return View(saleAmountBySalePerson);
         }
 
-        public List<RpSaleAmountBySalePersonViewModel.SalePerson> GetSaleAmountBySalePersonReport(DateTime fromDate,DateTime toDate, List<int>lstUserID,List<int>lstClientID)
+        public List<RpSaleAmountBySalePersonViewModel.SalePerson> GetSaleAmountBySalePersonReport(DateTime fromDate,DateTime toDate, List<int>lstUserID,List<int>lstClientID, int? selectedLocationId)
         {
             List<RpSaleAmountBySalePersonViewModel.SalePerson> lstSaleAmountBySalePerson = new List<RpSaleAmountBySalePersonViewModel.SalePerson>();
             RpSaleAmountBySalePersonViewModel.SalePerson SalePerson = new RpSaleAmountBySalePersonViewModel.SalePerson();
@@ -81,6 +81,7 @@ namespace Inventory.Controllers
             cmd.Parameters.AddWithValue("@ToDate", toDate);
             cmd.Parameters.AddWithValue("@TempUsertbl", tblUser);
             cmd.Parameters.AddWithValue("@TempClienttbl", tblClient);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

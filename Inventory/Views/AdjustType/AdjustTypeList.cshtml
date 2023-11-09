@@ -43,23 +43,7 @@
                     </tr>
                 </thead>
 
-                <tbody>
-
-                    @for (int i = 0; i < Model.LstAdjustType.Count(); i++)
-                    {
-                        <tr class="row table-item">
-                            <td class="col-md-4 col-lg-4">@Model.LstAdjustType[i].AdjustTypeName</td>
-                            <td class="col-md-3 col-lg-3">@Model.LstAdjustType[i].ShortName</td>
-                            <td class="col-md-3 col-lg-3">@Model.LstAdjustType[i].IncreaseDecrease</td>
-                            <td class="col-md-2 col-lg-2">
-                                <button id="btnEdit" class="btn btn-sm btn-primary btn-list-action" onclick="action('2')">Edit</button>
-                                <button id="btnDelete" class="btn btn-sm btn-danger btn-list-action" onclick="action('3')">Delete</button>
-                            </td>
-                            <td style="display:none">@Model.LstAdjustType[i].AdjustTypeID</td>
-                        </tr>
-                    }
-
-                </tbody>
+                <tbody></tbody>
 
             </table>
         </div>
@@ -96,6 +80,8 @@
 
     $(function () {
 
+        createAdjustTypeData('', false);
+
         $("#tblAdjustType").on("click", "tbody tr", function (event) {
             selectedRow = $(this).parent('tr');
             $(this).find("td:last").each(function () {
@@ -119,17 +105,7 @@
                 dataType: "json",
                 success: function (response) {
                     hideLoadingIcon();
-                    $("#tblAdjustType").find("tbody").empty();
-                    $.each(response, function (i, item) {
-                         var rows = "<tr class='row table-item'>"
-                         + "<td class='col-md-4 col-lg-4'>" + item.AdjustTypeName + "</td>"
-                         + "<td class='col-md-3 col-lg-3'>" + item.ShortName + "</td>"
-                         + "<td class='col-md-3 col-lg-3'>" + item.IncreaseDecrease + "</td>"
-                         + "<td class='col-md-2 col-lg-2'><button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button><button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button></td>"
-                         + "<td style='display:none'>" + item.AdjustTypeID + "</td>"
-                         + "</tr>";
-                         $('#tblAdjustType tbody').append(rows);
-                    });
+                    createAdjustTypeData(response, true);              
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -141,6 +117,32 @@
                 }
             });
         });
+
+        function createAdjustTypeData(response, isFromJson) {
+            $("#tblAdjustType").find("tbody").empty();
+            if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstAdjustType"]))');
+            $.each(response, function (i, item) {
+                 var rows = "<tr class='row table-item'>"
+                 + "<td class='col-md-4 col-lg-4'>" + item.AdjustTypeName + "</td>"
+                 + "<td class='col-md-3 col-lg-3'>" + item.ShortName + "</td>"
+                 + "<td class='col-md-3 col-lg-3'>" + item.IncreaseDecrease + "</td>"
+                 + "<td class='col-md-2 col-lg-2'>"
+                    if (isEditSetupModule == 'True') {
+                        rows += "<button id='btnEdit' class='btn btn-sm btn-primary btn-list-action' onclick='action(2)'>Edit</button>"
+                    } else {
+                        rows += "<button id='btnEdit' class='btn btn-sm btn-list-action disabled'>Edit</button>"
+                    }
+                    if (isDeleteSetupModule == 'True') {
+                        rows += "<button id='btnDelete' class='btn btn-sm btn-danger btn-list-action' style='margin-left:3px' onclick='action(3)'>Delete</button>"
+                    } else {
+                        rows += "<button id='btnDelete' class='btn btn-sm btn-list-action disabled' style='margin-left:3px'>Delete</button>"
+                    }
+                    rows += "</td>"
+                 + "<td style='display:none'>" + item.AdjustTypeID + "</td>"
+                 + "</tr>";
+                 $('#tblAdjustType tbody').append(rows);
+            });
+        }
 
         $("#btnDelOk").click(function () {
             showLoadingIcon();
@@ -155,7 +157,7 @@
                         if (selectedRow != null) {
                             selectedRow.remove();
                             location.reload();
-                            showToast(1, "Deleted Successfully!");                     
+                            showToast(1, "Deleted Successfully!");
                         }
                     },
                     failure: function (response) {

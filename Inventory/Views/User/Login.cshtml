@@ -108,6 +108,15 @@
                             localStorage.setItem("Charges", response.ServiceCharges);
                             localStorage.setItem("SaleVoucherDesignType", response.SaleVoucherDesignType);
 
+                            if (response.IsEditSetupModule == true) localStorage.setItem("IsEditSetupModule", "True");
+                            else localStorage.setItem("IsEditSetupModule", "False");
+                            if (response.IsDeleteSetupModule == true) localStorage.setItem("IsDeleteSetupModule", "True");
+                            else localStorage.setItem("IsDeleteSetupModule", "False");
+                            if (response.IsEditEntryModule == true) localStorage.setItem("IsEditEntryModule", "True");
+                            else localStorage.setItem("IsEditEntryModule", "False");
+                            if (response.IsDeleteEntryModule == true) localStorage.setItem("IsDeleteEntryModule", "True");
+                            else localStorage.setItem("IsDeleteEntryModule", "False");
+
                             let isTechnician = localStorage.getItem("IsTechnician");
                             let userId = localStorage.getItem("UserID");
                             if(isTechnician == 1)window.location.href = '@Url.Action("Dashboard", "Home")';

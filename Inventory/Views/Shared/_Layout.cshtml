@@ -193,7 +193,7 @@
     <script src="~/Scripts/chosen.jquery.min.js"></script>
 
     <script>
-        var userId = 0, userName, isMultiUnit = false, isMultiCurrency = false, isBankPayment = false, isTechnician = 0;
+        var userId = 0, userName, isMultiUnit = false, isMultiCurrency = false, isBankPayment = false, isTechnician = 0, isEditEntryModule = false, isDeleteEntryModule = false;
         const SaleModule = 1, PurchaseModule = 2;
 
         userId = localStorage.getItem("UserID");
@@ -202,6 +202,8 @@
         isMultiCurrency = localStorage.getItem("IsMultiCurrency");
         isBankPayment = localStorage.getItem("IsBankPayment");
         isTechnician = localStorage.getItem("IsTechnician");
+        isEditEntryModule = localStorage.getItem("IsEditEntryModule");
+        isDeleteEntryModule = localStorage.getItem("IsDeleteEntryModule");
    
         $("#loginUser").text(userName);
 

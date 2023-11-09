@@ -232,7 +232,7 @@
                 });
             }
 
-            function createMasterSaleData(response,isFromJson) {
+            function createMasterSaleData(response, isFromJson) {
                 $("#tblSaleList").find("tbody").empty();
                 if (!isFromJson) response = JSON.parse('@Html.Raw(Json.Encode(ViewData["LstMasterSale"]))');
                 $.each(response, function (index, item) {
@@ -244,12 +244,20 @@
                             + '<td class="col-md-2 col-lg-2 value-right">' + separatedComma(item.Grandtotal) + '</td>'
                             + '<td class="col-md-2 col-lg-2 btn-group">'
                                 + '<button title="View" class="btn btn-sm btn-dark" onclick="listTableAction(1)"><i class="fa fa-list"></i></button>'
-                                + '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
-                                + '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
-                                + '<button title="Print" class="btn btn-sm btn-first" onclick="listTableAction(4)"><i class="fa fa-print"></i></button>'
-                            +'</td>'
-                            + '<td style="display:none">' + item.SaleID + '</td>'
-                        +'</tr>'
+                    if (isEditEntryModule == 'True') {
+                        row += '<button title="Edit" class="btn btn-sm btn-primary" onclick="listTableAction(2)"><i class="fa fa-edit"></i></button>'
+                    } else {
+                        row += '<button title="Edit" class="btn btn-sm" disabled><i class="fa fa-edit"></i></button>'
+                    }
+                    if (isDeleteEntryModule == 'True') {
+                        row += '<button title="Delete" class="btn btn-sm btn-danger" onclick="listTableAction(3)"><i class="fa fa-remove"></i></button>'
+                    } else {
+                        row += '<button title="Delete" class="btn btn-sm" disabled><i class="fa fa-remove"></i></button>'
+                    }
+                    row += '<button title="Print" class="btn btn-sm btn-first" onclick="listTableAction(4)"><i class="fa fa-print"></i></button>'
+                + '</td>'
+                + '<td style="display:none">' + item.SaleID + '</td>'
+                + '</tr>'
                     $('#tblSaleList tbody').append(row);
                 });
             }

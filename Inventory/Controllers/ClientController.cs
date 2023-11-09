@@ -45,6 +45,7 @@ namespace Inventory.Controllers
             }
             rd.Close();
             dataConnectorSQL.Close();
+            ViewData["LstClient"] = model.LstClient;
 
             return View(model);
         }

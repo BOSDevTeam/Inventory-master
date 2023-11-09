@@ -55,8 +55,7 @@ namespace Inventory.Controllers
         public ActionResult TownshipList()
         {
             GetDivision();
-            TownshipModels.TownshipModel townshipModel = new TownshipModels.TownshipModel();
-            model.LstTownship = new List<TownshipModels.TownshipModel>();
+            TownshipModels.TownshipModel townshipModel = new TownshipModels.TownshipModel();           
             lstTownshipList = new List<TownshipModels.TownshipModel>();
 
             foreach (var town in Entities.PrcGetTownship())
@@ -67,10 +66,10 @@ namespace Inventory.Controllers
                 townshipModel.Code = town.Code;
                 townshipModel.DivisionID = Convert.ToInt32(town.DivisionID);
                 townshipModel.DivisionName = town.DivisionName;
-                townshipModel.IsDefault = town.IsDefault;
-                model.LstTownship.Add(townshipModel);
+                townshipModel.IsDefault = town.IsDefault;             
                 lstTownshipList.Add(townshipModel);
             }
+            ViewData["LstTownship"] = lstTownshipList;
 
             return View(model);
         }

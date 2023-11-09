@@ -23,12 +23,12 @@ namespace Inventory.Controllers
         }
 
         [SessionTimeoutAttribute]
-        public ActionResult PurchaseAuditReport(DateTime fromDate,DateTime toDate)
+        public ActionResult PurchaseAuditReport(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
             try
             {
-                List<RpPurchaseAuditViewModel.MasterPurchaseView> lstMasterPurchase = GetRptMasterPurchase(fromDate,toDate);
-                List<RpPurchaseAuditViewModel.TranPurchaseView> lstTranPurchase = GetRptTranPurchase(fromDate,toDate);
+                List<RpPurchaseAuditViewModel.MasterPurchaseView> lstMasterPurchase = GetRptMasterPurchase(fromDate,toDate, selectedLocationId);
+                List<RpPurchaseAuditViewModel.TranPurchaseView> lstTranPurchase = GetRptTranPurchase(fromDate,toDate, selectedLocationId);
                 purchaseAuditViewModel.lstMasterPurchase = lstMasterPurchase;
                 purchaseAuditViewModel.lstTranPurchase = lstTranPurchase;
                 purchaseAuditViewModel.FromDate = fromDate;
@@ -41,7 +41,7 @@ namespace Inventory.Controllers
             return View(purchaseAuditViewModel);
         }
 
-        public List<RpPurchaseAuditViewModel.MasterPurchaseView> GetRptMasterPurchase(DateTime FromDate,DateTime ToDate)
+        public List<RpPurchaseAuditViewModel.MasterPurchaseView> GetRptMasterPurchase(DateTime FromDate,DateTime ToDate, int? selectedLocationId)
         {
             List<RpPurchaseAuditViewModel.MasterPurchaseView> lstRptMasterPurchase = new List<RpPurchaseAuditViewModel.MasterPurchaseView>();
             RpPurchaseAuditViewModel.MasterPurchaseView masterPurchase = new RpPurchaseAuditViewModel.MasterPurchaseView();
@@ -50,6 +50,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@FromDate", FromDate);
             cmd.Parameters.AddWithValue("@ToDate", ToDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
@@ -83,7 +84,7 @@ namespace Inventory.Controllers
             setting.conn.Close();
             return lstRptMasterPurchase;
         }
-        public List<RpPurchaseAuditViewModel.TranPurchaseView> GetRptTranPurchase(DateTime fromDate,DateTime toDate)
+        public List<RpPurchaseAuditViewModel.TranPurchaseView> GetRptTranPurchase(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
             List<RpPurchaseAuditViewModel.TranPurchaseView> lstRptTranPurchase = new List<RpPurchaseAuditViewModel.TranPurchaseView>();
             RpPurchaseAuditViewModel.TranPurchaseView tranPurchase = new RpPurchaseAuditViewModel.TranPurchaseView();
@@ -92,6 +93,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@FromDate", fromDate);
             cmd.Parameters.AddWithValue("@ToDate", toDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             cmd.Connection = setting.conn;
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())

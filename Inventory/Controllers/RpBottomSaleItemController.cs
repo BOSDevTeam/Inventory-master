@@ -14,10 +14,10 @@ namespace Inventory.Controllers
     {
         RpBottomSaleItemViewModel bottomSale = new RpBottomSaleItemViewModel();
         DataConnectorSQL dataConnectorSQL = new DataConnectorSQL();
-        public ActionResult BottomSaleItemReport(DateTime fromDate, DateTime toDate)
+        public ActionResult BottomSaleItemReport(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
             bottomSale = new RpBottomSaleItemViewModel();
-            List<RpBottomSaleItemViewModel.TranSaleModels> lstTranSale = GetSaleReport(fromDate,toDate);
+            List<RpBottomSaleItemViewModel.TranSaleModels> lstTranSale = GetSaleReport(fromDate,toDate, selectedLocationId);
             bottomSale.lstTranSale = lstTranSale;
             bottomSale.FromDate = fromDate;
             bottomSale.ToDate = toDate;
@@ -30,7 +30,7 @@ namespace Inventory.Controllers
         }
 
 
-        public List<RpBottomSaleItemViewModel.TranSaleModels> GetSaleReport(DateTime fromDate, DateTime toDate)
+        public List<RpBottomSaleItemViewModel.TranSaleModels> GetSaleReport(DateTime fromDate, DateTime toDate, int? selectedLocationId)
         {
             List<RpBottomSaleItemViewModel.TranSaleModels> list = new List<RpBottomSaleItemViewModel.TranSaleModels>();
             RpBottomSaleItemViewModel.TranSaleModels item = new RpBottomSaleItemViewModel.TranSaleModels();
@@ -38,6 +38,7 @@ namespace Inventory.Controllers
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@fromDate", fromDate);
             cmd.Parameters.AddWithValue("@toDate", toDate);
+            cmd.Parameters.AddWithValue("@selectedLocationId", selectedLocationId);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
