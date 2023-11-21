@@ -71,16 +71,17 @@
                 }
 
                 <div class="row rpt-item">
-                    <div class="col-md-2 col-lg-2">@purchase.ProductCode</div>
-                    @if (purchase.UnitID != 0)
-                    {
-                        <div class="col-md-2 col-lg-2">@purchase.ProductName <span>(@purchase.UnitKeyword)</span></div>
-                    }
-                    else
-                    {
-                        <div class="col-md-2 col-lg-2">@purchase.ProductName</div>
-                    }
-
+                    <div class="col-md-2 col-lg-2">@purchase.ProductCode</div>                   
+                    <div class="col-md-2 col-lg-2">@purchase.ProductName 
+                        @if (purchase.Accessories != null)
+                        {
+                            <span>(@purchase.Accessories.Trim())</span>
+                        }
+                        @if (purchase.UnitKeyword.Length != 0)
+                        {
+                            <span>(@purchase.UnitKeyword)</span>
+                        }                    
+                    </div>                                         
                     <div class="col-md-2 col-lg-2 aligh-right">
                     <script>separatedComma(@purchase.Quantity)</script></div>
                     <div class="col-md-2 col-lg-2 aligh-right">

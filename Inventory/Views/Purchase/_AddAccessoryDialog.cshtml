@@ -1,0 +1,160 @@
+﻿<div class="modal fade" id="modalAccessory" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:700px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">@Resource.AddAccessories</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body"> 
+                <div class="row">
+                    <div class="col-md-12 col-lg-12">
+                        <table class="width-100-percent">                    
+                            <tr class="row">
+                                <td class="col-md-2 col-lg-2 align-center"><label class="control-label">@Resource.Gold</label></td>
+                                <td class="col-md-8 col-lg-8"><input id="inputGold" type="text" class="form-control control-input numberonly" /></td>
+                                <td class="col-md-2 col-lg-2 align-center"><label class="control-title">@Resource.G</label></td>
+                            </tr>
+                            <tr class="row m-t-10">
+                                <td class="col-md-2 col-lg-2 align-center"><label class="control-label">@Resource.Pearl</label></td>
+                                <td class="col-md-8 col-lg-8"><input id="inputPearl" type="text" class="form-control control-input numberonly" /></td>
+                                <td class="col-md-2 col-lg-2 align-center"><label class="control-title">@Resource.Rati</label></td>
+                            </tr>
+                            <tr class="row m-t-10">
+                                <td class="col-md-2 col-lg-2 align-center"><label class="control-label">@Resource.Diamond</label></td>
+                                <td class="col-md-8 col-lg-8"><input id="inputDiamond" type="text" class="form-control control-input numberonly" /></td>
+                                <td class="col-md-2 col-lg-2 align-center"><label class="control-title">@Resource.Carat</label></td>
+                            </tr>
+                            <tr class="row m-t-10">
+                                <td class="col-md-2 col-lg-2 align-center"><label class="control-label">@Resource.Stone</label></td>
+                                <td class="col-md-8 col-lg-8"><input id="inputStone" type="text" class="form-control control-input numberonly" /></td>
+                                <td class="col-md-2 col-lg-2 align-center"><label class="control-title">@Resource.Carat</label></td>
+                            </tr>
+                            <tr class="row m-t-10">
+                                <td class="col-md-2 col-lg-2 align-center"><label class="control-label">@Resource.Palatinum</label></td>
+                                <td class="col-md-8 col-lg-8"><input id="inputPalatinum" type="text" class="form-control control-input numberonly" /></td>
+                                <td class="col-md-2 col-lg-2 align-center"><label class="control-title">@Resource.G</label></td>
+                            </tr>
+                        </table>                      
+                        <div class="form-group m-t-10">
+                            <label class="control-label">@Resource.Photo<span class="control-span-sm">&nbsp;(Recommended Size 200*200)</span></label><br />
+                            <img src="" id="imgPreview" style="width:80px;height:80px;" />
+                            <span class="btn control-label">
+                                <input type="file" name="file" id="file" onchange="previewPhoto(this);" accept=".jpg,.jpeg,.png" />          
+                            </span>
+                            <button id="btnRemovePhoto" class="btn btn-gray">@Resource.RemovePhoto</button>                                                      
+                            <div id="divImageError" style="display:none"><span style="color:red">Photo is larger than 200 pixels!</span></div>
+                        </div>                 
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnCloseAccessory" class="btn btn-white-outline-third">@Resource.Close</button>
+                <button id="btnAddAccessory" class="btn btn-first" data-dismiss="modal" aria-label="Close">@Resource.Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    let tranNumber;
+
+    $(document).ready(function () {      
+
+        $("#btnAddAccessory").click(function (e) {
+            let gold = $("#inputGold").val();
+            let pearl = $("#inputPearl").val();
+            let diamond = $("#inputDiamond").val();
+            let stone = $("#inputStone").val();
+            let palatinum = $("#inputPalatinum").val();          
+            let base64String = convertImageToBase64();
+            showLoadingIcon();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddAccessoryAction", "Purchase")',
+                data: JSON.stringify({ "number": tranNumber, "gold": gold, "pearl": pearl, "diamond": diamond, "stone": stone, "palatinum": palatinum, "base64String": base64String }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else {                      
+                        createTranPurchaseData(response.LstTranPurchase);
+                        clearAccessoryControls();
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        });
+
+        $("#btnCloseAccessory").click(function (e) {
+            $('#modalAccessory').modal('hide');
+            $('#tblTranPurchase tr').removeClass("selected");
+            clearAccessoryControls();
+        });
+
+        $("#btnRemovePhoto").click(function (e) {
+            document.getElementById('imgPreview').src = "";
+            $('#file').val('');
+        });
+
+    });
+
+    function fillAccessoryControls(TranPurchaseAccessoryModel) {
+        $("#inputGold").val(TranPurchaseAccessoryModel.Gold);
+        $("#inputPearl").val(TranPurchaseAccessoryModel.Pearl);
+        $("#inputDiamond").val(TranPurchaseAccessoryModel.Diamond);
+        $("#inputStone").val(TranPurchaseAccessoryModel.Stone);
+        $("#inputPalatinum").val(TranPurchaseAccessoryModel.Palatinum);
+        document.getElementById('imgPreview').src = TranPurchaseAccessoryModel.Base64Photo;
+    }
+
+    function clearAccessoryControls() {
+        $("#inputGold").val("");
+        $("#inputPearl").val("");
+        $("#inputDiamond").val("");
+        $("#inputStone").val("");
+        $("#inputPalatinum").val("");
+        document.getElementById('imgPreview').src = "";
+        $('#file').val('');
+    }
+
+    function previewPhoto(input) {
+        let img = new Image();
+        let objectURL = window.URL.createObjectURL(input.files[0]);
+        img.onload = function () {
+            if (this.width > 200 || this.height > 200) {
+                $('#file').val('');
+                $("#divImageError").show();
+            }
+            else {
+                document.getElementById('imgPreview').src = objectURL;
+                $("#divImageError").hide();
+            }
+        }
+        img.src = objectURL;
+    }
+
+    function convertImageToBase64() {
+        var c = document.createElement('canvas');      
+        var img = document.getElementById('imgPreview');
+        c.height = img.naturalHeight;
+        c.width = img.naturalWidth;
+        var ctx = c.getContext('2d');    
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        var base64String = c.toDataURL();      
+        return base64String;
+    }
+
+</script>
+

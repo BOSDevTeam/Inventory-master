@@ -25,5 +25,6 @@ namespace Inventory.Models
         public int? Number { get; set; }
         public string ActionCode { get; set; }
         public bool IsNewTran { get; set; }
+        public int? LogNumber { get; set; }
     }
 }

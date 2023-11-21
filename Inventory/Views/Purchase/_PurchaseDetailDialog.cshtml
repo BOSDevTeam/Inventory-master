@@ -56,18 +56,66 @@
     </div>
 </div>
 
+<div>
+    @{
+        Html.RenderPartial("_ViewAccessoryDialog");
+    }
+</div>
+
 <script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#tblTranPurchase").on("click", "tbody tr", function (event) {
+            if (shopTypeCode != '@Inventory.Common.AppConstants.ShopType.JewelleryShop') return;
+            $(this).find("td:last").each(function () {
+                let tranPurchaseId = $(this).text();
+                showLoadingIcon();
+                $.ajax({
+                    type: "GET",
+                    url: '@Url.Action("ViewAccessoryAction", "Purchase")',
+                    data: { "tranPurchaseId": tranPurchaseId },
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        hideLoadingIcon();
+                        if (!response.ResultDefaultData.IsRequestSuccess)
+                            responseUnSuccessful(response);
+                        else {
+                            $('#modalAccessory').modal('show');
+                            fillAccessoryData(response.TranPurchaseAccessoryModel);
+                        }
+                    },
+                    failure: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        hideLoadingIcon();
+                        alert(response.responseText);
+                    }
+                });
+            })
+        });
+
+    });
 
     function createTranPurchaseDetail(response) {
         $("#tblTranPurchase").find("tbody").empty();
         $.each(response.LstTranPurchase, function (index, item) {
             let row = '<tr class="row voucher-table-item">'
-            if (item.IsFOC == true) row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '(FOC)' + '</td>'
-            else row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '</td>'
+            if (shopTypeCode == '@Inventory.Common.AppConstants.ShopType.JewelleryShop') {
+                if (item.IsFOC == true) row += '<td class="col-md-4 col-lg-4 text-overflow text-link">' + item.ProductName + '(FOC)' + '</td>'
+                else row += '<td class="col-md-4 col-lg-4 text-overflow text-link">' + item.ProductName + '</td>'
+            } else {
+                if (item.IsFOC == true) row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '(FOC)' + '</td>'
+                else row += '<td class="col-md-4 col-lg-4 text-overflow">' + item.ProductName + '</td>'
+            }            
             row += '<td class="col-md-2 col-lg-2">' + item.Quantity + '<span class="control-span-sm">' + item.UnitKeyword + '</span></td>'
                + '<td class="col-md-2 col-lg-2">' + separatedComma(item.PurchasePrice) + '<span class="control-span-sm">' + item.CurrencyKeyword + '</span></td>'
                + '<td class="col-md-2 col-lg-2">' + separatedComma(item.Discount) + '</td>'
                + '<td class="col-md-2 col-lg-2 aligh-right">' + separatedComma(item.Amount) + '</td>'
+               + '<td style="display:none;">' + item.ID + '</td>'
                + "</tr>";
             $('#tblTranPurchase tbody').append(row);
         });
@@ -96,9 +144,9 @@
         }
         if (response.BankPayment.length != 0) {
             $('#lblBankPayment').text(response.BankPayment);
-            $('#trBankPayment').show();           
+            $('#trBankPayment').show();
         }
-        else $('#trBankPayment').css('display', 'none');        
+        else $('#trBankPayment').css('display', 'none');
 
         $('#lblSubtotal').text(separatedComma(response.Subtotal));
         $('#lblTaxValue').text(separatedComma(response.TaxAmt));

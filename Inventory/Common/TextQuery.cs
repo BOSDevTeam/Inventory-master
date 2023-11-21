@@ -216,5 +216,11 @@ namespace Inventory.Common
             return "Select ms.BankPaymentID,PaymentPercent,Amount,BankPaymentName"
             + " From TMultiPayMethodSale ms Inner Join SBankPayment bp On ms.BankPaymentID=bp.BankPaymentID Where PayMethodID=2 And SaleID=" + saleId;
         }
+
+        public string getTranPurchaseAccessory(int tranPurchaseId)
+        {
+            return "Select Gold,Pearl,Diamond,Stone,Palatinum,Photo"
+            + " From TTranPurchaseAccessory Where TranPurchaseID=" + tranPurchaseId;
+        }
     }
 }

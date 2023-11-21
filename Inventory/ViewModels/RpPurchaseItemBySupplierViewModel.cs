@@ -43,6 +43,7 @@ namespace Inventory.ViewModels
             public string ProductCode { get; set; }
             public string UnitKeyword { get; set; }
             public string CurrencyKeyword { get; set; }
+            public string Accessories { get; set; }
         }
     }
 }

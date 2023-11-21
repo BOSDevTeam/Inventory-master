@@ -38,6 +38,8 @@ namespace Inventory.ViewModels
             public int Quantity { get; set; }
             public int PurchasePrice { get; set; }
             public int Amount { get; set; }
+            public string Accessories { get; set; }
+            public byte[] Photo { get; set; }
         }
     }
 }

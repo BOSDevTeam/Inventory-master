@@ -1,0 +1,67 @@
+﻿<div class="modal fade" id="modalAccessory" tabindex="-1" role="dialog" aria-labelledby="adminModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:400px;">
+        <div class="modal-content" style="background-color:aliceblue">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminModalLongTitle">@Resource.Accessory</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 col-lg-12">
+                        <table class="width-100-percent">
+                            <tr class="row">
+                                <td class="col-md-4 col-lg-4 align-center"><label class="control-label">@Resource.Gold</label></td>
+                                <td class="col-md-4 col-lg-4"><label id="lblGold" type="text" class="control-input"></label></td>
+                                <td class="col-md-4 col-lg-4 align-center"><label class="control-title">@Resource.G</label></td>
+                            </tr>
+                            <tr class="row m-t-10">
+                                <td class="col-md-4 col-lg-4 align-center"><label class="control-label">@Resource.Pearl</label></td>
+                                <td class="col-md-4 col-lg-4"><label id="lblPearl" type="text" class="control-input"></label></td>
+                                <td class="col-md-4 col-lg-4 align-center"><label class="control-title">@Resource.Rati</label></td>
+                            </tr>
+                            <tr class="row m-t-10">
+                                <td class="col-md-4 col-lg-4 align-center"><label class="control-label">@Resource.Diamond</label></td>
+                                <td class="col-md-4 col-lg-4"><label id="lblDiamond" type="text" class="control-input"></label></td>
+                                <td class="col-md-4 col-lg-4 align-center"><label class="control-title">@Resource.Carat</label></td>
+                            </tr>
+                            <tr class="row m-t-10">
+                                <td class="col-md-4 col-lg-4 align-center"><label class="control-label">@Resource.Stone</label></td>
+                                <td class="col-md-4 col-lg-4"><label id="lblStone" type="text" class="control-input"></label></td>
+                                <td class="col-md-4 col-lg-4 align-center"><label class="control-title">@Resource.Carat</label></td>
+                            </tr>
+                            <tr class="row m-t-10">
+                                <td class="col-md-4 col-lg-4 align-center"><label class="control-label">@Resource.Palatinum</label></td>
+                                <td class="col-md-4 col-lg-4"><label id="lblPalatinum" type="text" class="control-input"></label></td>
+                                <td class="col-md-4 col-lg-4 align-center"><label class="control-title">@Resource.G</label></td>
+                            </tr>
+                        </table>
+                        <div class="form-group m-t-10">                           
+                            <img src="" id="imgPreview" style="width:80px;height:80px;" />                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function fillAccessoryData(TranPurchaseAccessoryModel) {
+        if (TranPurchaseAccessoryModel.Gold == null) TranPurchaseAccessoryModel.Gold = '-';
+        if (TranPurchaseAccessoryModel.Pearl == null) TranPurchaseAccessoryModel.Pearl = '-';
+        if (TranPurchaseAccessoryModel.Diamond == null) TranPurchaseAccessoryModel.Diamond = '-';
+        if (TranPurchaseAccessoryModel.Stone == null) TranPurchaseAccessoryModel.Stone = '-';
+        if (TranPurchaseAccessoryModel.Palatinum == null) TranPurchaseAccessoryModel.Palatinum = '-';
+        $("#lblGold").text(TranPurchaseAccessoryModel.Gold);
+        $("#lblPearl").text(TranPurchaseAccessoryModel.Pearl);
+        $("#lblDiamond").text(TranPurchaseAccessoryModel.Diamond);
+        $("#lblStone").text(TranPurchaseAccessoryModel.Stone);
+        $("#lblPalatinum").text(TranPurchaseAccessoryModel.Palatinum);
+        document.getElementById('imgPreview').src = TranPurchaseAccessoryModel.Base64Photo;
+    }
+
+</script>
+

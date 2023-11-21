@@ -193,7 +193,7 @@
     <script src="~/Scripts/chosen.jquery.min.js"></script>
 
     <script>
-        var userId = 0, userName, isMultiUnit = false, isMultiCurrency = false, isBankPayment = false, isTechnician = 0, isEditEntryModule = false, isDeleteEntryModule = false;
+        var userId = 0, userName, isMultiUnit = false, isMultiCurrency = false, isBankPayment = false, isTechnician = 0, isEditEntryModule = false, isDeleteEntryModule = false, shopTypeCode;
         const SaleModule = 1, PurchaseModule = 2;
 
         userId = localStorage.getItem("UserID");
@@ -204,6 +204,7 @@
         isTechnician = localStorage.getItem("IsTechnician");
         isEditEntryModule = localStorage.getItem("IsEditEntryModule");
         isDeleteEntryModule = localStorage.getItem("IsDeleteEntryModule");
+        shopTypeCode = localStorage.getItem("ShopTypeCode");
    
         $("#loginUser").text(userName);
 
@@ -330,9 +331,9 @@
             $('#lblToastMessage').text(message);
         }
 
-        function showAlertInDialog(type, message) {
+        function showAlertInDialog(type, message) {           
             if (type == 1) $("#divAlertSuccess").delay(3000).addClass("in").toggle(true).fadeOut(500);
-            else if (type == 0) $("#divAlertError").delay(3000).addClass("in").toggle(true).fadeOut(500);
+            else if (type == 0) $("#divAlertError").delay(3000).addClass("in").toggle(true).fadeOut(500);            
             $("#spnAlertMessage").text(message);
         }
 

@@ -18,5 +18,6 @@ namespace Inventory.Models
         public int DiscountPercent { get; set; }
         public string ActionCode { get; set; }
         public int OrginalQuantity { get; set; }
+        public int? LogNumber { get; set; }
     }
 }

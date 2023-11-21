@@ -57,10 +57,10 @@
                     <div class="col-md-2 col-lg-2 aligh-right">@master.BankPayment</div>                    
                 </div>
                 @foreach(var item in Model.lstTranPurchase.Where(m=>m.PurchaseID==master.PurchaseID).ToList() as List<RpPurchaseAuditViewModel.TranPurchaseView>)
-                {
+                {                  
                     <div class="row rpt-item">
                         <div class="col-md-5 col-lg-5"></div>
-                        <div class="col-md-2 col-lg-2">
+                        <div class="col-md-2 col-lg-2">                           
                             @if (item.IsFOC == true)
                             {
                                 @item.ProductName@Resource.OpenParenthesis@Resource.FOC@Resource.CloseParenthesis

@@ -99,6 +99,7 @@
                             <ul id="subMenuPurchaseRpGp">
                                 <li id="subMenuPurchaseAmountOnlyRp"><a href="#">@Resource.PurchaseAmountOnlyReport</a></li>
                                 <li id="subMenuPurchaseItemSimpleRp"><a href="#">@Resource.PurchaseItemSimpleReport</a></li>
+                                <li id="subMenuPurchaseItemSimpleImageRp"><a href="#">@Resource.PurchaseItemSimpleReportWithImage</a></li>
                                 <li id="subMenuPurchaseAuditRp"><a href="#">@Resource.PurchaseAuditReport</a></li>
                                 <li id="subMenuPurchaseAmountBySupplierRp"><a href="#">@Resource.PurchaseAmountBySupplierReport</a></li>
                                 <li id="subMenuPurchaseItemBySupplierRp"><a href="#">@Resource.PurchaseItemBySupplierReport</a></li>
@@ -204,6 +205,9 @@
             $('#subMenuPurchaseItemSimpleRp').click(function () {
                 window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.PurchaseItemSimpleReport})';
             });
+            $('#subMenuPurchaseItemSimpleImageRp').click(function () {
+                window.location.href = '@Url.Action("Filter", "Report",new { reportName = Resource.PurchaseItemSimpleReportWithImage})';
+            });
             $('#subMenuPurchaseAuditRp').click(function () {
                 window.location.href = '@Url.Action("Filter", "Report", new { reportName = Resource.PurchaseAuditReport})';
             });
@@ -291,6 +295,7 @@
             let isShowSaleLog = localStorage.getItem("SaleLog");
             let isShowPurchaseAmountOnly = localStorage.getItem("PurchaseAmountOnly");
             let isShowPurchaseItemSimple = localStorage.getItem("PurchaseItemSimple");
+            let isShowPurchaseItemSimpleImage = localStorage.getItem("PurchaseItemSimpleWithImage");
             let isShowPurchaseAudit = localStorage.getItem("PurchaseAudit");
             let isShowPurchaseAmountBySupplier = localStorage.getItem("PurchaseAmountBySupplier");
             let isShowPurchaseItemBySupplier = localStorage.getItem("PurchaseItemBySupplier");
@@ -317,6 +322,7 @@
             if (isShowSaleLog != 'True') $("#subMenuSaleLogRp").css('display', 'none');
             if (isShowPurchaseAmountOnly != 'True') $("#subMenuPurchaseAmountOnlyRp").css('display', 'none');
             if (isShowPurchaseItemSimple != 'True') $("#subMenuPurchaseItemSimpleRp").css('display', 'none');
+            if (isShowPurchaseItemSimpleImage != 'True') $("#subMenuPurchaseItemSimpleImageRp").css('display', 'none');
             if (isShowPurchaseAudit != 'True') $("#subMenuPurchaseAuditRp").css('display', 'none');
             if (isShowPurchaseAmountBySupplier != 'True') $("#subMenuPurchaseAmountBySupplierRp").css('display', 'none');
             if (isShowPurchaseItemBySupplier != 'True') $("#subMenuPurchaseItemBySupplierRp").css('display', 'none');
@@ -337,7 +343,7 @@
                 $("#menuSale").css('display', 'none');
             }
             if (isShowPurchaseAmountOnly == 'False' && isShowPurchaseItemSimple == 'False' && isShowPurchaseAudit == 'False' && isShowPurchaseAmountBySupplier == 'False' &&
-                isShowPurchaseItemBySupplier == 'False' && isShowPurchaseLog == 'False' ) {
+                isShowPurchaseItemBySupplier == 'False' && isShowPurchaseLog == 'False' && isShowPurchaseItemSimpleImage == 'False') {
                 $("#menuPurchase").css('display', 'none');
             }
             if (isShowAdjustmentVoucher == 'False' && isShowAdjustmentItem == 'False') {

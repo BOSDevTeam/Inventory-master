@@ -296,6 +296,7 @@
     <Compile Include="Models\TranAdjustmentModels.cs" />
     <Compile Include="Models\TranCustomerConsignModels.cs" />
     <Compile Include="Models\TranPurchaseLogModels.cs" />
+    <Compile Include="Models\TranPurchaseAccessoryModels.cs" />
     <Compile Include="Models\TranSaleLogModels.cs" />
     <Compile Include="Models\TranSupplierOpeningModels.cs" />
     <Compile Include="Models\TranCustomerOpeningModels.cs" />
@@ -795,6 +796,9 @@
     <Content Include="Views\Sale\SaleVoucherDesign5.cshtml" />
     <Content Include="Views\RpSaleAmountByMultiPay\SaleAmountByMultiPayReport.cshtml" />
     <Content Include="Views\Shared\_LocationFilter.cshtml" />
+    <Content Include="Views\Purchase\_AddAccessoryDialog.cshtml" />
+    <Content Include="Views\Purchase\_ViewAccessoryDialog.cshtml" />
+    <Content Include="Views\RpPurchaseItemSimple\PurchaseItemSimpleReportWithImage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

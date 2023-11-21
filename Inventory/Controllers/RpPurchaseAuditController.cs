@@ -88,6 +88,7 @@ namespace Inventory.Controllers
         {
             List<RpPurchaseAuditViewModel.TranPurchaseView> lstRptTranPurchase = new List<RpPurchaseAuditViewModel.TranPurchaseView>();
             RpPurchaseAuditViewModel.TranPurchaseView tranPurchase = new RpPurchaseAuditViewModel.TranPurchaseView();
+
             setting.conn.Open();
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetRptTranPurchaseList, setting.conn);
             cmd.CommandType = CommandType.StoredProcedure;
@@ -100,7 +101,6 @@ namespace Inventory.Controllers
             {
                 tranPurchase = new RpPurchaseAuditViewModel.TranPurchaseView();
                 tranPurchase.PurchaseID = Convert.ToInt32(reader["PurchaseID"]);
-                tranPurchase.ProductName = Convert.ToString(reader["ProductName"]);
                 tranPurchase.Quantity = Convert.ToInt32(reader["Quantity"]);
                 tranPurchase.UnitKeyword = Convert.ToString(reader["UnitKeyword"]);
                 tranPurchase.PurchasePrice = Convert.ToInt32(reader["PurPrice"]);
@@ -109,6 +109,16 @@ namespace Inventory.Controllers
                 tranPurchase.Discount = Convert.ToInt32(reader["Discount"]);
                 tranPurchase.Amount = Convert.ToInt32(reader["Amount"]);
                 tranPurchase.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
+
+                if (reader["Gold"] != DBNull.Value) tranPurchase.Accessories += Resource.Gold + " " + reader["Gold"] + Resource.G + " ";
+                if (reader["Pearl"] != DBNull.Value) tranPurchase.Accessories += Resource.Pearl + " " + reader["Pearl"] + Resource.Rati + " ";
+                if (reader["Diamond"] != DBNull.Value) tranPurchase.Accessories += Resource.Diamond + " " + reader["Diamond"] + Resource.Carat + " ";
+                if (reader["Stone"] != DBNull.Value) tranPurchase.Accessories += Resource.Stone + " " + reader["Stone"] + Resource.Carat + " ";
+                if (reader["Palatinum"] != DBNull.Value) tranPurchase.Accessories += Resource.Palatinum + " " + reader["Palatinum"] + Resource.G + " ";
+
+                if (tranPurchase.Accessories != null) tranPurchase.ProductName = Convert.ToString(reader["ProductName"]) + Resource.OpenParenthesis + tranPurchase.Accessories.Trim() + Resource.CloseParenthesis;
+                else tranPurchase.ProductName = Convert.ToString(reader["ProductName"]);
+
                 lstRptTranPurchase.Add(tranPurchase);
             }
             reader.Close();

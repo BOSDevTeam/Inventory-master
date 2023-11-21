@@ -33,21 +33,13 @@ namespace Inventory.Controllers
 
         public ActionResult PurchaseItemSimpleReport(DateTime fromDate,DateTime toDate, int? selectedLocationId)
         {
-            try
-            {
-                string getVal = Request.QueryString["SubMenuID"];
-                string concat = @"{""data"":" + getVal + "}";
-                ValList vl = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);
-                ValList subMenu = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);
-                List<RpPurchaseItemSimpleViewModel.MainMenuViewModel> lstPurchaseItemSimpleRpt = GetPurchaseItemSimpleReport(fromDate, toDate, subMenu.data,selectedLocationId);
-                purchaseItemSimpleViewModel.lstPurchaseRpt = lstPurchaseItemSimpleRpt;
-                purchaseItemSimpleViewModel.FromDate = fromDate;
-                purchaseItemSimpleViewModel.ToDate = toDate;
-            }
-            catch(Exception ex)
-            {
-                ViewBag.ErrorMessage = ex.Message;
-            }
+            purchaseItemAction(fromDate, toDate, selectedLocationId);
+            return View(purchaseItemSimpleViewModel);
+        }
+
+        public ActionResult PurchaseItemSimpleReportWithImage(DateTime fromDate, DateTime toDate, int? selectedLocationId)
+        {
+            purchaseItemAction(fromDate, toDate, selectedLocationId);
             return View(purchaseItemSimpleViewModel);
         }
 
@@ -95,6 +87,14 @@ namespace Inventory.Controllers
                             PurchaseItemModel.Discount = Convert.ToInt32(reader["Discount"]);
                             PurchaseItemModel.PurchasePrice = Convert.ToInt32(reader["PurPrice"]);
                             PurchaseItemModel.Amount = Convert.ToInt32(reader["Amount"]);
+
+                            if (reader["Gold"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Gold + " " + reader["Gold"] + Resource.G + " ";
+                            if (reader["Pearl"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Pearl + " " + reader["Pearl"] + Resource.Rati + " ";
+                            if (reader["Diamond"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Diamond + " " + reader["Diamond"] + Resource.Carat + " ";
+                            if (reader["Stone"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Stone + " " + reader["Stone"] + Resource.Carat + " ";
+                            if (reader["Palatinum"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Palatinum + " " + reader["Palatinum"] + Resource.G + " ";
+                            if (reader["Photo"] != DBNull.Value) PurchaseItemModel.Photo = (byte[]) reader["Photo"];
+
                             foreach (var SubMenuData in MainMenuData.lstSubMenu.Where(m => m.SubMenuID == SubMenuModel.SubMenuID))
                             {
                                 SubMenuData.lstPurchaseItem.Add(PurchaseItemModel);
@@ -112,6 +112,14 @@ namespace Inventory.Controllers
                             PurchaseItemModel.Discount = Convert.ToInt32(reader["Discount"]);
                             PurchaseItemModel.PurchasePrice = Convert.ToInt32(reader["PurPrice"]);
                             PurchaseItemModel.Amount = Convert.ToInt32(reader["Amount"]);
+
+                            if (reader["Gold"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Gold + " " + reader["Gold"] + Resource.G + " ";
+                            if (reader["Pearl"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Pearl + " " + reader["Pearl"] + Resource.Rati + " ";
+                            if (reader["Diamond"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Diamond + " " + reader["Diamond"] + Resource.Carat + " ";
+                            if (reader["Stone"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Stone + " " + reader["Stone"] + Resource.Carat + " ";
+                            if (reader["Palatinum"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Palatinum + " " + reader["Palatinum"] + Resource.G + " ";
+                            if (reader["Photo"] != DBNull.Value) PurchaseItemModel.Photo = (byte[])reader["Photo"];
+
                             foreach (var SubMenuData in MainMenuData.lstSubMenu.Where(m => m.SubMenuID == SubMenuModel.SubMenuID))
                             {
                                 List<RpPurchaseItemSimpleViewModel.PurchaseItemViewModel> lstPurchaseItem = new List<RpPurchaseItemSimpleViewModel.PurchaseItemViewModel>();
@@ -141,6 +149,14 @@ namespace Inventory.Controllers
                         PurchaseItemModel.Discount = Convert.ToInt32(reader["Discount"]);
                         PurchaseItemModel.PurchasePrice = Convert.ToInt32(reader["PurPrice"]);
                         PurchaseItemModel.Amount = Convert.ToInt32(reader["Amount"]);
+
+                        if (reader["Gold"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Gold + " " + reader["Gold"] + Resource.G + " ";
+                        if (reader["Pearl"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Pearl + " " + reader["Pearl"] + Resource.Rati + " ";
+                        if (reader["Diamond"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Diamond + " " + reader["Diamond"] + Resource.Carat + " ";
+                        if (reader["Stone"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Stone + " " + reader["Stone"] + Resource.Carat + " ";
+                        if (reader["Palatinum"] != DBNull.Value) PurchaseItemModel.Accessories += Resource.Palatinum + " " + reader["Palatinum"] + Resource.G + " ";
+                        if (reader["Photo"] != DBNull.Value) PurchaseItemModel.Photo = (byte[])reader["Photo"];
+
                         foreach (var SubMenuData in MainMenuData.lstSubMenu.Where(m => m.SubMenuID == SubMenuModel.SubMenuID))
                         {
                             List<RpPurchaseItemSimpleViewModel.PurchaseItemViewModel> lstPurchaseItem = new List<RpPurchaseItemSimpleViewModel.PurchaseItemViewModel>();
@@ -194,6 +210,25 @@ namespace Inventory.Controllers
         public class ValList
         {
             public List<int> data { get; set; }
+        }
+
+        private void purchaseItemAction(DateTime fromDate, DateTime toDate, int? selectedLocationId)
+        {
+            try
+            {
+                string getVal = Request.QueryString["SubMenuID"];
+                string concat = @"{""data"":" + getVal + "}";
+                ValList vl = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);
+                ValList subMenu = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<ValList>(concat);
+                List<RpPurchaseItemSimpleViewModel.MainMenuViewModel> lstPurchaseItemSimpleRpt = GetPurchaseItemSimpleReport(fromDate, toDate, subMenu.data, selectedLocationId);
+                purchaseItemSimpleViewModel.lstPurchaseRpt = lstPurchaseItemSimpleRpt;
+                purchaseItemSimpleViewModel.FromDate = fromDate;
+                purchaseItemSimpleViewModel.ToDate = toDate;
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+            }
         }
     }
 }

@@ -46,6 +46,7 @@ namespace Inventory.Common
         {
             public const string GeneralShop = "ST001";
             public const string BeautyAndHairStyleShop = "ST002";
+            public const string JewelleryShop = "ST003";
         }
         
         //Firebase Notification

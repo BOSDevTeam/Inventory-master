@@ -65,6 +65,7 @@ namespace Inventory.ViewModels
             public string CurrencyKeyword { get; set; }
             public int DiscountPercent { get; set; }
             public bool IsFOC { get; set; }
+            public string Accessories { get; set; }
         }
     }
 }

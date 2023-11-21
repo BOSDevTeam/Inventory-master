@@ -52,6 +52,8 @@ div.paging-item{display:flex;justify-content:right;color:transparent;font-size:0
 .btn-icon.gray{color:#666;}
 .btn-icon.gray:hover{color:#999;}
 .plr-30{padding-left:30px;padding-right:30px;}
+.btn-link{color:#36b4e5;font-size:11px;font-family: 'Rubik',sans-serif;border:none;background-color:transparent;}
+.btn-link:hover{color:#2895bf;cursor:pointer;text-decoration:none;}
 /** end buttons */
 
 

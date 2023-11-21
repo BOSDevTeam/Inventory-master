@@ -40,6 +40,7 @@ namespace Inventory.Controllers
             bool isMultiCurrency = false, isMultiUnit = false, isBankPayment = false, isEditSetupModule = true,
                 isDeleteSetupModule = true, isEditEntryModule = true, isDeleteEntryModule = true;
             int tax = 0, serviceCharges = 0;
+            string shopTypeCode = "";
 
             if (Session["LstUser"] != null)
             {
@@ -72,6 +73,7 @@ namespace Inventory.Controllers
                                 serviceCharges = Convert.ToInt32(reader["ServiceCharges"]);
                                 saleVoucherDesignType = Convert.ToInt16(reader["SaleVoucherDesignType"]);                                
                                 Session[AppConstants.ShopTypeCode] = reader["ShopTypeCode"];
+                                shopTypeCode = Convert.ToString(reader["ShopTypeCode"]);
 
                                 reader.Close();
 
@@ -135,7 +137,8 @@ namespace Inventory.Controllers
                 IsEditSetupModule = isEditSetupModule,
                 IsDeleteSetupModule = isDeleteSetupModule,
                 IsEditEntryModule = isEditEntryModule,
-                IsDeleteEntryModule = isDeleteEntryModule
+                IsDeleteEntryModule = isDeleteEntryModule,
+                ShopTypeCode = shopTypeCode
             };
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }

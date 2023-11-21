@@ -291,7 +291,11 @@ namespace Inventory.Controllers
                     {
                         lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;
                         List<TranSaleModels> lstEditTran = lstTranSale.Where(x => x.Number == number).ToList();
-                        if (lstEditTran.Count() != 0) data.IsNewTran = lstEditTran[0].IsNewTran;
+                        if (lstEditTran.Count() != 0)
+                        {
+                            data.IsNewTran = lstEditTran[0].IsNewTran;
+                            data.LogNumber = lstEditTran[0].LogNumber;
+                        }
                         int index = (int)number - 1;
                         lstTranSale[index] = data;                      
                         resultDefaultData.IsRequestSuccess = true;
@@ -325,8 +329,9 @@ namespace Inventory.Controllers
                 dataLog.UnitID = data.UnitID;
                 dataLog.CurrencyID = data.CurrencyID;
                 dataLog.DiscountPercent = data.DiscountPercent;
-                dataLog.IsFOC = data.IsFOC;             
-                if (isEdit && !data.IsNewTran) setLog(AppConstants.EditActionCode, dataLog, data, number);               
+                dataLog.IsFOC = data.IsFOC;
+                dataLog.LogNumber = data.LogNumber;            
+                if (isEdit && !data.IsNewTran) setLog(AppConstants.EditActionCode, dataLog);
             }
          
             var jsonResult = new
@@ -338,26 +343,26 @@ namespace Inventory.Controllers
             };
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
-        }     
+        }        
 
-        private void setLog(string actionCode, TranSaleLogModels dataLog, TranSaleModels data, int? number)
+        private void setLog(string actionCode, TranSaleLogModels dataLog)
         {
             List<TranSaleLogModels> lstTranSaleLog = new List<TranSaleLogModels>();
             if (Session["Log"] != null)
                 lstTranSaleLog = Session["Log"] as List<TranSaleLogModels>;
 
             if (actionCode == AppConstants.EditActionCode)  // edit
-            {             
+            {
                 dataLog.ActionCode = AppConstants.EditActionCode;
-                dataLog.OrginalQuantity = lstTranSaleLog[(int)number - 1].OrginalQuantity;
-                if (number != null) lstTranSaleLog[(int)number - 1] = dataLog;                          
+                dataLog.OrginalQuantity = lstTranSaleLog[(int)dataLog.LogNumber - 1].OrginalQuantity;
+                if (dataLog.LogNumber != null) lstTranSaleLog[(int)dataLog.LogNumber - 1] = dataLog;
             }
             else if (actionCode == AppConstants.DeleteActionCode)  // delete
-            {               
-                dataLog.ActionCode = AppConstants.DeleteActionCode;              
-                if (number != null) lstTranSaleLog[(int)number - 1] = dataLog;             
+            {
+                dataLog.ActionCode = AppConstants.DeleteActionCode;
+                if (dataLog.LogNumber != null) lstTranSaleLog[(int)dataLog.LogNumber - 1] = dataLog;
             }
-            
+
             Session["Log"] = lstTranSaleLog;
         }
 
@@ -372,8 +377,8 @@ namespace Inventory.Controllers
             {
                 try
                 {
-                    lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;
-                    TranSaleModels data = lstTranSale[number - 1];
+                    lstTranSale = Session["TranSaleData"] as List<TranSaleModels>;                 
+                    TranSaleModels data = lstTranSale.Where(x => x.Number == number).SingleOrDefault();
                     if (isVoucherEdit)
                     {
                         TranSaleLogModels dataLog = new TranSaleLogModels();
@@ -386,7 +391,8 @@ namespace Inventory.Controllers
                         dataLog.CurrencyID = data.CurrencyID;
                         dataLog.DiscountPercent = data.DiscountPercent;
                         dataLog.IsFOC = data.IsFOC;
-                        if (!data.IsNewTran) setLog(AppConstants.DeleteActionCode, dataLog, data, number);
+                        dataLog.LogNumber = data.LogNumber;                      
+                        if (!data.IsNewTran) setLog(AppConstants.DeleteActionCode, dataLog);
                     }
                     lstTranSale.RemoveAt(number - 1);
                     resultDefaultData.IsRequestSuccess = true;
@@ -1754,7 +1760,7 @@ namespace Inventory.Controllers
             TranSaleModels item = new TranSaleModels();
             lstTranSaleLog = new List<TranSaleLogModels>();
             TranSaleLogModels itemLog = new TranSaleLogModels();
-            int number = 0;
+            int number = 0, logNumber = 0;
 
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetTranSaleBySaleID, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
@@ -1764,23 +1770,25 @@ namespace Inventory.Controllers
             {
                 item = new TranSaleModels();
                 number++;
-                item.Number = number;        
+                logNumber++;
+                item.Number = number;
                 item.ProductName = Convert.ToString(reader["ProductName"]);
                 item.Quantity = Convert.ToInt32(reader["Quantity"]);
-                item.SalePrice = Convert.ToInt32(reader["SalePrice"]);              
+                item.SalePrice = Convert.ToInt32(reader["SalePrice"]);
                 item.Discount = Convert.ToInt32(reader["Discount"]);
-                item.Amount = Convert.ToInt32(reader["Amount"]);             
+                item.Amount = Convert.ToInt32(reader["Amount"]);
                 item.UnitKeyword = Convert.ToString(reader["UnitKeyword"]);
                 item.CurrencyKeyword = Convert.ToString(reader["CurrencyKeyword"]);
-                item.ProductID= Convert.ToInt32(reader["ProductID"]);
+                item.ProductID = Convert.ToInt32(reader["ProductID"]);
                 item.UnitID = Convert.ToInt32(reader["UnitID"]);
                 item.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
                 item.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
-                item.ProductCode= Convert.ToString(reader["Code"]);
+                item.ProductCode = Convert.ToString(reader["Code"]);
                 item.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
+                item.LogNumber = logNumber;
                 list.Add(item);
 
-                // log
+                //log
                 itemLog = new TranSaleLogModels();
                 itemLog.Quantity = Convert.ToInt32(reader["Quantity"]);
                 itemLog.OrginalQuantity = Convert.ToInt32(reader["Quantity"]);
@@ -1792,6 +1800,7 @@ namespace Inventory.Controllers
                 itemLog.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
                 itemLog.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
                 itemLog.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
+                itemLog.LogNumber = logNumber;
                 lstTranSaleLog.Add(itemLog);
             }
             reader.Close();

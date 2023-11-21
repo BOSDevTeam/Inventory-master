@@ -954,4 +954,43 @@
   <data name="LocationFilter" xml:space="preserve">
     <value>Location Filter</value>
   </data>
+  <data name="AddAccessories" xml:space="preserve">
+    <value>Add Accessories</value>
+  </data>
+  <data name="Carat" xml:space="preserve">
+    <value>Carat</value>
+  </data>
+  <data name="Diamond" xml:space="preserve">
+    <value>Diamond</value>
+  </data>
+  <data name="G" xml:space="preserve">
+    <value>G</value>
+  </data>
+  <data name="Gold" xml:space="preserve">
+    <value>Gold</value>
+  </data>
+  <data name="Palatinum" xml:space="preserve">
+    <value>Palatinum</value>
+  </data>
+  <data name="Pearl" xml:space="preserve">
+    <value>Pearl</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>Photo</value>
+  </data>
+  <data name="Rati" xml:space="preserve">
+    <value>Rati</value>
+  </data>
+  <data name="Stone" xml:space="preserve">
+    <value>Stone</value>
+  </data>
+  <data name="Accessory" xml:space="preserve">
+    <value>Accessory</value>
+  </data>
+  <data name="PurchaseItemSimpleReportWithImage" xml:space="preserve">
+    <value>Purchase Item Simple Report (With Image)</value>
+  </data>
+  <data name="RemovePhoto" xml:space="preserve">
+    <value>Remove Photo</value>
+  </data>
 </root>

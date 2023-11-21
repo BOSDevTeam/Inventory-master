@@ -158,7 +158,11 @@
         Html.RenderPartial("_PaymentDialog", Model.Payments);
     }
 </div>
-
+<div>
+    @{
+        Html.RenderPartial("_AddAccessoryDialog");
+    }
+</div>
 
 
 <script type="text/javascript">
@@ -252,27 +256,6 @@
             showHideCurrency();
             showHideTranPurchaseAddEdit(false);
             isEditTranPurchase = false;
-        }
-
-        function createTranPurchaseData(lstTranPurchase) {
-            let num = 0;
-            $("#tblTranPurchase").find("tbody").empty();
-            $.each(lstTranPurchase, function (i, item) {
-                num += 1;
-                if (item.UnitKeyword == null) item.UnitKeyword = '';
-                if (item.CurrencyKeyword == null) item.CurrencyKeyword = '';
-                let row = '<tr class="row tran-table-item-row">'
-                       + '<td style="display:none;">' + item.ProductID + '</td>'
-                       + '<td class="col-md-4 col-lg-4"><label class="control-label mb-0 text-link text-overflow">' + item.ProductName + '</label></td>'
-                       + '<td class="col-md-1 col-lg-1"><label class="control-label mb-0">' + item.Quantity + '<span class="control-span-sm">&nbsp;' + item.UnitKeyword + '</span></label></td>'
-                       + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + separatedComma(item.PurchasePrice) + '<span class="control-span-sm">&nbsp;' + item.CurrencyKeyword + '</span></label></td>'
-                       + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + separatedComma(item.Discount) + '</label></td>'
-                       + '<td class="col-md-2 col-lg-2 value-right"><label class="control-label mb-0">' + separatedComma(item.Amount) + '</label></td>'
-                       + '<td class="col-md-1 col-lg-1 value-right"><button class="btn-icon gray" title="Delete" onclick="tranPurchaseTableAction(3)"><i class="fa fa-remove"></i></button></td>'
-                       + '<td style="display:none;">' + num + '</td>'
-                       + '</tr>';
-                $('#tblTranPurchase tbody').append(row);
-            })
         }
 
         function createAmount(response) {
@@ -421,11 +404,45 @@
                 if (tranPurchaseAction == 3) {
                     tranPurchaseAction = 0;
                     deleteTranPurchase(number);
-                } else {
+                } else if (tranPurchaseAction == 4) {
+                    tranPurchaseAction = 0;
+                    tranNumber = number;
+                    getAccessory(tranNumber);
+                }
+                else {
                     prepareToEditTranPurchase(number);
                 }
             })
         });
+
+        function getAccessory(number) {
+            showLoadingIcon();
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetAccessoryAction", "Purchase")',
+                data: { "number": number },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    hideLoadingIcon();
+                    if (!response.ResultDefaultData.IsRequestSuccess)
+                        responseUnSuccessful(response);
+                    else {
+                        $('#modalAccessory').modal('show');
+                        fillAccessoryControls(response.TranPurchaseAccessoryModel);
+                    }
+                },
+                failure: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    hideLoadingIcon();
+                    alert(response.responseText);
+                }
+            });
+        }
+
         function deleteTranPurchase(number) {
             showLoadingIcon();
             $.ajax({
@@ -453,6 +470,7 @@
                 }
             });
         }
+
         function prepareToEditTranPurchase(number) {
             showLoadingIcon();
             $.ajax({
@@ -599,7 +617,7 @@
                                 createCurrencyData(response);
                                 showHideTranPurchaseAddEdit(false);
                             }
-                        }                      
+                        }
                     },
                     failure: function (response) {
                         hideLoadingIcon();
@@ -769,7 +787,7 @@
                         $("#ddlSupplier").val(defaultSupplierId).trigger("chosen:updated");
                         $("#ddlLocation").val(defaultLocationId);
                         $("#ddlMCurrency").val(defaultMCurrencyId);
-                    }                  
+                    }
                 },
                 failure: function (response) {
                     hideLoadingIcon();
@@ -935,6 +953,37 @@
     function tranPurchaseTableAction(value) {
         tranPurchaseAction = value;
     }
+
+    function createTranPurchaseData(lstTranPurchase) {
+        let num = 0;
+        $("#tblTranPurchase").find("tbody").empty();
+        $.each(lstTranPurchase, function (i, item) {
+            num += 1;
+            if (item.UnitKeyword == null) item.UnitKeyword = '';
+            if (item.CurrencyKeyword == null) item.CurrencyKeyword = '';
+            let row = '<tr class="row tran-table-item-row">'
+                   + '<td style="display:none;">' + item.ProductID + '</td>'
+                   + '<td class="col-md-4 col-lg-4">'
+                   + '<label class="control-label mb-0 text-link text-overflow">' + item.ProductName + '</label>'
+            if(shopTypeCode == '@Inventory.Common.AppConstants.ShopType.JewelleryShop'){
+                if (item.Accessories == null || item.Accessories.length == 0) {
+                    row += '<button class="btn-link" onclick="tranPurchaseTableAction(4)"><i class="fa fa-plus" style="font-size:9px;"></i>&nbsp;@Resource.AddAccessories</button>'
+                } else {
+                    row += '<button class="btn-link" onclick="tranPurchaseTableAction(4)" style="text-align:left;">' + item.Accessories + '</button>'
+                }
+            }
+            row += '</td>'
+                   + '<td class="col-md-1 col-lg-1"><label class="control-label mb-0">' + item.Quantity + '<span class="control-span-sm">&nbsp;' + item.UnitKeyword + '</span></label></td>'
+                   + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + separatedComma(item.PurchasePrice) + '<span class="control-span-sm">&nbsp;' + item.CurrencyKeyword + '</span></label></td>'
+                   + '<td class="col-md-2 col-lg-2"><label class="control-label mb-0">' + separatedComma(item.Discount) + '</label></td>'
+                   + '<td class="col-md-2 col-lg-2 value-right"><label class="control-label mb-0">' + separatedComma(item.Amount) + '</label></td>'
+                   + '<td class="col-md-1 col-lg-1 value-right"><button class="btn-icon gray" title="Delete" onclick="tranPurchaseTableAction(3)"><i class="fa fa-remove"></i></button></td>'
+                   + '<td style="display:none;">' + num + '</td>'
+                   + '</tr>';
+            $('#tblTranPurchase tbody').append(row);
+        })
+    }
+
 </script>
 
 

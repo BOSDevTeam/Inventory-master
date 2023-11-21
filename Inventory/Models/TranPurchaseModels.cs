@@ -7,6 +7,10 @@ namespace Inventory.Models
 {
     public class TranPurchaseModels
     {
+        public TranPurchaseModels()
+        {
+            this.TranPurchaseAccessoryModel = new TranPurchaseAccessoryModels();
+        }
         public int ID { get; set; }
         public int SaleID { get; set; }
         public int ProductID { get; set; }
@@ -26,5 +30,8 @@ namespace Inventory.Models
         public int? Number { get; set; }
         public string ActionCode { get; set; }
         public bool IsNewTran { get; set; }
+        public int? LogNumber { get; set; }
+        public TranPurchaseAccessoryModels TranPurchaseAccessoryModel { get; set; }
+        public string Accessories { get; set; }
     }
 }

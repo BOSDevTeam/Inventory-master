@@ -9,6 +9,7 @@ using Inventory.Common;
 using Inventory.ViewModels;
 using System.Runtime.InteropServices;
 using Inventory.Filters;
+using System.Text.RegularExpressions;
 
 namespace Inventory.Controllers
 {
@@ -211,6 +212,7 @@ namespace Inventory.Controllers
             data.Discount = discount;
             data.Amount = (quantity * price) - discount;
             data.IsFOC = isItemFOC;
+           
             if (IsVoucherEdit)
             {
                 if(!isEdit)data.IsNewTran = true;
@@ -235,8 +237,14 @@ namespace Inventory.Controllers
                     {
                         lstTranPurchase = Session["TranPurchaseData"] as List<TranPurchaseModels>;
                         List<TranPurchaseModels> lstEditTran = lstTranPurchase.Where(x => x.Number == number).ToList();
-                        if (lstEditTran.Count() != 0) data.IsNewTran = lstEditTran[0].IsNewTran;
+                        if (lstEditTran.Count() != 0)
+                        {
+                            data.IsNewTran = lstEditTran[0].IsNewTran;
+                            data.LogNumber = lstEditTran[0].LogNumber;
+                        }
                         int index = (int)number - 1;
+                        data.Accessories = lstTranPurchase[index].Accessories;
+                        data.TranPurchaseAccessoryModel = lstTranPurchase[index].TranPurchaseAccessoryModel;
                         lstTranPurchase[index] = data;
                         resultDefaultData.IsRequestSuccess = true;
                     }
@@ -269,7 +277,8 @@ namespace Inventory.Controllers
                 dataLog.CurrencyID = data.CurrencyID;
                 dataLog.DiscountPercent = data.DiscountPercent;
                 dataLog.IsFOC = data.IsFOC;
-                if (isEdit && !data.IsNewTran) setLog(AppConstants.EditActionCode, dataLog, data, number);
+                dataLog.LogNumber = data.LogNumber;
+                if (isEdit && !data.IsNewTran) setLog(AppConstants.EditActionCode, dataLog);
             }
 
             var jsonResult = new
@@ -295,7 +304,7 @@ namespace Inventory.Controllers
                 try
                 {
                     lstTranPurchase = Session["TranPurchaseData"] as List<TranPurchaseModels>;
-                    TranPurchaseModels data = lstTranPurchase[number - 1];
+                    TranPurchaseModels data = lstTranPurchase.Where(x => x.Number == number).SingleOrDefault();
                     if (isVoucherEdit)
                     {
                         TranPurchaseLogModels dataLog = new TranPurchaseLogModels();
@@ -308,7 +317,8 @@ namespace Inventory.Controllers
                         dataLog.CurrencyID = data.CurrencyID;
                         dataLog.DiscountPercent = data.DiscountPercent;
                         dataLog.IsFOC = data.IsFOC;
-                        if (!data.IsNewTran) setLog(AppConstants.DeleteActionCode, dataLog, data, number);
+                        dataLog.LogNumber = data.LogNumber;
+                        if (!data.IsNewTran) setLog(AppConstants.DeleteActionCode, dataLog);
                     }
                     lstTranPurchase.RemoveAt(number - 1);
                     resultDefaultData.IsRequestSuccess = true;
@@ -428,10 +438,17 @@ namespace Inventory.Controllers
                     dt.Columns.Add(new DataColumn("Discount", typeof(int)));
                     dt.Columns.Add(new DataColumn("Amount", typeof(int)));
                     dt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
+                    dt.Columns.Add(new DataColumn("Gold", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Pearl", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Diamond", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Stone", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Palatinum", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Photo", typeof(byte[])));
 
                     for (int i = 0; i < list.Count; i++)
                     {
-                        dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurchasePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
+                        dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurchasePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC,
+                            list[i].TranPurchaseAccessoryModel.Gold, list[i].TranPurchaseAccessoryModel.Pearl, list[i].TranPurchaseAccessoryModel.Diamond, list[i].TranPurchaseAccessoryModel.Stone, list[i].TranPurchaseAccessoryModel.Palatinum, list[i].TranPurchaseAccessoryModel.Photo);
                     }
                     DateTime purchaseDateTime = DateTime.Parse(date);
                     if (payMethodId == null) payMethodId = 0;
@@ -556,6 +573,7 @@ namespace Inventory.Controllers
 
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
+
         public JsonResult DeleteAction(int purchaseId,int userId)
         {
             ResultDefaultData resultDefaultData = new ResultDefaultData();
@@ -716,7 +734,13 @@ namespace Inventory.Controllers
                     dt.Columns.Add(new DataColumn("Discount", typeof(int)));
                     dt.Columns.Add(new DataColumn("Amount", typeof(int)));
                     dt.Columns.Add(new DataColumn("IsFOC", typeof(bool)));
-                    
+                    dt.Columns.Add(new DataColumn("Gold", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Pearl", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Diamond", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Stone", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Palatinum", typeof(int)));
+                    dt.Columns.Add(new DataColumn("Photo", typeof(byte[])));
+
                     DataTable dtLog = new DataTable();
                     dtLog.Columns.Add(new DataColumn("ProductID", typeof(int)));
                     dtLog.Columns.Add(new DataColumn("Quantity", typeof(int)));
@@ -733,7 +757,9 @@ namespace Inventory.Controllers
 
                     for (int i = 0; i < list.Count; i++)
                     {
-                        dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurchasePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC);
+                        dt.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurchasePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC,
+                            list[i].TranPurchaseAccessoryModel.Gold, list[i].TranPurchaseAccessoryModel.Pearl, list[i].TranPurchaseAccessoryModel.Diamond, list[i].TranPurchaseAccessoryModel.Stone, list[i].TranPurchaseAccessoryModel.Palatinum, list[i].TranPurchaseAccessoryModel.Photo);
+
                         if (list[i].IsNewTran)
                         {
                             dtLog.Rows.Add(list[i].ProductID, list[i].Quantity, list[i].UnitID, list[i].PurchasePrice, list[i].CurrencyID, list[i].DiscountPercent, list[i].Discount, list[i].Amount, list[i].IsFOC, AppConstants.NewActionCode, AppConstants.NewActionName,0);
@@ -795,8 +821,145 @@ namespace Inventory.Controllers
             return Json(jsonResult, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public JsonResult AddAccessoryAction(int number, int? gold, int? pearl, int? diamond, int? stone, int? palatinum, string base64String)
+        {
+            List<TranPurchaseModels> lstTranPurchase = new List<TranPurchaseModels>();        
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+            string accessories = "";
+
+            if (Session["TranPurchaseData"] != null)
+            {
+                try
+                {
+                    lstTranPurchase = Session["TranPurchaseData"] as List<TranPurchaseModels>;                 
+                  
+                    TranPurchaseAccessoryModels tranPurchaseAccessoryModel = new TranPurchaseAccessoryModels();
+                    tranPurchaseAccessoryModel.Gold = gold;
+                    tranPurchaseAccessoryModel.Pearl = pearl;
+                    tranPurchaseAccessoryModel.Diamond = diamond;
+                    tranPurchaseAccessoryModel.Stone = stone;
+                    tranPurchaseAccessoryModel.Palatinum = palatinum;
+
+                    if (gold != null) accessories += Resource.Gold + " " + gold + Resource.G + " ";
+                    if (pearl != null) accessories += Resource.Pearl + " " + pearl + Resource.Rati + " ";
+                    if (diamond != null) accessories += Resource.Diamond + " " + diamond + Resource.Carat + " ";
+                    if (stone != null) accessories += Resource.Stone + " " + stone + Resource.Carat + " ";
+                    if (palatinum != null) accessories += Resource.Palatinum + " " + palatinum + Resource.G;                 
+                    
+                    if(base64String != "data:,")
+                    {
+                        tranPurchaseAccessoryModel.Base64Photo = base64String;
+                        Regex regex = new Regex(@"^[\w/\:.-]+;base64,");
+                        base64String = regex.Replace(base64String, string.Empty);
+                        byte[] bytes = System.Convert.FromBase64String(base64String);
+                        tranPurchaseAccessoryModel.Photo = bytes;
+                    }
+                                  
+                    int index = (int)number - 1;
+                    lstTranPurchase[index].Accessories = accessories;
+                    lstTranPurchase[index].TranPurchaseAccessoryModel = tranPurchaseAccessoryModel;
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+            }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();
+
+            Session["TranPurchaseData"] = lstTranPurchase;
+
+            var jsonResult = new
+            {
+                LstTranPurchase = lstTranPurchase,
+                ResultDefaultData = resultDefaultData
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult GetAccessoryAction(int number)
+        {
+            List<TranPurchaseModels> lstTranPurchase = new List<TranPurchaseModels>();
+            TranPurchaseAccessoryModels tranPurchaseAccessoryModel = new TranPurchaseAccessoryModels();
+            ResultDefaultData resultDefaultData = new ResultDefaultData();           
+
+            if (Session["TranPurchaseData"] != null)
+            {
+                try
+                {
+                    lstTranPurchase = Session["TranPurchaseData"] as List<TranPurchaseModels>;                                  
+                    int index = (int)number - 1;
+                    tranPurchaseAccessoryModel = lstTranPurchase[index].TranPurchaseAccessoryModel;                   
+                    resultDefaultData.IsRequestSuccess = true;
+                }
+                catch (Exception ex)
+                {
+                    resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                    resultDefaultData.Message = ex.Message;
+                }
+            }
+            else resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.SessionExpired.ToString();         
+
+            var jsonResult = new
+            {
+                TranPurchaseAccessoryModel = tranPurchaseAccessoryModel,
+                ResultDefaultData = resultDefaultData
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public JsonResult ViewAccessoryAction(int tranPurchaseId)
+        {
+            TranPurchaseAccessoryModels accessoryModel = new TranPurchaseAccessoryModels();
+            ResultDefaultData resultDefaultData = new ResultDefaultData();
+
+            try
+            {
+                setting.conn.Open();
+                SqlCommand cmd = new SqlCommand(textQuery.getTranPurchaseAccessory(tranPurchaseId), setting.conn);
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = setting.conn;
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.Read())
+                {
+                    if (reader["Gold"] != DBNull.Value) accessoryModel.Gold = Convert.ToInt32(reader["Gold"]);
+                    if (reader["Pearl"] != DBNull.Value) accessoryModel.Pearl = Convert.ToInt32(reader["Pearl"]);
+                    if (reader["Diamond"] != DBNull.Value) accessoryModel.Diamond = Convert.ToInt32(reader["Diamond"]);
+                    if (reader["Stone"] != DBNull.Value) accessoryModel.Stone = Convert.ToInt32(reader["Stone"]);
+                    if (reader["Palatinum"] != DBNull.Value) accessoryModel.Palatinum = Convert.ToInt32(reader["Palatinum"]);
+                    if (reader["Photo"] != DBNull.Value)
+                    {
+                        accessoryModel.Photo = (byte[])(reader["Photo"]);
+                        accessoryModel.Base64Photo = "data:image/png;base64," + Convert.ToBase64String(accessoryModel.Photo);
+                    }
+                }
+                reader.Close();
+                setting.conn.Close();
+                resultDefaultData.IsRequestSuccess = true;
+            }
+            catch (Exception ex)
+            {
+                resultDefaultData.UnSuccessfulReason = AppConstants.RequestUnSuccessful.UnExpectedError.ToString();
+                resultDefaultData.Message = ex.Message;
+            }
+
+            var jsonResult = new
+            {
+                TranPurchaseAccessoryModel = accessoryModel,
+                ResultDefaultData = resultDefaultData
+            };
+
+            return Json(jsonResult, JsonRequestBehavior.AllowGet);
+        }
 
         #endregion
+
         #region methods
         private string getUserVoucherNo(int userId)
         {
@@ -1041,18 +1204,24 @@ namespace Inventory.Controllers
         {
             List<TranPurchaseModels> list = new List<TranPurchaseModels>();
             TranPurchaseModels item = new TranPurchaseModels();
+            TranPurchaseAccessoryModels accessoryModel = new TranPurchaseAccessoryModels();
             lstTranPurchaseLog = new List<TranPurchaseLogModels>();
             TranPurchaseLogModels itemLog = new TranPurchaseLogModels();
-            int number = 0;
+            int number = 0, logNumber = 0;
+            string accessories = "";
+
             SqlCommand cmd = new SqlCommand(Procedure.PrcGetTranPurchaseByPurchaseID, (SqlConnection)getConnection());
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@PurchaseID", purchaseId);
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
+                accessories = "";
                 item = new TranPurchaseModels();
                 number++;
+                logNumber++;
                 item.Number = number;
+                item.ID = Convert.ToInt32(reader["ID"]);
                 item.ProductName = Convert.ToString(reader["ProductName"]);
                 item.Quantity = Convert.ToInt32(reader["Quantity"]);
                 item.PurchasePrice = Convert.ToInt32(reader["PurPrice"]);
@@ -1066,6 +1235,41 @@ namespace Inventory.Controllers
                 item.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
                 item.ProductCode = Convert.ToString(reader["Code"]);
                 item.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
+                item.LogNumber = logNumber;
+
+                accessoryModel = new TranPurchaseAccessoryModels();
+                if (reader["Gold"] != DBNull.Value)
+                {
+                    accessoryModel.Gold = Convert.ToInt32(reader["Gold"]);
+                    accessories += Resource.Gold + " " + accessoryModel.Gold + Resource.G + " ";
+                }
+                if (reader["Pearl"] != DBNull.Value)
+                {
+                    accessoryModel.Pearl = Convert.ToInt32(reader["Pearl"]);
+                    accessories += Resource.Pearl + " " + accessoryModel.Pearl + Resource.Rati + " ";
+                }
+                if (reader["Diamond"] != DBNull.Value)
+                {
+                    accessoryModel.Diamond = Convert.ToInt32(reader["Diamond"]);
+                    accessories += Resource.Diamond + " " + accessoryModel.Diamond + Resource.Carat + " ";
+                }
+                if (reader["Stone"] != DBNull.Value)
+                {
+                    accessoryModel.Stone = Convert.ToInt32(reader["Stone"]);
+                    accessories += Resource.Stone + " " + accessoryModel.Stone + Resource.Carat + " ";
+                }
+                if (reader["Palatinum"] != DBNull.Value)
+                {
+                    accessoryModel.Palatinum = Convert.ToInt32(reader["Palatinum"]);
+                    accessories += Resource.Palatinum + " " + accessoryModel.Palatinum + Resource.G;
+                }
+                if (reader["Photo"] != DBNull.Value)
+                {
+                    accessoryModel.Photo = (byte[])(reader["Photo"]);
+                    accessoryModel.Base64Photo = "data:image/png;base64," + Convert.ToBase64String(accessoryModel.Photo);
+                }
+                item.Accessories = accessories;
+                item.TranPurchaseAccessoryModel = accessoryModel;
                 list.Add(item);
 
                 itemLog = new TranPurchaseLogModels();
@@ -1079,6 +1283,7 @@ namespace Inventory.Controllers
                 itemLog.CurrencyID = Convert.ToInt32(reader["CurrencyID"]);
                 itemLog.DiscountPercent = Convert.ToInt32(reader["DiscountPercent"]);
                 itemLog.IsFOC = Convert.ToBoolean(reader["IsFOC"]);
+                item.LogNumber = logNumber;
                 lstTranPurchaseLog.Add(itemLog);
             }
             reader.Close();
@@ -1086,7 +1291,7 @@ namespace Inventory.Controllers
             return list;
         }
 
-        private void setLog(string actionCode, TranPurchaseLogModels dataLog, TranPurchaseModels data, int? number)
+        private void setLog(string actionCode, TranPurchaseLogModels dataLog)
         {
             List<TranPurchaseLogModels> lstTranPurchaseLog = new List<TranPurchaseLogModels>();
             if (Session["PurchaseLog"] != null)
@@ -1095,13 +1300,13 @@ namespace Inventory.Controllers
             if (actionCode == AppConstants.EditActionCode)  // edit
             {
                 dataLog.ActionCode = AppConstants.EditActionCode;
-                dataLog.OriginalQuantity = lstTranPurchaseLog[(int)number - 1].OriginalQuantity;
-                if (number != null) lstTranPurchaseLog[(int)number - 1] = dataLog;
+                dataLog.OriginalQuantity = lstTranPurchaseLog[(int)dataLog.LogNumber - 1].OriginalQuantity;
+                if (dataLog.LogNumber != null) lstTranPurchaseLog[(int)dataLog.LogNumber - 1] = dataLog;
             }
             else if (actionCode == AppConstants.DeleteActionCode)  // delete
             {
                 dataLog.ActionCode = AppConstants.DeleteActionCode;
-                if (number != null) lstTranPurchaseLog[(int)number - 1] = dataLog;
+                if (dataLog.LogNumber != null) lstTranPurchaseLog[(int)dataLog.LogNumber - 1] = dataLog;
             }
 
             Session["PurchaseLog"] = lstTranPurchaseLog;

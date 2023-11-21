@@ -171,6 +171,19 @@ namespace Inventory.Controllers
                 ViewBag.LocationData = getLocation();
                 ViewBag.isShowLocation = 1;
             }
+            else if (reportName.Equals(Resource.PurchaseItemSimpleReportWithImage))
+            {
+                reportViewModel.ControllerName = "RpPurchaseItemSimple";
+                reportViewModel.ActionName = "PurchaseItemSimpleReportWithImage";
+                reportViewModel.HtmlGroupElementID = "subMenuPurchaseRpGp";
+                reportViewModel.HtmlActiveElementID = "subMenuPurchaseItemSimpleImageRp";
+                reportViewModel.IsShowMenuFilter = true;
+                ViewBag.isShowMenu = 1;
+                GetMenuData();
+                reportViewModel.IsShowLocationFilter = true;
+                ViewBag.LocationData = getLocation();
+                ViewBag.isShowLocation = 1;
+            }
             else if (reportName.Equals(Resource.PurchaseAuditReport))
             {
                 reportViewModel.ControllerName = "RpPurchaseAudit";
@@ -421,6 +434,9 @@ namespace Inventory.Controllers
                         break;
                     case "Purchase Item Simple Report":
                         ViewBag.IsAllowPurchaseItemSimple = Convert.ToBoolean(reader["IsAllow"]);
+                        break;
+                    case "Purchase Item Simple Report (With Image)":
+                        ViewBag.IsAllowPurchaseItemSimpleImage = Convert.ToBoolean(reader["IsAllow"]);
                         break;
                     case "Purchase Audit Report":
                         ViewBag.IsAllowPurchaseAudit = Convert.ToBoolean(reader["IsAllow"]);

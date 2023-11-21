@@ -79,6 +79,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Accessory.
+        /// </summary>
+        public static string Accessory {
+            get {
+                return ResourceManager.GetString("Accessory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Account Opening.
         /// </summary>
         public static string AccountOpening {
@@ -102,6 +111,15 @@ namespace Inventory {
         public static string Add {
             get {
                 return ResourceManager.GetString("Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Accessories.
+        /// </summary>
+        public static string AddAccessories {
+            get {
+                return ResourceManager.GetString("AddAccessories", resourceCulture);
             }
         }
         
@@ -484,6 +502,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Carat.
+        /// </summary>
+        public static string Carat {
+            get {
+                return ResourceManager.GetString("Carat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cash.
         /// </summary>
         public static string Cash {
@@ -790,6 +817,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Diamond.
+        /// </summary>
+        public static string Diamond {
+            get {
+                return ResourceManager.GetString("Diamond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dis.
         /// </summary>
         public static string Dis {
@@ -961,11 +997,29 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to G.
+        /// </summary>
+        public static string G {
+            get {
+                return ResourceManager.GetString("G", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to General Setting.
         /// </summary>
         public static string GeneralSetting {
             get {
                 return ResourceManager.GetString("GeneralSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gold.
+        /// </summary>
+        public static string Gold {
+            get {
+                return ResourceManager.GetString("Gold", resourceCulture);
             }
         }
         
@@ -1393,6 +1447,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Palatinum.
+        /// </summary>
+        public static string Palatinum {
+            get {
+                return ResourceManager.GetString("Palatinum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pay by All.
         /// </summary>
         public static string PayByAll {
@@ -1456,6 +1519,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pearl.
+        /// </summary>
+        public static string Pearl {
+            get {
+                return ResourceManager.GetString("Pearl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Percent.
         /// </summary>
         public static string Percent {
@@ -1488,6 +1560,15 @@ namespace Inventory {
         public static string Phone {
             get {
                 return ResourceManager.GetString("Phone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Photo.
+        /// </summary>
+        public static string Photo {
+            get {
+                return ResourceManager.GetString("Photo", resourceCulture);
             }
         }
         
@@ -1591,6 +1672,15 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Purchase Item Simple Report (With Image).
+        /// </summary>
+        public static string PurchaseItemSimpleReportWithImage {
+            get {
+                return ResourceManager.GetString("PurchaseItemSimpleReportWithImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Purchase List.
         /// </summary>
         public static string PurchaseList {
@@ -1690,11 +1780,29 @@ namespace Inventory {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rati.
+        /// </summary>
+        public static string Rati {
+            get {
+                return ResourceManager.GetString("Rati", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remark.
         /// </summary>
         public static string Remark {
             get {
                 return ResourceManager.GetString("Remark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove Photo.
+        /// </summary>
+        public static string RemovePhoto {
+            get {
+                return ResourceManager.GetString("RemovePhoto", resourceCulture);
             }
         }
         
@@ -2091,6 +2199,15 @@ namespace Inventory {
         public static string StockStatusReport {
             get {
                 return ResourceManager.GetString("StockStatusReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stone.
+        /// </summary>
+        public static string Stone {
+            get {
+                return ResourceManager.GetString("Stone", resourceCulture);
             }
         }
         
